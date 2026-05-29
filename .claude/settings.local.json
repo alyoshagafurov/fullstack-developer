@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p public app components && mv *.jpg public/ && ls public/)",
+      "Bash(npm install *)",
+      "Bash(npx next *)",
+      "Bash(curl -s -o /dev/null http://localhost:3001)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3001)",
+      "Bash(curl -s http://localhost:3001)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm ls *)",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill -9)",
+      "Bash(sips -g pixelWidth -g pixelHeight hero-face.jpg hero-helmet.jpg)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(python3 /tmp/fix_title.py)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost:3000/)",
+      "Bash(find /Users/mobisop -name \".git\" -type d 2>/dev/null | head -5)",
+      "Bash(npm run *)",
+      "Bash(tee build.log)"
+    ]
+  }
+}
