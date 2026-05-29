@@ -1,0 +1,297 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+/* Onest — modern geometric sans, full Cyrillic, visually pairs with Satoshi.
+   The browser picks per-glyph: Latin uses Satoshi, Cyrillic falls back to Onest. */
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Satoshi', 'Onest', 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --ink-0: #050505;
+  --ink-1: #0D0D0D;
+  --ink-2: #101820;
+
+  /* Premium palette */
+  --text-primary: #EAEAEA;
+  --text-muted: #8A8A8A;
+  --gold: #D4AF37;
+  --gold-soft: #C9A961;
+
+  /* Atmospheric accents (kept for backdrop glows) */
+  --neon-blue: #00FFFF;
+  --neon-purple: #8A2BE2;
+  --neon-yellow: #D4AF37; /* aliased to gold so existing utilities go luxury */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ink-0);
+  color-scheme: dark;
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+body {
+  background: var(--ink-0);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  cursor: none;
+  text-rendering: optimizeLegibility;
+}
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink-0);
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ──────────── Custom cursor ──────────── */
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  transition: width .25s ease, height .25s ease, background .25s ease, border-color .25s ease;
+  will-change: transform, width, height;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 4px; height: 4px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.cursor-ring.is-hover {
+  width: 72px; height: 72px;
+  background: rgba(212, 175, 55, 0.10);
+  border-color: var(--gold);
+}
+
+/* ──────────── Typography utilities ──────────── */
+.font-display { font-family: var(--font-display); }
+.font-mono { font-family: var(--font-mono); }
+
+.text-cinematic {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+}
+
+.text-muted { color: var(--text-muted); }
+.text-gold  { color: var(--gold); }
+
+/* ──────────── Editorial quote — italic serif, literary feel.
+   Used for the finale credo. Contrasts sharply with the geometric
+   sans-serif used elsewhere, reads as a personal voice. ──────────── */
+.text-quote {
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+}
+
+/* ──────────── Glow / Color utilities ──────────── */
+.glow-blue   { text-shadow: 0 0 12px rgba(0,255,255,.65), 0 0 36px rgba(0,255,255,.35); }
+.glow-purple { text-shadow: 0 0 12px rgba(138,43,226,.7), 0 0 36px rgba(138,43,226,.4); }
+.glow-yellow { text-shadow: 0 0 14px rgba(212,175,55,.65), 0 0 36px rgba(212,175,55,.35); }
+.glow-gold   { text-shadow: 0 0 14px rgba(212,175,55,.65), 0 0 36px rgba(212,175,55,.35); }
+
+.box-glow-blue {
+  box-shadow:
+    0 0 20px rgba(0,255,255,.15),
+    0 0 80px rgba(0,255,255,.08),
+    inset 0 0 20px rgba(0,255,255,.05);
+}
+.box-glow-purple {
+  box-shadow:
+    0 0 20px rgba(138,43,226,.18),
+    0 0 80px rgba(138,43,226,.08),
+    inset 0 0 20px rgba(138,43,226,.06);
+}
+
+.bg-radial-cyan {
+  background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.15) 0%, transparent 60%);
+}
+.bg-radial-purple {
+  background: radial-gradient(circle at 50% 50%, rgba(138,43,226,0.18) 0%, transparent 60%);
+}
+
+/* ──────────── Atmospheric layers ──────────── */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 85;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.6) 100%);
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.02) 0px,
+    rgba(255,255,255,0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+}
+
+.grid-floor {
+  background-image:
+    linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ──────────── 3D & perspective ──────────── */
+.perspective-2000 { perspective: 2000px; }
+.preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+/* ──────────── Keyframes ──────────── */
+@keyframes drift-up {
+  0%   { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(-20px); opacity: 0; }
+  50%  { opacity: 0.8; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.6; }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.flicker { animation: flicker 4s linear infinite; }
+.pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+
+/* Premium gradient mask for cinematic edges */
+.mask-fade-vertical {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+
+.mask-fade-horizontal {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+
+/* Luxury gold shimmer text — premium, cinematic */
+.text-holographic {
+  background: linear-gradient(
+    110deg,
+    #D4AF37 0%,
+    #F5D06A 28%,
+    #FFF1B8 50%,
+    #D4AF37 72%,
+    #8C6E1A 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 8s linear infinite;
+}
+
+/* Hard-edge premium border (asymmetric) */
+.frame-corners::before,
+.frame-corners::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border: 1px solid currentColor;
+}
+.frame-corners::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.frame-corners::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+/* The morph face wrapper uses an SVG filter */
+.morph-target { filter: url(#displacement-filter); }
+
+/* Utility: smooth wheel cap */
+[data-no-scroll] { overflow: hidden; }
