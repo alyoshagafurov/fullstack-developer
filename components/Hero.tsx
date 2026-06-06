@@ -425,7 +425,7 @@ export default function Hero() {
         >
           <span>FULL-STACK РАЗРАБОТЧИК</span>
           <span className="text-white/25">·</span>
-          <span>MMA БОЕЦ</span>
+          <span>САЙТЫ ПОД КЛЮЧ</span>
         </div>
 
         {/* Segmented persona switcher — modern sliding toggle */}
