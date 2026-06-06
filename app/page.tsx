@@ -1,10 +1,10 @@
 'use client';
 
 import SmoothScroll from '@/components/SmoothScroll';
-import SVGFilters from '@/components/SVGFilters';
 import Loader from '@/components/Loader';
 import Cursor from '@/components/Cursor';
-import Starfield from '@/components/Starfield';
+import ScrollProgress from '@/components/ScrollProgress';
+import ScrollFX from '@/components/ScrollFX';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -17,33 +17,30 @@ import Contact from '@/components/Contact';
 import Finale from '@/components/Finale';
 
 /**
- * Page flow:
+ * Page flow — clean, top-to-bottom, no pinned/horizontal scroll tricks:
  *
- *   Hero       — the name + two-persona reveal
- *   About      — bio
- *   CodeWorld  — Dimension I · the code
- *   Services   — what I build
- *   Pricing    — three tiers
- *   Projects   — selected work (horizontal scroll)
- *   FightWorld — Dimension II · the fight
- *   Contact    — let's talk
- *   Finale     — two worlds, one mind · cinematic close
+ *   Hero        — the name + two-persona reveal (kept: hover + intro animation)
+ *   About       — bio
+ *   CodeWorld   — what I build (calm statement + pillars)
+ *   Services    — services
+ *   Pricing     — three tiers
+ *   Projects    — selected work (simple vertical cards)
+ *   FightWorld  — discipline (the fighter side, calm)
+ *   Contact     — let's talk
+ *   Finale      — warm closing band
  */
 export default function Home() {
   return (
     <>
       <SmoothScroll />
-      <SVGFilters />
-      <Loader />
       <Cursor />
-
-      <Starfield />
-      <div className="grain" />
-      <div className="vignette" />
+      <Loader />
+      <ScrollProgress />
+      <ScrollFX />
 
       <Navbar />
 
-      <main className="relative z-10">
+      <main className="relative">
         <Hero />
         <About />
         <CodeWorld />

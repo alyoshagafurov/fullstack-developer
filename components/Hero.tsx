@@ -280,15 +280,14 @@ export default function Hero() {
     <section
       id="hero"
       ref={wrapRef}
-      className="relative h-[100svh] w-full overflow-hidden perspective-2000"
+      className="relative h-[100svh] w-full overflow-hidden perspective-2000 bg-dark text-white"
     >
-      {/* Single soft key-light behind the subject — calm, minimal.
-          The global Starfield already supplies the atmosphere underneath. */}
+      {/* Single soft key-light behind the subject — calm, minimal. */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(46% 52% at 50% 38%, rgba(0,255,255,0.075) 0%, rgba(138,43,226,0.045) 46%, transparent 72%)',
+            'radial-gradient(46% 52% at 50% 38%, rgba(120,165,235,0.10) 0%, rgba(56,182,216,0.05) 46%, transparent 72%)',
         }}
       />
 
@@ -304,7 +303,7 @@ export default function Hero() {
             className="absolute -inset-10 rounded-[50%] blur-3xl opacity-60"
             style={{
               background:
-                'radial-gradient(closest-side, rgba(0,255,255,0.12) 0%, rgba(138,43,226,0.07) 50%, transparent 78%)',
+                'radial-gradient(closest-side, rgba(120,165,235,0.14) 0%, rgba(56,182,216,0.07) 50%, transparent 78%)',
               pointerEvents: 'none',
             }}
           />
@@ -380,17 +379,18 @@ export default function Hero() {
             className="absolute left-1/2 -translate-x-1/2 bottom-[6%] w-[55%] h-16 pointer-events-none blur-2xl"
             style={{
               background:
-                'radial-gradient(ellipse at center, rgba(0,255,255,0.22) 0%, rgba(138,43,226,0.14) 50%, transparent 75%)',
+                'radial-gradient(ellipse at center, rgba(120,165,235,0.22) 0%, rgba(56,182,216,0.12) 50%, transparent 75%)',
             }}
           />
 
-          {/* Scanlines over portrait — barely there */}
-          <div className="scanlines absolute inset-0 mix-blend-overlay opacity-10 pointer-events-none" />
         </div>
       </div>
 
       {/* TITLE LAYER */}
-      <div className="absolute inset-x-0 bottom-0 pointer-events-none flex flex-col items-center gap-3 md:gap-6 pb-[4vh] md:pb-[6vh] z-30 px-4 md:px-6">
+      <div
+        data-hero-fade
+        className="absolute inset-x-0 bottom-0 pointer-events-none flex flex-col items-center gap-3 md:gap-6 pb-[4vh] md:pb-[6vh] z-30 px-4 md:px-6"
+      >
         <h1
           ref={titleRef}
           className="text-cinematic text-center text-white text-[12vw] sm:text-[10vw] md:text-[7vw] xl:text-[6rem] leading-[0.9]"
@@ -441,25 +441,25 @@ export default function Hero() {
             style={{
               transform: mode === 'face' ? 'translateX(0)' : 'translateX(100%)',
               background:
-                mode === 'face' ? 'rgba(0,255,255,0.16)' : 'rgba(212,175,55,0.16)',
-              border: `1px solid ${mode === 'face' ? 'rgba(0,255,255,0.55)' : 'rgba(212,175,55,0.55)'}`,
-              boxShadow: `0 0 22px ${mode === 'face' ? 'rgba(0,255,255,0.28)' : 'rgba(212,175,55,0.28)'}`,
+                mode === 'face' ? 'rgba(91,198,230,0.18)' : 'rgba(120,165,235,0.18)',
+              border: `1px solid ${mode === 'face' ? 'rgba(91,198,230,0.6)' : 'rgba(120,165,235,0.6)'}`,
+              boxShadow: `0 0 22px ${mode === 'face' ? 'rgba(91,198,230,0.28)' : 'rgba(120,165,235,0.28)'}`,
             }}
           />
-          <SwitchSeg active={mode === 'face'} onClick={() => switchTo('face')} color="#00FFFF" disabled={transitioning}>
+          <SwitchSeg active={mode === 'face'} onClick={() => switchTo('face')} color="#5BC6E6" disabled={transitioning}>
             DEV
           </SwitchSeg>
-          <SwitchSeg active={mode === 'helmet'} onClick={() => switchTo('helmet')} color="#D4AF37" disabled={transitioning}>
+          <SwitchSeg active={mode === 'helmet'} onClick={() => switchTo('helmet')} color="#7FA8EE" disabled={transitioning}>
             FIGHT
           </SwitchSeg>
         </div>
       </div>
 
       {/* TOP-LEFT scene marker — hidden on mobile for max portrait space */}
-      <div className="absolute top-24 left-6 md:left-12 z-20 hidden md:flex items-center gap-3 font-mono text-[10px] tracking-[0.4em] text-white/35">
+      <div className="absolute top-24 left-6 md:left-12 z-20 hidden md:flex items-center gap-3 label text-[10px] text-white/45">
         <span>00</span>
-        <span className="w-8 h-px bg-neon-yellow" />
-        <span className="text-neon-yellow">ENTRY</span>
+        <span className="w-8 h-px" style={{ background: '#7FA8EE' }} />
+        <span style={{ color: '#7FA8EE' }}>СТАРТ</span>
       </div>
 
       {/* SCROLL HINT — hidden on mobile */}
@@ -467,18 +467,19 @@ export default function Hero() {
         ref={hintRef}
         className="absolute bottom-8 left-6 md:left-12 z-30 hidden md:flex items-center gap-3 pointer-events-none"
       >
-        <div className="relative w-14 h-px bg-gradient-to-r from-neon-yellow via-neon-yellow/40 to-transparent overflow-hidden">
+        <div
+          className="relative w-14 h-px overflow-hidden"
+          style={{ background: 'linear-gradient(90deg, #7FA8EE, rgba(120,165,235,0.4), transparent)' }}
+        >
           <div
-            className="absolute top-0 bottom-0 w-3 bg-neon-yellow"
+            className="absolute top-0 bottom-0 w-3"
             style={{
+              background: '#7FA8EE',
               animation: 'drift-up 2.2s ease-in-out infinite',
-              boxShadow: '0 0 8px rgba(212,175,55,0.8)',
             }}
           />
         </div>
-        <span className="font-mono text-[9px] tracking-[0.5em] text-white/60">
-          SCROLL
-        </span>
+        <span className="label text-[9px] text-white/60">SCROLL</span>
       </div>
     </section>
   );

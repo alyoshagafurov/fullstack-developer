@@ -1,30 +1,40 @@
 @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
-/* Onest — modern geometric sans, full Cyrillic, visually pairs with Satoshi.
-   The browser picks per-glyph: Latin uses Satoshi, Cyrillic falls back to Onest. */
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&display=swap');
+/* Onest — modern geometric sans with full Cyrillic; pairs with Satoshi.
+   Cormorant — editorial italic serif, used only for the closing quote. */
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-display: 'Satoshi', 'Onest', 'Space Grotesk', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Satoshi', 'Onest', sans-serif;
+  /* "mono" is now a clean tracked sans — the editorial label voice.
+     (No more code-terminal monospace.) */
+  --font-mono: 'Onest', 'Satoshi', sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
 
-  --ink-0: #050505;
-  --ink-1: #0D0D0D;
-  --ink-2: #101820;
+  /* ── Black + dark-blue editorial palette ──────────────────────────── */
+  --paper:      #070A11;  /* page background — black with a blue tint */
+  --paper-2:    #0C1320;  /* alternating dark-blue band           */
+  --surface:    #111B2E;  /* dark-blue cards                      */
 
-  /* Premium palette */
-  --text-primary: #EAEAEA;
-  --text-muted: #8A8A8A;
-  --gold: #D4AF37;
-  --gold-soft: #C9A961;
+  --ink:        #E9EDF5;  /* primary text — cool off-white        */
+  --ink-2:      #A6B0C4;  /* secondary text                       */
+  --muted:      #6E798F;  /* muted / labels                       */
 
-  /* Atmospheric accents (kept for backdrop glows) */
-  --neon-blue: #00FFFF;
-  --neon-purple: #8A2BE2;
-  --neon-yellow: #D4AF37; /* aliased to gold so existing utilities go luxury */
+  --line:       rgba(150, 180, 230, 0.12);
+  --line-2:     rgba(150, 180, 230, 0.22);
+
+  --accent:      #4F8AE0; /* azure — primary (reads on black)     */
+  --accent-deep: #2E5BA8; /* deep blue — hover / pressed          */
+  --accent-soft: #8FB6EE; /* light azure — highlights             */
+  --teal:        #38B6D8; /* cyan-blue secondary (dev side)       */
+  --teal-soft:   #7FD3EC;
+
+  /* Deepest black-blue — hero & closing band                     */
+  --dark:        #04060C;
+  --dark-2:      #0A0F1A;
 }
 
 * {
@@ -34,31 +44,20 @@
 }
 
 html {
-  background: var(--ink-0);
+  background: var(--paper);
   color-scheme: dark;
   scroll-behavior: auto; /* Lenis owns scrolling */
 }
 
 html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: clip;
-}
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
 
 body {
-  background: var(--ink-0);
-  color: var(--text-primary);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-display);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
@@ -73,32 +72,40 @@ body {
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--ink-0);
+  background: var(--accent);
+  color: #fff;
 }
 
-::-webkit-scrollbar { width: 0; height: 0; }
+/* ── Slim, visible scrollbar — helps the scroll feel understandable ──── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper-2); }
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 180, 230, 0.20);
+  border-radius: 999px;
+  border: 3px solid var(--paper-2);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+html { scrollbar-width: thin; scrollbar-color: rgba(150,180,230,0.24) var(--paper-2); }
 
-/* ──────────── Custom cursor ──────────── */
+/* ──────────── Custom cursor — subtle, adaptive (no neon) ──────────── */
 .cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 36px; height: 36px;
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  width: 34px; height: 34px;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-  transition: width .25s ease, height .25s ease, background .25s ease, border-color .25s ease;
+  mix-blend-mode: difference; /* adaptive: dark over light, light over dark */
+  transition: width .25s ease, height .25s ease, background .25s ease;
   will-change: transform, width, height;
 }
-
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
-  width: 4px; height: 4px;
-  background: #FFFFFF;
+  width: 5px; height: 5px;
+  background: #fff;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -106,106 +113,54 @@ body {
   mix-blend-mode: difference;
   will-change: transform;
 }
-
 .cursor-ring.is-hover {
-  width: 72px; height: 72px;
-  background: rgba(212, 175, 55, 0.10);
-  border-color: var(--gold);
+  width: 60px; height: 60px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* ──────────── Typography utilities ──────────── */
 .font-display { font-family: var(--font-display); }
-.font-mono { font-family: var(--font-mono); }
+.font-mono    { font-family: var(--font-mono); }
+.font-serif   { font-family: var(--font-serif); }
 
+/* Big display headings — heavy, tight, friendly (not cyber) */
 .text-cinematic {
   font-family: var(--font-display);
   font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.85;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
 }
 
-.text-muted { color: var(--text-muted); }
-.text-gold  { color: var(--gold); }
+/* Small editorial label — replaces the old mono "code" tags */
+.label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+}
 
-/* ──────────── Editorial quote — italic serif, literary feel.
-   Used for the finale credo. Contrasts sharply with the geometric
-   sans-serif used elsewhere, reads as a personal voice. ──────────── */
+.text-muted  { color: var(--muted); }
+.text-accent { color: var(--accent); }
+
+/* Editorial italic serif — the closing quote */
 .text-quote {
-  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 600;
   letter-spacing: -0.005em;
-  line-height: 1.15;
+  line-height: 1.18;
 }
 
-/* ──────────── Glow / Color utilities ──────────── */
-.glow-blue   { text-shadow: 0 0 12px rgba(0,255,255,.65), 0 0 36px rgba(0,255,255,.35); }
-.glow-purple { text-shadow: 0 0 12px rgba(138,43,226,.7), 0 0 36px rgba(138,43,226,.4); }
-.glow-yellow { text-shadow: 0 0 14px rgba(212,175,55,.65), 0 0 36px rgba(212,175,55,.35); }
-.glow-gold   { text-shadow: 0 0 14px rgba(212,175,55,.65), 0 0 36px rgba(212,175,55,.35); }
-
-.box-glow-blue {
-  box-shadow:
-    0 0 20px rgba(0,255,255,.15),
-    0 0 80px rgba(0,255,255,.08),
-    inset 0 0 20px rgba(0,255,255,.05);
-}
-.box-glow-purple {
-  box-shadow:
-    0 0 20px rgba(138,43,226,.18),
-    0 0 80px rgba(138,43,226,.08),
-    inset 0 0 20px rgba(138,43,226,.06);
+/* Tasteful accent gradient text (replaces the old gold "holographic") */
+.text-gradient {
+  background: linear-gradient(100deg, var(--accent) 0%, var(--accent-soft) 55%, var(--accent) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.bg-radial-cyan {
-  background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.15) 0%, transparent 60%);
-}
-.bg-radial-purple {
-  background: radial-gradient(circle at 50% 50%, rgba(138,43,226,0.18) 0%, transparent 60%);
-}
-
-/* ──────────── Atmospheric layers ──────────── */
-.grain {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 90;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 85;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.6) 100%);
-}
-
-.scanlines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    0deg,
-    rgba(255,255,255,0.02) 0px,
-    rgba(255,255,255,0.02) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  mix-blend-mode: overlay;
-  opacity: 0.4;
-}
-
-.grid-floor {
-  background-image:
-    linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
-  background-size: 80px 80px;
-}
-
-/* ──────────── 3D & perspective ──────────── */
+/* ──────────── 3D & perspective (used by the kept hero) ──────────── */
 .perspective-2000 { perspective: 2000px; }
 .preserve-3d { transform-style: preserve-3d; }
 .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -213,85 +168,54 @@ body {
 /* ──────────── Keyframes ──────────── */
 @keyframes drift-up {
   0%   { transform: translateY(20px); opacity: 0; }
+  50%  { opacity: 0.9; }
   100% { transform: translateY(-20px); opacity: 0; }
-  50%  { opacity: 0.8; }
 }
 @keyframes pulse-soft {
-  0%, 100% { opacity: 0.4; }
+  0%, 100% { opacity: 0.45; }
   50% { opacity: 1; }
 }
-@keyframes flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.6; }
-}
-@keyframes orbit {
-  from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
-  to   { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
-}
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,0.15) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-.flicker { animation: flicker 4s linear infinite; }
 .pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+.float-slow { animation: float-slow 7s ease-in-out infinite; }
 
-/* Premium gradient mask for cinematic edges */
-.mask-fade-vertical {
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
-          mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+/* ──────────── Scroll reveal (driven by useReveal / IntersectionObserver) ──
+   Elements start hidden from first paint (no flash) and ease in once visible. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.9s ease;
+  will-change: opacity, transform;
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
 }
 
-.mask-fade-horizontal {
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
-          mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
 }
 
-/* Luxury gold shimmer text — premium, cinematic */
-.text-holographic {
-  background: linear-gradient(
-    110deg,
-    #D4AF37 0%,
-    #F5D06A 28%,
-    #FFF1B8 50%,
-    #D4AF37 72%,
-    #8C6E1A 100%
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 8s linear infinite;
+/* Soft card hover lift */
+.card-lift {
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .3s ease;
 }
-
-/* Hard-edge premium border (asymmetric) */
-.frame-corners::before,
-.frame-corners::after {
-  content: '';
-  position: absolute;
-  width: 18px; height: 18px;
-  border: 1px solid currentColor;
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 60px -24px rgba(0, 0, 0, 0.7);
+  border-color: rgba(150, 180, 230, 0.28);
 }
-.frame-corners::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
-.frame-corners::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
-
-/* The morph face wrapper uses an SVG filter */
-.morph-target { filter: url(#displacement-filter); }
-
-/* Utility: smooth wheel cap */
-[data-no-scroll] { overflow: hidden; }

@@ -7,27 +7,38 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        paper: {
+          DEFAULT: '#070A11',
+          2: '#0C1320',
+        },
+        surface: '#111B2E',
         ink: {
-          0: '#050505',
-          1: '#0D0D0D',
-          2: '#101820',
-          3: '#171F2A',
+          DEFAULT: '#E9EDF5',
+          2: '#A6B0C4',
         },
-        neon: {
-          blue: '#00FFFF',
-          purple: '#8A2BE2',
-          yellow: '#D4AF37', // aliased to luxury gold so existing utilities go premium
+        muted: '#6E798F',
+        accent: {
+          DEFAULT: '#4F8AE0',
+          deep: '#2E5BA8',
+          soft: '#8FB6EE',
         },
-        gold: {
-          DEFAULT: '#D4AF37',
-          soft: '#C9A961',
-          bright: '#F5D06A',
+        teal: {
+          DEFAULT: '#38B6D8',
+          soft: '#7FD3EC',
         },
-        muted: '#8A8A8A',
+        dark: {
+          DEFAULT: '#04060C',
+          2: '#0A0F1A',
+        },
+        line: 'rgba(150, 180, 230, 0.12)',
       },
       fontFamily: {
         display: ['var(--font-display)', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        mono: ['var(--font-mono)', 'sans-serif'],
+        serif: ['var(--font-serif)', 'serif'],
+      },
+      maxWidth: {
+        content: '1240px',
       },
     },
   },

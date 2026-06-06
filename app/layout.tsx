@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#050505',
+  themeColor: '#F4F1EA',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -25,7 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="ru">
+      <head>
+        {/* If JS is disabled, never keep reveal content hidden. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important;filter:none!important;}`}</style>
+        </noscript>
+      </head>
       <body>{children}</body>
     </html>
   );
