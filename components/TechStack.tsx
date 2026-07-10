@@ -9,6 +9,7 @@ import SplitText from './SplitText';
 const GROUPS: { title: string; items: string[] }[] = [
   { title: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML', 'CSS'] },
   { title: 'Backend', items: ['Node.js', 'Express', 'NestJS', 'Python', 'REST API'] },
+  { title: 'Мобильные (iOS / Android)', items: ['React Native', 'Expo', 'Flutter', 'Swift', 'Kotlin', 'App Store', 'Google Play'] },
   { title: 'База данных', items: ['PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Prisma'] },
   { title: 'Инфраструктура', items: ['Vercel', 'Docker', 'AWS', 'Railway', 'Nginx'] },
   { title: 'Инструменты', items: ['Git', 'GitHub', 'Figma', 'Postman', 'GSAP', 'Framer Motion'] },

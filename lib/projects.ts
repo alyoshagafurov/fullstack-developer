@@ -1,11 +1,10 @@
 /*
  * Case-study data — single source of truth for the Projects section and the
- * /work/[slug] detail pages.
+ * /work/[slug] detail pages. Text-first (no screenshots).
  *
  * ▸ TODO (Alisher): replace the placeholder copy, metrics and links below with
- *   your REAL projects. Keep the shape identical. Drop project covers into
- *   /public and point `cover` at them. Everything else (section + detail page)
- *   updates automatically.
+ *   your REAL projects. Keep the shape identical — the section and the detail
+ *   page update automatically.
  */
 
 export type CaseStudy = {
@@ -14,7 +13,6 @@ export type CaseStudy = {
   title: string;
   category: string;
   year: string;
-  cover: string;
   summary: string;
   liveUrl?: string;
   result: { value: string; label: string };
@@ -22,7 +20,6 @@ export type CaseStudy = {
   solution: string;
   features: string[];
   stack: string[];
-  gallery?: string[];
 };
 
 export const projects: CaseStudy[] = [
@@ -32,7 +29,6 @@ export const projects: CaseStudy[] = [
     title: 'Продуктовый лендинг',
     category: 'Landing / Brand',
     year: '2025',
-    cover: '/project-1.jpg',
     summary:
       'Одностраничный сайт для запуска продукта: чёткая структура, акцент на заявки и быстрая загрузка.',
     liveUrl: '#',
@@ -48,7 +44,6 @@ export const projects: CaseStudy[] = [
       'SEO-разметка и Open Graph',
     ],
     stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-    gallery: ['/project-1.jpg'],
   },
   {
     slug: 'business',
@@ -56,7 +51,6 @@ export const projects: CaseStudy[] = [
     title: 'Корпоративный сайт',
     category: 'Corporate / Multi-page',
     year: '2025',
-    cover: '/project-2.jpg',
     summary:
       'Многостраничный сайт компании с продуманной структурой, SEO и формами заявок.',
     liveUrl: '#',
@@ -72,7 +66,6 @@ export const projects: CaseStudy[] = [
       'Формы заказа с уведомлениями',
     ],
     stack: ['Next.js', 'TypeScript', 'Headless CMS', 'PostgreSQL', 'Vercel'],
-    gallery: ['/project-2.jpg'],
   },
   {
     slug: 'webapp',
@@ -80,7 +73,6 @@ export const projects: CaseStudy[] = [
     title: 'Full-Stack веб-приложение',
     category: 'Web App / SaaS',
     year: '2026',
-    cover: '/project-3.jpg',
     summary:
       'Индивидуальное решение: админ-панель, база данных, личные кабинеты и бронирование.',
     liveUrl: '#',
@@ -96,7 +88,6 @@ export const projects: CaseStudy[] = [
       'REST API и интеграции',
     ],
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
-    gallery: ['/project-3.jpg'],
   },
 ];
 

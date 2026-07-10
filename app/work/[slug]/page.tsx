@@ -13,7 +13,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   return {
     title: `${p.title} — кейс`,
     description: p.summary,
-    openGraph: { title: p.title, description: p.summary, images: [p.cover] },
+    openGraph: { title: p.title, description: p.summary },
   };
 }
 

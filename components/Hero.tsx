@@ -58,8 +58,8 @@ export default function Hero() {
           priority
           quality={92}
           sizes="100vw"
-          className="object-cover object-[center_22%] grayscale"
-          style={{ filter: 'grayscale(1) contrast(1.08) brightness(0.95)' }}
+          className="object-cover object-[center_20%]"
+          style={{ filter: 'contrast(1.04) saturate(1.02) brightness(0.98)' }}
         />
       </div>
 
@@ -83,7 +83,7 @@ export default function Hero() {
           as="h1"
           trigger="load"
           delay={1.35}
-          className="display-tight text-white text-[15vw] md:text-[12vw] lg:text-[10rem] leading-[0.86] [text-shadow:0_6px_60px_rgba(0,0,0,0.6)]"
+          className="display-tight text-white text-[10vw] md:text-[6rem] lg:text-[7rem] leading-[0.9] [text-shadow:0_6px_50px_rgba(0,0,0,0.55)]"
         >
           ALISHER GAFUROV
         </SplitText>

@@ -30,7 +30,7 @@ export default function About() {
                 fill
                 data-parallax="0.04"
                 data-pscale="1.12"
-                className="object-cover object-top grayscale will-change-transform"
+                className="object-cover object-top will-change-transform"
                 sizes="(max-width:1024px) 90vw, 440px"
               />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 55%, rgba(7,7,7,0.85) 100%)' }} />
