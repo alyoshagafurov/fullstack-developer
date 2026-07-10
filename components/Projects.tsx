@@ -2,161 +2,88 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import { useReveal } from './useReveal';
+import SplitText from './SplitText';
+import { projects } from '@/lib/projects';
 
-/**
- * Projects — selected directions, as calm alternating rows on normal vertical
- * scroll (the old horizontal-scroll gallery is gone — this reads clearly).
+/*
+ * Work — large case cards. Image zooms and a gradient + "Смотреть проект" reveal
+ * on hover. Each card links to its full /work/[slug] case study.
  */
-
-const projects = [
-  {
-    n: '001',
-    title: 'Лендинг',
-    sub: 'одностраничный сайт',
-    image: '/project-1.jpg',
-    description:
-      'Стильная одностраничная презентация бренда, услуги или продукта. Чёткая структура, акцент на заявки и быстрая загрузка.',
-    tech: ['Next.js', 'React', 'Tailwind'],
-  },
-  {
-    n: '002',
-    title: 'Бизнес-сайт',
-    sub: 'многостраничный сайт',
-    image: '/project-2.jpg',
-    description:
-      'Сайт компании с продуманной структурой, SEO и формами заявок — чтобы клиенты находили вас и оставались.',
-    tech: ['SEO', 'CMS', 'Формы'],
-  },
-  {
-    n: '003',
-    title: 'Full-Stack',
-    sub: 'веб-приложение',
-    image: '/project-3.jpg',
-    description:
-      'Индивидуальные решения: админ-панель, база данных, бронирование, личные кабинеты — любой функционал под задачу.',
-    tech: ['Node.js', 'PostgreSQL', 'API'],
-  },
-];
-
 export default function Projects() {
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
 
   return (
-    <section
-      id="projects"
-      ref={ref}
-      className="relative w-full bg-paper px-5 md:px-12 py-20 md:py-32 overflow-hidden"
-    >
-      <div className="relative mx-auto max-w-content">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16 md:mb-24">
+    <section id="work" ref={ref} className="relative py-28 md:py-44">
+      <div className="mx-auto max-w-wide px-6 md:px-10">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-24">
           <div>
-            <div
-              data-reveal="0"
-              className="flex items-center gap-3 label text-[10px] text-muted mb-8"
-            >
-              <span>04</span>
-              <span className="w-10 h-px bg-accent" />
-              <span className="text-accent">РАБОТЫ</span>
-            </div>
-            <h2
-              data-reveal="1"
-              className="text-cinematic text-ink text-[12vw] md:text-[6vw] lg:text-[5rem] leading-[0.95]"
-            >
-              Что я
-              <br />
-              <span className="text-muted">создаю.</span>
-            </h2>
+            <div data-reveal="0" className="label mb-6">Избранные работы</div>
+            <SplitText as="h2" className="display text-ink text-[11vw] md:text-[4.6rem]">
+              Работы
+            </SplitText>
           </div>
-          <p
-            data-reveal="2"
-            className="text-ink-2 text-sm md:text-base max-w-xs leading-relaxed"
-          >
-            Направления, в которых я работаю — от простого лендинга до
-            полноценного веб-приложения.
+          <p data-reveal="1" className="text-ink-2 text-lg leading-relaxed max-w-sm">
+            Каждый проект — как кейс: задача, решение, стек и результат. Кликните, чтобы открыть разбор.
           </p>
         </div>
 
-        {/* Rows */}
-        <div className="flex flex-col gap-20 md:gap-28">
-          {projects.map((p, i) => {
-            const accent = i % 2 === 0 ? 'var(--accent)' : 'var(--teal)';
-            const flip = i % 2 === 1;
-            return (
-              <div
-                key={p.n}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-center"
-              >
-                {/* Image */}
-                <div
-                  data-reveal="1"
-                  data-hover
-                  className={`relative ${flip ? 'md:order-2' : ''}`}
-                >
-                  <div className="relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-line shadow-[0_30px_70px_-35px_rgba(0,0,0,0.65)]">
-                    <Image
-                      src={p.image}
-                      alt={p.title}
-                      fill
-                      data-parallax="0.05"
-                      data-pscale="1.12"
-                      className="object-cover will-change-transform"
-                      sizes="(max-width:768px) 90vw, 50vw"
-                    />
-                    <div
-                      className="absolute top-4 left-4 label text-[10px] text-white px-3 py-1 rounded-full backdrop-blur-sm"
-                      style={{ background: accent }}
-                    >
-                      {p.n}
-                    </div>
+        <div className="flex flex-col gap-5 md:gap-6">
+          {projects.map((p, i) => (
+            <Link
+              key={p.slug}
+              href={`/work/${p.slug}`}
+              data-reveal={String(i % 2)}
+              data-cursor="Открыть"
+              className="group glass overflow-hidden grid md:grid-cols-2 items-stretch"
+            >
+              {/* Image */}
+              <div className={`relative aspect-[16/10] md:aspect-auto md:min-h-[380px] overflow-hidden ${i % 2 ? 'md:order-2' : ''}`}>
+                <Image
+                  src={p.cover}
+                  alt={p.title}
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-[900ms] ease-[cubic-bezier(.2,.7,.2,1)]"
+                  sizes="(max-width:768px) 90vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg/80 via-bg/10 to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-700" />
+                <div className="absolute top-4 left-4 text-[11px] label text-ink/90 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">{p.index}</div>
+              </div>
+
+              {/* Meta */}
+              <div className="relative p-7 md:p-12 flex flex-col justify-center">
+                <div className="flex items-center gap-3 label mb-6">
+                  <span>{p.category}</span>
+                  <span className="w-1 h-1 rounded-full bg-white/30" />
+                  <span>{p.year}</span>
+                </div>
+                <h3 className="display text-ink text-3xl md:text-5xl mb-4">{p.title}</h3>
+                <p className="text-ink-2 text-[15px] md:text-base leading-relaxed max-w-md mb-7">{p.summary}</p>
+
+                <div className="flex items-end justify-between gap-6">
+                  <div>
+                    <div className="display text-ink text-2xl md:text-3xl tabular-nums">{p.result.value}</div>
+                    <div className="text-[12px] text-muted mt-1 max-w-[180px] leading-snug">{p.result.label}</div>
                   </div>
+                  <span className="inline-flex items-center gap-2 text-[13px] text-ink-2 group-hover:text-ink transition-colors">
+                    Смотреть проект
+                    <span className="w-9 h-9 rounded-full border border-line grid place-items-center group-hover:bg-white group-hover:text-bg group-hover:border-white transition-all duration-500">
+                      <ArrowUpRight size={16} />
+                    </span>
+                  </span>
                 </div>
 
-                {/* Meta */}
-                <div data-reveal="2" className={flip ? 'md:order-1' : ''}>
-                  <div className="label text-[10px]" style={{ color: accent }}>
-                    {p.sub}
-                  </div>
-                  <h3 className="text-cinematic text-ink text-5xl md:text-6xl mt-3 mb-5">
-                    {p.title}
-                  </h3>
-                  <p className="text-ink-2 text-sm md:text-base leading-relaxed max-w-md mb-6">
-                    {p.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {p.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="label text-[10px] text-ink-2 bg-paper-2 rounded-full px-3 py-1.5"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
+                <div className="flex flex-wrap gap-2 mt-7">
+                  {p.stack.slice(0, 4).map((t) => (
+                    <span key={t} className="text-[11px] text-muted border border-line rounded-full px-3 py-1">{t}</span>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Closing CTA */}
-        <div
-          data-reveal="0"
-          className="mt-24 md:mt-32 rounded-3xl bg-paper-2 border border-line p-10 md:p-16 text-center"
-        >
-          <div className="label text-[10px] text-accent mb-5">ГОТОВЫ НАЧАТЬ?</div>
-          <h3 className="text-cinematic text-ink text-[9vw] md:text-[4.5vw] lg:text-[3.5rem] leading-[1.0]">
-            Давайте создадим ваш сайт.
-          </h3>
-          <a
-            href="#contact"
-            data-hover
-            className="mt-9 inline-flex items-center gap-3 rounded-full px-7 py-4 bg-accent text-white label text-[10px] hover:bg-accent-deep transition-colors"
-          >
-            ОБСУДИТЬ ПРОЕКТ <span>→</span>
-          </a>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

@@ -2,47 +2,62 @@
 
 import { useEffect, useRef } from 'react';
 
-/**
- * Premium 2-layer cursor: a small fixed dot + a lagging ring.
- * Switches to "hover" mode on interactive elements (anchors, buttons, [data-hover]).
+/*
+ * Two-layer cursor: a fixed dot + a lagging ring. On interactive elements the
+ * ring grows. If an element carries data-cursor="View" the ring fills white and
+ * shows that label ("View" / "Open" / "Explore" …) — a small premium detail.
  */
 export default function Cursor() {
   const ringRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 768px)').matches) return;
 
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
-    let rx = mx;
-    let ry = my;
+    let rx = mx, ry = my;
 
     const move = (e: MouseEvent) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (dotRef.current) {
+      mx = e.clientX; my = e.clientY;
+      if (dotRef.current)
         dotRef.current.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%)`;
-      }
     };
-
     const tick = () => {
       rx += (mx - rx) * 0.18;
       ry += (my - ry) * 0.18;
-      if (ringRef.current) {
+      if (ringRef.current)
         ringRef.current.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
-      }
       raf = requestAnimationFrame(tick);
     };
     let raf = requestAnimationFrame(tick);
 
-    const hoverIn = () => ringRef.current?.classList.add('is-hover');
-    const hoverOut = () => ringRef.current?.classList.remove('is-hover');
+    const setLabel = (text: string | null) => {
+      const ring = ringRef.current;
+      const lbl = labelRef.current;
+      if (!ring || !lbl) return;
+      if (text) {
+        lbl.textContent = text;
+        ring.classList.add('has-label');
+      } else {
+        ring.classList.remove('has-label');
+      }
+    };
+
+    const hoverIn = (e: Event) => {
+      const el = (e.target as HTMLElement).closest('[data-cursor],a,button,[data-hover],input,textarea,select');
+      ringRef.current?.classList.add('is-hover');
+      const label = el?.getAttribute('data-cursor');
+      setLabel(label || null);
+    };
+    const hoverOut = () => {
+      ringRef.current?.classList.remove('is-hover');
+      setLabel(null);
+    };
 
     const attach = () => {
-      const els = document.querySelectorAll(
-        'a, button, [data-hover], input, textarea',
-      );
+      const els = document.querySelectorAll('a, button, [data-hover], [data-cursor], input, textarea, select');
       els.forEach((el) => {
         el.addEventListener('mouseenter', hoverIn);
         el.addEventListener('mouseleave', hoverOut);
@@ -51,7 +66,6 @@ export default function Cursor() {
     };
     let els = attach();
 
-    // Re-scan as DOM grows (Lenis can mount things later)
     const observer = new MutationObserver(() => {
       els.forEach((el) => {
         el.removeEventListener('mouseenter', hoverIn);
@@ -75,7 +89,9 @@ export default function Cursor() {
 
   return (
     <>
-      <div ref={ringRef} className="cursor-ring" />
+      <div ref={ringRef} className="cursor-ring">
+        <span ref={labelRef} className="cursor-label" />
+      </div>
       <div ref={dotRef} className="cursor-dot" />
     </>
   );

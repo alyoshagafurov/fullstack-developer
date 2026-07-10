@@ -1,56 +1,59 @@
-'use client';
-
-import SmoothScroll from '@/components/SmoothScroll';
 import Loader from '@/components/Loader';
-import Cursor from '@/components/Cursor';
-import ScrollProgress from '@/components/ScrollProgress';
-import ScrollFX from '@/components/ScrollFX';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import About from '@/components/About';
-import CodeWorld from '@/components/CodeWorld';
+import Marquee from '@/components/Marquee';
+import Stats from '@/components/Stats';
 import Services from '@/components/Services';
-import Pricing from '@/components/Pricing';
 import Projects from '@/components/Projects';
-import FightWorld from '@/components/FightWorld';
+import Process from '@/components/Process';
+import TechStack from '@/components/TechStack';
+import WhyMe from '@/components/WhyMe';
+import Testimonials from '@/components/Testimonials';
+import Pricing from '@/components/Pricing';
+import FAQ from '@/components/FAQ';
+import About from '@/components/About';
 import Contact from '@/components/Contact';
-import Finale from '@/components/Finale';
+import Footer from '@/components/Footer';
 
 /**
- * Page flow — clean, top-to-bottom, no pinned/horizontal scroll tricks:
+ * Home — a premium, monochrome, single-page portfolio built to sell:
  *
- *   Hero        — the name + two-persona reveal (kept: hover + intro animation)
- *   About       — bio
- *   CodeWorld   — what I build (calm statement + pillars)
- *   Services    — services
- *   Pricing     — three tiers
- *   Projects    — selected work (simple vertical cards)
- *   FightWorld  — discipline (the fighter side, calm)
- *   Contact     — let's talk
- *   Finale      — warm closing band
+ *   Hero         — clean product-style first screen
+ *   Marquee      — stack trust strip
+ *   Stats        — animated numbers
+ *   Services     — what I do (glass cards)
+ *   Projects     — featured work → /work/[slug] case studies
+ *   Process      — how a project runs
+ *   TechStack    — full stack by layer
+ *   WhyMe        — reasons to choose me
+ *   Testimonials — client voices
+ *   Pricing      — three transparent tiers
+ *   FAQ          — common questions
+ *   About        — bio
+ *   Contact      — real form (+ Telegram/email)
+ *   Footer       — nav + socials
  */
 export default function Home() {
   return (
     <>
-      <SmoothScroll />
-      <Cursor />
       <Loader />
-      <ScrollProgress />
-      <ScrollFX />
-
       <Navbar />
-
       <main className="relative">
         <Hero />
-        <About />
-        <CodeWorld />
+        <Marquee />
+        <Stats />
         <Services />
-        <Pricing />
         <Projects />
-        <FightWorld />
+        <Process />
+        <TechStack />
+        <WhyMe />
+        <Testimonials />
+        <Pricing />
+        <FAQ />
+        <About />
         <Contact />
-        <Finale />
       </main>
+      <Footer />
     </>
   );
 }

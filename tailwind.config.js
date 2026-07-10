@@ -7,38 +7,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        paper: {
-          DEFAULT: '#070A11',
-          2: '#0C1320',
+        bg: {
+          DEFAULT: '#070707',
+          2: '#0A0A0A',
         },
-        surface: '#111B2E',
+        card: {
+          DEFAULT: '#101010',
+          2: '#161616',
+        },
         ink: {
-          DEFAULT: '#E9EDF5',
-          2: '#A6B0C4',
+          DEFAULT: '#F4F4F5', // primary text
+          2: '#A1A1AA',       // secondary text
         },
-        muted: '#6E798F',
-        accent: {
-          DEFAULT: '#4F8AE0',
-          deep: '#2E5BA8',
-          soft: '#8FB6EE',
-        },
-        teal: {
-          DEFAULT: '#38B6D8',
-          soft: '#7FD3EC',
-        },
-        dark: {
-          DEFAULT: '#04060C',
-          2: '#0A0F1A',
-        },
-        line: 'rgba(150, 180, 230, 0.12)',
+        muted: '#6B6B72',
+        line: 'rgba(255, 255, 255, 0.08)',
+        'line-2': 'rgba(255, 255, 255, 0.14)',
+        accent: '#FFFFFF',
       },
       fontFamily: {
-        display: ['var(--font-display)', 'sans-serif'],
-        mono: ['var(--font-mono)', 'sans-serif'],
-        serif: ['var(--font-serif)', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
       maxWidth: {
-        content: '1240px',
+        content: '1200px',
+        wide: '1400px',
+      },
+      screens: {
+        xs: '480px',
       },
     },
   },

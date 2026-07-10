@@ -1,162 +1,71 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, MouseEvent } from 'react';
+import {
+  LayoutTemplate, Building2, ShoppingBag, Boxes, Bot, LifeBuoy, ArrowUpRight,
+} from 'lucide-react';
 import { useReveal } from './useReveal';
+import SplitText from './SplitText';
 
-/**
- * Services — what Alisher builds. Light card grid, calm scroll.
- */
+/* Services — glass cards with a pointer-following sheen. */
 
-const SERVICES: {
-  n: string;
-  title: string;
-  body: string;
-  tags: string[];
-}[] = [
-  {
-    n: '01',
-    title: 'Landing Page',
-    body: 'Одностраничные сайты для личного бренда, услуг, портфолио или небольшого бизнеса. Стильно, быстро, адаптивно.',
-    tags: ['React', 'Next.js', 'Tailwind'],
-  },
-  {
-    n: '02',
-    title: 'Бизнес-сайты',
-    body: 'Многостраничные сайты с продуманной структурой, SEO-оптимизацией и формами заказов — всё для вашего бизнеса.',
-    tags: ['SEO', 'Формы', 'CMS'],
-  },
-  {
-    n: '03',
-    title: 'Full-Stack проекты',
-    body: 'Индивидуальные веб-решения с админ-панелью, базой данных, бронированием и любым функционалом под ваши задачи.',
-    tags: ['Node.js', 'PostgreSQL', 'API'],
-  },
-  {
-    n: '04',
-    title: 'Портфолио и бренд',
-    body: 'Персональные сайты с premium-дизайном, анимациями и интерактивом. Чтобы вы выделялись в цифровом пространстве.',
-    tags: ['GSAP', 'Анимации', 'UX'],
-  },
-];
-
-const BENEFITS = [
-  'Современный premium-дизайн',
-  'Адаптивность под все устройства',
-  'Быстрая работа сайта',
-  'Удобный интерфейс и UX',
-  'Чистая архитектура проекта',
-  'Решение под ваши задачи',
+const SERVICES = [
+  { icon: LayoutTemplate, title: 'Лендинги', body: 'Одностраничные сайты под запуск продукта, услугу или личный бренд. Заточены под заявки и скорость.', tags: ['Next.js', 'Анимации', 'SEO'] },
+  { icon: Building2, title: 'Корпоративные сайты', body: 'Многостраничные сайты с продуманной структурой, SEO и CMS для самостоятельного управления.', tags: ['CMS', 'SEO', 'Формы'] },
+  { icon: ShoppingBag, title: 'E-commerce', body: 'Интернет-магазины с корзиной, оплатой и каталогом. Stripe, интеграции, аналитика продаж.', tags: ['Stripe', 'Каталог', 'Оплата'] },
+  { icon: Boxes, title: 'Веб-приложения', body: 'Full-Stack решения: админ-панели, личные кабинеты, базы данных, бронирование и API.', tags: ['Node.js', 'PostgreSQL', 'API'] },
+  { icon: Bot, title: 'Интеграции & AI', body: 'Автоматизация процессов, чат-боты, интеграции с внешними сервисами и AI-функции.', tags: ['OpenAI', 'Боты', 'Webhooks'] },
+  { icon: LifeBuoy, title: 'Поддержка & развитие', body: 'Сопровождение после запуска: доработки, оптимизация, обновления и техподдержка.', tags: ['SLA', 'Оптимизация', 'Хостинг'] },
 ];
 
 export default function Services() {
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
 
-  return (
-    <section
-      id="services"
-      ref={ref}
-      className="relative w-full bg-paper px-5 md:px-12 py-20 md:py-32 overflow-hidden"
-    >
-      <div
-        aria-hidden
-        data-parallax="0.16"
-        className="pointer-events-none select-none absolute top-[3%] left-[-4vw] z-0 font-display font-black leading-none text-ink/[0.04] text-[46vw] md:text-[26vw]"
-      >
-        03
-      </div>
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--my', `${e.clientY - r.top}px`);
+  };
 
-      <div className="relative z-10 mx-auto max-w-content">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16 md:mb-20">
+  return (
+    <section id="services" ref={ref} className="relative py-28 md:py-44">
+      <div className="mx-auto max-w-wide px-6 md:px-10">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-20">
           <div>
-            <div
-              data-reveal="0"
-              className="flex items-center gap-3 label text-[10px] text-muted mb-8"
-            >
-              <span>03</span>
-              <span className="w-10 h-px bg-accent" />
-              <span className="text-accent">УСЛУГИ</span>
-            </div>
-            <h2
-              data-reveal="1"
-              className="text-cinematic text-ink text-[10vw] md:text-[5vw] lg:text-[4rem] leading-[1.0] max-w-3xl"
-            >
-              Разработка сайтов
-              <br />
-              <span className="text-muted">под ключ.</span>
-            </h2>
+            <div data-reveal="0" className="label mb-6">Услуги</div>
+            <SplitText as="h2" className="display text-ink text-[9vw] md:text-[3.6rem] max-w-3xl">
+              Что я делаю
+            </SplitText>
           </div>
-          <p
-            data-reveal="2"
-            className="text-ink-2 text-sm md:text-base leading-relaxed max-w-xs"
-          >
-            Стильные, быстрые и современные сайты с акцентом на дизайн,
-            удобство и эффективность для бизнеса.
+          <p data-reveal="1" className="text-ink-2 text-lg leading-relaxed max-w-sm">
+            От быстрого лендинга до полноценного продукта — беру проект от идеи до запуска и поддержки.
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {SERVICES.map((s, i) => {
-            const accent = i % 2 === 0 ? 'var(--accent)' : 'var(--teal)';
-            return (
-              <div
-                key={s.n}
-                data-reveal={String(i)}
-                data-hover
-                className="card-lift group relative bg-surface rounded-2xl border border-line p-8 md:p-10"
-              >
-                <span
-                  className="absolute top-0 left-8 right-8 h-[2px] w-0 group-hover:w-[calc(100%-4rem)] transition-[width] duration-500 rounded-full"
-                  style={{ background: accent }}
-                />
-
-                <div className="flex items-start justify-between mb-8">
-                  <span className="label text-xs" style={{ color: accent }}>
-                    {s.n}
-                  </span>
-                  <span
-                    className="text-lg text-muted group-hover:translate-x-1 transition-transform"
-                    style={{ color: accent }}
-                  >
-                    →
-                  </span>
-                </div>
-
-                <h3 className="text-ink text-2xl md:text-3xl font-display font-bold mb-4 tracking-tight">
-                  {s.title}
-                </h3>
-                <p className="text-ink-2 text-sm md:text-base leading-relaxed max-w-md mb-8">
-                  {s.body}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {s.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="label text-[10px] text-ink-2 bg-paper-2 rounded-full px-3 py-1.5"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Benefits */}
-        <div
-          data-reveal="0"
-          className="mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4"
-        >
-          {BENEFITS.map((b) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          {SERVICES.map((s, i) => (
             <div
-              key={b}
-              className="flex items-center gap-3 text-ink-2 text-sm md:text-base"
+              key={s.title}
+              data-reveal={String(i % 3)}
+              data-hover
+              onMouseMove={onMove}
+              className="glass glass-sheen group p-7 md:p-8"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-              {b}
+              <div className="flex items-center justify-between mb-8">
+                <div className="w-12 h-12 rounded-xl border border-line bg-white/[0.03] grid place-items-center text-ink group-hover:scale-110 transition-transform duration-500">
+                  <s.icon size={20} strokeWidth={1.5} />
+                </div>
+                <ArrowUpRight size={18} className="text-muted group-hover:text-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </div>
+              <h3 className="text-ink text-xl md:text-2xl font-semibold tracking-tight mb-3">{s.title}</h3>
+              <p className="text-ink-2 text-[15px] leading-relaxed mb-6">{s.body}</p>
+              <div className="flex flex-wrap gap-2">
+                {s.tags.map((t) => (
+                  <span key={t} className="text-[11px] text-muted border border-line rounded-full px-3 py-1">{t}</span>
+                ))}
+              </div>
             </div>
           ))}
         </div>
