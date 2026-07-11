@@ -6,13 +6,14 @@ import {
 } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import SectionMore from './SectionMore';
 import { useI18n } from '@/lib/i18n';
 
 /* Services — glass cards with a pointer-following sheen. Icons here, text from i18n. */
 
 const ICONS = [LayoutTemplate, Building2, ShoppingBag, Boxes, Bot, LifeBuoy];
 
-export default function Services() {
+export default function Services({ moreHref }: { moreHref?: string }) {
   const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
@@ -65,6 +66,8 @@ export default function Services() {
             </div>
           ))}
         </div>
+
+        {moreHref && <SectionMore href={moreHref} />}
       </div>
     </section>
   );

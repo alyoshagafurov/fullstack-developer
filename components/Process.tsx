@@ -3,11 +3,12 @@
 import { useRef } from 'react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import SectionMore from './SectionMore';
 import { useI18n } from '@/lib/i18n';
 
 /* Process — alternating timeline: 01 left, 02 right, 03 left … down a center line. */
 
-export default function Process() {
+export default function Process({ moreHref }: { moreHref?: string }) {
   const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
@@ -55,6 +56,8 @@ export default function Process() {
             })}
           </div>
         </div>
+
+        {moreHref && <SectionMore href={moreHref} />}
       </div>
     </section>
   );

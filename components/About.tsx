@@ -4,9 +4,10 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import SectionMore from './SectionMore';
 import { useI18n } from '@/lib/i18n';
 
-export default function About() {
+export default function About({ moreHref }: { moreHref?: string }) {
   const { t } = useI18n();
   const a = t.about;
   const ref = useRef<HTMLElement>(null);
@@ -57,6 +58,8 @@ export default function About() {
             </dl>
           </div>
         </div>
+
+        {moreHref && <SectionMore href={moreHref} />}
       </div>
     </section>
   );

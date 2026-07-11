@@ -1,25 +1,27 @@
-'use client';
-
 import Loader from '@/components/Loader';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
-import Teaser from '@/components/Teaser';
+import Stats from '@/components/Stats';
+import Services from '@/components/Services';
+import Projects from '@/components/Projects';
+import Process from '@/components/Process';
+import TechStack from '@/components/TechStack';
+import WhyMe from '@/components/WhyMe';
+import Testimonials from '@/components/Testimonials';
 import PricingTeaser from '@/components/PricingTeaser';
-import CTABand from '@/components/CTABand';
+import FAQ from '@/components/FAQ';
+import About from '@/components/About';
+import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import { useI18n } from '@/lib/i18n';
-import { projects } from '@/lib/projects';
 
 /*
- * Landing — a concise "table of contents": the hero, a stack strip, and a short
- * teaser for each section, each with a button that opens the full dedicated
- * page. The detail lives on /services, /work, /process, /pricing, /about,
- * /contact — the header menu points there too.
+ * Landing — keeps all the full sections. The only change vs a standalone page:
+ * the pricing block is a short teaser (range + button to /pricing), and the
+ * sections that have a dedicated page carry a "Подробнее →" button. The header
+ * menu still navigates to the dedicated pages.
  */
 export default function Home() {
-  const { t } = useI18n();
-
   return (
     <>
       <Loader />
@@ -27,47 +29,17 @@ export default function Home() {
       <main className="relative">
         <Hero />
         <Marquee />
-
-        <Teaser
-          eyebrow={t.services.eyebrow}
-          title={t.services.title}
-          text={t.services.sub}
-          bullets={t.services.items.map((s) => s.title)}
-          href="/services"
-          cta={t.common.more}
-        />
-
-        <Teaser
-          eyebrow={t.work.eyebrow}
-          title={t.work.title}
-          text={t.work.sub}
-          bullets={projects.map((p) => t.cases[p.slug]?.title).filter(Boolean) as string[]}
-          href="/work"
-          cta={t.common.more}
-          alt
-        />
-
-        <Teaser
-          eyebrow={t.process.eyebrow}
-          title={t.process.title}
-          text={t.process.sub}
-          bullets={t.process.steps.map((s) => s.t)}
-          href="/process"
-          cta={t.common.more}
-        />
-
+        <Stats />
+        <Services moreHref="/services" />
+        <Projects moreHref="/work" />
+        <Process moreHref="/process" />
+        <TechStack />
+        <WhyMe />
+        <Testimonials />
         <PricingTeaser />
-
-        <Teaser
-          eyebrow={t.about.eyebrow}
-          title={t.about.title}
-          text={t.about.p1}
-          bullets={t.about.facts.map((f) => `${f.k}: ${f.v}`)}
-          href="/about"
-          cta={t.common.more}
-        />
-
-        <CTABand />
+        <FAQ />
+        <About moreHref="/about" />
+        <Contact />
       </main>
       <Footer />
     </>

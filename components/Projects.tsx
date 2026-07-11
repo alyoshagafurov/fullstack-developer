@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import SectionMore from './SectionMore';
 import { projects } from '@/lib/projects';
 import { useI18n } from '@/lib/i18n';
 
@@ -12,7 +13,7 @@ import { useI18n } from '@/lib/i18n';
  * Work — text-first case cards (no screenshots). Structure from lib/projects,
  * translatable text from the i18n dictionary (cases[slug]).
  */
-export default function Projects() {
+export default function Projects({ moreHref }: { moreHref?: string }) {
   const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
@@ -79,6 +80,8 @@ export default function Projects() {
             );
           })}
         </div>
+
+        {moreHref && <SectionMore href={moreHref} />}
       </div>
     </section>
   );
