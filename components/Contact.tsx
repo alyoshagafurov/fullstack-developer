@@ -25,7 +25,7 @@ export default function Contact() {
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
 
-    if ((data.name || '').trim().length < 2 || (data.message || '').trim().length < 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email || '')) {
+    if ((data.name || '').trim().length < 2 || (data.contact || '').trim().length < 3 || (data.message || '').trim().length < 10) {
       setState('error');
       setErr(c.errValidation);
       return;
@@ -48,8 +48,7 @@ export default function Contact() {
       if (json.fallback) {
         const subject = encodeURIComponent(`Заявка с сайта — ${data.name}`);
         const lines = [
-          `Имя: ${data.name}`, `Email: ${data.email}`,
-          data.company && `Компания: ${data.company}`,
+          `Имя: ${data.name}`, `Контакт: ${data.contact}`,
           data.budget && `Бюджет: ${data.budget}`,
           data.timeline && `Сроки: ${data.timeline}`,
           '', data.message,
@@ -113,9 +112,8 @@ export default function Contact() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field name="name" label={c.f.name} placeholder={c.f.namePh} />
-                  <Field name="email" label={c.f.email} type="email" placeholder={c.f.emailPh} />
+                  <Field name="contact" label={c.f.contact} placeholder={c.f.contactPh} />
                 </div>
-                <Field name="company" label={c.f.company} placeholder={c.f.companyPh} />
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Select name="budget" label={c.f.budget} options={c.budgets} placeholder={c.f.select} />

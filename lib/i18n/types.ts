@@ -35,7 +35,7 @@ export interface Dict {
     eyebrow: string; title1: string; title2: string; sub: string;
     channels: { label: string; value: string; href: string }[];
     budgets: string[]; timelines: string[];
-    f: { name: string; namePh: string; email: string; emailPh: string; company: string; companyPh: string; budget: string; timeline: string; message: string; messagePh: string; select: string; submit: string; sending: string; consent: string };
+    f: { name: string; namePh: string; contact: string; contactPh: string; budget: string; timeline: string; message: string; messagePh: string; select: string; submit: string; sending: string; consent: string };
     okTitle: string; okText: string; again: string; errValidation: string; errFail: string;
   };
   footer: { tagline: string; navTitle: string; contactTitle: string; location: string; up: string; rights: string };
