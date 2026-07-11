@@ -3,35 +3,28 @@
 import { useRef } from 'react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import { useI18n } from '@/lib/i18n';
 
 /* Process — alternating timeline: 01 left, 02 right, 03 left … down a center line. */
 
-const STEPS = [
-  { n: '01', t: 'Знакомство', d: 'Разбираюсь в бизнесе, задачах и целях. Определяем, что и зачем делаем.' },
-  { n: '02', t: 'Планирование', d: 'Структура, экраны, техническое решение и сроки. Прозрачная смета.' },
-  { n: '03', t: 'Дизайн', d: 'UI/UX-макет: чистый, современный, заточенный под конверсию.' },
-  { n: '04', t: 'Разработка', d: 'Frontend + backend. Чистый код, адаптив, анимации, интеграции.' },
-  { n: '05', t: 'Тестирование', d: 'Проверка на всех устройствах, скорость, SEO, вычитка контента.' },
-  { n: '06', t: 'Запуск', d: 'Деплой, подключение домена, аналитика и финальная проверка.' },
-  { n: '07', t: 'Поддержка', d: 'Сопровождение после запуска: доработки, обновления, оптимизация.' },
-];
-
 export default function Process() {
+  const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const STEPS = t.process.steps;
 
   return (
     <section id="process" ref={ref} className="relative py-28 md:py-44 bg-bg-2/30">
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-24">
           <div>
-            <div data-reveal="0" className="label mb-6">Как я работаю</div>
+            <div data-reveal="0" className="label mb-6">{t.process.eyebrow}</div>
             <SplitText as="h2" className="display text-ink text-[10vw] md:text-[3.6rem] max-w-2xl">
-              Процесс
+              {t.process.title}
             </SplitText>
           </div>
           <p data-reveal="1" className="text-ink-2 text-lg leading-relaxed max-w-sm">
-            Понятный путь от идеи до запуска — вы всегда знаете, на каком этапе проект.
+            {t.process.sub}
           </p>
         </div>
 

@@ -4,32 +4,26 @@ import { useRef } from 'react';
 import { Quote } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import { useI18n } from '@/lib/i18n';
 
 /*
  * Testimonials — a clean, readable grid (no marquee).
- * ▸ TODO (Alisher): replace with REAL client reviews (name, role, text, photo).
+ * ▸ TODO (Alisher): replace with REAL client reviews in lib/i18n/*.
  */
 
-const REVIEWS = [
-  { name: 'Далер Р.', role: 'основатель, кофейня', text: 'Сайт сделал быстро и по делу. Заявки пошли сразу, всё работает как часы. Отдельно порадовала связь — всегда на месте.' },
-  { name: 'Марьям С.', role: 'директор студии', text: 'Понял задачу с полуслова, предложил решения, о которых мы не думали. Дизайн — уровень, каким я хотела его видеть.' },
-  { name: 'Ihsan K.', role: 'product manager', text: 'Чистый код и адаптив без единого бага. Приложение выдержало нагрузку с первого дня. Рекомендую без оговорок.' },
-  { name: 'Нигина А.', role: 'владелец магазина', text: 'Перенёс наш магазин на новый уровень: скорость, оплата, удобная админка. Продажи выросли уже в первый месяц.' },
-  { name: 'Тимур Б.', role: 'стартап-фаундер', text: 'Собрал MVP за считанные дни. Гибкий, вовлечённый, доводит до результата. Будем работать дальше.' },
-  { name: 'Сабрина М.', role: 'маркетолог', text: 'Наконец-то сайт, за который не стыдно. Загрузка мгновенная, на телефоне выглядит идеально. Спасибо!' },
-];
-
 export default function Testimonials() {
+  const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const REVIEWS = t.testimonials.items;
 
   return (
     <section ref={ref} className="relative py-28 md:py-44">
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="text-center mb-16 md:mb-20">
-          <div data-reveal="0" className="label mb-6">Отзывы</div>
+          <div data-reveal="0" className="label mb-6">{t.testimonials.eyebrow}</div>
           <SplitText as="h2" className="display text-ink text-[9vw] md:text-[3.6rem] mx-auto max-w-3xl">
-            Что говорят клиенты
+            {t.testimonials.title}
           </SplitText>
         </div>
 

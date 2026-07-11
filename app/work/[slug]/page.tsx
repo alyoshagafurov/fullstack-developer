@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { projects, getProject } from '@/lib/projects';
+import { ru } from '@/lib/i18n/ru';
 import CaseView from '@/components/CaseView';
 
 export function generateStaticParams() {
@@ -8,12 +9,12 @@ export function generateStaticParams() {
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const p = getProject(params.slug);
-  if (!p) return { title: 'Проект не найден' };
+  const c = ru.cases[params.slug];
+  if (!c) return { title: 'Проект не найден' };
   return {
-    title: `${p.title} — кейс`,
-    description: p.summary,
-    openGraph: { title: p.title, description: p.summary },
+    title: `${c.title} — кейс`,
+    description: c.summary,
+    openGraph: { title: c.title, description: c.summary },
   };
 }
 

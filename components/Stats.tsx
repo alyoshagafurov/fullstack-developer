@@ -2,22 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useReveal } from './useReveal';
+import { useI18n } from '@/lib/i18n';
 
-/*
- * Numbers band — animated count-up on first view.
- * ▸ TODO (Alisher): put your REAL numbers here.
- */
-
-const STATS: { value: number; suffix?: string; label: string }[] = [
-  { value: 30, suffix: '+', label: 'завершённых проектов' },
-  { value: 3, suffix: '+', label: 'года в разработке' },
-  { value: 20, suffix: '+', label: 'технологий в стеке' },
-  { value: 100, suffix: '%', label: 'кастомный код' },
-];
+/* Numbers band — animated count-up on first view. Numbers live in the i18n dicts. */
 
 export default function Stats() {
+  const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const STATS = t.stats.items;
 
   return (
     <section ref={ref} className="relative py-24 md:py-36">

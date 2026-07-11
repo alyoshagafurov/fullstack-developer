@@ -4,22 +4,18 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
-
-const FACTS = [
-  { k: 'Роль', v: 'Full-Stack разработчик' },
-  { k: 'Город', v: 'Душанбе, Таджикистан' },
-  { k: 'Фокус', v: 'Веб-приложения · Интерфейсы · Скорость' },
-  { k: 'Языки', v: 'Русский · English · Тоҷикӣ' },
-];
+import { useI18n } from '@/lib/i18n';
 
 export default function About() {
+  const { t } = useI18n();
+  const a = t.about;
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
 
   return (
     <section id="about" ref={ref} className="relative py-28 md:py-44">
       <div className="mx-auto max-w-wide px-6 md:px-10">
-        <div className="label mb-14 md:mb-20" data-reveal="0">О себе</div>
+        <div className="label mb-14 md:mb-20" data-reveal="0">{a.eyebrow}</div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           <div data-reveal="1" className="lg:col-span-5">
@@ -42,29 +38,17 @@ export default function About() {
 
           <div className="lg:col-span-7">
             <SplitText as="h2" className="display text-ink text-[8vw] md:text-[3.4rem] max-w-2xl mb-10">
-              Разработчик, который доводит до результата
+              {a.title}
             </SplitText>
 
             <div className="space-y-6 max-w-2xl text-ink-2 text-lg leading-relaxed">
-              <p data-reveal="2">
-                Я — Алишер Гафуров, Full-Stack веб-разработчик. Создаю современные,
-                быстрые и функциональные сайты, которые помогают бизнесу и личным
-                брендам выделяться в цифровом пространстве.
-              </p>
-              <p data-reveal="3">
-                Для меня разработка — это не просто код, а создание сильного
-                цифрового продукта: он выглядит профессионально, работает быстро и
-                приносит клиенту заявки. Веду проект от идеи до запуска и остаюсь на
-                связи после сдачи.
-              </p>
-              <p data-reveal="3" className="text-ink-2/80">
-                Вне работы занимаюсь спортом — он приучил к дисциплине и спокойствию
-                под давлением. Те же качества приношу в каждый проект.
-              </p>
+              <p data-reveal="2">{a.p1}</p>
+              <p data-reveal="3">{a.p2}</p>
+              <p data-reveal="3" className="text-ink-2/80">{a.p3}</p>
             </div>
 
             <dl data-reveal="4" className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6 max-w-2xl">
-              {FACTS.map((f) => (
+              {a.facts.map((f) => (
                 <div key={f.k} className="flex flex-col gap-1 border-t border-line pt-4">
                   <dt className="label text-[10px]">{f.k}</dt>
                   <dd className="text-ink text-[15px] md:text-base">{f.v}</dd>

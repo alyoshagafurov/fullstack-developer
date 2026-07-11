@@ -6,21 +6,17 @@ import {
 } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import { useI18n } from '@/lib/i18n';
 
-/* Services — glass cards with a pointer-following sheen. */
+/* Services — glass cards with a pointer-following sheen. Icons here, text from i18n. */
 
-const SERVICES = [
-  { icon: LayoutTemplate, title: 'Лендинги', body: 'Одностраничные сайты под запуск продукта, услугу или личный бренд. Заточены под заявки и скорость.', tags: ['Next.js', 'Анимации', 'SEO'] },
-  { icon: Building2, title: 'Корпоративные сайты', body: 'Многостраничные сайты с продуманной структурой, SEO и CMS для самостоятельного управления.', tags: ['CMS', 'SEO', 'Формы'] },
-  { icon: ShoppingBag, title: 'E-commerce', body: 'Интернет-магазины с корзиной, оплатой и каталогом. Stripe, интеграции, аналитика продаж.', tags: ['Stripe', 'Каталог', 'Оплата'] },
-  { icon: Boxes, title: 'Веб-приложения', body: 'Full-Stack решения: админ-панели, личные кабинеты, базы данных, бронирование и API.', tags: ['Node.js', 'PostgreSQL', 'API'] },
-  { icon: Bot, title: 'Интеграции & AI', body: 'Автоматизация процессов, чат-боты, интеграции с внешними сервисами и AI-функции.', tags: ['OpenAI', 'Боты', 'Webhooks'] },
-  { icon: LifeBuoy, title: 'Поддержка & развитие', body: 'Сопровождение после запуска: доработки, оптимизация, обновления и техподдержка.', tags: ['SLA', 'Оптимизация', 'Хостинг'] },
-];
+const ICONS = [LayoutTemplate, Building2, ShoppingBag, Boxes, Bot, LifeBuoy];
 
 export default function Services() {
+  const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const SERVICES = t.services.items.map((s, i) => ({ ...s, icon: ICONS[i] ?? LayoutTemplate }));
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
@@ -34,13 +30,13 @@ export default function Services() {
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-20">
           <div>
-            <div data-reveal="0" className="label mb-6">Услуги</div>
+            <div data-reveal="0" className="label mb-6">{t.services.eyebrow}</div>
             <SplitText as="h2" className="display text-ink text-[9vw] md:text-[3.6rem] max-w-3xl">
-              Что я делаю
+              {t.services.title}
             </SplitText>
           </div>
           <p data-reveal="1" className="text-ink-2 text-lg leading-relaxed max-w-sm">
-            От быстрого лендинга до полноценного продукта — беру проект от идеи до запуска и поддержки.
+            {t.services.sub}
           </p>
         </div>
 

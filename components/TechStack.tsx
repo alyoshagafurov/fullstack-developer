@@ -3,34 +3,28 @@
 import { useRef } from 'react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import { useI18n } from '@/lib/i18n';
 
 /* Tech stack — chips grouped by layer. They drift gently and light up on hover. */
 
-const GROUPS: { title: string; items: string[] }[] = [
-  { title: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML', 'CSS'] },
-  { title: 'Backend', items: ['Node.js', 'Express', 'NestJS', 'Python', 'REST API'] },
-  { title: 'Мобильные (iOS / Android)', items: ['React Native', 'Expo', 'Flutter', 'Swift', 'Kotlin', 'App Store', 'Google Play'] },
-  { title: 'База данных', items: ['PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Prisma'] },
-  { title: 'Инфраструктура', items: ['Vercel', 'Docker', 'AWS', 'Railway', 'Nginx'] },
-  { title: 'Инструменты', items: ['Git', 'GitHub', 'Figma', 'Postman', 'GSAP', 'Framer Motion'] },
-];
-
 export default function TechStack() {
+  const { t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const GROUPS = t.stack.groups;
 
   return (
     <section id="stack" ref={ref} className="relative py-28 md:py-44">
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-20">
           <div>
-            <div data-reveal="0" className="label mb-6">Инструментарий</div>
+            <div data-reveal="0" className="label mb-6">{t.stack.eyebrow}</div>
             <SplitText as="h2" className="display text-ink text-[10vw] md:text-[3.6rem] max-w-2xl">
-              Стек технологий
+              {t.stack.title}
             </SplitText>
           </div>
           <p data-reveal="1" className="text-ink-2 text-lg leading-relaxed max-w-sm">
-            Современный, проверенный стек — выбираю инструмент под задачу, а не наоборот.
+            {t.stack.sub}
           </p>
         </div>
 

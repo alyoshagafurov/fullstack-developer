@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 /*
  * A quiet trust strip: an infinite, edge-faded marquee of the stack. Reads as
  * "here's what I build with" without shouting. Two rows drifting in opposite
@@ -12,10 +14,11 @@ const ROW = [
 ];
 
 export default function Marquee() {
+  const { t } = useI18n();
   return (
     <section className="relative py-14 md:py-20 border-y border-line overflow-hidden">
       <div className="mx-auto max-w-wide px-6 md:px-10 mb-8">
-        <p className="text-center label">Технологии, на которых я строю</p>
+        <p className="text-center label">{t.marquee.title}</p>
       </div>
       <div className="mask-fade-x">
         <div className="marquee-track">
