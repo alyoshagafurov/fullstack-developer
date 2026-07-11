@@ -103,10 +103,10 @@ export default function Hero() {
         </div>
 
         <div data-hero-fx className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
-          <Button href="#work" cursorLabel={t.nav.work}>
+          <Button href="/work" cursorLabel={t.nav.work}>
             {t.hero.ctaWork} <span aria-hidden>→</span>
           </Button>
-          <Button href="#contact" variant="ghost" cursorLabel={t.nav.contact}>
+          <Button href="/contact" variant="ghost" cursorLabel={t.nav.contact}>
             {t.hero.ctaContact}
           </Button>
         </div>

@@ -11,15 +11,15 @@ const SOCIAL = [
   { icon: Phone, label: 'Phone', href: 'tel:+992918793231' },
 ];
 
-export default function Footer({ home = true }: { home?: boolean }) {
+export default function Footer() {
   const { t } = useI18n();
 
   const NAV = [
-    { id: 'work', label: t.nav.work },
-    { id: 'services', label: t.nav.services },
-    { id: 'pricing', label: t.nav.pricing },
-    { id: 'about', label: t.nav.about },
-    { id: 'contact', label: t.nav.contact },
+    { href: '/work', label: t.nav.work },
+    { href: '/services', label: t.nav.services },
+    { href: '/pricing', label: t.nav.pricing },
+    { href: '/about', label: t.nav.about },
+    { href: '/contact', label: t.nav.contact },
   ];
 
   const top = () => {
@@ -51,12 +51,8 @@ export default function Footer({ home = true }: { home?: boolean }) {
             <div className="label mb-5">{t.footer.navTitle}</div>
             <ul className="space-y-3">
               {NAV.map((n) => (
-                <li key={n.id}>
-                  {home ? (
-                    <a href={`#${n.id}`} data-hover className="text-ink-2 hover:text-ink text-[15px] link-underline transition-colors">{n.label}</a>
-                  ) : (
-                    <Link href={`/#${n.id}`} data-hover className="text-ink-2 hover:text-ink text-[15px] link-underline transition-colors">{n.label}</Link>
-                  )}
+                <li key={n.href}>
+                  <Link href={n.href} data-hover className="text-ink-2 hover:text-ink text-[15px] link-underline transition-colors">{n.label}</Link>
                 </li>
               ))}
             </ul>

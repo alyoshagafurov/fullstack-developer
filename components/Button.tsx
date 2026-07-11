@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, MouseEvent } from 'react';
+import Link from 'next/link';
 
 /*
  * Premium CTA button.
@@ -69,6 +70,25 @@ export default function Button({
     ripple(e);
     onClick?.();
   };
+
+  const isInternal = !!href && href.startsWith('/');
+
+  // Internal route → Next Link (client-side nav); otherwise a plain anchor.
+  if (isInternal) {
+    return (
+      <Link
+        ref={ref as any}
+        href={href!}
+        onClick={handleClick}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        data-cursor={cursorLabel}
+        className={cls}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   if (href) {
     return (

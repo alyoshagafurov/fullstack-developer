@@ -4,6 +4,7 @@
 export type Lang = 'ru' | 'tg' | 'en';
 
 export interface Dict {
+  common: { more: string; viewPricing: string; ctaTitle: string };
   nav: { work: string; services: string; process: string; pricing: string; about: string; contact: string; cta: string };
   hero: { badge: string; roleA: string; roleB: string; ctaWork: string; ctaContact: string; marker: string; scroll: string };
   marquee: { title: string };
@@ -25,6 +26,8 @@ export interface Dict {
     services: { n: string; name: string; from: string; to: string }[];
     dependsTitle: string; dependsText: string; factorsTitle: string; factors: string[];
     writeTitle: string; writeText: string; ctaTg: string; noPressure: string;
+    tariffsTitle: string; tariffsSub: string; order: string; popular: string; tableTitle: string;
+    tariffs: { name: string; tagline: string; features: string[]; deadline: string }[];
   };
   faq: { eyebrow: string; title: string; sub: string; items: { q: string; a: string }[] };
   about: { eyebrow: string; title: string; p1: string; p2: string; p3: string; facts: { k: string; v: string }[] };

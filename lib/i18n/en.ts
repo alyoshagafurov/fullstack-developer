@@ -1,6 +1,7 @@
 import type { Dict } from './types';
 
 export const en: Dict = {
+  common: { more: 'Learn more', viewPricing: 'View pricing & plans', ctaTitle: 'Ready to start a project?' },
   nav: { work: 'Work', services: 'Services', process: 'Process', pricing: 'Pricing', about: 'About', contact: 'Contact', cta: 'Start a project' },
   hero: {
     badge: 'Available for new projects',
@@ -134,6 +135,16 @@ export const en: Dict = {
     writeTitle: 'Message me',
     writeText: 'I’ll analyze your project for free and prepare an individual cost estimate.',
     ctaTg: 'Message on Telegram', noPressure: 'No obligations · No pushy sales',
+    tariffsTitle: 'Plans', tariffsSub: 'Ready-made packages for typical tasks. Need something else — I’ll scope it individually.',
+    order: 'Order', popular: 'Popular', tableTitle: 'Prices by service',
+    tariffs: [
+      { name: 'Start', tagline: 'Landing page or business-card site', deadline: 'up to 6 days',
+        features: ['Responsive site (phone, tablet, desktop)', 'Modern design', 'Contact form', 'Basic SEO', 'Hosting setup'] },
+      { name: 'Business', tagline: 'Multi-page site for a business', deadline: 'up to 10 days',
+        features: ['Everything in “Start”', 'Multi-page structure', 'CMS for content management', 'Order & lead forms', 'Advanced SEO', 'Analytics setup'] },
+      { name: 'Pro', tagline: 'Web app or complex project', deadline: 'from 2–3 weeks',
+        features: ['Everything in “Business”', 'Admin panel', 'Database & user accounts', 'Integrations & AI features', 'Custom functionality', 'Priority support'] },
+    ],
   },
   faq: {
     eyebrow: 'FAQ', title: 'Frequent questions', sub: 'Didn’t find an answer? Message me — I’ll reply personally.',

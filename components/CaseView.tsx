@@ -124,7 +124,7 @@ export default function CaseView({ project: p, next }: { project: ProjectMeta; n
         </div>
       </main>
 
-      <Footer home={false} />
+      <Footer />
     </>
   );
 }

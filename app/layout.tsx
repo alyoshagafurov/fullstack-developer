@@ -7,6 +7,7 @@ import Cursor from '@/components/Cursor';
 import ScrollProgress from '@/components/ScrollProgress';
 import ScrollFX from '@/components/ScrollFX';
 import { LanguageProvider } from '@/lib/i18n';
+import { CurrencyProvider } from '@/lib/currency';
 
 /*
  * Inter — self-hosted by next/font (no external request, no layout shift,
@@ -117,7 +118,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Cursor />
         <ScrollProgress />
         <ScrollFX />
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <CurrencyProvider>{children}</CurrencyProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
