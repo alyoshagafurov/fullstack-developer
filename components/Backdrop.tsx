@@ -24,7 +24,7 @@ export default function Backdrop() {
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let stars: Star[] = [];
-    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let mx = 0, my = 0, cx = 0, cy = 0, raf = 0, t = 0;
 
     const build = () => {
@@ -36,7 +36,7 @@ export default function Backdrop() {
       canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // density scales with area; kept modest so it reads as "a few real stars"
-      const count = Math.min(180, Math.round((w * h) / 12000));
+      const count = Math.min(110, Math.round((w * h) / 18000));
       stars = Array.from({ length: count }, () => {
         const bright = Math.random() < 0.12; // a few brighter stars
         return {
@@ -86,15 +86,23 @@ export default function Backdrop() {
       if (glowRef.current) glowRef.current.style.transform = `translate3d(${mx * 24}px, ${my * 24}px, 0)`;
     };
 
+    // Pause the render loop while the tab is hidden (saves CPU/battery).
+    const onVis = () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
+      else if (!reduce && !raf) { t += 0.016; raf = requestAnimationFrame(tick); }
+    };
+
     build();
     if (reduce) draw();
     else raf = requestAnimationFrame(tick);
     window.addEventListener('mousemove', onMove);
     window.addEventListener('resize', build);
+    document.addEventListener('visibilitychange', onVis);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('resize', build);
+      document.removeEventListener('visibilitychange', onVis);
     };
   }, []);
 

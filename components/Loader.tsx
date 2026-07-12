@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
  * until it finishes; a fail-safe guarantees it always lifts.
  */
 
-const TOTAL_MS = 1300;
-const FADE_MS = 620;
+const TOTAL_MS = 700;
+const FADE_MS = 420;
 const NAME = 'ALISHER GAFUROV';
 
 export default function Loader() {

@@ -42,9 +42,9 @@ export default function Hero() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(outerRef.current, { opacity: 0, scale: 1.08, filter: 'blur(14px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power3.out', delay: 1.1 });
+        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power3.out', delay: 0.5 });
       gsap.fromTo('[data-hero-fx]', { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.12, delay: 1.5 });
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.85 });
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -90,7 +90,7 @@ export default function Hero() {
         <SplitText
           as="h1"
           trigger="load"
-          delay={1.35}
+          delay={0.65}
           className="display-tight text-white text-[10vw] sm:text-6xl md:text-7xl lg:text-[5rem] leading-[0.92] [text-shadow:0_6px_50px_rgba(0,0,0,0.6)]"
         >
           ALISHER GAFUROV

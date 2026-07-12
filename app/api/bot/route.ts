@@ -49,6 +49,24 @@ export async function POST(req: Request) {
   return handle(req);
 }
 
-export function GET() {
+/*
+ * GET /api/bot            → healthcheck ("Bot is running")
+ * GET /api/bot?setup      → registers the Telegram webhook to this same domain
+ *   using the BOT_TOKEN already in the server env (no token in the URL). Open it
+ *   once in the browser after deploy to finish setup.
+ */
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  if (url.searchParams.has('setup')) {
+    if (!bot) return new Response('BOT_TOKEN is not configured', { status: 500 });
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const hookUrl = `https://${host}/api/bot`;
+    try {
+      await bot.api.setWebhook(hookUrl, { drop_pending_updates: true });
+      return Response.json({ ok: true, webhook: hookUrl });
+    } catch (e) {
+      return Response.json({ ok: false, error: String((e as Error)?.message || e) }, { status: 500 });
+    }
+  }
   return new Response('Bot is running', { status: 200 });
 }
