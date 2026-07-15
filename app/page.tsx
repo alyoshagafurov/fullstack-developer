@@ -32,7 +32,7 @@ export default function Home() {
         <Stats />
         <Services moreHref="/services" />
         <Projects moreHref="/work" />
-        <Process moreHref="/process" />
+        <Process />
         <TechStack />
         <WhyMe />
         <Testimonials />

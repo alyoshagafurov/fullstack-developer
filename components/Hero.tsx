@@ -80,11 +80,6 @@ export default function Hero() {
         background: 'linear-gradient(180deg, rgba(7,7,7,0.6) 0%, transparent 20%, transparent 48%, rgba(7,7,7,0.72) 80%, rgba(7,7,7,0.97) 100%)',
       }} />
 
-      {/* Top-left marker */}
-      <div data-hero-fade className="absolute top-24 left-6 md:left-10 z-20 hidden md:flex items-center gap-3 label">
-        <span>01</span><span className="w-8 h-px bg-white/40" /><span className="text-ink-2">{t.hero.marker}</span>
-      </div>
-
       {/* Bottom lockup */}
       <div data-hero-fade className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center text-center px-5 pb-[8vh] md:pb-[9vh]">
         <SplitText
@@ -112,13 +107,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll hint */}
-      <div data-hero-fade className="absolute bottom-8 left-6 md:left-10 z-20 hidden md:flex items-center gap-3">
-        <div className="relative w-14 h-px overflow-hidden bg-white/20">
-          <div className="absolute top-0 bottom-0 w-3 bg-white/80" style={{ animation: 'marquee 2s linear infinite' }} />
-        </div>
-        <span className="label text-[9px]">{t.hero.scroll}</span>
-      </div>
     </section>
   );
 }
