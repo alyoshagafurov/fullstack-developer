@@ -85,7 +85,7 @@ export default function Hero() {
         <SplitText
           as="h1"
           trigger="load"
-          delay={0.65}
+          delay={0.3}
           className="display-tight text-white text-[10vw] sm:text-6xl md:text-7xl lg:text-[5rem] leading-[0.92] [text-shadow:0_6px_50px_rgba(0,0,0,0.6)]"
         >
           ALISHER GAFUROV

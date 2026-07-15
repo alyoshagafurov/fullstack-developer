@@ -2,19 +2,18 @@
 
 import { useEffect, useRef, createElement } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitType from 'split-type';
 
 /*
- * Heading that animates line-by-line: each line rises out of a clipped mask.
- *
- * SSR-safe & no-JS-safe: the text renders normally in the initial HTML. The
- * split only runs after fonts are ready (correct line breaks). For below-the-
- * fold headings the split primes at mount — long before you scroll there — so
- * there is no flash. Reduced-motion users just see the static text.
+ * Heading that animates line-by-line. Fast by design: it does NOT wait for all
+ * fonts to finish loading (that added a ~1s stall) — it starts on the next
+ * frame, capped by a tiny race against document.fonts.ready so line breaks are
+ * still measured correctly. Reveal fires via IntersectionObserver the moment the
+ * heading is in view; above-the-fold headings play immediately.
  *
  *  trigger="scroll" (default) — plays when the heading enters the viewport
- *  trigger="load"             — plays once after `delay` (used by the hero)
+ *  trigger="load"             — plays once after `delay`
+ * Reduced-motion users just see the static text.
  */
 
 type Props = {
@@ -24,7 +23,6 @@ type Props = {
   trigger?: 'scroll' | 'load';
   delay?: number;
   stagger?: number;
-  start?: string;
 };
 
 export default function SplitText({
@@ -33,8 +31,7 @@ export default function SplitText({
   children,
   trigger = 'scroll',
   delay = 0,
-  stagger = 0.11,
-  start = 'top 82%',
+  stagger = 0.08,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
 
@@ -43,10 +40,8 @@ export default function SplitText({
     if (!el) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
     let split: SplitType | null = null;
-    let st: ScrollTrigger | null = null;
+    let io: IntersectionObserver | null = null;
     let tween: gsap.core.Tween | null = null;
     let cancelled = false;
 
@@ -54,7 +49,6 @@ export default function SplitText({
       if (cancelled || !ref.current) return;
       split = new SplitType(ref.current, { types: 'lines' });
 
-      // Wrap each measured line in an overflow-hidden mask.
       ref.current.querySelectorAll<HTMLElement>('.line').forEach((line) => {
         const wrap = document.createElement('span');
         wrap.className = 'split-line';
@@ -64,47 +58,55 @@ export default function SplitText({
       });
 
       const inners = ref.current.querySelectorAll<HTMLElement>('.line-inner');
-
       const play = () =>
         (tween = gsap.to(inners, {
           yPercent: 0,
-          duration: 1.05,
-          ease: 'power4.out',
+          duration: 0.7,
+          ease: 'power3.out',
           stagger,
           delay,
-          onComplete: () => split?.revert(), // back to clean text after
+          onComplete: () => split?.revert(),
         }));
 
       if (trigger === 'load') {
         play();
       } else {
-        st = ScrollTrigger.create({
-          trigger: ref.current,
-          start,
-          once: true,
-          onEnter: play,
-        });
+        io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                io?.disconnect();
+                play();
+              }
+            }
+          },
+          { threshold: 0.1, rootMargin: '0px 0px -8% 0px' },
+        );
+        io.observe(ref.current);
       }
     };
 
-    // Wait for the font so line breaks are measured correctly.
-    if (document.fonts && (document.fonts as any).ready) {
-      (document.fonts as any).ready.then(run);
+    // Start ASAP — don't stall on every font; cap the wait at ~120ms.
+    const fontsReady = (document as any).fonts?.ready as Promise<unknown> | undefined;
+    if (fontsReady) {
+      Promise.race([fontsReady, new Promise((r) => setTimeout(r, 120))]).then(() =>
+        requestAnimationFrame(run),
+      );
     } else {
-      run();
+      requestAnimationFrame(run);
     }
 
     return () => {
       cancelled = true;
       tween?.kill();
-      st?.kill();
+      io?.disconnect();
       try {
         split?.revert();
       } catch {
         /* noop */
       }
     };
-  }, [children, trigger, delay, stagger, start]);
+  }, [children, trigger, delay, stagger]);
 
   return createElement(as, { ref, className }, children);
 }
