@@ -7,6 +7,7 @@ import {
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
 import SectionMore from './SectionMore';
+import SectionBg from './SectionBg';
 import { useI18n } from '@/lib/i18n';
 
 /* Services — glass cards with a pointer-following sheen. Icons here, text from i18n. */
@@ -27,7 +28,8 @@ export default function Services({ moreHref }: { moreHref?: string }) {
   };
 
   return (
-    <section id="services" ref={ref} className="relative py-28 md:py-44">
+    <section id="services" ref={ref} className="relative isolate py-28 md:py-44">
+      <SectionBg src="/bg-services.jpg" focus="82% 18%" />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-20">
           <div>

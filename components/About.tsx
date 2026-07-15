@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
 import SectionMore from './SectionMore';
+import SectionBg from './SectionBg';
 import { useI18n } from '@/lib/i18n';
 
 export default function About({ moreHref }: { moreHref?: string }) {
@@ -14,7 +15,8 @@ export default function About({ moreHref }: { moreHref?: string }) {
   useReveal(ref);
 
   return (
-    <section id="about" ref={ref} className="relative py-28 md:py-44">
+    <section id="about" ref={ref} className="relative isolate py-28 md:py-44">
+      <SectionBg src="/bg-about.jpg" opacity={0.28} focus="70% 30%" />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="label mb-14 md:mb-20" data-reveal="0">{a.eyebrow}</div>
 

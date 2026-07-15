@@ -6,6 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
 import SectionMore from './SectionMore';
+import SectionBg from './SectionBg';
 import { projects } from '@/lib/projects';
 import { useI18n } from '@/lib/i18n';
 
@@ -19,7 +20,8 @@ export default function Projects({ moreHref }: { moreHref?: string }) {
   useReveal(ref);
 
   return (
-    <section id="work" ref={ref} className="relative py-28 md:py-44">
+    <section id="work" ref={ref} className="relative isolate py-28 md:py-44">
+      <SectionBg src="/bg-work.jpg" opacity={0.3} focus="20% 50%" />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-24">
           <div>

@@ -7,6 +7,7 @@ import Button from './Button';
 import { useI18n } from '@/lib/i18n';
 import { useMoney } from '@/lib/currency';
 import { TARIFFS } from '@/lib/pricing';
+import SectionBg from './SectionBg';
 
 /*
  * Pricing (full — lives on /pricing): range statement, tariff plans, a per-
@@ -21,7 +22,8 @@ export default function Pricing() {
   useReveal(ref);
 
   return (
-    <section id="pricing" ref={ref} className="relative py-24 md:py-36">
+    <section id="pricing" ref={ref} className="relative isolate py-24 md:py-36">
+      <SectionBg src="/bg-pricing.jpg" opacity={0.3} focus="50% 12%" />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         {/* ── Range ── */}
         <div className="text-center">

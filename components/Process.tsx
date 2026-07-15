@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
 import SectionMore from './SectionMore';
+import FloatObject from './FloatObject';
 import { useI18n } from '@/lib/i18n';
 
 /* Process — alternating timeline: 01 left, 02 right, 03 left … down a center line. */
@@ -15,7 +16,8 @@ export default function Process({ moreHref }: { moreHref?: string }) {
   const STEPS = t.process.steps;
 
   return (
-    <section id="process" ref={ref} className="relative py-28 md:py-44 bg-bg-2/30">
+    <section id="process" ref={ref} className="relative isolate py-28 md:py-44 bg-bg-2/30">
+      <FloatObject src="/obj-cluster.jpg" className="bottom-[2%] right-[-8%] w-[56vw] md:w-[26vw]" opacity={0.45} />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16 md:mb-24">
           <div>

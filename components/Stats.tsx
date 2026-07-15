@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useReveal } from './useReveal';
 import { useI18n } from '@/lib/i18n';
+import FloatObject from './FloatObject';
 
 /* Numbers band — animated count-up on first view. Numbers live in the i18n dicts. */
 
@@ -13,7 +14,8 @@ export default function Stats() {
   const STATS = t.stats.items;
 
   return (
-    <section ref={ref} className="relative py-24 md:py-36">
+    <section ref={ref} className="relative isolate py-24 md:py-36">
+      <FloatObject src="/obj-sphere.jpg" className="top-[-14%] right-[-6%] w-[52vw] md:w-[26vw]" opacity={0.5} />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line rounded-3xl overflow-hidden border border-line">
           {STATS.map((s, i) => (

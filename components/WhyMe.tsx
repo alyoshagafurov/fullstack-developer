@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import FloatObject from './FloatObject';
 import { useI18n } from '@/lib/i18n';
 
 const ICONS = [MessageSquare, Rocket, Smartphone, ShieldCheck, Code2, Search, Globe, Wrench];
@@ -17,7 +18,8 @@ export default function WhyMe() {
   const ITEMS = t.why.items.map((it, i) => ({ ...it, icon: ICONS[i] ?? MessageSquare }));
 
   return (
-    <section ref={ref} className="relative py-28 md:py-44 bg-bg-2/40">
+    <section ref={ref} className="relative isolate py-28 md:py-44 bg-bg-2/40">
+      <FloatObject src="/obj-ribbon.jpg" className="top-[-6%] left-[-10%] w-[58vw] md:w-[30vw]" opacity={0.5} />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="text-center mb-16 md:mb-20">
           <div data-reveal="0" className="label mb-6">{t.why.eyebrow}</div>

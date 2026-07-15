@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { Quote } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
+import FloatObject from './FloatObject';
 import { useI18n } from '@/lib/i18n';
 
 /*
@@ -18,7 +19,8 @@ export default function Testimonials() {
   const REVIEWS = t.testimonials.items;
 
   return (
-    <section ref={ref} className="relative py-28 md:py-44">
+    <section ref={ref} className="relative isolate py-28 md:py-44">
+      <FloatObject src="/obj-crystal.jpg" className="top-[2%] right-[-6%] w-[48vw] md:w-[22vw]" opacity={0.5} />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="text-center mb-16 md:mb-20">
           <div data-reveal="0" className="label mb-6">{t.testimonials.eyebrow}</div>

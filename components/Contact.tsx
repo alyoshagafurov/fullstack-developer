@@ -5,6 +5,7 @@ import { Send, Instagram, Mail, Phone, Check, Loader2 } from 'lucide-react';
 import { useReveal } from './useReveal';
 import SplitText from './SplitText';
 import Button from './Button';
+import SectionBg from './SectionBg';
 import { useI18n } from '@/lib/i18n';
 
 const CHANNEL_ICONS = [Send, Mail, Instagram, Phone];
@@ -66,7 +67,8 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" ref={ref} className="relative py-28 md:py-44">
+    <section id="contact" ref={ref} className="relative isolate py-28 md:py-44">
+      <SectionBg src="/bg-contact.jpg" opacity={0.35} focus="50% 60%" />
       <div className="mx-auto max-w-wide px-6 md:px-10">
         <div className="grid lg:grid-cols-[1fr_1.1fr] gap-14 lg:gap-20 items-start">
           {/* Left — pitch + channels */}
