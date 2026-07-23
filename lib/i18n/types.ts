@@ -41,7 +41,7 @@ export interface Dict {
       q1: string; q2: string; q3: string; q4: string;
       tasks: string[];
       step: string; of: string; back: string;
-      comment: string; commentPh: string; intro: string;
+      comment: string; commentFor: string[]; commentPh: string; intro: string;
     };
   };
   footer: { tagline: string; navTitle: string; contactTitle: string; location: string; up: string; rights: string };

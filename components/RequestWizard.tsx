@@ -165,7 +165,9 @@ export default function RequestWizard() {
               />
             </div>
             <div>
-              <label className="label text-[10px] block mb-2">{w.comment}</label>
+              <label className="label text-[10px] block mb-2">
+                {w.commentFor[w.tasks.indexOf(data.task)] ?? w.comment}
+              </label>
               <textarea
                 rows={3}
                 value={data.message}
