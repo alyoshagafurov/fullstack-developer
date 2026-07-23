@@ -34,6 +34,17 @@ const bot = token ? new Bot(token) : null;
 if (bot) {
   const keyboard = new InlineKeyboard().url('🌐 Открыть сайт и оставить заявку', SITE_URL);
   bot.on('message', async (ctx) => {
+    // /id — owner helper: returns the chat id to paste into TELEGRAM_CHAT_ID
+    // so website requests get delivered here.
+    if ((ctx.message.text || '').trim().toLowerCase() === '/id') {
+      await ctx.reply(
+        `🆔 <b>Ваш chat id:</b> <code>${ctx.chat.id}</code>\n\n` +
+          `Добавьте его в Vercel → Settings → Environment Variables как ` +
+          `<code>TELEGRAM_CHAT_ID</code> и сделайте Redeploy — заявки с сайта будут приходить сюда.`,
+        { parse_mode: 'HTML' },
+      );
+      return;
+    }
     await ctx.reply(GREETING, {
       parse_mode: 'HTML',
       reply_markup: keyboard,

@@ -37,6 +37,12 @@ export interface Dict {
     budgets: string[]; timelines: string[];
     f: { name: string; namePh: string; contact: string; contactPh: string; budget: string; timeline: string; message: string; messagePh: string; select: string; submit: string; sending: string; consent: string };
     okTitle: string; okText: string; again: string; errValidation: string; errFail: string;
+    w: {
+      q1: string; q2: string; q3: string; q4: string;
+      tasks: string[];
+      step: string; of: string; back: string;
+      comment: string; commentPh: string; intro: string;
+    };
   };
   footer: { tagline: string; navTitle: string; contactTitle: string; location: string; up: string; rights: string };
   langNames: { ru: string; tg: string; en: string };

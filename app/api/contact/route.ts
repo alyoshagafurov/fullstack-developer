@@ -3,18 +3,27 @@ import { NextResponse } from 'next/server';
 /*
  * Contact endpoint — delivers a lead straight to Alisher's Telegram.
  *
- * Setup (one time, so submissions arrive in your Telegram automatically):
- *   1. In Telegram open @BotFather → /newbot → copy the token.
- *   2. Message your new bot once (press Start), then open @userinfobot to get
- *      your numeric chat id.
- *   3. On Vercel → Project → Settings → Environment Variables, add:
- *        TELEGRAM_BOT_TOKEN = <token from BotFather>
- *        TELEGRAM_CHAT_ID   = <your numeric id>
- *      Redeploy. Done — every request lands in your Telegram.
+ * Setup (one time):
+ *   1. Send /id to your bot (@alygafurov_bot) — it replies with your chat id.
+ *   2. Vercel → Settings → Environment Variables → add TELEGRAM_CHAT_ID = <that id>.
+ *   3. Redeploy. Done — every request lands in your Telegram.
+ * The bot token is reused from BOT_TOKEN, so no second token is needed.
  *
- * Without those vars it responds { fallback:true } and the client opens a
+ * Without a chat id it responds { fallback:true } and the client opens a
  * prefilled email so the lead still reaches you.
  */
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** Build a one-tap "reply" link from whatever contact the client left. */
+function replyLink(contact: string): string | null {
+  const c = contact.trim();
+  const at = c.match(/@([A-Za-z0-9_]{4,32})/);
+  if (at) return `https://t.me/${at[1]}`;
+  const digits = c.replace(/\D/g, '');
+  if (digits.length >= 9) return `https://wa.me/${digits}`;
+  return null;
+}
 
 export async function POST(req: Request) {
   let body: Record<string, string>;
@@ -26,12 +35,13 @@ export async function POST(req: Request) {
 
   const name = (body.name || '').trim();
   const contact = (body.contact || '').trim();
+  const task = (body.task || '').trim();
   const budget = (body.budget || '').trim();
   const timeline = (body.timeline || '').trim();
   const message = (body.message || '').trim();
 
-  // Validation at the boundary
-  if (name.length < 2 || contact.length < 3 || message.length < 10) {
+  // Validation at the boundary — name + a way to reach them is the minimum.
+  if (name.length < 2 || contact.length < 3) {
     return NextResponse.json({ ok: false, error: 'validation' }, { status: 422 });
   }
   // Honeypot (bots fill hidden fields)
@@ -39,22 +49,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const token = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
   if (token && chatId) {
+    const link = replyLink(contact);
     const text =
-      `🚀 Новая заявка с сайта\n\n` +
-      `👤 Имя: ${name}\n` +
-      `📞 Контакт: ${contact}\n` +
-      (budget ? `💰 Бюджет: ${budget}\n` : '') +
-      (timeline ? `⏱ Сроки: ${timeline}\n` : '') +
-      `\n📝 ${message}`;
+      `🔥 <b>Новая заявка с сайта</b>\n\n` +
+      `👤 <b>Имя:</b> ${esc(name)}\n` +
+      `📞 <b>Контакт:</b> ${esc(contact)}\n` +
+      (task ? `🧩 <b>Задача:</b> ${esc(task)}\n` : '') +
+      (budget ? `💰 <b>Бюджет:</b> ${esc(budget)}\n` : '') +
+      (timeline ? `⏱ <b>Сроки:</b> ${esc(timeline)}\n` : '') +
+      (message ? `\n📝 ${esc(message)}\n` : '') +
+      (link ? `\n👉 <a href="${link}">Ответить клиенту</a>` : '');
+
     try {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          parse_mode: 'HTML',
+          link_preview_options: { is_disabled: true },
+          ...(link
+            ? { reply_markup: { inline_keyboard: [[{ text: '💬 Ответить клиенту', url: link }]] } }
+            : {}),
+        }),
       });
       if (!r.ok) throw new Error(`tg ${r.status}`);
       return NextResponse.json({ ok: true });
