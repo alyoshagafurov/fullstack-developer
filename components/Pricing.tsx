@@ -21,6 +21,11 @@ export default function Pricing() {
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
 
+  // Headline range is derived from the table so it can never go stale.
+  const num = (s: string) => parseInt(s.replace(/\D/g, ''), 10) || 0;
+  const minFrom = Math.min(...p.services.map((s) => num(s.from)));
+  const maxTo = Math.max(...p.services.map((s) => num(s.to)));
+
   return (
     <section id="pricing" ref={ref} className="relative isolate py-24 md:py-36">
       <SectionBg src="/bg-pricing.jpg" opacity={0.3} focus="50% 12%" />
@@ -31,12 +36,12 @@ export default function Pricing() {
           <div data-reveal="1" className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10">
             <div className="flex items-baseline gap-3">
               <span className="label text-[10px]">{p.from}</span>
-              <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(700)}</span>
+              <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(minFrom)}</span>
             </div>
             <span className="hidden sm:block text-dim text-4xl font-light">/</span>
             <div className="flex items-baseline gap-3">
               <span className="label text-[10px]">{p.to}</span>
-              <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(30000)}</span>
+              <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(maxTo)}</span>
             </div>
           </div>
         </div>

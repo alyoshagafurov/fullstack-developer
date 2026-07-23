@@ -16,6 +16,11 @@ export default function PricingTeaser() {
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
 
+  // Derived from the price table so the teaser always matches /pricing.
+  const num = (s: string) => parseInt(s.replace(/\D/g, ''), 10) || 0;
+  const minFrom = Math.min(...t.pricing.services.map((s) => num(s.from)));
+  const maxTo = Math.max(...t.pricing.services.map((s) => num(s.to)));
+
   return (
     <section ref={ref} className="relative py-24 md:py-36 bg-bg-2/30">
       <div className="mx-auto max-w-content px-6 md:px-10 text-center">
@@ -24,12 +29,12 @@ export default function PricingTeaser() {
         <div data-reveal="1" className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 mb-12">
           <div className="flex items-baseline gap-3">
             <span className="label text-[10px]">{t.pricing.from}</span>
-            <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(700)}</span>
+            <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(minFrom)}</span>
           </div>
           <span className="hidden sm:block text-dim text-4xl font-light">/</span>
           <div className="flex items-baseline gap-3">
             <span className="label text-[10px]">{t.pricing.to}</span>
-            <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(30000)}</span>
+            <span className="display font-light text-ink text-4xl md:text-6xl tabular-nums">{money(maxTo)}</span>
           </div>
         </div>
 
