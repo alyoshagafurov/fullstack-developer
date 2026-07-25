@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, Check } from 'lucide-react';
 import { useReveal } from './useReveal';
@@ -59,18 +60,10 @@ export default function CaseView({ project: p, next }: { project: ProjectMeta; n
           </div>
         </div>
 
-        {/* type-driven cover (no screenshots) */}
+        {/* cover — real screenshot of the live project */}
         <div data-reveal="0" className="mx-auto max-w-wide px-6 md:px-10 mt-14 md:mt-20">
-          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-line glass aspect-[16/10] md:aspect-[21/9] grid place-items-center">
-            <div className="display text-white/[0.06] text-[38vw] md:text-[20rem] leading-none select-none tabular-nums">{p.index}</div>
-            <div className="absolute inset-x-6 bottom-6 md:inset-x-10 md:bottom-8 flex flex-wrap items-center justify-between gap-4">
-              <span className="label">{c.category}</span>
-              <div className="flex flex-wrap gap-2">
-                {c.stack.slice(0, 4).map((s) => (
-                  <span key={s} className="text-[11px] text-ink-2 border border-line rounded-full px-3 py-1">{s}</span>
-                ))}
-              </div>
-            </div>
+          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-line aspect-[16/10] md:aspect-[16/9]">
+            <Image src={p.cover} alt={c.title} fill priority className="object-cover object-top" sizes="100vw" />
           </div>
         </div>
 
