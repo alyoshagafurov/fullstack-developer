@@ -40,7 +40,7 @@ export function useReveal(scopeRef: RefObject<HTMLElement>) {
           }
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+      { threshold: 0, rootMargin: '0px 0px 22% 0px' },
     );
 
     items.forEach((el) => io.observe(el));
