@@ -32,7 +32,7 @@ export default function CaseView({ project: p, next }: { project: ProjectMeta; n
         </div>
       </header>
 
-      <main ref={ref} className="relative pt-32 md:pt-40 pb-8">
+      <main id="main" ref={ref} className="relative pt-32 md:pt-40 pb-8">
         <div className="mx-auto max-w-content px-6 md:px-10">
           <div data-reveal="0" className="flex items-center gap-3 label mb-8">
             <span>{p.index}</span><span className="w-6 h-px bg-white/30" />

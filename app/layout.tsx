@@ -6,65 +6,63 @@ import Backdrop from '@/components/Backdrop';
 import Cursor from '@/components/Cursor';
 import ScrollProgress from '@/components/ScrollProgress';
 import ScrollFX from '@/components/ScrollFX';
+import JsonLd from '@/components/JsonLd';
 import { LanguageProvider } from '@/lib/i18n';
 import { CurrencyProvider } from '@/lib/currency';
+import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, siteGraph } from '@/lib/seo';
 
-/*
- * Inter — self-hosted by next/font (no external request, no layout shift,
- * full Cyrillic). Exposed as the --font-sans CSS variable used across the
- * design system.
- */
+/* Inter — self-hosted by next/font (no external request, no layout shift, full Cyrillic). */
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-sans',
   display: 'swap',
+  preload: true,
 });
 
-const SITE = 'https://alishergafurov.dev';
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
-  title: {
-    default: 'Алишер Гафуров — Full-Stack разработчик',
-    template: '%s — Алишер Гафуров',
-  },
-  description:
-    'Full-Stack веб-разработчик. Создаю современные, быстрые сайты и веб-приложения под ключ — от лендинга до полноценного продукта. React, Next.js, Node.js.',
-  keywords: [
-    'Full-Stack разработчик',
-    'веб-разработчик',
-    'разработка сайтов',
-    'сайт под ключ',
-    'Next.js',
-    'React',
-    'Node.js',
-    'Душанбе',
-    'Alisher Gafurov',
-  ],
-  authors: [{ name: 'Алишер Гафуров' }],
-  creator: 'Алишер Гафуров',
+  metadataBase: new URL(SITE_URL),
+  title: { default: DEFAULT_TITLE, template: `%s — ${PERSON} (${BRAND})` },
+  description: DEFAULT_DESCRIPTION,
+  keywords: KEYWORDS,
+  applicationName: BRAND,
+  authors: [{ name: PERSON, url: SITE_URL }],
+  creator: PERSON,
+  publisher: PERSON,
+  category: 'technology',
+  alternates: { canonical: SITE_URL },
+  manifest: '/manifest.webmanifest',
+  formatDetection: { email: false, telephone: false, address: false },
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
-    url: SITE,
-    siteName: 'Алишер Гафуров',
-    title: 'Алишер Гафуров — Full-Stack разработчик',
-    description:
-      'Современные сайты и веб-приложения под ключ — быстро, чисто, профессионально.',
+    alternateLocale: ['en_US'],
+    url: SITE_URL,
+    siteName: `${PERSON} — ${BRAND}`,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Алишер Гафуров — Full-Stack разработчик',
-    description: 'Современные сайты и веб-приложения под ключ.',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
-  manifest: '/manifest.webmanifest',
-  alternates: { canonical: SITE },
+  appleWebApp: { capable: true, title: BRAND, statusBarStyle: 'black-translucent' },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
+  },
 };
 
 export const viewport: Viewport = {
@@ -74,45 +72,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      name: 'Алишер Гафуров',
-      jobTitle: 'Full-Stack веб-разработчик',
-      url: SITE,
-      address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
-      email: 'mailto:gafurovalyosha@gmail.com',
-      sameAs: ['https://t.me/alishergafurovv', 'https://instagram.com/alishergafurow'],
-      knowsAbout: ['React', 'Next.js', 'Node.js', 'TypeScript', 'PostgreSQL', 'UI/UX', 'SEO'],
-    },
-    {
-      '@type': 'ProfessionalService',
-      name: 'Алишер Гафуров — веб-разработка',
-      description: 'Разработка сайтов и веб-приложений под ключ.',
-      url: SITE,
-      areaServed: 'Worldwide',
-      priceRange: '$$',
-      provider: { '@type': 'Person', name: 'Алишер Гафуров' },
-    },
-  ],
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" className={inter.variable}>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {/* If JS is disabled, never keep reveal content hidden. */}
+        <JsonLd data={siteGraph()} />
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important;filter:none!important;}.split-line>.line-inner{transform:none!important;}`}</style>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important;}`}</style>
         </noscript>
       </head>
       <body>
+        <a href="#main" className="skip-link">Перейти к содержимому</a>
         <SmoothScroll />
         <Backdrop />
         <Cursor />

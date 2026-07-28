@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { gsap } from 'gsap';
 import SplitText from './SplitText';
 import Button from './Button';
+import AlyMark from './AlyMark';
 import { useI18n } from '@/lib/i18n';
 
 /*
@@ -53,6 +54,13 @@ export default function Hero() {
 
   return (
     <section id="hero" ref={sectionRef} className="relative h-[100svh] w-full overflow-hidden">
+      {/* Giant faint brand watermark behind everything */}
+      <AlyMark
+        variant="outline"
+        strokeWidth={1}
+        className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[135%] md:w-[95%] text-white/[0.035]"
+      />
+
       {/* Centered portrait column */}
       <div className="absolute inset-0 flex justify-center">
         <div ref={outerRef} className="relative h-full w-full max-w-[300px] sm:max-w-[420px] md:max-w-[560px]" style={{ opacity: 0 }}>
@@ -89,6 +97,7 @@ export default function Hero() {
           className="display-tight text-white text-[10vw] sm:text-6xl md:text-7xl lg:text-[5rem] leading-[0.92] [text-shadow:0_6px_50px_rgba(0,0,0,0.6)]"
         >
           ALISHER GAFUROV
+          <span className="sr-only"> (Aly) — Full-Stack разработчик и Software Engineer из Душанбе, Таджикистан. Основатель ALY.</span>
         </SplitText>
 
         <div data-hero-fx className="mt-5 flex items-center gap-3 label text-[10px] md:text-[11px] text-ink-2">

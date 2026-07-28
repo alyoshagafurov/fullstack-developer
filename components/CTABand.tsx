@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useReveal } from './useReveal';
 import Button from './Button';
 import SectionBg from './SectionBg';
+import AlyMark from './AlyMark';
 import { useI18n } from '@/lib/i18n';
 
 /* Closing call-to-action band, reused at the bottom of section pages. */
@@ -16,6 +17,7 @@ export default function CTABand() {
       <SectionBg src="/bg-hero.jpg" opacity={0.4} focus="50% 40%" />
       <div className="mx-auto max-w-content px-6 md:px-10">
         <div data-reveal="0" className="glass rounded-3xl p-10 md:p-20 text-center">
+          <AlyMark title="ALY" className="h-7 md:h-8 w-auto text-white/80 mx-auto mb-8" />
           <h2 className="display text-ink text-[8vw] md:text-[3.2rem] max-w-2xl mx-auto mb-9 leading-[1.02]">{t.common.ctaTitle}</h2>
           <div className="flex justify-center">
             <Button href="/contact" cursorLabel={t.nav.contact}>{t.nav.cta} <span aria-hidden>→</span></Button>

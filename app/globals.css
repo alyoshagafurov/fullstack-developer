@@ -66,6 +66,39 @@ body {
 
 ::selection { background: #FFFFFF; color: #070707; }
 
+/* ── Accessibility helpers ─────────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: fixed; top: 8px; left: 8px; z-index: 300;
+  transform: translateY(-150%);
+  background: #fff; color: #070707; font-size: 13px; font-weight: 600;
+  padding: 10px 16px; border-radius: 10px; text-decoration: none;
+  transition: transform .2s ease;
+}
+.skip-link:focus { transform: translateY(0); outline: 2px solid #fff; }
+
+/* Visible keyboard focus (Lighthouse a11y) */
+:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; border-radius: 4px; }
+
+/* ── ALY logo motion language ──────────────────────────────────────────── */
+/* Draw-on: each stroke reveals itself (loader / splash). pathLength=1 normalises. */
+@keyframes aly-draw { to { stroke-dashoffset: 0; } }
+.aly-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: aly-draw .7s cubic-bezier(.65,0,.35,1) forwards; }
+.aly-draw:nth-of-type(1) { animation-delay: .04s; }
+.aly-draw:nth-of-type(2) { animation-delay: .13s; }
+.aly-draw:nth-of-type(3) { animation-delay: .22s; }
+.aly-draw:nth-of-type(4) { animation-delay: .30s; }
+.aly-draw:nth-of-type(5) { animation-delay: .40s; }
+@media (prefers-reduced-motion: reduce) { .aly-draw { animation: none; stroke-dashoffset: 0; } }
+
+/* Very slow idle rotation for a decorative logo (kept subtle) */
+@keyframes aly-spin { to { transform: rotate(360deg); } }
+.aly-spin { animation: aly-spin 60s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .aly-spin { animation: none; } }
+
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track { background: var(--bg); }

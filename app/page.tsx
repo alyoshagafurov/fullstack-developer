@@ -14,6 +14,20 @@ import FAQ from '@/components/FAQ';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
+import { SITE_URL } from '@/lib/seo';
+
+const profilePage = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': `${SITE_URL}/#profilepage`,
+  url: SITE_URL,
+  name: 'Alisher Gafurov (ALY) — Full-Stack разработчик',
+  inLanguage: 'ru',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  about: { '@id': `${SITE_URL}/#person` },
+  mainEntity: { '@id': `${SITE_URL}/#person` },
+};
 
 /*
  * Landing — keeps all the full sections. The only change vs a standalone page:
@@ -24,9 +38,10 @@ import Footer from '@/components/Footer';
 export default function Home() {
   return (
     <>
+      <JsonLd data={profilePage} />
       <Loader />
       <Navbar />
-      <main className="relative">
+      <main id="main" className="relative">
         <Hero />
         <Marquee />
         <Stats />

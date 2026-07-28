@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowUp, Send, Instagram, Mail, Phone } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import AlyMark from './AlyMark';
 
 const SOCIAL = [
   { icon: Send, label: 'Telegram', href: 'https://t.me/alishergafurovv' },
@@ -29,14 +30,20 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative border-t border-line">
-      <div className="mx-auto max-w-wide px-6 md:px-10 py-16 md:py-20">
+    <footer className="relative border-t border-line overflow-hidden">
+      {/* Giant signature watermark */}
+      <AlyMark
+        variant="outline"
+        strokeWidth={1.4}
+        className="pointer-events-none select-none absolute -bottom-[18%] -right-[4%] w-[70%] md:w-[46%] text-white/[0.035]"
+      />
+      <div className="relative mx-auto max-w-wide px-6 md:px-10 py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <div className="display text-ink text-3xl md:text-4xl tracking-tight">
-              Alisher<span className="text-dim">/</span>Gafurov
-            </div>
-            <p className="mt-4 text-ink-2 text-[15px] max-w-xs leading-relaxed">{t.footer.tagline}</p>
+            <Link href="/" aria-label="ALY — на главную" data-hover className="inline-block text-ink hover:text-white transition-colors">
+              <AlyMark title="ALY" className="h-9 md:h-11 w-auto" />
+            </Link>
+            <p className="mt-5 text-ink-2 text-[15px] max-w-xs leading-relaxed">{t.footer.tagline}</p>
             <div className="mt-6 flex items-center gap-2.5">
               {SOCIAL.map((s) => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" data-hover aria-label={s.label}

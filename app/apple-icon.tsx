@@ -1,11 +1,10 @@
 import { ImageResponse } from 'next/og';
 
-export const size = { width: 512, height: 512 };
+export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
 
-/* ALY brand mark — lowercase "aly", white on matte black. High-res so it works
-   as the browser tab / Google search favicon and the Organization logo. */
-export default function Icon() {
+/* Apple touch icon — ALY mark on matte black (iOS rounds the corners). */
+export default function AppleIcon() {
   return new ImageResponse(
     (
       <div
@@ -13,7 +12,7 @@ export default function Icon() {
           width: '100%', height: '100%', display: 'flex',
           alignItems: 'center', justifyContent: 'center',
           background: '#070707', color: '#ffffff',
-          fontSize: 300, fontWeight: 800, letterSpacing: '-0.06em',
+          fontSize: 96, fontWeight: 800, letterSpacing: '-0.06em',
         }}
       >
         aly
