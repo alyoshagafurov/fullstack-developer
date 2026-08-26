@@ -1,22 +1,24 @@
 import { ImageResponse } from 'next/og';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export const size = { width: 512, height: 512 };
 export const contentType = 'image/png';
 
-/* ALY brand mark — lowercase "aly", white on matte black. High-res so it works
-   as the browser tab / Google search favicon and the Organization logo. */
+/* ALY brand mark — the owner's real "aly" wordmark on warm near-black. High-res
+   so it works as the browser tab / Google favicon and the Organization logo. */
 export default function Icon() {
+  const logo = `data:image/png;base64,${readFileSync(join(process.cwd(), 'app/aly-logo.png')).toString('base64')}`;
   return new ImageResponse(
     (
       <div
         style={{
           width: '100%', height: '100%', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          background: '#070707', color: '#ffffff',
-          fontSize: 300, fontWeight: 800, letterSpacing: '-0.06em',
+          alignItems: 'center', justifyContent: 'center', background: '#191817',
         }}
       >
-        aly
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logo} width={368} height={207} alt="ALY" />
       </div>
     ),
     { ...size },

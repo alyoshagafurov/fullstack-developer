@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import AlyMark from './AlyMark';
+import Logo from './Logo';
 
 /*
- * Splash — the ALY logo assembles itself stroke by stroke, then the curtain
- * lifts to reveal the hero. Scroll is locked until it finishes; a fail-safe
- * guarantees it always lifts.
+ * Splash — the real ALY wordmark settles in, then the curtain lifts to reveal
+ * the hero. Scroll is locked until it finishes; a fail-safe guarantees it
+ * always lifts.
  */
 const TOTAL_MS = 1200;
 const FADE_MS = 450;
@@ -53,7 +53,7 @@ export default function Loader() {
       aria-hidden={done}
     >
       <div className="flex flex-col items-center gap-8 px-6">
-        <AlyMark variant="draw" title="ALY" className="h-14 md:h-20 w-auto text-white" />
+        <Logo priority className="logo-rise h-11 md:h-16 w-auto" />
         <div className="h-px w-40 md:w-56 bg-line overflow-hidden">
           <div
             className="h-full bg-white/70 origin-left"

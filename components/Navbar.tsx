@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/lib/i18n';
 import LangSwitcher from './LangSwitcher';
-import AlyMark from './AlyMark';
+import Logo from './Logo';
 
 /*
  * Top nav — multi-page. Links go to dedicated routes; the active one is derived
@@ -54,8 +54,8 @@ export default function Navbar() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-[130] transition-[background,border-color,backdrop-filter] duration-500 ${scrolled && !open ? 'bg-bg/70 backdrop-blur-xl border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
         <div className="mx-auto max-w-wide px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-          <Link href="/" data-hover aria-label="ALY — Алишер Гафуров, на главную" className="text-ink hover:text-white transition-colors">
-            <AlyMark title="ALY" className="h-[17px] w-auto" />
+          <Link href="/" data-hover aria-label="ALY — Алишер Гафуров, на главную" className="opacity-90 hover:opacity-100 transition-opacity">
+            <Logo priority className="h-[16px] md:h-[17px] w-auto" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
