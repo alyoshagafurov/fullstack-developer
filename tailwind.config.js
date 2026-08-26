@@ -7,22 +7,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Dark Luxury — warm near-black surfaces, warm off-white/taupe type, bronze accent
         bg: {
-          DEFAULT: '#070707',
-          2: '#0A0A0A',
+          DEFAULT: '#191817', // page — deep warm charcoal
+          2: '#1F1E1C',       // alt band
         },
         card: {
-          DEFAULT: '#101010',
-          2: '#161616',
+          DEFAULT: '#242322', // cards (#242323)
+          2: '#2C2B29',       // raised
         },
         ink: {
-          DEFAULT: '#F4F4F5', // primary text
-          2: '#A1A1AA',       // secondary text
+          DEFAULT: '#EBE7E1', // primary — warm off-white
+          2: '#AEA7A3',       // secondary — warm taupe (#AEA7A3)
         },
-        muted: '#6B6B72',
-        line: 'rgba(255, 255, 255, 0.08)',
-        'line-2': 'rgba(255, 255, 255, 0.14)',
-        accent: '#FFFFFF',
+        muted: '#857F79',
+        line: 'rgba(174, 167, 163, 0.12)',
+        'line-2': 'rgba(174, 167, 163, 0.22)',
+        accent: {
+          DEFAULT: '#B98A5E', // refined bronze
+          deep: '#795238',    // palette brown
+        },
+        bone: '#EBE7E1',      // warm light — solid fills
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],

@@ -4,10 +4,10 @@
 
 /*
  * ─────────────────────────────────────────────────────────────────────────
- * Alisher Gafurov — portfolio design system
- * Premium, minimal, monochrome. Matte-black canvas, white/grey/transparent
- * type, ONE "accent" = pure white (buttons, active states, glows).
- * Inspired by Linear / Vercel / Stripe restraint.
+ * Aly Portfolio 2.0 — Dark Luxury design system
+ * Warm near-black canvas (private office / quiet wealth), warm off-white +
+ * taupe type, a single refined BRONZE accent (#795238 family) used sparingly.
+ * Cinematic, editorial, restrained. Photography carries the warmth.
  * Font (Inter) is injected by next/font as --font-sans in layout.tsx.
  * ─────────────────────────────────────────────────────────────────────────
  */
@@ -15,23 +15,25 @@
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 
-  /* ── Surfaces — matte black ─────────────────────────────────────────── */
-  --bg:        #070707;  /* page background — matte near-black          */
-  --bg-2:      #0A0A0A;  /* faint alternating band                      */
-  --card:      #101010;  /* cards                                        */
-  --card-2:    #161616;  /* raised / hovered cards                      */
+  /* ── Surfaces — warm near-black ─────────────────────────────────────── */
+  --bg:        #191817;  /* page — deep warm charcoal                   */
+  --bg-2:      #1F1E1C;  /* faint alternating band                      */
+  --card:      #242322;  /* cards (#242323)                             */
+  --card-2:    #2C2B29;  /* raised / hovered cards                      */
 
-  /* ── Hairlines ──────────────────────────────────────────────────────── */
-  --border:    rgba(255, 255, 255, 0.08);
-  --border-2:  rgba(255, 255, 255, 0.14);
+  /* ── Warm taupe hairlines (#AEA7A3) ─────────────────────────────────── */
+  --border:    rgba(174, 167, 163, 0.12);
+  --border-2:  rgba(174, 167, 163, 0.22);
 
-  /* ── Type — white / grey / muted ────────────────────────────────────── */
-  --text:      #F4F4F5;  /* primary — near-white                        */
-  --text-2:    #A1A1AA;  /* secondary — grey                           */
-  --muted:     #6B6B72;  /* labels / captions                          */
+  /* ── Type — warm off-white / taupe / muted ──────────────────────────── */
+  --text:      #EBE7E1;  /* primary — warm off-white                    */
+  --text-2:    #AEA7A3;  /* secondary — warm taupe (#AEA7A3)            */
+  --muted:     #857F79;  /* labels / captions                          */
 
-  /* The single accent is white. Everything "highlighted" is just brighter. */
-  --accent:    #FFFFFF;
+  /* ── Bronze accent (used sparingly) + warm bone for solid fills ─────── */
+  --accent:      #B98A5E;  /* refined bronze — legible on dark          */
+  --accent-deep: #795238;  /* palette brown — pressed / deep            */
+  --bone:        #EBE7E1;  /* warm light — primary buttons              */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -64,7 +66,7 @@ body {
 
 @media (max-width: 768px) { body { cursor: auto; } }
 
-::selection { background: #FFFFFF; color: #070707; }
+::selection { background: var(--accent); color: #16130F; }
 
 /* ── Accessibility helpers ─────────────────────────────────────────────── */
 .sr-only {
@@ -74,14 +76,14 @@ body {
 .skip-link {
   position: fixed; top: 8px; left: 8px; z-index: 300;
   transform: translateY(-150%);
-  background: #fff; color: #070707; font-size: 13px; font-weight: 600;
+  background: var(--bone); color: var(--bg); font-size: 13px; font-weight: 600;
   padding: 10px 16px; border-radius: 10px; text-decoration: none;
   transition: transform .2s ease;
 }
-.skip-link:focus { transform: translateY(0); outline: 2px solid #fff; }
+.skip-link:focus { transform: translateY(0); outline: 2px solid var(--accent); }
 
 /* Visible keyboard focus (Lighthouse a11y) */
-:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
 /* ── ALY logo motion language ──────────────────────────────────────────── */
 /* Draw-on: each stroke reveals itself (loader / splash). pathLength=1 normalises. */
@@ -103,18 +105,18 @@ body {
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(174, 167, 163, 0.16);
   border-radius: 999px;
   border: 2px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.28); }
-html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: rgba(185, 138, 94, 0.5); }
+html { scrollbar-width: thin; scrollbar-color: rgba(174,167,163,0.2) var(--bg); }
 
 /* ─────────────────────────── Custom cursor ─────────────────────────────── */
 .cursor-ring {
   position: fixed; top: 0; left: 0;
   width: 34px; height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(235, 231, 225, 0.5);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -128,7 +130,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 .cursor-dot {
   position: fixed; top: 0; left: 0;
   width: 4px; height: 4px;
-  background: #fff; border-radius: 50%;
+  background: var(--bone); border-radius: 50%;
   pointer-events: none; z-index: 9999;
   transform: translate(-50%, -50%);
   will-change: transform;
@@ -136,13 +138,13 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 }
 .cursor-ring.is-hover {
   width: 68px; height: 68px;
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(235, 231, 225, 0.06);
+  border-color: rgba(235, 231, 225, 0.25);
 }
-.cursor-ring.has-label { width: 84px; height: 84px; background: #fff; border-color: #fff; }
+.cursor-ring.has-label { width: 84px; height: 84px; background: var(--bone); border-color: var(--bone); }
 .cursor-ring .cursor-label {
   font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-  color: #070707; opacity: 0; transition: opacity .2s ease; white-space: nowrap;
+  color: var(--bg); opacity: 0; transition: opacity .2s ease; white-space: nowrap;
 }
 .cursor-ring.has-label .cursor-label { opacity: 1; }
 .cursor-ring.has-label + .cursor-dot { opacity: 0; }
@@ -166,21 +168,21 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 
 .text-muted { color: var(--muted); }
 
-/* Subtle white→grey emphasis for a highlighted phrase */
+/* Warm bone→bronze emphasis for a highlighted phrase */
 .text-grad {
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 40%, #8B8B93 100%);
+  background: linear-gradient(180deg, #EBE7E1 0%, #D8C6B2 45%, #B98A5E 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 /* De-emphasised second clause of a heading */
-.text-dim { color: #52525B; }
+.text-dim { color: #6C6C6A; }
 
 /* ─────────────────────────── Backdrop layers ───────────────────────────── */
 /* Faint grid, fades toward edges */
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgba(174,167,163,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(174,167,163,0.03) 1px, transparent 1px);
   background-size: 68px 68px;
   -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 85%);
           mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 85%);
@@ -194,8 +196,8 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  filter: blur(90px);
+  background: radial-gradient(circle, rgba(185,138,94,0.10) 0%, rgba(174,167,163,0.04) 45%, transparent 72%);
   will-change: transform;
   pointer-events: none;
 }
@@ -203,31 +205,31 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 /* ─────────────────────────── Glass cards ───────────────────────────────── */
 .glass {
   position: relative;
-  background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%);
+  background: linear-gradient(180deg, rgba(235,231,225,0.04) 0%, rgba(235,231,225,0.015) 100%);
   border: 1px solid var(--border);
   border-radius: 20px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  box-shadow: inset 0 1px 0 rgba(235,231,225,0.04);
   transition: transform .5s cubic-bezier(.2,.7,.2,1),
               border-color .4s ease, box-shadow .5s ease, background .4s ease;
 }
 .glass:hover {
   transform: translateY(-4px);
   border-color: var(--border-2);
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  background: linear-gradient(180deg, rgba(235,231,225,0.06) 0%, rgba(235,231,225,0.02) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    0 24px 60px -28px rgba(0,0,0,0.9),
-    0 0 0 1px rgba(255,255,255,0.02),
-    0 0 60px -20px rgba(255,255,255,0.12);
+    inset 0 1px 0 rgba(235,231,225,0.07),
+    0 28px 70px -30px rgba(0,0,0,0.92),
+    0 0 0 1px rgba(174,167,163,0.03),
+    0 0 70px -22px rgba(185,138,94,0.14);
 }
 /* Sheen that follows the pointer (set --mx/--my in JS) */
 .glass-sheen::before {
   content: '';
   position: absolute; inset: 0; border-radius: inherit;
   background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 0%),
-              rgba(255,255,255,0.10), transparent 60%);
+              rgba(185,138,94,0.10), transparent 60%);
   opacity: 0; transition: opacity .4s ease; pointer-events: none;
 }
 .glass-sheen:hover::before { opacity: 1; }
@@ -247,20 +249,26 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
 .btn:hover { transform: translateY(-2px); }
 .btn:active { transform: translateY(0) scale(.985); }
 
-.btn-primary { background: #fff; color: #070707; }
+.btn-primary { background: var(--bone); color: #16130F; }
 .btn-primary:hover {
   background: #fff;
-  box-shadow: 0 10px 40px -8px rgba(255,255,255,0.35), 0 0 0 1px rgba(255,255,255,0.4);
+  box-shadow: 0 12px 44px -10px rgba(235,231,225,0.28), 0 0 0 1px rgba(235,231,225,0.35);
+}
+/* Bronze accent button — for special / brand-forward CTAs (used sparingly) */
+.btn-accent { background: var(--accent-deep); color: #F3E8DC; border: 1px solid rgba(185,138,94,0.5); }
+.btn-accent:hover {
+  background: #8A5E40;
+  box-shadow: 0 12px 44px -10px rgba(121,82,56,0.6), 0 0 0 1px rgba(185,138,94,0.5);
 }
 .btn-ghost {
-  background: rgba(255,255,255,0.02);
+  background: rgba(235,231,225,0.02);
   color: var(--text);
   border: 1px solid var(--border-2);
 }
 .btn-ghost:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.32);
-  box-shadow: 0 0 40px -12px rgba(255,255,255,0.18);
+  background: rgba(235,231,225,0.06);
+  border-color: rgba(185,138,94,0.4);
+  box-shadow: 0 0 40px -12px rgba(185,138,94,0.2);
 }
 
 /* Ripple element injected on click by <Button> */
@@ -269,7 +277,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) var(--bg);
   background: rgba(0,0,0,0.18); pointer-events: none;
   animation: ripple .6s ease-out forwards; z-index: 0;
 }
-.btn-ghost .ripple { background: rgba(255,255,255,0.16); }
+.btn-ghost .ripple { background: rgba(235,231,225,0.14); }
 @keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
 
 /* ─────────────────────────── Reveal system ─────────────────────────────── */
