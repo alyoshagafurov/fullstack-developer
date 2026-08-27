@@ -49,7 +49,7 @@ export default function Loader() {
       className={`fixed inset-0 z-[200] flex flex-col items-center justify-center transition-opacity ease-out ${
         done ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
-      style={{ background: '#070707', transitionDuration: `${FADE_MS}ms` }}
+      style={{ background: '#141210', transitionDuration: `${FADE_MS}ms` }}
       aria-hidden={done}
     >
       <div className="flex flex-col items-center gap-8 px-6">

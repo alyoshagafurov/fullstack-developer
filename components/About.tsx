@@ -24,15 +24,15 @@ export default function About({ moreHref }: { moreHref?: string }) {
           <div data-reveal="1" className="lg:col-span-5">
             <div className="relative aspect-[4/5] w-full max-w-[440px] mx-auto lg:mx-0 overflow-hidden rounded-3xl border border-line">
               <Image
-                src="/hero-face.jpg"
-                alt="Алишер Гафуров"
+                src="/about-portrait-dark-office.jpg"
+                alt="Алишер Гафуров — портрет в студии, Душанбе"
                 fill
                 data-parallax="0.04"
                 data-pscale="1.12"
-                className="object-cover object-top will-change-transform"
+                className="object-cover object-[56%_26%] will-change-transform"
                 sizes="(max-width:1024px) 90vw, 440px"
               />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 55%, rgba(7,7,7,0.85) 100%)' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 52%, rgba(15,13,11,0.86) 100%)' }} />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between label text-[10px] text-ink/80">
                 <span>Алишер Гафуров</span><span>2026</span>
               </div>
