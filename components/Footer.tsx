@@ -69,7 +69,7 @@ export default function Footer() {
             <a href="mailto:gafurovalyosha@gmail.com" data-hover className="block text-ink hover:text-white text-[15px] link-underline mb-3">gafurovalyosha@gmail.com</a>
             <a href="https://t.me/alishergafurovv" data-hover className="block text-ink-2 hover:text-ink text-[15px] link-underline mb-6">@alishergafurovv</a>
             <div className="label text-[10px] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white pulse-soft" /> {t.footer.location}
+              <span className="w-1.5 h-1.5 rounded-full bg-accent pulse-soft" /> {t.footer.location}
             </div>
           </div>
         </div>

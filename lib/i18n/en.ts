@@ -102,6 +102,15 @@ export const en: Dict = {
       { title: 'Tools', items: ['Git', 'GitHub', 'Figma', 'Postman', 'GSAP', 'Framer Motion'] },
     ],
   },
+  photo: {
+    craftLabel: 'Craft',
+    craftTitle: 'Until it feels right',
+    craftNote: 'Dushanbe · late shift',
+    toolsLabel: 'Tools',
+    toolsNote: 'A desk built for speed and focus',
+    standardLabel: 'Standard',
+    standardNote: 'Attention to detail — not only in the code',
+  },
   why: {
     eyebrow: 'Why me', title: 'It’s not only about the code',
     items: [

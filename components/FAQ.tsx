@@ -41,7 +41,7 @@ export default function FAQ() {
                     <span className={`text-lg md:text-xl tracking-tight transition-colors ${isOpen ? 'text-ink' : 'text-ink-2 group-hover:text-ink'}`}>
                       {item.q}
                     </span>
-                    <span className={`shrink-0 w-9 h-9 rounded-full border border-line grid place-items-center transition-all duration-300 ${isOpen ? 'bg-white text-bg border-white rotate-45' : 'text-ink-2'}`}>
+                    <span className={`shrink-0 w-9 h-9 rounded-full border border-line grid place-items-center transition-all duration-300 ${isOpen ? 'bg-accent-deep text-bone border-accent/60 rotate-45' : 'text-ink-2'}`}>
                       <Plus size={16} />
                     </span>
                   </button>

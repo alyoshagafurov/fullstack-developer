@@ -60,7 +60,7 @@ export default function Pricing() {
               return (
                 <div key={tf.id} data-reveal={String(i)} className={`glass p-8 md:p-9 flex flex-col ${tf.popular ? 'md:-mt-4 md:pb-12 border-line-2 !bg-white/[0.05]' : ''}`}>
                   {tf.popular && (
-                    <div className="self-start mb-6 inline-flex items-center rounded-full bg-white text-bg text-[11px] font-semibold tracking-wide px-3 py-1">{p.popular}</div>
+                    <div className="self-start mb-6 inline-flex items-center rounded-full bg-accent-deep text-bone border border-accent/50 text-[11px] font-semibold tracking-wide px-3 py-1">{p.popular}</div>
                   )}
                   <div className="label mb-4">{d.name}</div>
                   <div className="flex items-baseline gap-2 mb-2">

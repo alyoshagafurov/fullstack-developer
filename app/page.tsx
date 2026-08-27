@@ -6,8 +6,10 @@ import Stats from '@/components/Stats';
 import Services from '@/components/Services';
 import Projects from '@/components/Projects';
 import Process from '@/components/Process';
+import PhotoStatement from '@/components/PhotoStatement';
 import TechStack from '@/components/TechStack';
 import WhyMe from '@/components/WhyMe';
+import PhotoStrip from '@/components/PhotoStrip';
 import Testimonials from '@/components/Testimonials';
 import PricingTeaser from '@/components/PricingTeaser';
 import FAQ from '@/components/FAQ';
@@ -48,8 +50,10 @@ export default function Home() {
         <Services moreHref="/services" />
         <Projects moreHref="/work" />
         <Process />
+        <PhotoStatement />
         <TechStack />
         <WhyMe />
+        <PhotoStrip />
         <Testimonials />
         <PricingTeaser />
         <FAQ />

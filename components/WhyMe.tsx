@@ -31,7 +31,7 @@ export default function WhyMe() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {ITEMS.map((it, i) => (
             <div key={it.t} data-reveal={String(i % 4)} data-hover className="glass group p-6 md:p-7">
-              <div className="w-11 h-11 rounded-xl border border-line bg-white/[0.03] grid place-items-center text-ink mb-6 group-hover:rotate-6 transition-transform duration-500">
+              <div className="w-11 h-11 rounded-xl border border-line bg-white/[0.03] grid place-items-center text-ink mb-6 transition-all duration-500 group-hover:rotate-6 group-hover:border-accent/45 group-hover:text-accent">
                 <it.icon size={19} strokeWidth={1.5} />
               </div>
               <h3 className="text-ink text-base md:text-lg font-semibold tracking-tight mb-2">{it.t}</h3>

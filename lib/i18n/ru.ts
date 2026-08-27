@@ -102,6 +102,15 @@ export const ru: Dict = {
       { title: 'Инструменты', items: ['Git', 'GitHub', 'Figma', 'Postman', 'GSAP', 'Framer Motion'] },
     ],
   },
+  photo: {
+    craftLabel: 'Ремесло',
+    craftTitle: 'Пока не станет правильно',
+    craftNote: 'Душанбе · поздняя смена',
+    toolsLabel: 'Инструменты',
+    toolsNote: 'Рабочее место, собранное под скорость и фокус',
+    standardLabel: 'Стандарт',
+    standardNote: 'Внимание к деталям — не только в коде',
+  },
   why: {
     eyebrow: 'Почему я', title: 'Дело не только в коде',
     items: [

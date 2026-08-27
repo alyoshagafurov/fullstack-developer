@@ -53,10 +53,10 @@ export default function Services({ moreHref }: { moreHref?: string }) {
               className="glass glass-sheen group p-7 md:p-8"
             >
               <div className="flex items-center justify-between mb-8">
-                <div className="w-12 h-12 rounded-xl border border-line bg-white/[0.03] grid place-items-center text-ink group-hover:scale-110 transition-transform duration-500">
+                <div className="w-12 h-12 rounded-xl border border-line bg-white/[0.03] grid place-items-center text-ink transition-all duration-500 group-hover:scale-110 group-hover:border-accent/45 group-hover:text-accent">
                   <s.icon size={20} strokeWidth={1.5} />
                 </div>
-                <ArrowUpRight size={18} className="text-muted group-hover:text-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                <ArrowUpRight size={18} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </div>
               <h3 className="text-ink text-xl md:text-2xl font-semibold tracking-tight mb-3">{s.title}</h3>
               <p className="text-ink-2 text-[15px] leading-relaxed mb-6">{s.body}</p>

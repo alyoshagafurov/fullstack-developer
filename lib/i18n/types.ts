@@ -18,6 +18,12 @@ export interface Dict {
   caseUI: { back: string; discuss: string; openSite: string; problem: string; solution: string; result: string; done: string; next: string };
   process: { eyebrow: string; title: string; sub: string; steps: { n: string; t: string; d: string }[] };
   stack: { eyebrow: string; title: string; sub: string; groups: { title: string; items: string[] }[] };
+  /* Editorial photography punctuation — captions for the photo moments. */
+  photo: {
+    craftLabel: string; craftTitle: string; craftNote: string;
+    toolsLabel: string; toolsNote: string;
+    standardLabel: string; standardNote: string;
+  };
   why: { eyebrow: string; title: string; items: { t: string; d: string }[] };
   testimonials: { eyebrow: string; title: string; items: { name: string; role: string; text: string }[] };
   pricing: {

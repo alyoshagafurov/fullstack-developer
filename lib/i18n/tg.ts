@@ -104,6 +104,15 @@ export const tg: Dict = {
       { title: 'Абзорҳо', items: ['Git', 'GitHub', 'Figma', 'Postman', 'GSAP', 'Framer Motion'] },
     ],
   },
+  photo: {
+    craftLabel: 'Ҳунар',
+    craftTitle: 'То он даме, ки дуруст шавад',
+    craftNote: 'Душанбе · смени шабона',
+    toolsLabel: 'Абзорҳо',
+    toolsNote: 'Ҷойи кор, ки барои суръат ва тамаркуз ҷамъ шудааст',
+    standardLabel: 'Стандарт',
+    standardNote: 'Диққат ба ҷузъиёт — на танҳо дар код',
+  },
   why: {
     eyebrow: 'Чаро ман', title: 'Гап танҳо дар код нест',
     items: [

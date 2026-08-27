@@ -43,6 +43,10 @@ html {
   color-scheme: dark;
   scroll-behavior: auto; /* Lenis owns scrolling */
   -webkit-tap-highlight-color: transparent;
+  /* Decorative bleed (backdrop orbs, parallax over-scale, the marquee) must
+     never let the page pan sideways. `clip` contains it without turning <html>
+     into a scroll container, which would break Lenis and sticky positioning. */
+  overflow-x: clip;
 }
 
 html.lenis, html.lenis body { height: auto; }

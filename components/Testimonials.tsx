@@ -32,7 +32,7 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {REVIEWS.map((r, i) => (
             <figure key={i} data-reveal={String(i % 3)} className="glass p-7 md:p-8 flex flex-col">
-              <Quote size={24} className="text-white/20 mb-5" />
+              <Quote size={24} className="text-accent/45 mb-5" />
               <blockquote className="text-ink-2 text-[15px] leading-relaxed flex-1">{r.text}</blockquote>
               <figcaption className="mt-7 flex items-center gap-3.5">
                 <span className="w-11 h-11 rounded-full border border-line bg-white/[0.04] grid place-items-center text-ink text-sm font-semibold shrink-0">

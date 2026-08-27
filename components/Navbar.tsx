@@ -62,7 +62,7 @@ export default function Navbar() {
             {LINKS.map((l) => (
               <Link key={l.href} href={l.href} data-hover className={`relative text-[13px] tracking-tight transition-colors ${isActive(l.href) ? 'text-ink' : 'text-ink-2 hover:text-ink'}`}>
                 {l.label}
-                <span className={`absolute -bottom-1.5 left-0 h-px bg-white transition-all duration-300 ${isActive(l.href) ? 'w-full' : 'w-0'}`} />
+                <span className={`absolute -bottom-1.5 left-0 h-px bg-accent transition-all duration-300 ${isActive(l.href) ? 'w-full' : 'w-0'}`} />
               </Link>
             ))}
           </nav>
@@ -97,7 +97,7 @@ export default function Navbar() {
         <div className="relative px-8 pb-12 flex flex-col gap-4 transition-opacity duration-500" style={{ opacity: open ? 1 : 0, transitionDelay: open ? '420ms' : '0ms' }}>
           <div className="h-px w-full bg-line" />
           <div className="flex items-center justify-between label text-[10px]">
-            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white pulse-soft" /> Душанбе · TJ</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent pulse-soft" /> Душанбе · TJ</span>
             <a href="https://t.me/alishergafurovv" className="text-ink" data-hover>@alishergafurovv</a>
           </div>
         </div>

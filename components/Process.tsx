@@ -42,7 +42,9 @@ export default function Process({ moreHref }: { moreHref?: string }) {
                 <div key={s.n} className="relative md:grid md:grid-cols-2 md:gap-x-20 md:items-center">
                   {/* node */}
                   <span
-                    className="absolute left-[6px] md:left-1/2 top-2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 w-3 h-3 rounded-full bg-white ring-4 ring-bg z-10"
+                    className={`absolute left-[6px] md:left-1/2 top-2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 w-3 h-3 rounded-full ring-4 ring-bg z-10 ${
+                      i === 0 ? 'bg-accent' : 'bg-ink/70'
+                    }`}
                     aria-hidden
                   />
                   <div
