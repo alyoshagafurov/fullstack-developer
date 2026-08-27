@@ -1,23 +1,40 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Unbounded, Manrope, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
-import Backdrop from '@/components/Backdrop';
-import Cursor from '@/components/Cursor';
-import ScrollProgress from '@/components/ScrollProgress';
-import ScrollFX from '@/components/ScrollFX';
 import JsonLd from '@/components/JsonLd';
 import { LanguageProvider } from '@/lib/i18n';
-import { CurrencyProvider } from '@/lib/currency';
 import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, siteGraph } from '@/lib/seo';
 
-/* Inter — self-hosted by next/font (no external request, no layout shift, full Cyrillic). */
-const inter = Inter({
+/*
+ * Three voices, all self-hosted by next/font and all carrying Cyrillic —
+ * non-negotiable, since the site's primary languages are Russian and Tajik.
+ *
+ *   Unbounded      — display. Wide, geometric, technical. The brand's face.
+ *   Manrope        — text/UI. Modern grotesk that stays quiet next to it.
+ *   JetBrains Mono — indices, years, stack, meta. The developer's voice.
+ */
+const display = Unbounded({
   subsets: ['latin', 'cyrillic'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-display',
+  display: 'swap',
+  preload: true,
+});
+
+const sans = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
   preload: true,
+});
+
+const mono = JetBrains_Mono({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500'],
+  variable: '--font-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -74,7 +91,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={inter.variable}>
+    <html lang="ru" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <head>
         <JsonLd data={siteGraph()} />
         <noscript>
@@ -84,13 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a href="#main" className="skip-link">Перейти к содержимому</a>
         <SmoothScroll />
-        <Backdrop />
-        <Cursor />
-        <ScrollProgress />
-        <ScrollFX />
-        <LanguageProvider>
-          <CurrencyProvider>{children}</CurrencyProvider>
-        </LanguageProvider>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

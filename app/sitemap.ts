@@ -1,30 +1,20 @@
 import type { MetadataRoute } from 'next';
-import { projects } from '@/lib/projects';
 import { SITE_URL } from '@/lib/seo';
 
+/*
+ * The rebuild collapsed the site into one continuous composition, so there is
+ * exactly one indexable URL right now. The old per-section routes and case
+ * pages were removed with the old UI — listing them here would advertise 404s.
+ *
+ * When case pages return, add them back from lib/projects.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-  const pages: { path: string; priority: number; freq: 'daily' | 'weekly' | 'monthly' }[] = [
-    { path: '', priority: 1.0, freq: 'weekly' },
-    { path: '/work', priority: 0.9, freq: 'weekly' },
-    { path: '/services', priority: 0.9, freq: 'monthly' },
-    { path: '/pricing', priority: 0.8, freq: 'monthly' },
-    { path: '/process', priority: 0.7, freq: 'monthly' },
-    { path: '/about', priority: 0.8, freq: 'monthly' },
-    { path: '/contact', priority: 0.7, freq: 'monthly' },
-  ];
   return [
-    ...pages.map((p) => ({
-      url: `${SITE_URL}${p.path}`,
-      lastModified: now,
-      changeFrequency: p.freq,
-      priority: p.priority,
-    })),
-    ...projects.map((p) => ({
-      url: `${SITE_URL}/work/${p.slug}`,
-      lastModified: now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })),
+    {
+      url: SITE_URL,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1,
+    },
   ];
 }

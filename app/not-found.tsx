@@ -1,25 +1,30 @@
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import Logo from '@/components/Logo';
+import Logo from '@/components/ui/Logo';
+import Action from '@/components/ui/Action';
 
+/*
+ * 404 — built from the same primitives as the rest of the site, so a wrong URL
+ * still lands somewhere that looks like the brand.
+ */
 export default function NotFound() {
   return (
-    <main id="main" className="relative min-h-[100svh] flex flex-col items-center justify-center text-center px-6">
-      {/* Giant faint logo watermark — the real wordmark */}
+    <main id="main" className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden">
       <div
         aria-hidden
-        className="pointer-events-none select-none absolute w-[86%] md:w-[52%] aspect-[720/405] bg-[url('/aly-logo.png')] bg-contain bg-no-repeat bg-center opacity-[0.05]"
+        className="dot-field pointer-events-none absolute inset-x-0 top-0 h-[50vh] opacity-30
+                   [mask-image:radial-gradient(60%_60%_at_50%_10%,#000,transparent)]"
       />
+      <div className="shell relative">
+        <a href="/" aria-label="ALY" className="inline-block mb-14 opacity-90 hover:opacity-100 transition-opacity">
+          <Logo className="h-5 w-auto" />
+        </a>
 
-      <div className="relative z-10 flex flex-col items-center gap-7">
-        <Logo className="h-9 w-auto" />
-        <div className="display text-ink text-[22vw] md:text-[9rem] leading-none tabular-nums">404</div>
-        <p className="text-ink-2 text-lg max-w-sm leading-relaxed">
+        <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-signal mb-6">Error 404</p>
+        <h1 className="display text-d-xl text-ink leading-[0.9] mb-8">404</h1>
+        <p className="text-lead text-ink-2 max-w-sm mb-12">
           Страница не найдена. Возможно, ссылка устарела или её больше нет.
         </p>
-        <Link href="/" data-hover className="btn btn-primary !rounded-xl">
-          <ArrowLeft size={17} /> На главную
-        </Link>
+
+        <Action href="/" variant="solid">На главную</Action>
       </div>
     </main>
   );

@@ -1,21 +1,13 @@
-import Loader from '@/components/Loader';
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import Marquee from '@/components/Marquee';
-import Stats from '@/components/Stats';
-import Services from '@/components/Services';
-import Projects from '@/components/Projects';
-import Process from '@/components/Process';
-import PhotoStatement from '@/components/PhotoStatement';
-import TechStack from '@/components/TechStack';
-import WhyMe from '@/components/WhyMe';
-import PhotoStrip from '@/components/PhotoStrip';
-import Testimonials from '@/components/Testimonials';
-import PricingTeaser from '@/components/PricingTeaser';
-import FAQ from '@/components/FAQ';
-import About from '@/components/About';
-import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import Header from '@/components/chrome/Header';
+import Identity from '@/components/sections/Identity';
+import SelectedWork from '@/components/sections/SelectedWork';
+import Capabilities from '@/components/sections/Capabilities';
+import Method from '@/components/sections/Method';
+import Studio from '@/components/sections/Studio';
+import Technology from '@/components/sections/Technology';
+import Proof from '@/components/sections/Proof';
+import StartProject from '@/components/sections/StartProject';
+import SiteFooter from '@/components/sections/SiteFooter';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 
@@ -32,35 +24,28 @@ const profilePage = {
 };
 
 /*
- * Landing — keeps all the full sections. The only change vs a standalone page:
- * the pricing block is a short teaser (range + button to /pricing), and the
- * sections that have a dedicated page carry a "Подробнее →" button. The header
- * menu still navigates to the dedicated pages.
+ * The site is one continuous composition, read top to bottom.
+ *
+ * The order below is the story, and the rhythm between blocks is deliberately
+ * uneven — see the py-rhythm-* tokens inside each section. Nothing here is a
+ * repeated section template; every block owns its own layout.
  */
 export default function Home() {
   return (
     <>
       <JsonLd data={profilePage} />
-      <Loader />
-      <Navbar />
-      <main id="main" className="relative">
-        <Hero />
-        <Marquee />
-        <Stats />
-        <Services moreHref="/services" />
-        <Projects moreHref="/work" />
-        <Process />
-        <PhotoStatement />
-        <TechStack />
-        <WhyMe />
-        <PhotoStrip />
-        <Testimonials />
-        <PricingTeaser />
-        <FAQ />
-        <About moreHref="/about" />
-        <Contact />
+      <Header />
+      <main id="main">
+        <Identity />
+        <SelectedWork />
+        <Capabilities />
+        <Method />
+        <Studio />
+        <Technology />
+        <Proof />
+        <StartProject />
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }
