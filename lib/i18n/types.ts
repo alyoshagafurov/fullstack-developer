@@ -1,6 +1,11 @@
 /* Shared shape for every language dictionary. Enforces that ru/tg/en all
    provide the same keys, so nothing goes untranslated. */
 
+import type {
+  ProjectType, Need, Feature, Budget, Timeline, Source, StepId,
+} from '@/lib/brief/schema';
+import type { ErrorKey } from '@/lib/brief/validate';
+
 export type Lang = 'ru' | 'tg' | 'en';
 
 export interface Dict {
@@ -48,6 +53,48 @@ export interface Dict {
       tasks: string[];
       step: string; of: string; back: string;
       comment: string; commentFor: string[]; commentPh: string; intro: string;
+    };
+  };
+  /* Project Brief — the progressive multi-step request flow at /brief. */
+  brief: {
+    eyebrow: string; title: string; intro: string;
+    step: string; of: string;
+    back: string; next: string; toReview: string; submit: string; sending: string;
+    optional: string; edit: string; skip: string; required: string;
+    q: Record<StepId, { t: string; hint: string }>;
+    types: Record<ProjectType, string>;
+    needs: Record<Need, string>;
+    features: Record<Feature, string>;
+    budgets: Record<Budget, string>;
+    budgetNote: string;
+    timelines: Record<Timeline, string>;
+    sources: Record<Source, string>;
+    f: {
+      typeOtherL: string; typeOtherP: string;
+      projectNameL: string; projectNameP: string;
+      descriptionL: string; descriptionP: string;
+      problemP: string;
+      featuresOtherL: string; featuresOtherP: string;
+      existingUrlL: string; existingUrlP: string;
+      referenceUrlsL: string; referenceUrlsP: string;
+      nameL: string; nameP: string;
+      emailL: string; emailP: string;
+      messengerL: string; messengerP: string;
+      sourceL: string;
+      notesL: string; notesP: string;
+      consentL: string;
+    };
+    sum: {
+      project: string; type: string; needs: string; features: string;
+      budget: string; timeline: string; contact: string; links: string;
+      notes: string; problem: string; none: string;
+    };
+    err: Record<ErrorKey, string> & { summary: string };
+    fail: { validation: string; unavailable: string; network: string; retry: string };
+    ok: {
+      title: string; lead: string; refLabel: string;
+      whatNext: string; n1: string; n2: string; n3: string;
+      home: string; work: string;
     };
   };
   footer: { tagline: string; navTitle: string; contactTitle: string; location: string; up: string; rights: string };
