@@ -4,6 +4,7 @@ import SelectedWork from '@/components/sections/SelectedWork';
 import Capabilities from '@/components/sections/Capabilities';
 import Method from '@/components/sections/Method';
 import Studio from '@/components/sections/Studio';
+import Principles from '@/components/sections/Principles';
 import Technology from '@/components/sections/Technology';
 import Proof from '@/components/sections/Proof';
 import StartProject from '@/components/sections/StartProject';
@@ -41,6 +42,7 @@ export default function Home() {
         <Capabilities />
         <Method />
         <Studio />
+        <Principles />
         <Technology />
         <Proof />
         <StartProject />
