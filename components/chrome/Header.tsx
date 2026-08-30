@@ -72,7 +72,7 @@ export default function Header() {
               </button>
             ))}
           </div>
-          <Action href="#start" variant="ghost" className="!px-5 !py-2.5 !text-micro">
+          <Action href="/start-project" variant="ghost" className="!px-5 !py-2.5 !text-micro">
             {t.nav.cta}
           </Action>
         </div>

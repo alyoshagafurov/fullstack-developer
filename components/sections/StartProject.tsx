@@ -52,7 +52,7 @@ export default function StartProject() {
         <div className="grid-12 gap-y-12 items-end mt-16 md:mt-24">
           <Reveal delay={2} className="col-span-12 lg:col-span-5">
             <p className="text-lead text-ink-2 max-w-sm mb-10">{c.sub}</p>
-            <Action href="#top" variant="signal">{t.nav.cta}</Action>
+            <Action href="/start-project" variant="signal">{t.nav.cta}</Action>
           </Reveal>
 
           {/* channels as a mono ledger, aligned to the right margin */}

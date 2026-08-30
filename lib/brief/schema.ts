@@ -1,68 +1,60 @@
 /*
  * Project Brief — the shared data contract.
  *
- * This module is the single source of truth for WHAT a brief is: the option
- * values, the field shape, the length limits and the step order. It is imported
- * by the client wizard, by the client-side validator, by the i18n dictionaries
- * (so every option is guaranteed a label in ru/tg/en) and by the API route.
+ * Single source of truth for what a brief IS: the option values, the field
+ * shape, the length limits and the step order. Imported by the client wizard,
+ * the client validator, the i18n dictionaries (so every option is guaranteed a
+ * label in ru/tg/en) and the API route.
  *
- * It deliberately contains no UI copy and no validation logic — copy lives in
- * lib/i18n, client rules in ./validate, and the server keeps its own
- * independent rules in app/api/brief/route.ts (the server never trusts these).
+ * No UI copy and no validation logic live here — copy is in lib/i18n, client
+ * rules in ./validate, and the server keeps its own independent rules in
+ * app/api/brief/route.ts, which never trusts these.
  *
- * Phase 8 persists `BriefSubmission` as-is; keep this stable.
+ * Phase 6 persists `BriefSubmission` as-is. Keep it stable.
  */
 
 export const PROJECT_TYPES = [
   'website', 'landing', 'webapp', 'saas', 'ecommerce', 'crm',
-  'ai', 'telegram', 'automation', 'api', 'custom', 'other',
+  'telegram', 'automation', 'ai', 'api', 'custom', 'other',
 ] as const;
 export type ProjectType = (typeof PROJECT_TYPES)[number];
 
-export const NEEDS = ['design', 'development', 'both', 'redesign', 'mvp', 'support', 'consult'] as const;
-export type Need = (typeof NEEDS)[number];
-
-export const FEATURES = [
-  'auth', 'payments', 'admin', 'catalog', 'booking', 'chat',
-  'integrations', 'analytics', 'multilang', 'notifications', 'aiFeature', 'mobile',
-] as const;
-export type Feature = (typeof FEATURES)[number];
-
-/* Ranges, never an exact number — a planning signal, not a quote. */
-export const BUDGETS = ['lt1k', 'r1k3k', 'r3k7k', 'r7k15k', 'gt15k', 'unsure'] as const;
+/* Ranges, never an exact figure — a planning signal, not a quote. */
+export const BUDGETS = ['lt500', 'r500_1k', 'r1k_2k5', 'r2k5_5k', 'gt5k', 'unsure'] as const;
 export type Budget = (typeof BUDGETS)[number];
 
-export const TIMELINES = ['asap', 'm1', 'm13', 'm3plus', 'planning'] as const;
+export const TIMELINES = ['asap', 'w1_2', 'w2_4', 'm1_2', 'flexible', 'unsure'] as const;
 export type Timeline = (typeof TIMELINES)[number];
 
-export const SOURCES = ['instagram', 'telegram', 'google', 'referral', 'portfolio', 'other'] as const;
-export type Source = (typeof SOURCES)[number];
-
-/** Everything the brief collects. Nothing here is more personal than needed. */
-export interface BriefData {
+/** Everything the brief collects. Nothing more personal than needed. */
+export interface ProjectBrief {
+  /* 01 — project */
   projectType: ProjectType | '';
   projectTypeOther: string;
-  projectName: string;
+  /* 02 — goal */
+  goal: string;
+  /* 03 — scope */
   description: string;
-  problem: string;
-  needs: Need[];
-  features: Feature[];
-  featuresOther: string;
+  functionality: string;
+  /* 04 — references */
   existingUrl: string;
-  referenceUrls: string;
+  referenceLinks: string;
+  notes: string;
+  /* 05 / 06 */
   budget: Budget | '';
   timeline: Timeline | '';
+  /* 07 — contact */
   name: string;
+  company: string;
   email: string;
-  messenger: string;
-  source: Source | '';
-  notes: string;
+  telegram: string;
+  whatsapp: string;
   consent: boolean;
 }
 
-/** What actually crosses the wire. Phase 8 stores this shape. */
+/** What crosses the wire. Phase 6 stores this shape. */
 export interface BriefSubmission {
-  data: BriefData;
+  data: ProjectBrief;
   meta: {
     /** UI language the brief was filled in — useful when replying. */
     locale: string;
@@ -76,54 +68,54 @@ export interface BriefSubmission {
 
 export const LIMITS = {
   projectTypeOther: 80,
-  projectName: 120,
+  goal: { min: 12, max: 1500 },
   description: { min: 20, max: 2000 },
-  problem: 1500,
-  featuresOther: 300,
+  functionality: 1500,
   url: 500,
-  name: { min: 2, max: 80 },
-  email: 160,
-  messenger: 80,
+  links: 800,
   notes: 1500,
+  name: { min: 2, max: 80 },
+  company: 120,
+  email: 160,
+  handle: 80,
 } as const;
 
-export function emptyBrief(): BriefData {
+export function emptyBrief(): ProjectBrief {
   return {
-    projectType: '', projectTypeOther: '', projectName: '', description: '', problem: '',
-    needs: [], features: [], featuresOther: '', existingUrl: '', referenceUrls: '',
-    budget: '', timeline: '', name: '', email: '', messenger: '', source: '',
-    notes: '', consent: false,
+    projectType: '', projectTypeOther: '',
+    goal: '',
+    description: '', functionality: '',
+    existingUrl: '', referenceLinks: '', notes: '',
+    budget: '', timeline: '',
+    name: '', company: '', email: '', telegram: '', whatsapp: '',
+    consent: false,
   };
 }
 
-/* ── Steps ──────────────────────────────────────────────────────────────────
- * Order matters: it drives progress, Back/Continue and which fields each step
- * validates. `optional` steps can be skipped with Continue.
+/* ── Steps ────────────────────────────────────────────────────────────────
+ * One question per screen. `optional` steps can be passed with Continue.
+ * `autoAdvance` marks the single-choice steps that move on by themselves.
  */
 export const STEP_IDS = [
-  'type', 'about', 'problem', 'needs', 'features',
-  'existing', 'budget', 'timeline', 'contact', 'review',
+  'project', 'goal', 'scope', 'references', 'budget', 'timeline', 'contact', 'review',
 ] as const;
 export type StepId = (typeof STEP_IDS)[number];
 
 export type StepDef = {
   id: StepId;
-  fields: (keyof BriefData)[];
+  fields: (keyof ProjectBrief)[];
   optional?: boolean;
-  /** Single-choice steps advance on their own once an option is picked. */
   autoAdvance?: boolean;
 };
 
 export const STEPS: StepDef[] = [
-  { id: 'type', fields: ['projectType', 'projectTypeOther'], autoAdvance: true },
-  { id: 'about', fields: ['projectName', 'description'] },
-  { id: 'problem', fields: ['problem'], optional: true },
-  { id: 'needs', fields: ['needs'], optional: true },
-  { id: 'features', fields: ['features', 'featuresOther'], optional: true },
-  { id: 'existing', fields: ['existingUrl', 'referenceUrls'], optional: true },
+  { id: 'project', fields: ['projectType', 'projectTypeOther'], autoAdvance: true },
+  { id: 'goal', fields: ['goal'] },
+  { id: 'scope', fields: ['description', 'functionality'] },
+  { id: 'references', fields: ['existingUrl', 'referenceLinks', 'notes'], optional: true },
   { id: 'budget', fields: ['budget'], autoAdvance: true },
   { id: 'timeline', fields: ['timeline'], autoAdvance: true },
-  { id: 'contact', fields: ['name', 'email', 'messenger', 'source', 'notes', 'consent'] },
+  { id: 'contact', fields: ['name', 'company', 'email', 'telegram', 'whatsapp', 'consent'] },
   { id: 'review', fields: [] },
 ];
 
@@ -131,9 +123,9 @@ export const STEPS: StepDef[] = [
 export const ANSWER_STEPS = STEPS.length - 1;
 
 /**
- * Reference id shown on the confirmation screen, e.g. `ALY-2026-4F7K2`.
- * Generated by the SERVER when a brief is actually stored (Phase 8) — never on
- * the client, so a reference always corresponds to something real.
+ * Reference shown on the confirmation screen, e.g. `ALY-2026-4F7K2`.
+ * Issued by the SERVER only when a brief is really stored (Phase 6) — never on
+ * the client, so a reference always corresponds to something that exists.
  */
 export const REFERENCE_PREFIX = 'ALY';
 export const REFERENCE_PATTERN = /^ALY-\d{4}-[A-Z0-9]{5}$/;

@@ -2,7 +2,7 @@
    provide the same keys, so nothing goes untranslated. */
 
 import type {
-  ProjectType, Need, Feature, Budget, Timeline, Source, StepId,
+  ProjectType, Budget, Timeline, StepId,
 } from '@/lib/brief/schema';
 import type { ErrorKey } from '@/lib/brief/validate';
 
@@ -63,31 +63,28 @@ export interface Dict {
     optional: string; edit: string; skip: string; required: string;
     q: Record<StepId, { t: string; hint: string }>;
     types: Record<ProjectType, string>;
-    needs: Record<Need, string>;
-    features: Record<Feature, string>;
     budgets: Record<Budget, string>;
     budgetNote: string;
     timelines: Record<Timeline, string>;
-    sources: Record<Source, string>;
+    timelineNote: string;
     f: {
       typeOtherL: string; typeOtherP: string;
-      projectNameL: string; projectNameP: string;
+      goalP: string;
       descriptionL: string; descriptionP: string;
-      problemP: string;
-      featuresOtherL: string; featuresOtherP: string;
+      functionalityL: string; functionalityP: string;
       existingUrlL: string; existingUrlP: string;
-      referenceUrlsL: string; referenceUrlsP: string;
-      nameL: string; nameP: string;
-      emailL: string; emailP: string;
-      messengerL: string; messengerP: string;
-      sourceL: string;
+      referenceLinksL: string; referenceLinksP: string;
       notesL: string; notesP: string;
+      nameL: string; nameP: string;
+      companyL: string; companyP: string;
+      emailL: string; emailP: string;
+      telegramL: string; telegramP: string;
+      whatsappL: string; whatsappP: string;
       consentL: string;
     };
     sum: {
-      project: string; type: string; needs: string; features: string;
-      budget: string; timeline: string; contact: string; links: string;
-      notes: string; problem: string; none: string;
+      project: string; goal: string; scope: string; references: string;
+      budget: string; timeline: string; contact: string; none: string;
     };
     err: Record<ErrorKey, string> & { summary: string };
     fail: { validation: string; unavailable: string; network: string; retry: string };
