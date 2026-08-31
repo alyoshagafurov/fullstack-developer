@@ -308,6 +308,7 @@ export const en: Dict = {
     fail: {
       validation: 'A few fields need fixing.',
       unavailable: 'Briefs through the site are not switched on yet — this brief was not saved. Message me directly, contacts below.',
+      tooMany: 'Too many attempts in a row. Wait a moment and send again.',
       network: 'Couldn’t send. Check your connection and try again.',
       retry: 'Try again',
     },

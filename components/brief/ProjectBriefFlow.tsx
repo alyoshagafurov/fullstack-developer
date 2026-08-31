@@ -13,7 +13,7 @@ import {
   PROJECT_TYPES, BUDGETS, TIMELINES, ProjectType, Budget, Timeline,
 } from '@/lib/brief/schema';
 import { validateStep, validateAll, FieldErrors, ErrorKey } from '@/lib/brief/validate';
-import { submitBrief, BriefSubmitResult } from '@/lib/brief/submit';
+import { submitBrief, newSubmissionId, BriefSubmitResult } from '@/lib/brief/submit';
 
 /*
  * Start a project.
@@ -33,7 +33,7 @@ import { submitBrief, BriefSubmitResult } from '@/lib/brief/submit';
 
 const DRAFT_KEY = 'aly-brief-v2';
 
-type Draft = { data: ProjectBrief; step: number; startedAt: string };
+type Draft = { data: ProjectBrief; step: number; startedAt: string; submissionId?: string };
 
 /** Steps where typing is the point — focus the field, not the heading. */
 const TEXT_FIRST = new Set(['goal', 'scope', 'references', 'contact']);
@@ -52,6 +52,9 @@ export default function ProjectBriefFlow() {
   const [returnToReview, setReturnToReview] = useState(false);
 
   const startedAt = useRef(new Date().toISOString());
+  /* Stable for the life of this brief, including across a refresh — a retry
+     must reuse it so the server treats it as the same submission. */
+  const submissionId = useRef(newSubmissionId());
   const headingRef = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const firstRender = useRef(true);
@@ -72,6 +75,7 @@ export default function ProjectBriefFlow() {
           setData({ ...emptyBrief(), ...d.data });
           setStep(Math.min(Math.max(d.step ?? 0, 0), STEPS.length - 1));
           if (d.startedAt) startedAt.current = d.startedAt;
+          if (d.submissionId) submissionId.current = d.submissionId;
         }
       }
     } catch {
@@ -83,7 +87,9 @@ export default function ProjectBriefFlow() {
   useEffect(() => {
     if (!hydrated || reference) return;
     try {
-      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, step, startedAt: startedAt.current }));
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+        data, step, startedAt: startedAt.current, submissionId: submissionId.current,
+      }));
     } catch {
       /* the draft is a convenience, not a requirement */
     }
@@ -155,6 +161,7 @@ export default function ProjectBriefFlow() {
     setOutcome(null);
     const result = await submitBrief({
       data,
+      submissionId: submissionId.current,
       meta: { locale: lang, startedAt: startedAt.current, completedAt: new Date().toISOString() },
       hp: hp.current,
     });
@@ -516,6 +523,7 @@ export default function ProjectBriefFlow() {
               <p role="alert" className="mt-10 border-l-2 border-signal pl-4 text-body text-ink-2">
                 {outcome.status === 'invalid' && b.fail.validation}
                 {outcome.status === 'unavailable' && b.fail.unavailable}
+                {outcome.status === 'rateLimited' && b.fail.tooMany}
                 {outcome.status === 'error' && b.fail.network}
               </p>
             )}

@@ -87,7 +87,7 @@ export interface Dict {
       budget: string; timeline: string; contact: string; none: string;
     };
     err: Record<ErrorKey, string> & { summary: string };
-    fail: { validation: string; unavailable: string; network: string; retry: string };
+    fail: { validation: string; unavailable: string; tooMany: string; network: string; retry: string };
     ok: {
       title: string; lead: string; refLabel: string;
       whatNext: string; n1: string; n2: string; n3: string;

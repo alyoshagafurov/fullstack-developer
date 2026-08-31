@@ -1,0 +1,84 @@
+// Project Brief — persistence.
+//
+// One model for now. The brief the site collects (lib/brief/schema.ts) maps
+// field-for-field onto ProjectLead, plus the columns an operator needs: a
+// quotable reference, a pipeline status, and the idempotency key that stops a
+// retried request from creating a second row.
+//
+// The connection string is read from the environment only — never committed.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Pipeline state. Deliberately small — the admin panel is a later phase.
+enum LeadStatus {
+  NEW
+  CONTACTED
+  DISCOVERY
+  PROPOSAL
+  IN_PROGRESS
+  COMPLETED
+  DECLINED
+}
+
+model ProjectLead {
+  id String @id @default(cuid())
+
+  /// Server-issued, human-quotable: ALY-2026-4F7K2. Shown to the client.
+  reference String @unique
+
+  /// Client-generated once per completed brief. A retry reuses it, so the
+  /// unique constraint turns a duplicate POST into a lookup rather than a
+  /// second lead.
+  submissionId String @unique
+
+  // ── The brief itself ──────────────────────────────────────────────────
+  projectType      String
+  projectTypeOther String @default("")
+  goal             String
+  description      String
+  functionality    String @default("")
+  existingUrl      String @default("")
+  referenceLinks   String @default("")
+  notes            String @default("")
+  budget           String
+  timeline         String
+
+  // ── Contact ───────────────────────────────────────────────────────────
+  name     String
+  company  String @default("")
+  email    String
+  telegram String @default("")
+  whatsapp String @default("")
+
+  /// The visitor agreed to be contacted about this brief. Stored as proof.
+  consent Boolean @default(true)
+
+  // ── Provenance ────────────────────────────────────────────────────────
+  /// UI language the brief was filled in — useful when replying.
+  locale String @default("ru")
+  /// Client clock, from the brief's own meta.
+  startedAt   DateTime
+  completedAt DateTime
+  /// Server clock. The one to trust.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ── Operator fields (admin panel, later phase) ────────────────────────
+  status LeadStatus @default(NEW)
+  /// Private note for the owner. Never returned by the public API.
+  internalNote String @default("")
+
+  // Indexes the admin panel will actually query on: the pipeline board
+  // (status + newest first), the inbox (newest first), and lookup by client.
+  // `reference` and `submissionId` are already indexed by @unique.
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([email])
+}

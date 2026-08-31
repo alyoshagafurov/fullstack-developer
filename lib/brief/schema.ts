@@ -52,9 +52,15 @@ export interface ProjectBrief {
   consent: boolean;
 }
 
-/** What crosses the wire. Phase 6 stores this shape. */
+/** What crosses the wire. The API stores this shape. */
 export interface BriefSubmission {
   data: ProjectBrief;
+  /**
+   * Idempotency key, generated once per completed brief and reused on retry.
+   * The database holds a unique constraint on it, so a double click or a
+   * network retry resolves to the same lead instead of a duplicate.
+   */
+  submissionId: string;
   meta: {
     /** UI language the brief was filled in — useful when replying. */
     locale: string;
