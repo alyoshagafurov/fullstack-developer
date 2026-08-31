@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     },
   },
   appleWebApp: { capable: true, title: BRAND, statusBarStyle: 'black-translucent' },
+  // `appleWebApp.capable` emits only the legacy apple-prefixed tag, which
+  // Chrome reports as deprecated. Ship the standard name alongside it.
+  other: { 'mobile-web-app-capable': 'yes' },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
     yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,

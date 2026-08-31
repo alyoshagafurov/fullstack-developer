@@ -449,7 +449,7 @@ export default function ProjectBriefFlow() {
     <Shell className="py-rhythm-m">
       {/* masthead */}
       <div className="flex items-center gap-6 mb-14 md:mb-20">
-        <Link href="/" aria-label="ALY" className="opacity-80 hover:opacity-100 transition-opacity">
+        <Link href="/" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-80 hover:opacity-100 transition-opacity">
           <Logo className="h-4 w-auto" />
         </Link>
         <span aria-hidden className="h-px flex-1 bg-line" />

@@ -42,12 +42,12 @@ export default function Header() {
           <Logo priority className="h-[15px] md:h-4 w-auto" />
         </a>
 
-        <nav className="hidden md:flex items-center gap-9" aria-label="Разделы">
+        <nav className="hidden md:flex items-center gap-6 lg:gap-9" aria-label="Разделы">
           {SECTIONS.map((s, i) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="group inline-flex items-baseline gap-2 text-micro text-ink-2 hover:text-ink transition-colors"
+              className="group inline-flex items-baseline gap-2 whitespace-nowrap py-[12px] min-h-[44px] text-micro text-ink-2 hover:text-ink transition-colors"
             >
               <span className="font-mono text-[0.625rem] text-ink-3 group-hover:text-signal transition-colors">
                 {String(i + 1).padStart(2, '0')}
