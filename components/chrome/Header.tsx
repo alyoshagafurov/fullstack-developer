@@ -38,7 +38,7 @@ export default function Header() {
       }`}
     >
       <div className="shell h-16 md:h-20 flex items-center justify-between gap-6">
-        <a href="#top" aria-label="ALY" className="shrink-0 opacity-90 hover:opacity-100 transition-opacity">
+        <a href="#top" aria-label="ALY" className="shrink-0 inline-flex items-center min-h-[44px] opacity-90 hover:opacity-100 transition-opacity">
           <Logo priority className="h-[15px] md:h-4 w-auto" />
         </a>
 
@@ -64,7 +64,7 @@ export default function Header() {
                 key={l}
                 onClick={() => setLang(l)}
                 aria-pressed={lang === l}
-                className={`font-mono text-[0.625rem] uppercase tracking-[0.14em] px-1.5 py-1 transition-colors ${
+                className={`font-mono text-[0.625rem] uppercase tracking-[0.14em] px-2 min-h-[44px] inline-flex items-center transition-colors ${
                   lang === l ? 'text-signal' : 'text-ink-3 hover:text-ink-2'
                 }`}
               >
@@ -72,7 +72,7 @@ export default function Header() {
               </button>
             ))}
           </div>
-          <Action href="/start-project" variant="ghost" className="!px-5 !py-2.5 !text-micro">
+          <Action href="/start-project" variant="ghost" className="!px-5 !py-3 !text-micro !min-h-[44px]">
             {t.nav.cta}
           </Action>
         </div>

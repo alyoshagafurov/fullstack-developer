@@ -35,7 +35,7 @@ export default function Identity() {
           priority
           quality={88}
           sizes="(max-width: 1024px) 100vw, 58vw"
-          className="object-cover object-[62%_38%]"
+          className="object-cover object-[20%_26%] lg:object-[62%_38%]"
         />
         {/* dissolve the photo into the canvas on its inner edge */}
         <div
@@ -55,6 +55,18 @@ export default function Identity() {
           }}
         />
       </div>
+
+      {/* Narrow screens: the name spans nearly the whole frame, so the
+          photograph drops further back and its subject is cropped clear of the
+          type rather than sitting under it. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none lg:hidden"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(34,40,49,0.60) 0%, rgba(34,40,49,0.34) 32%, rgba(34,40,49,0.88) 66%, #222831 100%)',
+        }}
+      />
 
       {/* ── Vertical label riding the left margin ────────────────────── */}
       <div

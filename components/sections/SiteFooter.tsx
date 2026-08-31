@@ -27,7 +27,7 @@ export default function SiteFooter() {
     <footer className="relative bg-base-deep border-t border-line pt-rhythm-s pb-12">
       <Shell grid className="gap-y-12">
         <div className="col-span-12 md:col-span-5">
-          <a href="#top" aria-label="ALY" className="inline-block opacity-90 hover:opacity-100 transition-opacity">
+          <a href="#top" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-90 hover:opacity-100 transition-opacity">
             <Logo className="h-7 md:h-9 w-auto" />
           </a>
           <p className="text-body text-ink-2 mt-6 max-w-[28ch]">{t.footer.tagline}</p>
@@ -44,7 +44,7 @@ export default function SiteFooter() {
           <ul className="space-y-3">
             {LINKS.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="text-body text-ink-2 hover:text-signal transition-colors">
+                <a href={l.href} className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors">
                   {t.nav[l.key]}
                 </a>
               </li>
@@ -58,7 +58,7 @@ export default function SiteFooter() {
           </p>
           <ul className="space-y-3">
             <li>
-              <a href="mailto:gafurovalyosha@gmail.com" className="text-body text-ink-2 hover:text-signal transition-colors break-all">
+              <a href="mailto:gafurovalyosha@gmail.com" className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors break-all">
                 gafurovalyosha@gmail.com
               </a>
             </li>
@@ -67,7 +67,7 @@ export default function SiteFooter() {
                 href="https://t.me/alishergafurovv"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-body text-ink-2 hover:text-signal transition-colors"
+                className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors"
               >
                 @alishergafurovv
               </a>
@@ -79,7 +79,7 @@ export default function SiteFooter() {
           <span className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3">
             {t.footer.rights}
           </span>
-          <a href="#top" className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 hover:text-signal transition-colors">
+          <a href="#top" className="inline-flex items-center min-h-[44px] font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 hover:text-signal transition-colors">
             {t.footer.up}
           </a>
         </div>
