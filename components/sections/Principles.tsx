@@ -1,72 +1,102 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Shell from '@/components/ui/Shell';
 import Reveal from '@/components/ui/Reveal';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 06 — Principles (why me).
+ * 06 — Principles.
  *
- * Composition: a column of statements, not a grid of reasons. Each line is set
- * at heading scale with its number hung small beside it, and the supporting
- * sentence sits underneath in a narrow measure. The list is indented in a slow
- * stagger so the left edge steps down the page instead of forming a hard rule.
+ * Compositional idea: A MANIFESTO PAGE.
  *
- * Interaction: pointing at one statement dims the others. That is the whole
- * effect — attention, expressed as contrast. It is driven by one piece of
- * state rather than CSS sibling hacks so it also works from the keyboard, and
- * it only touches opacity.
+ * No heading, no eyebrow row, no supporting column. The statements themselves
+ * are the section: set large in the serif, one per line, with a progressive
+ * indent so the left edge steps away down the page. The supporting sentence
+ * sits directly underneath in small sans — extreme scale contrast inside a
+ * single unit rather than across columns.
+ *
+ * A narrow vertical photograph runs down the outer margin as a stripe. It is
+ * 736px wide in the source, which is exactly right for a column this narrow
+ * and would be wrong for anything larger.
+ *
+ * Pointing at one statement dims the rest — state-driven, so it works from the
+ * keyboard too, and it only touches opacity.
  */
 export default function Principles() {
   const { t } = useI18n();
   const [active, setActive] = useState<number | null>(null);
 
   return (
-    <section id="principles" className="relative beat-tight">
+    <section id="principles" className="relative beat-tight overflow-x-clip">
       <Shell>
-        <div className="grid-12 items-end gap-y-6 mb-16 md:mb-24">
-          <div className="col-span-12 md:col-span-7">
-            <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
-              06 / {t.why.eyebrow}
-            </span>
-            <h2 className="display text-d-m text-ink mt-6 max-w-[13ch]">{t.why.title}</h2>
-          </div>
-        </div>
-
-        <ul className="max-w-4xl" onMouseLeave={() => setActive(null)}>
-          {t.why.items.map((item, i) => {
-            const dimmed = active !== null && active !== i;
-            return (
-              <Reveal as="li" key={item.t} delay={i % 4}>
-                <div
-                  tabIndex={0}
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
-                  style={{ paddingLeft: `${(i % 4) * 2.5}%` }}
-                  className={`flex items-baseline gap-5 md:gap-8 py-6 md:py-7 outline-none
-                              transition-opacity duration-500 ease-out
-                              focus-visible:ring-1 focus-visible:ring-signal/60
-                              focus-visible:ring-offset-4 focus-visible:ring-offset-base
-                              ${dimmed ? 'opacity-30' : 'opacity-100'}`}
-                >
-                  <span
-                    className={`shrink-0 font-mono text-[0.625rem] pt-2 transition-colors duration-300
-                                ${active === i ? 'text-signal' : 'text-ink-3'}`}
+        <h2 className="sr-only">{t.why.title}</h2>
+        <div className="grid-12 gap-y-[48px]">
+          {/* the manifesto */}
+          <ul
+            className="col-span-12 lg:col-span-9"
+            onMouseLeave={() => setActive(null)}
+          >
+            {t.why.items.map((item, i) => {
+              const dimmed = active !== null && active !== i;
+              return (
+                <Reveal as="li" key={item.t} delay={i % 4}>
+                  <div
+                    tabIndex={0}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onBlur={() => setActive(null)}
+                    style={{ paddingLeft: `${Math.min(i, 5) * 3}%` }}
+                    className={`py-[16px] md:py-[24px] outline-none transition-opacity duration-300
+                                focus-visible:ring-1 focus-visible:ring-signal/70
+                                focus-visible:ring-offset-4 focus-visible:ring-offset-base
+                                ${dimmed ? 'opacity-25' : 'opacity-100'}`}
                   >
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-
-                  <div>
-                    <h3 className="display text-d-s text-ink leading-[1.12]">{item.t}</h3>
-                    <p className="text-body text-ink-2 mt-2.5 max-w-md">{item.d}</p>
+                    <h3 className="display text-[clamp(1.75rem,4.2vw,3.5rem)] leading-[1.02] text-ink">
+                      {item.t}
+                      <span
+                        aria-hidden
+                        className={`transition-opacity duration-300 ${
+                          active === i ? 'text-signal opacity-100' : 'opacity-0'
+                        }`}
+                      >
+                        .
+                      </span>
+                    </h3>
+                    <p className="text-[13px] leading-[1.6] text-ink-3 mt-[8px] max-w-[44ch]">
+                      {item.d}
+                    </p>
                   </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </ul>
+                </Reveal>
+              );
+            })}
+          </ul>
+
+          {/* the stripe — a narrow column at a size the source actually supports */}
+          <Reveal className="hidden lg:block col-span-2 col-start-11">
+            <div className="sticky top-[128px]">
+              <div className="relative aspect-[736/920] w-full overflow-hidden">
+                <Image
+                  src="/lifestyle-macbook.jpg"
+                  alt="Рабочее место: планшет, наушники и часы на тёмном дереве"
+                  fill
+                  quality={84}
+                  sizes="16vw"
+                  className="object-cover"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'rgba(34,40,49,0.32)' }}
+                />
+              </div>
+              <span className="label text-[11px] block mt-[12px]">
+                {String(t.why.items.length).padStart(2, '0')} принципов
+              </span>
+            </div>
+          </Reveal>
+        </div>
       </Shell>
     </section>
   );

@@ -7,76 +7,57 @@ import { useI18n } from '@/lib/i18n';
 /*
  * 03 — Capabilities.
  *
- * A typographic system, not a grid. Each capability is a full-width rule with
- * its number, its name set as a graphic object, and a description that is
- * present in the document at all times but only *visible* on hover or keyboard
- * focus — so the list reads as a clean index until you interrogate it.
+ * Compositional idea: THE NUMBER IS THE HEADLINE.
  *
- * The reveal animates opacity and transform only: the description keeps its
- * space in the layout, so nothing reflows and there is no CLS. Below `lg` the
- * description is simply always visible — hover is not a thing on touch, and
- * hiding content behind it would be a trap.
+ * This section has no section title at all — it opens straight into the list,
+ * which is what breaks it away from every other block on the page. The serif
+ * numeral is set enormous and right-aligned, so the numbers build a hard right
+ * edge down the page while the titles hang off it to the left in small caps.
+ * Reading direction is therefore right-to-left, the opposite of everywhere
+ * else on the site.
+ *
+ * Density is tight — rows sit close together and the whitespace is pushed out
+ * to the margins rather than between the items.
  */
 export default function Capabilities() {
   const { t } = useI18n();
 
   return (
-    <section id="capabilities" className="relative beat bg-base-deep">
+    <section id="capabilities" className="relative beat">
       <Shell>
-        <div className="grid-12 items-end gap-y-6 mb-16 md:mb-20">
-          <div className="col-span-12 md:col-span-7">
-            <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
-              03 / {t.services.eyebrow}
-            </span>
-            <h2 className="display text-d-m text-ink mt-6 max-w-[12ch]">{t.services.title}</h2>
-          </div>
-          <p className="col-span-12 md:col-span-4 md:col-start-9 text-body text-ink-2">
-            {t.services.sub}
-          </p>
+        {/* the only chrome: a single hairline with a running label */}
+        <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[64px] md:mb-[96px]">
+          <span className="label">03 — {t.services.eyebrow}</span>
+          <span className="label text-ink-3">{t.services.items.length}</span>
         </div>
 
-        <ul className="border-t border-line">
+        <h2 className="sr-only">{t.services.title}</h2>
+        <ul>
           {t.services.items.map((s, i) => (
             <Reveal
               as="li"
               key={s.title}
               delay={i % 3}
-              className="group border-b border-line"
+              className="group border-b border-line last:border-b-0"
             >
-              {/* focus-within keeps the reveal reachable from the keyboard */}
-              <div
-                tabIndex={0}
-                className="grid-12 items-baseline gap-y-4 py-8 md:py-10 outline-none
-                           focus-visible:ring-1 focus-visible:ring-signal/60 focus-visible:ring-offset-4
-                           focus-visible:ring-offset-base-deep"
-              >
-                <span className="col-span-2 md:col-span-1 font-mono text-[0.6875rem] text-ink-3 transition-colors duration-300 group-hover:text-signal group-focus-within:text-signal">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-
-                <h3 className="col-span-10 md:col-span-5 display text-d-s text-ink-2 transition-all duration-500 ease-out group-hover:text-ink group-hover:translate-x-1.5 group-focus-within:text-ink group-focus-within:translate-x-1.5">
+              <div className="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_180px] items-baseline gap-x-[24px] md:gap-x-[48px] gap-y-[8px] py-[24px] md:py-[32px]">
+                {/* title hangs off the number's edge */}
+                <h3 className="order-2 md:order-1 col-span-2 md:col-span-1 text-[15px] md:text-[17px] font-medium tracking-tight text-ink text-left md:text-right transition-colors duration-200 group-hover:text-signal">
                   {s.title}
                 </h3>
 
-                {/* Always in the DOM; revealed on hover / focus from lg up. */}
-                <div
-                  className="col-span-12 md:col-span-6 lg:opacity-0 lg:translate-y-1
-                             transition-[opacity,transform] duration-500 ease-out
-                             group-hover:lg:opacity-100 group-hover:lg:translate-y-0
-                             group-focus-within:lg:opacity-100 group-focus-within:lg:translate-y-0"
+                {/* the number carries the scale */}
+                <span
+                  aria-hidden
+                  className="order-1 md:order-2 display text-[clamp(3rem,7vw,7rem)] leading-[0.8] text-ink-3 tabular-nums transition-colors duration-200 group-hover:text-signal"
                 >
-                  <p className="text-body text-ink-2 max-w-md">{s.body}</p>
-                  <ul className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
-                    {s.tags.map((tag) => (
-                      <li
-                        key={tag}
-                        className="font-mono text-[0.625rem] uppercase tracking-[0.14em] text-ink-3"
-                      >
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+
+                {/* the description is deliberately small and quiet */}
+                <p className="order-3 col-span-2 md:col-span-1 text-[13px] leading-[1.6] text-ink-3 max-w-[26ch]">
+                  {s.body}
+                </p>
               </div>
             </Reveal>
           ))}

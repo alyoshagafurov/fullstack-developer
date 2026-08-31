@@ -8,17 +8,18 @@ import { useI18n } from '@/lib/i18n';
 /*
  * 08 — Proof.
  *
- * Composition: one outcome pulled to display scale as the section's statement,
- * attributed the way a magazine credits a photograph — project, type, year, in
- * mono, under a rule. The remaining outcomes follow as a quiet ledger, and the
- * numbers close the section staggered across the grid.
+ * Compositional idea: THE NUMBERS ARE THE PAGE.
  *
- * NOTE ON CONTENT: the dictionary's `testimonials` entries are placeholders
- * (the previous implementation carried a TODO to replace them with real client
- * reviews). Rendering them would be inventing social proof, so this section is
- * built from facts that are actually verifiable — outcomes of shipped projects
- * that each have a live URL. When real, attributable reviews exist, a quote
- * drops into the statement slot and the outcomes move down.
+ * No heading and no quote block. Four figures are set at display scale in an
+ * uneven two-column arrangement, each dropped to a different height, so the
+ * block reads as a scoreboard rather than a stat bar. The project outcomes
+ * that used to be the headline are demoted to a caption strip along the
+ * bottom rule — the exact inverse of the previous version.
+ *
+ * CONTENT NOTE: the dictionary's `testimonials` are placeholders (the original
+ * implementation carried a TODO to replace them with real reviews), so they
+ * are still not rendered. Everything here is a shipped project with a live URL
+ * or a figure the owner stands behind.
  */
 export default function Proof() {
   const { t } = useI18n();
@@ -27,85 +28,47 @@ export default function Proof() {
     .map((p) => ({ meta: p, case: t.cases[p.slug] }))
     .filter((o) => o.case?.result?.value);
 
-  const [lead, ...rest] = outcomes;
+  /* Each figure sits at its own height — the drop is the composition. */
+  const drop = ['lg:mt-0', 'lg:mt-[96px]', 'lg:mt-[32px]', 'lg:mt-[128px]'];
 
   return (
     <section id="proof" className="relative beat">
       <Shell>
-        <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
-          08 / {t.testimonials.eyebrow}
-        </span>
+        <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[64px] md:mb-[96px]">
+          <span className="label">08 — {t.testimonials.eyebrow}</span>
+        </div>
 
-        {/* ── the statement ─────────────────────────────────────────── */}
-        {lead && (
-          <Reveal>
-            <figure className="mt-10 md:mt-14 grid-12 gap-y-8 items-end">
-              <blockquote className="col-span-12 lg:col-span-8">
-                <p className="display text-d-l text-ink leading-[1.02]">
-                  {lead.case.result.value}
-                </p>
-                <p className="text-lead text-ink-2 mt-6 max-w-lg">{lead.case.result.label}</p>
-              </blockquote>
+        <h2 className="sr-only">{t.testimonials.title}</h2>
 
-              <figcaption className="col-span-12 lg:col-span-3 lg:col-start-10 border-t border-line pt-5">
-                <dl className="space-y-3">
-                  {[
-                    ['Project', lead.case.title],
-                    ['Type', lead.case.category],
-                    ['Year', lead.meta.year],
-                  ].map(([k, v]) => (
-                    <div key={k} className="flex items-baseline justify-between gap-4">
-                      <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-ink-3">
-                        {k}
-                      </dt>
-                      <dd className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-ink-2 text-right">
-                        {v}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </figcaption>
-            </figure>
-          </Reveal>
-        )}
-
-        {/* ── the ledger of remaining outcomes ──────────────────────── */}
-        {rest.length > 0 && (
-          <ul className="mt-rhythm-s border-t border-line">
-            {rest.map((o, i) => (
-              <Reveal as="li" key={o.meta.slug} delay={i % 3} className="group border-b border-line">
-                <div className="grid-12 items-baseline gap-y-2 py-6 md:py-8">
-                  <span className="col-span-3 md:col-span-2 display text-d-s text-ink">
-                    {o.case.result.value}
-                  </span>
-                  <p className="col-span-9 md:col-span-6 text-body text-ink-2">
-                    {o.case.result.label}
-                  </p>
-                  <span className="col-span-12 md:col-span-3 md:col-start-10 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 md:text-right">
-                    {o.case.title}
-                  </span>
-                </div>
-              </Reveal>
-            ))}
-          </ul>
-        )}
-
-        {/* ── the numbers, staggered ────────────────────────────────── */}
-        <div className="grid-12 gap-y-12 mt-rhythm-s">
+        {/* the scoreboard */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-[24px] gap-y-[48px] mb-[96px] md:mb-[128px]">
           {t.stats.items.map((s, i) => (
-            <Reveal
-              key={s.label}
-              delay={i}
-              className={`col-span-6 md:col-span-3 ${i % 2 ? 'md:pt-12' : ''}`}
-            >
-              <div className="display text-d-m text-ink tabular-nums">
+            <Reveal key={s.label} delay={i} className={drop[i % drop.length]}>
+              <div className="display text-[clamp(3.5rem,9vw,8rem)] leading-[0.85] text-ink tabular-nums">
                 {s.value}
                 <span className="text-signal">{s.suffix}</span>
               </div>
-              <p className="text-micro text-ink-3 mt-3 max-w-[18ch]">{s.label}</p>
+              <p className="text-[13px] leading-[1.5] text-ink-3 mt-[16px] max-w-[16ch]">
+                {s.label}
+              </p>
             </Reveal>
           ))}
         </div>
+
+        {/* the outcomes, demoted to a caption strip */}
+        <Reveal>
+          <ul className="border-t border-line grid sm:grid-cols-2 lg:grid-cols-5">
+            {outcomes.map((o) => (
+              <li
+                key={o.meta.slug}
+                className="border-b lg:border-b-0 lg:border-r border-line last:border-r-0 py-[16px] lg:py-[24px] lg:px-[16px] first:lg:pl-0"
+              >
+                <span className="display text-[17px] text-ink block">{o.case.result.value}</span>
+                <span className="label text-[11px] block mt-[8px]">{o.case.title}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </Shell>
     </section>
   );
