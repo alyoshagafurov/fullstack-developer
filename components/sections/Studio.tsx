@@ -24,7 +24,7 @@ export default function Studio() {
   const a = t.about;
 
   return (
-    <section id="studio" className="relative py-rhythm-l overflow-x-clip">
+    <section id="studio" className="relative beat-wide overflow-x-clip">
       <Shell>
         <div className="grid-12 gap-y-14 items-start">
           {/* ── The portrait — bleeds to the left page edge ───────────── */}

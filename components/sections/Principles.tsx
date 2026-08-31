@@ -23,14 +23,14 @@ export default function Principles() {
   const [active, setActive] = useState<number | null>(null);
 
   return (
-    <section id="principles" className="relative py-rhythm-l">
+    <section id="principles" className="relative beat-tight">
       <Shell>
         <div className="grid-12 items-end gap-y-6 mb-16 md:mb-24">
           <div className="col-span-12 md:col-span-7">
             <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
               06 / {t.why.eyebrow}
             </span>
-            <h2 className="display text-d-l text-ink mt-6 max-w-[13ch]">{t.why.title}</h2>
+            <h2 className="display text-d-m text-ink mt-6 max-w-[13ch]">{t.why.title}</h2>
           </div>
         </div>
 

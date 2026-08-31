@@ -39,7 +39,7 @@ export default function SelectedWork() {
   const thirdCase = t.cases[third.slug];
 
   return (
-    <section id="work" className="relative py-rhythm-l overflow-x-clip">
+    <section id="work" className="relative beat-wide overflow-x-clip">
       {/* ── Section head ──────────────────────────────────────────────── */}
       <Shell>
         <div className="grid-12 items-end gap-y-6 mb-20 md:mb-28">

@@ -24,7 +24,7 @@ export default function StartProject() {
   const c = t.contact;
 
   return (
-    <section id="start" className="relative py-rhythm-l overflow-x-clip">
+    <section id="start" className="relative beat-wide overflow-x-clip">
       {/* the same dotted field that opens the site, mirrored to the left */}
       <div
         aria-hidden

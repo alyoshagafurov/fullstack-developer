@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import { Unbounded, Manrope, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
 import JsonLd from '@/components/JsonLd';
@@ -7,36 +6,17 @@ import { LanguageProvider } from '@/lib/i18n';
 import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, siteGraph } from '@/lib/seo';
 
 /*
- * Three voices, all self-hosted by next/font and all carrying Cyrillic —
- * non-negotiable, since the site's primary languages are Russian and Tajik.
+ * Two voices, both served from this origin — the woff2 files live in
+ * public/fonts and are declared in globals.css. No Google Fonts, no CDN, and
+ * no third-party request at runtime or at build.
  *
- *   Unbounded      — display. Wide, geometric, technical. The brand's face.
- *   Manrope        — text/UI. Modern grotesk that stays quiet next to it.
- *   JetBrains Mono — indices, years, stack, meta. The developer's voice.
+ *   Playfair Display — the display voice. High-contrast serif, real variable
+ *   weights, full Cyrillic (non-negotiable: the site is Russian first).
+ *   Onest — text, UI and the micro labels.
+ *
+ * Only the two Cyrillic slices are preloaded: they are what the first screen
+ * actually renders for a Russian visitor.
  */
-const display = Unbounded({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-display',
-  display: 'swap',
-  preload: true,
-});
-
-const sans = Manrope({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
-  display: 'swap',
-  preload: true,
-});
-
-const mono = JetBrains_Mono({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: DEFAULT_TITLE, template: `%s — ${PERSON} (${BRAND})` },
@@ -91,8 +71,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="ru">
       <head>
+        <link
+          rel="preload" href="/fonts/playfair-cyrillic.woff2"
+          as="font" type="font/woff2" crossOrigin="anonymous"
+        />
+        <link
+          rel="preload" href="/fonts/onest-cyrillic.woff2"
+          as="font" type="font/woff2" crossOrigin="anonymous"
+        />
         <JsonLd data={siteGraph()} />
         <noscript>
           <style>{`[data-reveal]{opacity:1!important;transform:none!important;}`}</style>

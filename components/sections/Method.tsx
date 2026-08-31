@@ -20,14 +20,14 @@ export default function Method() {
   const { t } = useI18n();
 
   return (
-    <section id="process" className="relative py-rhythm-l bg-base-deep overflow-x-clip">
+    <section id="process" className="relative beat bg-base-deep overflow-x-clip">
       <Shell>
         <div className="grid-12 items-end gap-y-6 mb-20 md:mb-28">
           <div className="col-span-12 md:col-span-6">
             <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
               04 / {t.process.eyebrow}
             </span>
-            <h2 className="display text-d-l text-ink mt-6 max-w-[10ch]">{t.process.title}</h2>
+            <h2 className="display text-d-m text-ink mt-6 max-w-[10ch]">{t.process.title}</h2>
           </div>
           <p className="col-span-12 md:col-span-4 md:col-start-9 text-body text-ink-2">
             {t.process.sub}

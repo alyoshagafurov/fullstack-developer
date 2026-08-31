@@ -49,10 +49,13 @@ module.exports = {
         },
       },
 
+      /* Two families only, both self-hosted from public/fonts. `mono` is
+         intentionally mapped to Onest: the technical voice comes from wide
+         tracking on micro labels, not from a third typeface. */
       fontFamily: {
-        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
+        sans: ['Onest', 'system-ui', 'sans-serif'],
+        mono: ['Onest', 'system-ui', 'sans-serif'],
       },
 
       /* Fluid scale — headings are compositional elements, so they move with

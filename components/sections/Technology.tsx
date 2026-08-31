@@ -24,14 +24,14 @@ export default function Technology() {
   const { t } = useI18n();
 
   return (
-    <section id="stack" className="relative py-rhythm-m bg-base-deep overflow-x-clip">
+    <section id="stack" className="relative beat-tight bg-base-deep overflow-x-clip">
       <Shell>
         <div className="grid-12 items-end gap-y-6 mb-16 md:mb-20">
           <div className="col-span-12 md:col-span-7">
             <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
               07 / {t.stack.eyebrow}
             </span>
-            <h2 className="display text-d-l text-ink mt-6 max-w-[11ch]">{t.stack.title}</h2>
+            <h2 className="display text-d-m text-ink mt-6 max-w-[11ch]">{t.stack.title}</h2>
           </div>
           <p className="col-span-12 md:col-span-4 md:col-start-9 text-body text-ink-2">
             {t.stack.sub}

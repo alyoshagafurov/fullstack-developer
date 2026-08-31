@@ -30,7 +30,7 @@ export default function Proof() {
   const [lead, ...rest] = outcomes;
 
   return (
-    <section id="proof" className="relative py-rhythm-l">
+    <section id="proof" className="relative beat">
       <Shell>
         <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
           08 / {t.testimonials.eyebrow}

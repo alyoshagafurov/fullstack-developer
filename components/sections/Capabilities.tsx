@@ -21,14 +21,14 @@ export default function Capabilities() {
   const { t } = useI18n();
 
   return (
-    <section id="capabilities" className="relative py-rhythm-m bg-base-deep">
+    <section id="capabilities" className="relative beat bg-base-deep">
       <Shell>
         <div className="grid-12 items-end gap-y-6 mb-16 md:mb-20">
           <div className="col-span-12 md:col-span-7">
             <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
               03 / {t.services.eyebrow}
             </span>
-            <h2 className="display text-d-l text-ink mt-6 max-w-[12ch]">{t.services.title}</h2>
+            <h2 className="display text-d-m text-ink mt-6 max-w-[12ch]">{t.services.title}</h2>
           </div>
           <p className="col-span-12 md:col-span-4 md:col-start-9 text-body text-ink-2">
             {t.services.sub}
