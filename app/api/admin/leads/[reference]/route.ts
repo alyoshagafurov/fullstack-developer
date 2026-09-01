@@ -34,11 +34,9 @@ const STATUS_FOR: Record<string, number> = {
   error: 502,
 };
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { reference: string } },
-) {
-  if (!readSession()) {
+export async function PATCH(req: Request, props: { params: Promise<{ reference: string }> }) {
+  const params = await props.params;
+  if (!(await readSession())) {
     return NextResponse.json({ ok: false, error: 'unauthenticated' }, { status: 401 });
   }
 

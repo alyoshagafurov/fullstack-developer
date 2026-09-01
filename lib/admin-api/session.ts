@@ -28,8 +28,12 @@ export interface AdminSession {
   csrfToken: string;
 }
 
-export function readSession(): AdminSession | null {
-  const jar = cookies();
+/**
+ * Async since Next 15: `cookies()` returns a promise now, because the request
+ * store is resolved lazily rather than being ambient. Every caller awaits.
+ */
+export async function readSession(): Promise<AdminSession | null> {
+  const jar = await cookies();
   const sessionId = jar.get(SESSION_COOKIE)?.value;
   const csrfToken = jar.get(CSRF_COOKIE)?.value ?? '';
   if (!sessionId) return null;

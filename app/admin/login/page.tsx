@@ -17,16 +17,17 @@ import { readSession } from '@/lib/admin-api/session';
 
 export const dynamic = 'force-dynamic';
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { expired?: string };
-}) {
+export default async function LoginPage(
+  props: {
+    searchParams: Promise<{ expired?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const configured = isBackendConfigured();
 
   // Already signed in? Don't make them type it again.
   if (configured) {
-    const session = readSession();
+    const session = await readSession();
     if (session) {
       const me = await fetchCurrentUser(session);
       if (me.status === 'ok') redirect('/admin');

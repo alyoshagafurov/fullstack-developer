@@ -92,7 +92,7 @@ export async function POST(req: Request) {
 
 export async function DELETE() {
   const base = apiBaseUrl();
-  const session = readSession();
+  const session = await readSession();
 
   // Best effort: tell Django to flush the session too, so signing out is not
   // merely local. A failure here still clears the cookies below.

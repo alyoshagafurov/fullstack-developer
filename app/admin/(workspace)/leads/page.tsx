@@ -24,11 +24,12 @@ const SORTABLE = [
   { key: 'createdAt', label: 'Дата' },
 ] as const;
 
-export default async function LeadsPage({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
+export default async function LeadsPage(
+  props: {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const one = (key: string): string => {
     const value = searchParams[key];
     return typeof value === 'string' ? value : '';

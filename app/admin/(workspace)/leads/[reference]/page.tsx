@@ -79,11 +79,12 @@ function Contacts({ lead }: { lead: LeadDetail }) {
   );
 }
 
-export default async function LeadDetailPage({
-  params,
-}: {
-  params: { reference: string };
-}) {
+export default async function LeadDetailPage(
+  props: {
+    params: Promise<{ reference: string }>;
+  }
+) {
+  const params = await props.params;
   const reference = decodeURIComponent(params.reference);
   const [result, me] = await Promise.all([fetchLead(reference), fetchCurrentUser()]);
 

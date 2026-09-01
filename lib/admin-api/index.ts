@@ -54,7 +54,11 @@ async function request<T>(
   const base = apiBaseUrl();
   if (!base) return { status: 'unavailable', code: 'backend_not_configured' };
 
-  const { session = readSession(), ...rest } = init;
+  // `readSession` is async since Next 15, so it cannot be a destructuring
+  // default. An explicitly passed `null` still means "no session" — only an
+  // omitted key falls back to reading the cookie jar.
+  const { session: providedSession, ...rest } = init;
+  const session = providedSession !== undefined ? providedSession : await readSession();
 
   const headers = new Headers(rest.headers);
   headers.set('Accept', 'application/json');

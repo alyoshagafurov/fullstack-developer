@@ -45,7 +45,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
     );
   }
 
-  const session = readSession();
+  const session = await readSession();
   if (!session) redirect('/admin/login');
 
   const me = await fetchCurrentUser(session);
