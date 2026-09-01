@@ -1,0 +1,20 @@
+# Process types. Read by Railway, Render, Heroku and anything nixpacks-based.
+#
+# NOTE THE ABSENCE OF A `release:` LINE THAT MIGRATES.
+#
+# Auto-running `manage.py migrate` on every deploy is the usual default, and
+# here it would break the first deploy outright: migration 0001 wraps its
+# CreateModel in SeparateDatabaseAndState, which `--fake-initial` does not
+# detect, so Django would try to CREATE TYPE "LeadStatus" against a database
+# where Prisma already made it — and fail. Worse, an automatic migrate is a
+# schema change nobody approved, against a table another system owns.
+#
+# The adoption sequence is manual and documented in docs/DEPLOYMENT.md. Run
+# it once, by hand, after checking the schema.
+#
+# Access logging is deliberately OFF (no --access-logfile). Gunicorn's access
+# log records the full request line including the query string, and the admin
+# register puts the operator's search term there — searches are by client
+# email. apps.observability logs the same requests with the query string
+# stripped. Errors still go to stderr and reach the platform's log stream.
+web: gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-2} --threads 4 --timeout 30 --graceful-timeout 30 --forwarded-allow-ips=* --error-logfile -

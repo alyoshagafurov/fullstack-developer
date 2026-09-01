@@ -1,0 +1,14 @@
+# The virtualenv is 76 MB of host-specific binaries; the image builds its own.
+.venv/
+__pycache__/
+*.py[cod]
+
+# Never copy a secret into an image layer. Layers are cached, pushed to a
+# registry, and survive being deleted from the running container.
+.env
+.env.*
+!.env.example
+
+staticfiles/
+*.log
+.DS_Store

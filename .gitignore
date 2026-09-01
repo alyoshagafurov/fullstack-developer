@@ -9,3 +9,11 @@ images/
 *.log
 .vercel
 tsconfig.tsbuildinfo
+
+# Django backend. The virtualenv is ~76 MB of third-party code that
+# requirements.txt already pins — it is rebuilt, never committed.
+backend/.venv/
+__pycache__/
+*.py[cod]
+backend/staticfiles/
+backend/.env
