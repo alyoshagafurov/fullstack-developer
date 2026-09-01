@@ -140,14 +140,29 @@ class BriefIntakeSerializer(serializers.Serializer):
 
 
 class LeadListSerializer(serializers.ModelSerializer):
-    """The list row. No description, no contact detail, no internal note."""
+    """The register row.
+
+    Carries what an operator needs to triage without opening a lead: who it
+    is, what they want, what it is worth, and how urgent. `email`, `budget`
+    and `timeline` are scalar columns already loaded by the viewset's
+    queryset, so widening this list costs no extra query per row.
+
+    Still withheld, deliberately: `internalNote` (the owner's private note),
+    and the brief body — `goal`, `description`, `functionality`, `notes`.
+    Those belong to the detail view. A register that carried them would turn
+    one screen into a bulk export of everything every client has written.
+    """
 
     projectType = serializers.CharField(source="project_type", read_only=True)
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
 
     class Meta:
         model = ProjectLead
-        fields = ["reference", "name", "projectType", "createdAt", "status"]
+        fields = [
+            "reference", "name", "email",
+            "projectType", "budget", "timeline",
+            "createdAt", "status",
+        ]
         read_only_fields = fields
 
 

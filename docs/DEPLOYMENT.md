@@ -86,9 +86,36 @@ is set in the platform's own environment UI.
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated hostnames Django will answer on. | Railway → Variables | **yes** |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Comma-separated origins with scheme, e.g. `https://aly.lat`. Needed only if the admin UI is on another host. | Railway → Variables | no |
 | `DJANGO_ADMIN_PATH` | Moves Django Admin off `/admin/`. Cheap, and removes a whole class of drive-by scans. | Railway → Variables | recommended |
+| `DJANGO_TRUSTED_PROXY_DEPTH` | **Set to `1`** for the current Railway topology. Decides which `X-Forwarded-For` entry the rate limits may believe — see below. | Railway → Variables | recommended |
 | `LEADS_WRITE_ENABLED` | **Leave unset.** Setting it to `true` makes Django a writer, which is P11, not now. | Railway → Variables | no |
 | `DJANGO_DB_POOLED` | `true` when pointing at a transaction-pooled endpoint (Neon's pooler). Disables server-side cursors. | Railway → Variables | no |
 | `WEB_CONCURRENCY` | Gunicorn workers. Default 2 is right for this size. | Railway → Variables | no |
+
+#### `DJANGO_TRUSTED_PROXY_DEPTH=1`
+
+`1` is not a default; it is the count of proxies that actually sit between a
+client and gunicorn on this deployment, and it was measured rather than
+assumed:
+
+- Gunicorn takes `REMOTE_ADDR` from the socket peer and never from
+  `X-Forwarded-For` (`gunicorn/http/wsgi.py`, the `REMOTE_*` block). The
+  `--forwarded-allow-ips=*` flag in `railway.json` governs only
+  `wsgi.url_scheme`. So without this variable Django sees Railway's edge as
+  the client, and every caller shares one rate-limit bucket — ten failed
+  logins from anyone would pause the login endpoint for everyone.
+- The production response headers carry `server: railway-hikari` and
+  `x-railway-edge: ams1`, and **no `cf-ray`** — no CDN terminates the
+  connection. Exactly one proxy, so exactly one trusted `X-Forwarded-For`
+  entry.
+
+`1` is correct whether Railway's edge appends to a caller-supplied header or
+replaces it: the right-most entry is the one the edge wrote either way.
+
+**Raise this only when a proxy is genuinely added** — a CDN in front of the
+Railway service, or a second gateway. Setting it higher than the real number
+of proxies is worse than leaving it at `0`: an over-count reads an entry the
+caller supplied as though a trusted proxy had written it, which hands the
+rate-limit key back to whoever is being limited.
 
 ### Next.js (Vercel)
 
@@ -111,25 +138,87 @@ Next.js side has no business holding them.
 3. **Set the variables** from the table above.
 4. **Deploy.** The build runs `pip install` and `collectstatic`; it does
    **not** migrate.
-5. **Adopt the schema** — see §4. One command, run once, by hand.
+5. **Adopt the schema** — see §4. Applies to a *new* database only. The
+   current production database is already migrated; skip this for it.
 6. **Create the first operator** — see §5.
 7. **Set `DJANGO_API_URL` on Vercel** to the Railway URL and redeploy.
 
 Steps 1–3 need accounts and a payment method. They are the blocker.
 
-## 4. Adopting the existing schema
+This sequence is the record of how a deployment is built from nothing. The
+live deployment has already been through it — see §4 for what its database
+actually looks like now and what must not be re-run against it.
 
-**This is the step that goes wrong if it is automated.**
+## 4. The schema
 
-`migrate --fake-initial` does **not** work here, and this was verified rather
-than assumed: migration `0001_initial` wraps its `CreateModel` inside
-`SeparateDatabaseAndState`, and Django's soft-apply detection only looks for
-a top-level `CreateModel`. It therefore concludes the migration is unapplied,
-runs the raw SQL, and fails with `type "LeadStatus" already exists`.
+### Current production: already provisioned. Run nothing.
 
-The correct sequence against a database Prisma created:
+**The production Neon database is fully migrated. There is no migration step
+left to perform, and none of the commands in this section should be run
+against it.** Verified by read-only introspection on 2026-09-01:
+
+| Checked | Result |
+| --- | --- |
+| `ProjectLead` | exists, 26 of 26 columns, same order, same types |
+| `LeadStatus` enum | 7 labels, same order |
+| Indexes | 6 of 6 present, under Prisma's names |
+| Triggers / stray constraints | none |
+| `django_migrations` | every migration applied; `showmigrations` shows no `[ ]` |
+| `_prisma_migrations` | `20260831000000_init_project_lead` recorded, finished, not rolled back |
+| Destructive drift | none |
+
+So, concretely, for the database that is live right now:
+
+- **Do not run `prisma migrate deploy`.** `_prisma_migrations` already records
+  the migration as applied. The command has nothing to do, and an earlier note
+  recommending it was written when the table was genuinely absent — that
+  situation no longer exists.
+- **Do not run `manage.py migrate leads 0001 --fake`.** It is already recorded
+  as applied. It is a procedure for a *fresh* environment (below), never a
+  step to repeat against this one.
+- **Do not re-create `ProjectLead` by any route** — not through Prisma, not
+  through Django, not by hand. Both migrations are capable of creating the
+  whole schema, and running either against a database that already has it
+  fails at best and destroys data at worst.
+
+### Why there are two migrations for one table
+
+The same DDL exists twice, deliberately, and the two copies are kept
+consistent:
+
+- `prisma/migrations/20260831000000_init_project_lead/migration.sql` — the
+  Prisma migration.
+- `backend/apps/leads/migrations/0001_initial.py` — the same SQL, verbatim,
+  inside `SeparateDatabaseAndState(database_operations=[RunSQL(...)])`, with
+  the Django model declared in `state_operations`.
+
+Prisma is the writer: leads are created by the public brief route on Vercel.
+Django reads the same table, and `LEADS_WRITE_ENABLED` is `False` so it cannot
+write to it. Django's copy of the DDL exists so a database can be built from
+either side — **exactly one of them may ever run against a given database.**
+
+How production got here, for the record, since it is not what the sequence
+below describes: Django's `0001` ran for real and created the schema, and the
+Prisma journal was afterwards reconciled with `prisma migrate resolve
+--applied` (its row carries `applied_steps_count = 0`, whereas a migration
+Prisma actually executed records `1`). The end state is consistent and
+correct; it simply arrived by the mirror image of the recipe below.
+
+### Fresh environment only: adopting a schema Prisma created
+
+Everything from here applies to a **new** database — a staging environment, a
+rebuild, a Neon branch — where Prisma has created the schema and Django has
+never been pointed at it. It does not apply to current production.
+
+`migrate --fake-initial` does **not** work in that situation, and this was
+verified rather than assumed: migration `0001_initial` wraps its `CreateModel`
+inside `SeparateDatabaseAndState`, and Django's soft-apply detection only
+looks for a top-level `CreateModel`. It therefore concludes the migration is
+unapplied, runs the raw SQL, and fails with `type "LeadStatus" already exists`.
 
 ```bash
+# Only against a NEW database whose schema Prisma built. Never production.
+
 # 1. Look before touching. Confirm the table is the one you think it is.
 psql "$DATABASE_URL" -c '\d "ProjectLead"'
 
@@ -157,8 +246,10 @@ through the enum column, the email index and the timestamp columns correctly.
 ### Never
 
 - `migrate reset` — drops every table.
-- `migrate` without the `--fake` step first — fails, and would create DDL if
-  it did not.
+- Any migration command against current production. It is already migrated;
+  see the top of this section.
+- On a fresh Prisma-built database: `migrate` without the `--fake` step first
+  — fails, and would create DDL if it did not.
 - `makemigrations` against production — generates a migration from drift
   instead of telling you drift exists.
 - Any migration that alters `ProjectLead` while Prisma still owns it.
@@ -174,7 +265,10 @@ DELETE FROM django_migrations WHERE app = 'leads';
 ```
 
 That un-records the adoption and leaves the schema untouched, because
-adoption never touched it.
+adoption never touched it. Note that this is the rollback for a *fake*
+adoption. Production's `leads.0001` really did create the schema, so there the
+same statement would un-record a migration whose DDL is still in place — which
+is a lie to Django, not a rollback.
 
 ## 5. The first operator account
 

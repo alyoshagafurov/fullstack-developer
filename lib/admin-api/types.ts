@@ -47,11 +47,20 @@ export const TIMELINE_LABEL: Record<string, string> = {
   m1_2: '1–2 месяца', flexible: 'гибкие', unsure: 'не определены',
 };
 
-/** A row in the register. Deliberately narrow — no contact detail, no note. */
+/**
+ * A row in the register — enough to triage without opening the lead.
+ *
+ * Mirrors LeadListSerializer exactly. Still absent, deliberately:
+ * `internalNote` and the brief body (goal, description, functionality,
+ * notes), which live only on the detail shape.
+ */
 export interface LeadRow {
   reference: string;
   name: string;
+  email: string;
   projectType: string;
+  budget: string;
+  timeline: string;
   createdAt: string;
   status: LeadStatus;
 }

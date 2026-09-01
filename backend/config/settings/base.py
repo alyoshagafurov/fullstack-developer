@@ -160,6 +160,24 @@ STORAGES = {
 # makes the read-only production phase real rather than a promise.
 LEADS_WRITE_ENABLED = False
 
+# How many proxies sit between a real client and this process.
+#
+# It decides which entry of X-Forwarded-For is trustworthy, and therefore what
+# a rate limit is actually counting. A caller can put anything in that header;
+# only the entries a trusted proxy appended are evidence. With N trusted
+# proxies the real peer is the Nth entry from the right, and everything to the
+# left of it is whatever the caller chose to claim.
+#
+# Zero — the default — means trust none of it and key on the socket address.
+# That is always correct and never forgeable, at the cost of being coarse when
+# a proxy really is in front: every request then shares one bucket. A
+# deployment behind exactly one edge proxy (Railway, Vercel, a single nginx)
+# should set DJANGO_TRUSTED_PROXY_DEPTH=1 so the limit is per client again.
+#
+# The default is 0 rather than 1 for the same reason LEADS_WRITE_ENABLED is
+# False: a settings module that forgets to mention it fails safe.
+TRUSTED_PROXY_DEPTH = int(os.environ.get("DJANGO_TRUSTED_PROXY_DEPTH", "0") or 0)
+
 # ── DRF ───────────────────────────────────────────────────────────────────
 # Session authentication first, as the brief requires it be considered before
 # JWT. The custom admin is reached through a server-side proxy on the Next.js

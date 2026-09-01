@@ -17,6 +17,7 @@
  */
 
 import { revalidatePath } from 'next/cache';
+import { cache } from 'react';
 
 import {
   DJANGO_CSRF_COOKIE, DJANGO_SESSION_COOKIE, readSession, type AdminSession,
@@ -194,10 +195,17 @@ export async function fetchLeads(query: LeadQuery = {}): Promise<ApiResult<Paged
   return request<Paged<LeadRow>>(`/api/v1/admin/leads/${qs ? `?${qs}` : ''}`);
 }
 
-/** Counts per stage — one grouped query rather than seven list calls. */
-export async function fetchSummary(): Promise<ApiResult<LeadSummary>> {
-  return request<LeadSummary>('/api/v1/admin/leads/summary/');
-}
+/** Counts per stage — one grouped query rather than seven list calls.
+ *
+ * Wrapped in React's `cache` so the layout (which needs the NEW count for the
+ * navigation badge) and the Overview page (which needs the whole
+ * distribution) share one request instead of asking Django twice on every
+ * page load. The cache is per-render, so it never serves a stale count.
+ */
+export const fetchSummary = cache(
+  async (): Promise<ApiResult<LeadSummary>> =>
+    request<LeadSummary>('/api/v1/admin/leads/summary/'),
+);
 
 const REFERENCE = /^ALY-\d{4}-[A-Z0-9]{5}$/;
 

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import Sidebar from '@/components/admin/Sidebar';
 import { BackendUnavailable, ResultNotice } from '@/components/admin/StateNotice';
-import { fetchCurrentUser, isBackendConfigured } from '@/lib/admin-api';
+import { fetchCurrentUser, fetchSummary, isBackendConfigured } from '@/lib/admin-api';
 import { readSession } from '@/lib/admin-api/session';
 
 /*
@@ -25,7 +25,9 @@ function Frame({ children }: { children: React.ReactNode }) {
   return (
     <div className="a-shell">
       <div />
-      <main id="main" className="a-main">{children}</main>
+      <main id="main" className="a-main">
+        <div className="a-wrap">{children}</div>
+      </main>
     </div>
   );
 }
@@ -37,8 +39,10 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
     return (
       <Frame>
         <header className="a-head">
-          <h1 className="a-title">Панель</h1>
-          <span className="a-eyebrow">Не настроено</span>
+          <div>
+            <span className="a-eyebrow">Панель</span>
+            <h1 className="a-title">Не настроено</h1>
+          </div>
         </header>
         <BackendUnavailable code="backend_not_configured" />
       </Frame>
@@ -70,34 +74,43 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
     return (
       <Frame>
         <header className="a-head">
-          <h1 className="a-title">Панель</h1>
-          <span className="a-eyebrow">{me.data.user.username}</span>
+          <div>
+            <span className="a-eyebrow">{me.data.user.username}</span>
+            <h1 className="a-title">Панель</h1>
+          </div>
         </header>
         <div className="a-note" data-tone="error" role="status">
           <h2>Доступ не выдан</h2>
-          <p className="m-0">
-            Учётная запись существует, но не входит ни в одну из ролей
-            (ADMIN или VIEWER). Обратитесь к владельцу.
+          <p>
+            Учётная запись существует, но не входит ни в одну из ролей.
+            Обратитесь к владельцу — доступ выдаётся вручную.
           </p>
         </div>
       </Frame>
     );
   }
 
+  // The badge count. Shares one request with Overview via React's cache, and
+  // a failure here must never block the shell — the badge simply stays off.
+  const summary = await fetchSummary();
+  const newCount = summary.status === 'ok' ? summary.data.byStatus.NEW ?? 0 : 0;
+
   return (
     <div className="a-shell">
-      <Sidebar user={me.data.user} />
+      <Sidebar user={me.data.user} newCount={newCount} />
       <main id="main" className="a-main">
-        {/* Said once, at the top of every screen, rather than only on the
-            control that is off. An operator should learn the system's state
-            before they try to change something and fail. */}
-        {!me.data.writesEnabled && (
-          <p className="a-note mb-6" role="status">
-            Режим чтения. Заявки пишет публичная форма; изменение статуса и
-            заметок откроется после переноса владения записью.
-          </p>
-        )}
-        {children}
+        <div className="a-wrap">
+          {/* Said once, at the top of every screen, rather than only on the
+              control that is off. An operator should learn the system's state
+              before they try to change something and fail. */}
+          {!me.data.writesEnabled && (
+            <p className="a-note mb-6" role="status">
+              Режим чтения — заявки пишет публичная форма. Изменение статуса и
+              заметок пока недоступно.
+            </p>
+          )}
+          {children}
+        </div>
       </main>
     </div>
   );

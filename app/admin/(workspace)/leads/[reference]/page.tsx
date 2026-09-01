@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 import OperatorRail from '@/components/admin/OperatorRail';
@@ -11,36 +12,39 @@ import {
 /*
  * The lead.
  *
- * The brief reads as a document — the client's own words at a comfortable
- * measure, in the order they answered them — with the operator's controls in
- * a separate rail. That separation is the whole layout idea: what the client
- * said is a record and cannot be edited; what the operator decides is
- * mutable. Mixing them into one form would blur which is which.
+ * An editorial hierarchy rather than a stack of equal cards. The client's
+ * goal is set large in the serif because it is the one sentence that decides
+ * whether this project is worth pursuing; the description follows at reading
+ * measure; contacts and commercial terms are compact definition lists; and
+ * the provenance timestamps are genuinely small, because they are reference
+ * material nobody reads twice.
  *
- * `internalNote` is rendered only inside the rail, visually quarantined, and
- * only reaches this component because Django returned it to an authenticated
- * session holding `view_projectlead`.
+ * The operator's controls live in a separate rail. That separation is the
+ * layout idea: what the client said is a record and cannot be edited; what
+ * the operator decides is mutable. One form containing both would blur which
+ * is which.
+ *
+ * `internalNote` is rendered only inside the rail and only reaches this
+ * component because Django returned it to an authenticated session holding
+ * `view_projectlead`.
  */
 
 export const dynamic = 'force-dynamic';
 
-function formatDateTime(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+function dt(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleString('ru-RU', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
   });
 }
 
 function Prose({ title, value }: { title: string; value: string }) {
   const empty = !value?.trim();
   return (
-    <section className="a-block">
-      <h2 className="a-block-title">{title}</h2>
-      <p className="a-prose" data-empty={empty}>
-        {empty ? 'Не заполнено' : value}
-      </p>
+    <section className="a-section">
+      <h2 className="a-section-title">{title}</h2>
+      <p className="a-prose" data-empty={empty}>{empty ? 'Не заполнено' : value}</p>
     </section>
   );
 }
@@ -48,11 +52,11 @@ function Prose({ title, value }: { title: string; value: string }) {
 function Contacts({ lead }: { lead: LeadDetail }) {
   const telegram = lead.telegram.replace(/^@/, '');
   return (
-    <section className="a-block">
-      <h2 className="a-block-title">Контакты</h2>
+    <section className="a-section">
+      <h2 className="a-section-title">Клиент</h2>
       <dl className="a-dl">
         <dt>Имя</dt>
-        <dd className="text-ink">{lead.name || '—'}</dd>
+        <dd className="text-[color:var(--ink-50)] text-[length:var(--t-16)]">{lead.name || '—'}</dd>
 
         {lead.company && (<><dt>Компания</dt><dd>{lead.company}</dd></>)}
 
@@ -79,11 +83,9 @@ function Contacts({ lead }: { lead: LeadDetail }) {
   );
 }
 
-export default async function LeadDetailPage(
-  props: {
-    params: Promise<{ reference: string }>;
-  }
-) {
+export default async function LeadDetailPage(props: {
+  params: Promise<{ reference: string }>;
+}) {
   const params = await props.params;
   const reference = decodeURIComponent(params.reference);
   const [result, me] = await Promise.all([fetchLead(reference), fetchCurrentUser()]);
@@ -92,8 +94,12 @@ export default async function LeadDetailPage(
     return (
       <>
         <header className="a-head">
-          <h1 className="a-title">Заявка</h1>
-          <Link href="/admin/leads" className="a-eyebrow a-back hover:text-ink-2">← К списку</Link>
+          <div>
+            <Link href="/admin/leads" className="a-back">
+              <ArrowLeft size={14} aria-hidden strokeWidth={1.75} /> К списку
+            </Link>
+            <h1 className="a-title">Заявка</h1>
+          </div>
         </header>
         <ResultNotice result={result} reference={reference} />
       </>
@@ -107,62 +113,63 @@ export default async function LeadDetailPage(
     && me.data.user.permissions.changeLeads
     && me.data.writesEnabled;
   const readOnlyPhase = me.status === 'ok' && !me.data.writesEnabled;
+
   const projectType = PROJECT_TYPE_LABEL[lead.projectType] ?? lead.projectType;
 
   return (
     <>
       <header className="a-head">
-        <div>
-          <Link href="/admin/leads" className="a-eyebrow a-back hover:text-ink-2 mb-1">
-            ← К списку
+        <div className="min-w-0">
+          <Link href="/admin/leads" className="a-back">
+            <ArrowLeft size={14} aria-hidden strokeWidth={1.75} /> К списку
           </Link>
           <h1 className="a-title tabular-nums">{lead.reference}</h1>
         </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <StatusPill status={lead.status} />
-          <span className="a-eyebrow">{formatDateTime(lead.createdAt)}</span>
+          <span className="a-eyebrow mb-0">{dt(lead.createdAt)}</span>
         </div>
       </header>
 
       <div className="a-detail">
-        <div>
-          <section className="a-block">
-            <h2 className="a-block-title">Проект</h2>
+        <div className="min-w-0">
+          {/* The goal, set as the lead-in. It is the sentence that decides
+              whether this project is worth a reply. */}
+          <section className="a-section">
+            <h2 className="a-section-title">Цель</h2>
+            {lead.goal?.trim()
+              ? <p className="a-lead-in">{lead.goal}</p>
+              : <p className="a-prose" data-empty>Не заполнено</p>}
+          </section>
+
+          <Prose title="Описание" value={lead.description} />
+          <Prose title="Функциональность" value={lead.functionality} />
+
+          <section className="a-section">
+            <h2 className="a-section-title">Проект</h2>
             <dl className="a-dl">
               <dt>Тип</dt>
-              <dd className="text-ink">
+              <dd className="text-[color:var(--ink-50)]">
                 {projectType}
-                {lead.projectType === 'other' && lead.projectTypeOther
-                  && ` — ${lead.projectTypeOther}`}
+                {lead.projectType === 'other' && lead.projectTypeOther && ` — ${lead.projectTypeOther}`}
               </dd>
-
               <dt>Бюджет</dt>
               <dd>{BUDGET_LABEL[lead.budget] ?? lead.budget}</dd>
-
               <dt>Сроки</dt>
               <dd>{TIMELINE_LABEL[lead.timeline] ?? lead.timeline}</dd>
-
-              <dt>Язык брифа</dt>
-              <dd>{lead.locale.toUpperCase()}</dd>
             </dl>
           </section>
 
           <Contacts lead={lead} />
 
-          <Prose title="Цель" value={lead.goal} />
-          <Prose title="Описание" value={lead.description} />
-          <Prose title="Функциональность" value={lead.functionality} />
-
-          <section className="a-block">
-            <h2 className="a-block-title">Референсы</h2>
+          <section className="a-section">
+            <h2 className="a-section-title">Референсы</h2>
             <dl className="a-dl">
               <dt>Текущий сайт</dt>
               <dd>
-                {lead.existingUrl ? (
-                  <a href={lead.existingUrl} target="_blank" rel="noopener noreferrer">
-                    {lead.existingUrl}
-                  </a>
-                ) : '—'}
+                {lead.existingUrl
+                  ? <a href={lead.existingUrl} target="_blank" rel="noopener noreferrer">{lead.existingUrl}</a>
+                  : '—'}
               </dd>
               <dt>Ссылки</dt>
               <dd className="whitespace-pre-wrap">{lead.referenceLinks || '—'}</dd>
@@ -171,14 +178,31 @@ export default async function LeadDetailPage(
 
           <Prose title="Комментарий клиента" value={lead.notes} />
 
-          <section className="a-block">
-            <h2 className="a-block-title">Служебное</h2>
-            <dl className="a-dl">
-              <dt>Заполнение брифа</dt>
-              <dd>{formatDateTime(lead.startedAt)} → {formatDateTime(lead.completedAt)}</dd>
-              <dt>Обновлено</dt>
-              <dd>{formatDateTime(lead.updatedAt)}</dd>
-            </dl>
+          {/* Provenance. Deliberately the smallest type on the screen. */}
+          <section className="a-section">
+            <h2 className="a-section-title">Служебное</h2>
+            <div className="a-meta-grid">
+              <div>
+                <span className="a-meta-k">Язык брифа</span>
+                <span className="a-meta-v">{lead.locale.toUpperCase()}</span>
+              </div>
+              <div>
+                <span className="a-meta-k">Начат</span>
+                <span className="a-meta-v">{dt(lead.startedAt)}</span>
+              </div>
+              <div>
+                <span className="a-meta-k">Завершён</span>
+                <span className="a-meta-v">{dt(lead.completedAt)}</span>
+              </div>
+              <div>
+                <span className="a-meta-k">Создан</span>
+                <span className="a-meta-v">{dt(lead.createdAt)}</span>
+              </div>
+              <div>
+                <span className="a-meta-k">Обновлён</span>
+                <span className="a-meta-v">{dt(lead.updatedAt)}</span>
+              </div>
+            </div>
           </section>
         </div>
 

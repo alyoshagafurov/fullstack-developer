@@ -122,3 +122,75 @@ class LoginThrottleTests(TestCase):
 
         self.assertEqual(statuses[:10], [401] * 10)
         self.assertEqual(statuses[10], 429)
+
+    def test_a_rotating_forwarded_for_cannot_buy_more_attempts(self):
+        """The header the caller controls must not choose the bucket.
+
+        X-Forwarded-For is appended to by each proxy, so a caller who sends
+        their own arrives with the claim on the left and the truth on the
+        right. Keying on the left-most entry means a new header is a new
+        client, and the guessing budget resets on every request — the whole
+        limit gone, on the one endpoint that takes a password.
+        """
+        statuses = []
+        for attempt in range(14):
+            response = self.client.post(
+                LOGIN,
+                data=json.dumps({"username": "owner", "password": "wrong"}),
+                content_type="application/json",
+                # A different claimed origin every single time.
+                HTTP_X_FORWARDED_FOR=f"203.0.113.{attempt}",
+            )
+            statuses.append(response.status_code)
+
+        self.assertIn(429, statuses, "rotating X-Forwarded-For bypassed the limit")
+        self.assertEqual(statuses[:10], [401] * 10)
+        self.assertTrue(all(code == 429 for code in statuses[10:]))
+
+    @override_settings(TRUSTED_PROXY_DEPTH=1)
+    def test_one_trusted_proxy_keys_on_the_entry_it_appended(self):
+        """Configured depth restores per-client limiting without trusting the caller.
+
+        Behind one edge proxy the real peer is the right-most entry — the one
+        that proxy wrote. Two different clients through it get two buckets, and
+        a forged entry to the left of it changes nothing.
+        """
+        def attempt(chain: str) -> int:
+            return self.client.post(
+                LOGIN,
+                data=json.dumps({"username": "owner", "password": "wrong"}),
+                content_type="application/json",
+                HTTP_X_FORWARDED_FOR=chain,
+            ).status_code
+
+        # Ten from one real client, each carrying a different forged prefix.
+        for number in range(10):
+            self.assertEqual(attempt(f"203.0.113.{number}, 198.51.100.7"), 401)
+        self.assertEqual(attempt("203.0.113.99, 198.51.100.7"), 429)
+
+        # A genuinely different client, behind the same proxy, is unaffected.
+        self.assertEqual(attempt("203.0.113.99, 198.51.100.8"), 401)
+
+    @override_settings(TRUSTED_PROXY_DEPTH=1)
+    def test_a_chain_shorter_than_the_configured_depth_is_discarded(self):
+        """A missing header means the request did not arrive the expected way.
+
+        Falling back to the socket address is the safe reading: it cannot be
+        forged, and it never silently promotes a caller-supplied entry into the
+        position a trusted proxy was supposed to fill.
+        """
+        from django.test import RequestFactory
+
+        from apps.accounts.throttling import LoginRateThrottle
+
+        request = RequestFactory().post(LOGIN)
+        request.META["REMOTE_ADDR"] = "10.0.0.5"
+        throttle = LoginRateThrottle()
+
+        # No header at all.
+        self.assertEqual(throttle.client_ident(request), "10.0.0.5")
+
+        # A chain too short to contain the entry a trusted proxy would have
+        # written: the single value present is the caller's own claim.
+        request.META["HTTP_X_FORWARDED_FOR"] = ""
+        self.assertEqual(throttle.client_ident(request), "10.0.0.5")

@@ -90,11 +90,11 @@ export default function OperatorRail({
 
   return (
     <div className="a-rail">
-      <div className="a-panel mb-5">
+      <div className="a-panel mb-6">
         <div className="a-panel-head">
-          <h2 className="a-block-title m-0">Статус</h2>
+          <h2 className="a-panel-title">Статус</h2>
         </div>
-        <div className="p-[18px]">
+        <div className="p-6 pt-0">
           <label htmlFor="lead-status" className="sr-only">Статус заявки</label>
           <select
             id="lead-status"
@@ -127,10 +127,13 @@ export default function OperatorRail({
 
       <div className="a-panel">
         <div className="a-panel-head">
-          <h2 className="a-block-title m-0">Внутренняя заметка</h2>
+          <h2 className="a-panel-title">Внутренняя заметка</h2>
         </div>
-        <div className="p-[18px]">
+        <div className="p-6 pt-0">
           <div className="a-private">
+            <span className="a-private-tag">
+              <span aria-hidden>●</span> Только для вас
+            </span>
             <label htmlFor="lead-note" className="sr-only">Внутренняя заметка</label>
             <textarea
               id="lead-note"

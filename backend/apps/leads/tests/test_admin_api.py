@@ -77,13 +77,54 @@ class AdminRoleTests(TestCase):
         rows = response.json()["results"]
         self.assertEqual(rows[0]["reference"], self.lead.reference)
 
-    def test_list_row_withholds_the_internal_note_and_the_brief_body(self):
-        """The list is an index, not a data dump."""
+    def test_list_row_carries_exactly_the_triage_fields(self):
+        """The register is an index, not a data dump.
+
+        Widened to carry email, budget and timeline so an operator can triage
+        without opening every lead. The brief body and the private note stay
+        on the detail shape — asserting the exact set is what stops the list
+        quietly growing into a bulk export.
+        """
         row = self.client.get(LIST_URL).json()["results"][0]
-        self.assertEqual(set(row), {"reference", "name", "projectType",
-                                    "createdAt", "status"})
-        self.assertNotIn("internalNote", row)
-        self.assertNotIn("email", row)
+        self.assertEqual(set(row), {
+            "reference", "name", "email",
+            "projectType", "budget", "timeline",
+            "createdAt", "status",
+        })
+
+    def test_list_row_still_withholds_the_note_and_the_brief_body(self):
+        row = self.client.get(LIST_URL).json()["results"][0]
+        for withheld in ("internalNote", "goal", "description",
+                         "functionality", "notes", "submissionId",
+                         "telegram", "whatsapp", "company"):
+            self.assertNotIn(withheld, row)
+
+    def test_list_returns_the_real_stored_values(self):
+        """No defaults, no placeholders — whatever the visitor submitted."""
+        row = self.client.get(LIST_URL).json()["results"][0]
+        self.assertEqual(row["email"], self.lead.email)
+        self.assertEqual(row["budget"], self.lead.budget)
+        self.assertEqual(row["timeline"], self.lead.timeline)
+
+    def test_widening_the_row_adds_no_query_per_row(self):
+        """The three new fields are scalar columns already in the queryset."""
+        for index in range(9):
+            make_lead(reference=f"ALY-2026-N{index:04d}", submission_id=f"n{index}")
+
+        before = len(self.client.get(LIST_URL).json()["results"])
+        self.assertEqual(before, 10)
+
+        # The query count must not scale with the number of rows.
+        with self.assertNumQueries(self._list_query_count()):
+            self.client.get(LIST_URL)
+
+    def _list_query_count(self) -> int:
+        """Baseline measured on a single row, so the assertion is relative."""
+        from django.test.utils import CaptureQueriesContext
+        from django.db import connection
+        with CaptureQueriesContext(connection) as ctx:
+            self.client.get(f"{LIST_URL}?page=1")
+        return len(ctx)
 
     def test_detail_includes_the_internal_note(self):
         response = self.client.get(detail_url(self.lead.reference))
