@@ -43,7 +43,7 @@ export default function Identity() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(90deg, #222831 0%, rgba(34,40,49,0.72) 34%, rgba(34,40,49,0.18) 72%, rgba(34,40,49,0.45) 100%)',
+              'linear-gradient(90deg, #0c0d0f 0%, rgba(12,13,15,0.72) 34%, rgba(12,13,15,0.18) 72%, rgba(12,13,15,0.45) 100%)',
           }}
         />
         <div
@@ -51,7 +51,7 @@ export default function Identity() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(34,40,49,0.82) 0%, rgba(34,40,49,0.1) 30%, rgba(34,40,49,0.55) 78%, #222831 100%)',
+              'linear-gradient(180deg, rgba(12,13,15,0.82) 0%, rgba(12,13,15,0.1) 30%, rgba(12,13,15,0.55) 78%, #0c0d0f 100%)',
           }}
         />
       </div>
@@ -64,7 +64,7 @@ export default function Identity() {
         className="absolute inset-0 pointer-events-none lg:hidden"
         style={{
           background:
-            'linear-gradient(180deg, rgba(34,40,49,0.60) 0%, rgba(34,40,49,0.34) 32%, rgba(34,40,49,0.88) 66%, #222831 100%)',
+            'linear-gradient(180deg, rgba(12,13,15,0.60) 0%, rgba(12,13,15,0.34) 32%, rgba(12,13,15,0.88) 66%, #0c0d0f 100%)',
         }}
       />
 

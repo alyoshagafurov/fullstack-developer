@@ -88,7 +88,7 @@ export default function Principles() {
                 <div
                   aria-hidden
                   className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'rgba(34,40,49,0.32)' }}
+                  style={{ background: 'rgba(12,13,15,0.42)' }}
                 />
               </div>
               <span className="label text-[11px] block mt-[12px]">

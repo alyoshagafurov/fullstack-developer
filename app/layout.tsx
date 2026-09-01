@@ -66,7 +66,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#191817',
+  // Matches --base. This paints the browser chrome on mobile, so a stale
+  // value here shows as a coloured band above a black page.
+  themeColor: '#0C0D0F',
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,

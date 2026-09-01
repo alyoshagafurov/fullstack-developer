@@ -25,8 +25,10 @@ import { useI18n } from '@/lib/i18n';
 export default function Technology() {
   const { t } = useI18n();
 
+  /* Lifted, not sunk — see Method.tsx. The footer keeps the deepest value
+     so the page still visibly ends. */
   return (
-    <section id="stack" className="relative beat-tight bg-base-deep overflow-x-clip">
+    <section id="stack" className="relative beat-tight bg-surface-low overflow-x-clip">
       <Shell>
         <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[48px] md:mb-[64px]">
           <span className="label">07 — {t.stack.eyebrow}</span>
@@ -48,7 +50,7 @@ export default function Technology() {
               <div
                 aria-hidden
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: 'rgba(26,31,38,0.30)' }}
+                style={{ background: 'rgba(7,8,9,0.38)' }}
               />
             </div>
           </Reveal>

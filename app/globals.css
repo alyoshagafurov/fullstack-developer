@@ -60,16 +60,43 @@
 
 :root {
   /* ── Colour ────────────────────────────────────────────────────────────
-   * The approved four. #222831 is the canvas, #393E46 is depth, #EEEEEE is
-   * light, and #00ADB5 is the only saturated value on the site — so anything
-   * turquoise means "this does something". */
-  --base: #222831;
-  --base-deep: #1a1f26;
-  --surface: #393e46;
-  --surface-low: #2b313a;
+   * Matte black is the site. Not #000 — pure black reads as a switched-off
+   * screen, and on an OLED phone it makes the panel physically stop emitting,
+   * so edges crush and the page looks like a hole rather than a material.
+   * #0C0D0F keeps a hair of tone in it: the same difference as matte paint
+   * against a void.
+   *
+   * The greys are no longer the canvas; they are things ON the canvas.
+   * #222831 and #393E46 stayed in the system — demoted from background to
+   * surface, which is what they were always better at.
+   *
+   *   base         the site. Almost everything.
+   *   base-deep    the floor — footer, overlays, deepest areas
+   *   surface-low  barely lifted; panels that should not announce themselves
+   *   surface      a real panel, readable as a separate plane
+   *   surface-high frames and graphic blocks
+   *
+   * #00ADB5 remains the ONLY saturated value anywhere on the site, so
+   * anything blue means "this does something". Against black it reads
+   * considerably brighter than it did against #222831 — which is a reason to
+   * use it on fewer elements, not more.
+   *
+   * These now match tailwind.config.js exactly. They previously disagreed:
+   * Tailwind already described this matte-black scheme while `:root` still
+   * carried the old grey canvas, so `bg-base` and `var(--base)` were two
+   * different colours. */
+  --base: #0c0d0f;
+  --base-deep: #070809;
+  --surface-low: #15181c;
+  --surface: #222831;
+  --surface-high: #393e46;
   --ink: #eeeeee;
   --ink-2: rgba(238, 238, 238, 0.66);
-  --ink-3: rgba(238, 238, 238, 0.42);
+  /* Raised from 0.42. On the old grey canvas this sat at 3.2:1 and on black
+     it reached 3.67 — still short of 4.5:1, and it carries the micro labels,
+     which are 11–12px. 0.50 clears AA at 4.6:1 while staying quiet enough to
+     read as secondary. The black canvas is what made the headroom available. */
+  --ink-3: rgba(238, 238, 238, 0.5);
   --signal: #00adb5;
   --signal-deep: #00868d;
   --line: rgba(238, 238, 238, 0.12);
@@ -235,7 +262,7 @@ a { color: inherit; text-decoration: none; }
 html { scrollbar-width: thin; scrollbar-color: var(--line-2) var(--base); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--base); }
-::-webkit-scrollbar-thumb { background: var(--surface); border: 3px solid var(--base); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: var(--surface-high); border: 3px solid var(--base); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--line-2); }
 
 @media (prefers-reduced-motion: reduce) {

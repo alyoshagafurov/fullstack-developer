@@ -31,11 +31,15 @@ module.exports = {
           low: '#15181C', // barely lifted off the black
           high: '#393E46', // panels, frames, graphic blocks
         },
-        /* Light — primary text, and inverted blocks */
+        /* Light — primary text, and inverted blocks.
+           These match the CSS custom properties in globals.css exactly. They
+           used to differ by a few points of alpha, which meant `text-ink-3`
+           and `color: var(--ink-3)` were two different greys depending on
+           which system a component happened to use. */
         ink: {
           DEFAULT: '#EEEEEE',
-          2: 'rgba(238,238,238,0.62)', // secondary text
-          3: 'rgba(238,238,238,0.38)', // meta, disabled
+          2: 'rgba(238,238,238,0.66)', // secondary text
+          3: 'rgba(238,238,238,0.50)', // meta, disabled — 4.6:1 on --base
         },
         /* The one signal colour. Small doses only. */
         signal: {
@@ -44,8 +48,8 @@ module.exports = {
           wash: 'rgba(0,173,181,0.12)', // faint backing
         },
         line: {
-          DEFAULT: 'rgba(238,238,238,0.10)',
-          2: 'rgba(238,238,238,0.22)',
+          DEFAULT: 'rgba(238,238,238,0.12)',
+          2: 'rgba(238,238,238,0.24)',
         },
       },
 

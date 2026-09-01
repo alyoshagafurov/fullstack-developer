@@ -25,8 +25,14 @@ import { useI18n } from '@/lib/i18n';
 export default function Method() {
   const { t } = useI18n();
 
+  /*
+   * The band is lifted a step off the black rather than sunk into it.
+   * Against the old #222831 canvas a deeper value read clearly; against
+   * matte black there is no room left below, so the punctuation now comes
+   * from a plane slightly nearer the viewer instead.
+   */
   return (
-    <section id="process" className="relative beat bg-base-deep overflow-x-clip">
+    <section id="process" className="relative beat bg-surface-low overflow-x-clip">
       <Shell>
         <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[64px] md:mb-[128px]">
           <span className="label">04 — {t.process.eyebrow}</span>
