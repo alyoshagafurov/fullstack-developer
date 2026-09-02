@@ -95,16 +95,17 @@ export default function Identity() {
             <div className="lg:col-span-4 flex flex-wrap gap-2.5 lg:flex-nowrap lg:justify-end">
               <Link
                 href="/work"
-                className="inline-flex items-center rounded-pill bg-ink px-5 py-2.5 text-[13px]
-                           font-medium text-base transition-colors duration-200 hover:bg-signal-deep"
+                className="inline-flex min-h-[44px] items-center rounded-pill bg-ink px-5 py-2.5
+                           text-[13px] font-medium text-base transition-colors duration-200
+                           hover:bg-signal-deep"
               >
                 {t.hero.ctaWork}
               </Link>
               <Link
                 href="/start-project"
-                className="inline-flex items-center rounded-pill border border-line-2 px-5 py-2.5
-                           text-[13px] font-medium text-ink transition-colors duration-200
-                           hover:border-ink hover:bg-[rgba(255,255,255,0.06)]"
+                className="inline-flex min-h-[44px] items-center rounded-pill border border-line-2
+                           px-5 py-2.5 text-[13px] font-medium text-ink transition-colors
+                           duration-200 hover:border-ink hover:bg-[rgba(255,255,255,0.06)]"
               >
                 {t.hero.ctaContact}
               </Link>

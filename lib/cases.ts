@@ -33,6 +33,8 @@ export interface CaseRow {
   year: string;
   /** First screenshot, or '' when the case has none yet. */
   cover: string;
+  /** ISO-8601. The register never renders it; the sitemap needs it. */
+  updatedAt: string;
 }
 
 /** The whole record. */
@@ -42,7 +44,6 @@ export interface CaseDetail extends CaseRow {
   published: boolean;
   position: number;
   createdAt: string;
-  updatedAt: string;
 }
 
 /* Prisma hands back Date objects and a screenshots array; the pages want ISO

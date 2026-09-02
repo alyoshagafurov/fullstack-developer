@@ -1,100 +1,71 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import Shell from '@/components/ui/Shell';
+
+import Panel from '@/components/ui/Panel';
 import Reveal from '@/components/ui/Reveal';
+import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 06 — Principles.
+ * Principles — the statements as panels.
  *
- * Compositional idea: A MANIFESTO PAGE.
+ * Was a manifesto page: each statement set large in the serif with a
+ * progressive indent, and hovering one dimmed the rest. Both devices go. The
+ * indent depended on there being no grid to align to, and the dimming spent a
+ * client-side state hook to make eleven lines of text slightly more
+ * theatrical — the references hold statements in blocks and let the reader
+ * choose where to look.
  *
- * No heading, no eyebrow row, no supporting column. The statements themselves
- * are the section: set large in the serif, one per line, with a progressive
- * indent so the left edge steps away down the page. The supporting sentence
- * sits directly underneath in small sans — extreme scale contrast inside a
- * single unit rather than across columns.
- *
- * A narrow vertical photograph runs down the outer margin as a stripe. It is
- * 736px wide in the source, which is exactly right for a column this narrow
- * and would be wrong for anything larger.
- *
- * Pointing at one statement dims the rest — state-driven, so it works from the
- * keyboard too, and it only touches opacity.
+ * The photograph keeps its narrow column, now as a panel spanning the row's
+ * full height. Its source is 736×920, which is right for a column this width
+ * and wrong for anything larger.
  */
 export default function Principles() {
   const { t } = useI18n();
-  const [active, setActive] = useState<number | null>(null);
 
   return (
     <section id="principles" className="relative beat-tight overflow-x-clip">
       <Shell>
-        <h2 className="sr-only">{t.why.title}</h2>
-        <div className="grid-12 gap-y-[48px]">
-          {/* the manifesto */}
-          <ul
-            className="col-span-12 lg:col-span-9"
-            onMouseLeave={() => setActive(null)}
-          >
-            {t.why.items.map((item, i) => {
-              const dimmed = active !== null && active !== i;
-              return (
-                <Reveal as="li" key={item.t} delay={i % 4}>
-                  <div
-                    tabIndex={0}
-                    onMouseEnter={() => setActive(i)}
-                    onFocus={() => setActive(i)}
-                    onBlur={() => setActive(null)}
-                    style={{ paddingLeft: `${Math.min(i, 5) * 3}%` }}
-                    className={`py-[16px] md:py-[24px] outline-none transition-opacity duration-300
-                                focus-visible:ring-1 focus-visible:ring-signal/70
-                                focus-visible:ring-offset-4 focus-visible:ring-offset-base
-                                ${dimmed ? 'opacity-25' : 'opacity-100'}`}
-                  >
-                    <h3 className="display text-[clamp(1.75rem,4.2vw,3.5rem)] leading-[1.02] text-ink">
-                      {item.t}
-                      <span
-                        aria-hidden
-                        className={`transition-opacity duration-300 ${
-                          active === i ? 'text-signal opacity-100' : 'opacity-0'
-                        }`}
-                      >
-                        .
-                      </span>
-                    </h3>
-                    <p className="text-[13px] leading-[1.6] text-ink-3 mt-[8px] max-w-[44ch]">
-                      {item.d}
-                    </p>
-                  </div>
-                </Reveal>
-              );
-            })}
+        <header className="mb-8 md:mb-10">
+          <span className="label">
+            {String(t.why.items.length).padStart(2, '0')} принципов
+          </span>
+          <h2 className="display text-d-s text-ink mt-3">{t.why.title}</h2>
+        </header>
+
+        <div className="grid gap-3 lg:grid-cols-4">
+          <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:col-span-3">
+            {t.why.items.map((item, index) => (
+              <Reveal as="li" key={item.t} delay={index % 4}>
+                <Panel className="h-full p-6 md:p-7">
+                  <h3 className="m-0 text-[17px] font-medium leading-tight tracking-tight text-ink">
+                    {item.t}
+                  </h3>
+                  <p className="m-0 mt-3 text-[14px] leading-[1.6] text-ink-2">{item.d}</p>
+                </Panel>
+              </Reveal>
+            ))}
           </ul>
 
-          {/* the stripe — a narrow column at a size the source actually supports */}
-          <Reveal className="hidden lg:block col-span-2 col-start-11">
-            <div className="sticky top-[128px]">
-              <div className="relative aspect-[736/920] w-full overflow-hidden">
+          <Reveal className="hidden lg:block">
+            <Panel className="h-full overflow-hidden p-0">
+              <div className="relative h-full min-h-[320px] w-full">
                 <Image
                   src="/lifestyle-macbook.jpg"
                   alt="Рабочее место: планшет, наушники и часы на тёмном дереве"
                   fill
                   quality={84}
-                  sizes="16vw"
+                  sizes="320px"
                   className="object-cover"
                 />
                 <div
                   aria-hidden
-                  className="absolute inset-0 pointer-events-none"
+                  className="pointer-events-none absolute inset-0"
                   style={{ background: 'rgba(12,13,15,0.42)' }}
                 />
               </div>
-              <span className="label text-[11px] block mt-[12px]">
-                {String(t.why.items.length).padStart(2, '0')} принципов
-              </span>
-            </div>
+            </Panel>
           </Reveal>
         </div>
       </Shell>

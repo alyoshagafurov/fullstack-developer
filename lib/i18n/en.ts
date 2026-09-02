@@ -11,6 +11,8 @@ export const en: Dict = {
   },
   marquee: { title: 'The stack I build with' },
   stats: {
+    eyebrow: 'Numbers',
+    title: 'The work, in short',
     items: [
       { value: 30, suffix: '+', label: 'projects delivered' },
       { value: 3, suffix: '+', label: 'years building' },

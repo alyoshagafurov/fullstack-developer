@@ -1,74 +1,57 @@
 'use client';
 
-import Shell from '@/components/ui/Shell';
+import Panel from '@/components/ui/Panel';
 import Reveal from '@/components/ui/Reveal';
-import { projects } from '@/lib/projects';
+import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 08 — Proof.
+ * Proof — the figures, as a bento row.
  *
- * Compositional idea: THE NUMBERS ARE THE PAGE.
+ * Two changes, and the second matters more than the look.
  *
- * No heading and no quote block. Four figures are set at display scale in an
- * uneven two-column arrangement, each dropped to a different height, so the
- * block reads as a scoreboard rather than a stat bar. The project outcomes
- * that used to be the headline are demoted to a caption strip along the
- * bottom rule — the exact inverse of the previous version.
+ * The scoreboard was four numerals dropped to uneven heights. That reads as a
+ * composition rather than a grid, so it is now four panels of equal weight
+ * with the figure still carrying the scale inside each one.
  *
- * CONTENT NOTE: the dictionary's `testimonials` are placeholders (the original
- * implementation carried a TODO to replace them with real reviews), so they
- * are still not rendered. Everything here is a shipped project with a live URL
- * or a figure the owner stands behind.
+ * The outcome strip along the bottom is gone. It listed case titles and their
+ * headline results, pulled from the hard-coded `lib/projects.ts` — which is
+ * both case content on the landing page, where cases no longer belong, and a
+ * second source of truth that would drift the moment a case is edited in the
+ * admin. Cases live on /work now, and they come from the database.
+ *
+ * CONTENT NOTE, unchanged: the dictionary's `testimonials` entries are
+ * placeholders, so no quote is rendered. Only figures the owner stands behind.
  */
 export default function Proof() {
   const { t } = useI18n();
 
-  const outcomes = projects
-    .map((p) => ({ meta: p, case: t.cases[p.slug] }))
-    .filter((o) => o.case?.result?.value);
-
-  /* Each figure sits at its own height — the drop is the composition. */
-  const drop = ['lg:mt-0', 'lg:mt-[96px]', 'lg:mt-[32px]', 'lg:mt-[128px]'];
-
   return (
     <section id="proof" className="relative beat">
       <Shell>
-        <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[64px] md:mb-[96px]">
-          <span className="label">08 — {t.testimonials.eyebrow}</span>
-        </div>
+        {/* The figures' own heading, not the testimonials'. This block used to
+            carry "Отзывы / Что говорят клиенты" as a screen-reader-only title,
+            which was survivable while it was invisible; promoting it to a
+            visible header made the page promise quotes and then hand over
+            statistics. The quotes are still placeholders and still unrendered. */}
+        <header className="mb-8 md:mb-10">
+          <span className="label">{t.stats.eyebrow}</span>
+          <h2 className="display text-d-s text-ink mt-3">{t.stats.title}</h2>
+        </header>
 
-        <h2 className="sr-only">{t.testimonials.title}</h2>
-
-        {/* the scoreboard */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-[24px] gap-y-[48px] mb-[96px] md:mb-[128px]">
-          {t.stats.items.map((s, i) => (
-            <Reveal key={s.label} delay={i} className={drop[i % drop.length]}>
-              <div className="display text-[clamp(3.5rem,9vw,8rem)] leading-[0.85] text-ink tabular-nums">
-                {s.value}
-                <span className="text-signal">{s.suffix}</span>
-              </div>
-              <p className="text-[13px] leading-[1.5] text-ink-3 mt-[16px] max-w-[16ch]">
-                {s.label}
-              </p>
+        <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 lg:grid-cols-4">
+          {t.stats.items.map((stat, index) => (
+            <Reveal as="li" key={stat.label} delay={index % 3}>
+              <Panel className="h-full p-6 md:p-7">
+                <div className="display text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] text-ink tabular-nums">
+                  {stat.value}
+                  <span className="text-ink-2">{stat.suffix}</span>
+                </div>
+                <p className="m-0 mt-4 text-[13px] leading-[1.5] text-ink-2">{stat.label}</p>
+              </Panel>
             </Reveal>
           ))}
-        </div>
-
-        {/* the outcomes, demoted to a caption strip */}
-        <Reveal>
-          <ul className="border-t border-line grid sm:grid-cols-2 lg:grid-cols-5">
-            {outcomes.map((o) => (
-              <li
-                key={o.meta.slug}
-                className="border-b lg:border-b-0 lg:border-r border-line last:border-r-0 py-[16px] lg:py-[24px] lg:px-[16px] first:lg:pl-0"
-              >
-                <span className="display text-[17px] text-ink block">{o.case.result.value}</span>
-                <span className="label text-[11px] block mt-[8px]">{o.case.title}</span>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+        </ul>
       </Shell>
     </section>
   );

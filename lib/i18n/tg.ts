@@ -13,6 +13,8 @@ export const tg: Dict = {
   },
   marquee: { title: 'Технологияҳое, ки бо онҳо кор мекунам' },
   stats: {
+    eyebrow: 'Рақамҳо',
+    title: 'Мухтасар дар бораи кор',
     items: [
       { value: 30, suffix: '+', label: 'лоиҳаҳои иҷрошуда' },
       { value: 3, suffix: '+', label: 'сол дар барномасозӣ' },

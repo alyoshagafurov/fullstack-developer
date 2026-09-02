@@ -1,93 +1,85 @@
 'use client';
 
-import Shell from '@/components/ui/Shell';
-import Logo from '@/components/ui/Logo';
 import Action from '@/components/ui/Action';
+import Logo from '@/components/ui/Logo';
+import Panel from '@/components/ui/Panel';
 import Reveal from '@/components/ui/Reveal';
+import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 09 — Start a project. The last page of the story.
+ * Start a project — the close.
  *
- * Composition: it answers the Hero. The opening set the name at display scale
- * over a photograph on matte black; the close sets the invitation at the same
- * scale over nothing at all — the page empties out, and the only things left
- * are the words, the wordmark and one turquoise action.
+ * It still answers the hero: the opening sets the name at display scale inside
+ * a panel, and this sets the invitation at the same scale inside another. What
+ * changes is that the finale is no longer an empty page. In a bento layout an
+ * un-panelled block does not read as deliberate silence — it reads as a
+ * section someone forgot to finish.
  *
- * Deliberately no inverted light block here: after eight sections of black,
- * the finale is stronger as silence than as a flashbulb. The signal colour on
- * the single button is the loudest thing on the page because everything around
- * it is quiet.
+ * So the invitation is one wide panel and the channels sit beside it as a
+ * ledger. The action keeps its solid fill and is the brightest thing here,
+ * because everything around it is a hairline.
  */
 export default function StartProject() {
   const { t } = useI18n();
   const c = t.contact;
 
   return (
-    <section id="start" className="relative beat-wide overflow-x-clip">
-      {/* the same dotted field that opens the site, mirrored to the left */}
-      <div
-        aria-hidden
-        className="dot-field pointer-events-none absolute left-0 bottom-0 h-[40vh] w-[52vw] opacity-20
-                   [mask-image:radial-gradient(70%_70%_at_10%_90%,#000,transparent)]"
-      />
-
+    <section id="start" className="relative beat overflow-x-clip">
       <Shell className="relative">
-        <Reveal>
-          <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-3">
-            09 / {c.eyebrow}
-          </span>
-        </Reveal>
+        <div className="grid gap-3 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <Panel className="flex h-full flex-col justify-between p-6 md:p-9">
+              <div>
+                <span className="label">{c.eyebrow}</span>
+                {/* Russian copy wraps, so this holds a safe leading rather than
+                    the token's tight display value — descenders collided. */}
+                <h2 className="display text-d-m text-ink mt-4 max-w-[16ch] leading-[1.06]">
+                  {c.title1}
+                  <br />
+                  <span className="text-ink-2">{c.title2}</span>
+                </h2>
+              </div>
 
-        <Reveal delay={1}>
-          {/* Russian copy wraps, so this holds a safe leading rather than the
-              token's tight display value — collided descenders otherwise. */}
-          <h2 className="display text-d-l text-ink mt-10 leading-[1.04] max-w-[16ch]">
-            {c.title1}
-            <br />
-            <span className="text-ink-2">{c.title2}</span>
-          </h2>
-        </Reveal>
-
-        <div className="grid-12 gap-y-12 items-end mt-16 md:mt-24">
-          <Reveal delay={2} className="col-span-12 lg:col-span-5">
-            <p className="text-lead text-ink-2 max-w-sm mb-10">{c.sub}</p>
-            <Action href="/start-project" variant="signal">{t.nav.cta}</Action>
+              <div className="mt-10">
+                <p className="mb-7 max-w-sm text-[15px] leading-[1.65] text-ink-2">{c.sub}</p>
+                <Action href="/start-project" variant="signal">
+                  {t.nav.cta}
+                </Action>
+              </div>
+            </Panel>
           </Reveal>
 
-          {/* channels as a mono ledger, aligned to the right margin */}
-          <Reveal delay={3} className="col-span-12 lg:col-span-5 lg:col-start-8">
-            <ul className="border-t border-line">
-              {c.channels.map((ch) => (
-                <li key={ch.label} className="border-b border-line">
-                  <a
-                    href={ch.href}
-                    {...(ch.href.startsWith('http')
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    className="group flex items-baseline justify-between gap-4 py-4"
-                  >
-                    <span className="font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-ink-3">
-                      {ch.label}
-                    </span>
-                    <span className="text-body text-ink-2 group-hover:text-signal transition-colors">
-                      {ch.value}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <Reveal delay={1} className="lg:col-span-5">
+            <Panel className="h-full px-6 py-2 md:px-7">
+              <ul className="m-0 list-none p-0">
+                {c.channels.map((channel) => (
+                  <li key={channel.label} className="border-b border-line last:border-b-0">
+                    <a
+                      href={channel.href}
+                      {...(channel.href.startsWith('http')
+                        ? { target: '_blank', rel: 'noopener noreferrer' }
+                        : {})}
+                      className="group flex min-h-[44px] items-baseline justify-between gap-4 py-4"
+                    >
+                      <span className="label text-[10px]">{channel.label}</span>
+                      <span className="text-[14px] text-ink-2 transition-colors group-hover:text-ink">
+                        {channel.value}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
           </Reveal>
         </div>
 
-        {/* the wordmark signs off the story */}
-        <Reveal delay={4}>
-          <div className="mt-rhythm-s flex items-center gap-6">
-            <Logo className="h-6 md:h-8 w-auto opacity-80" />
+        {/* The wordmark signs off the story. */}
+        <Reveal delay={2}>
+          <div className="mt-10 flex items-center gap-6">
+            <Logo className="h-6 w-auto opacity-80 md:h-7" />
             <span aria-hidden className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-ink-3">
-              Dushanbe · Tajikistan
-            </span>
+            <span className="label text-[10px]">Dushanbe · Tajikistan</span>
           </div>
         </Reveal>
       </Shell>

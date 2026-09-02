@@ -1,88 +1,86 @@
 'use client';
 
 import Image from 'next/image';
-import Shell from '@/components/ui/Shell';
+
+import Panel from '@/components/ui/Panel';
 import Reveal from '@/components/ui/Reveal';
+import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 07 — Technology.
+ * Technology — one panel per group of the stack.
  *
- * Compositional idea: A COLOPHON.
+ * Was a colophon: the whole stack set as a single run of large serif text with
+ * the group names dropped inline. It read well, and it does not survive the
+ * move to monochrome bento — the effect depended on the serif and on having no
+ * grid at all.
  *
- * The stack is set as one continuous run of large serif text — a single
- * paragraph, not rows and not chips. Group names are dropped inline as small
- * sans markers inside the flow, so the block reads like the credits page at
- * the back of a magazine. There is no heading and no grid: the paragraph is
- * the composition, and the only structure is where the lines happen to break.
+ * Each group is now a panel and each tool a chip inside it, which is also the
+ * more useful shape: a visitor scanning for one technology finds it in a
+ * labelled block instead of mid-sentence.
  *
- * The toolkit photograph overlaps the text block's top-right corner rather
- * than sitting beside it. At 736px wide the source comfortably carries a
- * column this size and nothing larger.
- *
- * Every name comes from the dictionary; nothing here is invented.
+ * The toolkit photograph becomes a tall cell at the end of the row rather than
+ * an object overlapping a corner. Its source is 736×1307, so a narrow portrait
+ * panel is the one place it goes without being upscaled.
  */
 export default function Technology() {
   const { t } = useI18n();
 
-  /* Lifted, not sunk — see Method.tsx. The footer keeps the deepest value
-     so the page still visibly ends. */
   return (
-    <section id="stack" className="relative beat-tight bg-surface-low overflow-x-clip">
+    <section id="stack" className="relative beat-tight overflow-x-clip">
       <Shell>
-        <div className="flex items-baseline justify-between gap-6 border-t border-line pt-[16px] mb-[48px] md:mb-[64px]">
-          <span className="label">07 — {t.stack.eyebrow}</span>
-        </div>
+        <header className="mb-8 grid gap-4 md:mb-10 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-6">
+            <span className="label">{t.stack.eyebrow}</span>
+            <h2 className="display text-d-s text-ink mt-3">{t.stack.title}</h2>
+          </div>
+          <p className="m-0 text-[14px] leading-[1.6] text-ink-2 md:col-span-5 md:col-start-8">
+            {t.stack.sub}
+          </p>
+        </header>
 
-        <h2 className="sr-only">{t.stack.title}</h2>
-        <div className="relative">
-          {/* the object, overlapping the corner of the text */}
-          <Reveal className="hidden md:block absolute -top-[32px] right-0 w-[150px] lg:w-[190px] z-10">
-            <div className="relative aspect-[736/1307] overflow-hidden">
-              <Image
-                src="/lifestyle-accessories.jpg"
-                alt="Инструменты: техника, разложенная на графитовой поверхности"
-                fill
-                quality={84}
-                sizes="190px"
-                className="object-cover"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'rgba(7,8,9,0.38)' }}
-              />
-            </div>
-          </Reveal>
-
-          {/* the colophon */}
-          <Reveal>
-            <p className="display text-[clamp(1.5rem,3.4vw,2.75rem)] leading-[1.35] text-ink-2 max-w-[26ch] sm:max-w-[34ch] md:max-w-none md:pr-[210px] lg:pr-[260px]">
-              {t.stack.groups.map((g, gi) => (
-                <span key={g.title}>
-                  <span className="align-middle mr-[12px] text-[11px] font-sans font-medium uppercase tracking-[0.18em] text-ink-3 whitespace-nowrap">
-                    {g.title}
-                  </span>
-                  {g.items.map((item, i) => (
-                    <span key={item}>
-                      <span className="transition-colors duration-200 hover:text-signal cursor-default">
+        <div className="grid gap-3 lg:grid-cols-4">
+          <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:col-span-3">
+            {t.stack.groups.map((group, index) => (
+              <Reveal as="li" key={group.title} delay={index % 3}>
+                <Panel className="h-full p-6 md:p-7">
+                  <span className="label text-[10px]">{group.title}</span>
+                  <ul className="mt-4 flex list-none flex-wrap gap-1.5 p-0">
+                    {group.items.map((item) => (
+                      <li
+                        key={item}
+                        className="rounded-pill border border-line px-2.5 py-1 text-[12px] leading-none text-ink-2"
+                      >
                         {item}
-                      </span>
-                      {i < g.items.length - 1 && <span className="text-ink-3">, </span>}
-                    </span>
-                  ))}
-                  {gi < t.stack.groups.length - 1 && (
-                    <span aria-hidden className="text-signal px-[8px]">/</span>
-                  )}
-                </span>
-              ))}
-            </p>
-          </Reveal>
+                      </li>
+                    ))}
+                  </ul>
+                </Panel>
+              </Reveal>
+            ))}
+          </ul>
 
-          <Reveal delay={1}>
-            <p className="text-[13px] leading-[1.6] text-ink-3 mt-[32px] max-w-[40ch]">
-              {t.stack.sub}
-            </p>
+          {/* Portrait cell, matching the source's own orientation. Hidden below
+              lg: at one column it would be a very tall image carrying nothing
+              the panels above do not already say. */}
+          <Reveal className="hidden lg:block">
+            <Panel className="h-full overflow-hidden p-0">
+              <div className="relative h-full min-h-[280px] w-full">
+                <Image
+                  src="/lifestyle-accessories.jpg"
+                  alt="Инструменты: техника, разложенная на графитовой поверхности"
+                  fill
+                  quality={84}
+                  sizes="320px"
+                  className="object-cover"
+                />
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{ background: 'rgba(7,8,9,0.38)' }}
+                />
+              </div>
+            </Panel>
           </Reveal>
         </div>
       </Shell>

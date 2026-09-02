@@ -13,7 +13,14 @@ export interface Dict {
   nav: { work: string; services: string; process: string; pricing: string; about: string; contact: string; cta: string };
   hero: { badge: string; roleA: string; roleB: string; ctaWork: string; ctaContact: string; marker: string; scroll: string };
   marquee: { title: string };
-  stats: { items: { value: number; suffix: string; label: string }[] };
+  /* The figures carry their own heading. They used to sit under the
+     testimonials one, which promised quotes and delivered numbers — and the
+     quotes are still placeholders, so nothing renders them. */
+  stats: {
+    eyebrow: string;
+    title: string;
+    items: { value: number; suffix: string; label: string }[];
+  };
   services: { eyebrow: string; title: string; sub: string; items: { title: string; body: string; tags: string[] }[] };
   work: { eyebrow: string; title: string; sub: string; open: string };
   cases: Record<

@@ -11,6 +11,8 @@ export const ru: Dict = {
   },
   marquee: { title: 'Технологии, на которых я строю' },
   stats: {
+    eyebrow: 'Цифры',
+    title: 'Коротко о работе',
     items: [
       { value: 30, suffix: '+', label: 'завершённых проектов' },
       { value: 3, suffix: '+', label: 'года в разработке' },
