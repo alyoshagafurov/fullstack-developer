@@ -2,92 +2,140 @@
 
 import Image from 'next/image';
 
-import Panel from '@/components/ui/Panel';
 import Reveal from '@/components/ui/Reveal';
 import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * About — portrait panel beside a copy panel.
+ * About — the light spread.
  *
- * Was a spread: the photograph bled past the grid to the page edge and the
- * word "About" ran vertically down the gutter, stitching the halves together.
- * Neither survives a bento layout — a full-bleed image has no corner radius to
- * share with its neighbours, and type set in the gutter needs a gutter, which
- * a gap-separated grid does not have.
+ * The one section on the page that is not dark, and that is the whole idea.
+ * The reference works by dropping a bright editorial block into an otherwise
+ * dark composition: a heavy sans headline with a single word in italic serif,
+ * a photograph in a soft-cornered panel beside it, and one small card floating
+ * over the image.
  *
- * The photograph is still used exactly as shot: no filter, no retouch, no
- * recolour. The only overlay is a scrim on its outer edge, and it never
- * reaches the face.
+ * The colours are written literally rather than pulled from the palette
+ * tokens, because every token in this project names a value on the dark
+ * canvas. Inverting them here would mean adding a parallel light scale for a
+ * single section, and the section would still have to state what it is.
  *
- * The ledger of facts keeps hairline rows inside its panel — it is a table of
- * values, and a table is the one thing here that should still read as rows
- * rather than as blocks.
+ * The photograph is used exactly as shot — no filter, no recolour, no scrim.
+ * It is already a bright, quiet frame, which is why it can carry this block.
  */
+
+const CREAM = '#efece7';
+const INK = '#14110f';
+const INK_SOFT = 'rgba(20,17,15,0.62)';
+const HAIRLINE = 'rgba(20,17,15,0.12)';
+
 export default function Studio() {
   const { t } = useI18n();
   const a = t.about;
 
+  // The headline's last word is set in italic serif, the way the reference
+  // emphasises one word rather than a phrase. If the dictionary ever returns a
+  // single-word title this still holds: `head` is empty and `tail` carries it.
+  const words = a.title.trim().split(/\s+/);
+  const tail = words[words.length - 1];
+  const head = words.slice(0, -1).join(' ');
+
   return (
     <section id="studio" className="relative beat overflow-x-clip">
       <Shell>
-        <header className="mb-8 md:mb-10">
-          <span className="label">{a.eyebrow}</span>
-          <h2 className="display text-d-s text-ink mt-3 max-w-[20ch]">{a.title}</h2>
-        </header>
+        <Reveal>
+          <div
+            className="rounded-panel px-6 py-10 md:px-12 md:py-14"
+            style={{ background: CREAM, color: INK }}
+          >
+            <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+              {/* ── The words ────────────────────────────────────────── */}
+              <div className="lg:col-span-6">
+                <span
+                  className="inline-flex items-center rounded-pill px-3 py-1.5 text-[10px]
+                             font-medium uppercase tracking-[0.18em]"
+                  style={{ border: `1px solid ${HAIRLINE}`, color: INK_SOFT }}
+                >
+                  {a.eyebrow}
+                </span>
 
-        <div className="grid gap-3 lg:grid-cols-12">
-          {/* The portrait. 3:2 is the source ratio, so it is shown whole. */}
-          <Reveal className="lg:col-span-6">
-            <Panel className="h-full overflow-hidden p-0">
-              <div className="relative aspect-[3/2] w-full overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[420px]">
-                <Image
-                  src="/about-portrait-dark-office.jpg"
-                  alt="Алишер Гафуров — портрет"
-                  fill
-                  quality={92}
-                  sizes="(max-width:1024px) 100vw, 50vw"
-                  className="object-cover object-center"
-                />
+                <h2
+                  className="mt-6 text-[clamp(1.9rem,1.2rem+2.6vw,3.25rem)] font-semibold
+                             leading-[1.06] tracking-[-0.03em]"
+                >
+                  {head}{' '}
+                  {/* `font-display` rather than the `.display` class: the
+                      monochrome pivot repointed that class at the grotesk, but
+                      Playfair is still loaded and Tailwind still maps to it.
+                      The reference emphasises its one word in a serif italic,
+                      and that is the whole effect. */}
+                  <span className="font-display font-normal italic">{tail}</span>
+                </h2>
+
+                <div className="mt-6 max-w-[46ch] space-y-4">
+                  <p className="m-0 text-[15px] leading-[1.7]" style={{ color: INK_SOFT }}>
+                    {a.p1}
+                  </p>
+                  <p className="m-0 text-[15px] leading-[1.7]" style={{ color: INK_SOFT }}>
+                    {a.p2}
+                  </p>
+                </div>
+
+                {/* The ledger, as pills. Small, factual, and the only place in
+                    this block where the type goes quiet. */}
+                <dl className="mt-8 flex flex-wrap gap-2">
+                  {a.facts.map((fact) => (
+                    <div
+                      key={fact.k}
+                      className="inline-flex items-baseline gap-2 rounded-pill px-3.5 py-2"
+                      style={{ border: `1px solid ${HAIRLINE}` }}
+                    >
+                      <dt
+                        className="text-[10px] font-medium uppercase tracking-[0.16em]"
+                        style={{ color: INK_SOFT }}
+                      >
+                        {fact.k}
+                      </dt>
+                      <dd className="m-0 text-[13px] font-medium">{fact.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* ── The photograph ───────────────────────────────────── */}
+              <div className="relative lg:col-span-6">
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-panel">
+                  <Image
+                    src="/about-portrait.jpg"
+                    alt="Алишер Гафуров за работой"
+                    fill
+                    quality={90}
+                    sizes="(max-width:1024px) 100vw, 46vw"
+                    className="object-cover object-center"
+                  />
+                </div>
+
+                {/* The floating card. One fact, lifted off the photograph —
+                    the reference's "Calories" chip, doing the same job. */}
                 <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/4 lg:block"
-                  style={{
-                    background: 'linear-gradient(90deg, rgba(12,13,15,0.72) 0%, transparent 100%)',
-                  }}
-                />
-              </div>
-            </Panel>
-          </Reveal>
-
-          {/* The prose. */}
-          <Reveal className="lg:col-span-6">
-            <Panel className="h-full p-6 md:p-8">
-              <div className="space-y-5">
-                <p className="m-0 text-[15px] leading-[1.7] text-ink-2">{a.p1}</p>
-                <p className="m-0 text-[15px] leading-[1.7] text-ink-2">{a.p2}</p>
-                <p className="m-0 text-[15px] leading-[1.7] text-ink-3">{a.p3}</p>
-              </div>
-            </Panel>
-          </Reveal>
-
-          {/* The ledger, spanning the full width beneath both. */}
-          <Reveal delay={1} className="lg:col-span-12">
-            <Panel className="px-6 py-2 md:px-8">
-              <dl className="m-0 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
-                {a.facts.map((fact) => (
-                  <div
-                    key={fact.k}
-                    className="flex items-baseline justify-between gap-6 border-b border-line py-4 last:border-b-0 lg:border-b-0"
+                  className="absolute bottom-4 left-4 right-4 rounded-[18px] px-4 py-3
+                             backdrop-blur-md sm:right-auto sm:min-w-[220px]"
+                  style={{ background: 'rgba(255,255,255,0.82)', border: `1px solid ${HAIRLINE}` }}
+                >
+                  <span
+                    className="block text-[10px] font-medium uppercase tracking-[0.18em]"
+                    style={{ color: INK_SOFT }}
                   >
-                    <dt className="label text-[10px]">{fact.k}</dt>
-                    <dd className="m-0 text-right text-[14px] text-ink">{fact.v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Panel>
-          </Reveal>
-        </div>
+                    {a.eyebrow}
+                  </span>
+                  <span className="mt-1 block text-[15px] font-semibold">
+                    Dushanbe · Tajikistan
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </Shell>
     </section>
   );
