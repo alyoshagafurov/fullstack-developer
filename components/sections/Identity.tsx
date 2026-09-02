@@ -1,115 +1,142 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import WaveField from '@/components/ui/WaveField';
+import { ArrowRight } from 'lucide-react';
+
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 01 — Identity.
+ * The hero.
  *
- * Rebuilt to the reference: one dark panel, an abstract object holding the
- * middle of it, and the words kept deliberately small underneath.
+ * Split down the middle: the claim on the left, the photograph on the right,
+ * and the large word running between them, so the two halves are held together
+ * by type rather than by a divider. The subject overlaps the word — that
+ * overlap is the composition, and it is why the photograph sits above the type
+ * in the stack instead of beside it.
  *
- * That restraint is the whole idea, and it is the opposite of what stood here
- * before — a portrait photograph with the name set enormous in a serif. A
- * masthead that shouts has to be believed; an object that is simply well made,
- * with four quiet lines under it, is believed before it is read.
+ * Three layers, back to front:
  *
- * So: no photograph, no serif, no italic. The type is the grotesk at text
- * scale, the controls are pills, and the only filled element on the screen is
- * the primary action — which is what makes it read as primary without a colour
- * to announce it.
+ *   1  a single overhead spotlight, so the frame is lit rather than flat
+ *   2  the word, set once, large, in two lines
+ *   3  the photograph, then the claim, which never sits over the subject
+ *
+ * The word is `aria-hidden`. It is a graphic, and the page already has one
+ * <h1> saying what this is; announcing it a second time would be noise.
+ *
+ * Below lg the split cannot hold — half a screen is not enough for either the
+ * claim or the subject — so the photograph drops behind the text as a dimmed
+ * field and the layout becomes a single column.
  */
 export default function Identity() {
   const { t } = useI18n();
+  const h = t.hero;
 
   return (
-    <section id="top" className="relative w-full px-gutter pt-[88px]">
-      {/* The panel. Inset from the viewport on every side, because a bordered
-          object floating on the page is the reference's basic unit — a
-          full-bleed hero would be a different design language. */}
+    <section
+      id="top"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-base"
+    >
+      {/* 1 — the light. */}
       <div
-        className="relative w-full max-w-shell mx-auto overflow-hidden
-                   rounded-panel border border-line bg-base-deep
-                   min-h-[680px] md:min-h-[720px] lg:min-h-[calc(100svh-136px)]
-                   flex flex-col justify-end"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(120% 78% at 50% -12%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 34%, transparent 68%)',
+        }}
+      />
+
+      {/* 2 — the word. */}
+      <div
+        aria-hidden
+        /* Centred in the band to the RIGHT of the claim, not in the viewport.
+           Centring it on the page put it underneath the headline, where the
+           first half of the word was simply lost. Starting the band at 32%
+           leaves the claim its column and still lets the subject overlap the
+           word's tail, which is the effect the reference is built on. */
+        className="pointer-events-none absolute inset-x-0 top-[24%] z-10 flex flex-col
+                   items-center lg:top-[24%] lg:pl-[33%] lg:pr-[37%]"
       >
-        <WaveField className="absolute inset-0 h-full w-full" />
+        <span
+          className="block whitespace-nowrap text-[clamp(2.1rem,5.9vw,5.2rem)] font-medium
+                     leading-[0.85] tracking-[-0.045em] text-ink/[0.92]"
+        >
+          {h.bigTop}
+        </span>
+        {/* Letter-spaced and quieter: the second line is a caption to the
+            first, not a second shout. */}
+        <span
+          className="mt-2 block whitespace-nowrap text-[clamp(0.65rem,1.45vw,1.15rem)]
+                     font-light uppercase leading-none tracking-[0.42em] text-ink-3 lg:mt-4"
+        >
+          {h.bigBottom}
+        </span>
+      </div>
 
-        {/* The type sits on the panel's own floor so the object above it has
-            room. A gradient rather than a flat overlay: a flat one would put a
-            visible edge across the artwork. */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[58%] pointer-events-none"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.55) 32%, rgba(5,5,5,0.93) 62%, rgba(5,5,5,0.99) 100%)',
-          }}
-        />
-
-        <div className="relative px-6 pb-8 md:px-10 md:pb-10 lg:px-14 lg:pb-14">
-          <div className="hero-fade flex items-center gap-2.5 mb-6" style={{ animationDelay: '0.5s' }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-ink" aria-hidden />
-            <span className="label">{t.hero.badge}</span>
-          </div>
-
+      {/* 3a — the photograph. */}
+      <div
+        className="absolute inset-y-0 right-0 z-20 w-full opacity-[0.28]
+                   lg:w-[36%] lg:opacity-100"
+      >
+        <div className="relative h-full w-full">
+          <Image
+            src="/hero-portrait.jpg"
+            alt="Алишер Гафуров за работой"
+            fill
+            priority
+            quality={90}
+            sizes="(max-width:1024px) 100vw, 36vw"
+            className="object-cover object-[46%_26%]"
+          />
+          {/* The photograph has to end without a seam. On large screens it is
+              feathered along its left edge so it dissolves into the word
+              behind it; on small ones it is sunk under the text instead. */}
           <div
-            className="hero-fade grid gap-y-8 lg:grid-cols-12 lg:items-end"
-            style={{ animationDelay: '0.62s' }}
-          >
-            {/* The name, at text scale. */}
-            <div className="lg:col-span-4">
-              <h1 className="text-[clamp(1.75rem,1.2rem+1.8vw,2.6rem)] leading-[1.08] tracking-[-0.03em] font-medium text-ink">
-                Alisher Gafurov
-              </h1>
-              <p className="mt-3 text-[15px] leading-[1.6] text-ink-2 max-w-[36ch]">
-                {t.hero.roleA} · {t.hero.roleB}
-              </p>
-            </div>
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden lg:block"
+            style={{
+              background:
+                'linear-gradient(90deg, #0A0A0A 0%, rgba(10,10,10,0.55) 14%, transparent 40%)',
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3"
+            style={{ background: 'linear-gradient(180deg, transparent 0%, #0A0A0A 100%)' }}
+          />
+        </div>
+      </div>
 
-            {/* Four short columns, as the reference sets them — a ledger, not a
-                paragraph. They read as specification, which is the tone the
-                whole page is aiming for. */}
-            <dl className="lg:col-span-4 grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4 lg:gap-x-5">
-              {[
-                ['Focus', 'Web · Product'],
-                ['Since', '2022'],
-                ['Base', 'Dushanbe'],
-                ['Stack', 'Full-Stack'],
-              ].map(([term, value]) => (
-                <div key={term}>
-                  <dt className="label text-[10px]">{term}</dt>
-                  {/* A ledger entry that wraps stops being a ledger entry —
-                      "Web · Product" breaking after the dot reads as two
-                      separate values rather than one. */}
-                  <dd className="mt-1.5 text-[13px] leading-[1.4] text-ink-2 whitespace-nowrap">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+      {/* 3b — the claim. */}
+      <div className="relative z-30 w-full px-gutter">
+        <div className="mx-auto w-full max-w-shell">
+          <div className="max-w-[30rem] lg:max-w-[27rem]">
+            <span className="label whitespace-nowrap">{h.eyebrow}</span>
 
-            {/* One filled, one outlined. The reference never puts two filled
-                controls next to each other, and neither does this. */}
-            <div className="lg:col-span-4 flex flex-wrap gap-2.5 lg:flex-nowrap lg:justify-end">
-              <Link
-                href="/work"
-                className="inline-flex min-h-[44px] items-center rounded-pill bg-ink px-5 py-2.5
-                           text-[13px] font-medium text-base transition-colors duration-200
-                           hover:bg-signal-deep"
-              >
-                {t.hero.ctaWork}
-              </Link>
-              <Link
-                href="/start-project"
-                className="inline-flex min-h-[44px] items-center rounded-pill border border-line-2
-                           px-5 py-2.5 text-[13px] font-medium text-ink transition-colors
-                           duration-200 hover:border-ink hover:bg-[rgba(255,255,255,0.06)]"
-              >
-                {t.hero.ctaContact}
-              </Link>
-            </div>
+            <h1
+              className="mt-6 text-[clamp(2rem,1.2rem+2.4vw,3.15rem)] font-semibold uppercase
+                         leading-[1.04] tracking-[-0.03em] text-ink"
+            >
+              {h.titleMain} <span className="text-ink-3">{h.titleAccent}</span>
+            </h1>
+
+            <p className="mt-6 max-w-[34ch] text-[15px] leading-[1.65] text-ink-2">{h.sub}</p>
+
+            <Link
+              href="/work"
+              className="group mt-9 inline-flex min-h-[52px] items-center gap-4 whitespace-nowrap rounded-pill
+                         border border-line-2 px-7 text-[13px] font-medium uppercase
+                         tracking-[0.14em] text-ink transition-colors duration-200
+                         hover:border-ink hover:bg-[rgba(255,255,255,0.06)]"
+            >
+              {h.ctaWork}
+              <ArrowRight
+                size={16}
+                aria-hidden
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </Link>
           </div>
         </div>
       </div>

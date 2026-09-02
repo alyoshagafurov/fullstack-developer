@@ -4,6 +4,12 @@ export const ru: Dict = {
   common: { more: 'Подробнее', viewPricing: 'Смотреть тарифы и цены', ctaTitle: 'Готовы начать проект?' },
   nav: { work: 'Работы', services: 'Услуги', process: 'Процесс', pricing: 'Тарифы', about: 'О себе', contact: 'Контакт', cta: 'Обсудить проект' },
   hero: {
+    eyebrow: 'Веб-дизайн • Разработка',
+    titleMain: 'Я создаю сайты, которые',
+    titleAccent: 'продают.',
+    sub: 'Дизайн. Код. Анимация. От идеи до готового цифрового продукта.',
+    bigTop: 'Цифровые',
+    bigBottom: 'Продукты',
     badge: 'Доступен для новых проектов',
     roleA: 'Full-Stack разработчик', roleB: 'Сайты под ключ',
     ctaWork: 'Смотреть работы', ctaContact: 'Обсудить проект',

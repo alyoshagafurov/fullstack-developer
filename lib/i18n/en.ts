@@ -4,6 +4,12 @@ export const en: Dict = {
   common: { more: 'Learn more', viewPricing: 'View pricing & plans', ctaTitle: 'Ready to start a project?' },
   nav: { work: 'Work', services: 'Services', process: 'Process', pricing: 'Pricing', about: 'About', contact: 'Contact', cta: 'Start a project' },
   hero: {
+    eyebrow: 'Web design • Development',
+    titleMain: 'I build websites that',
+    titleAccent: 'sell.',
+    sub: 'Design. Code. Motion. From an idea to a finished digital product.',
+    bigTop: 'Digital',
+    bigBottom: 'Products',
     badge: 'Available for new projects',
     roleA: 'Full-Stack Developer', roleB: 'Websites, end to end',
     ctaWork: 'View work', ctaContact: 'Start a project',

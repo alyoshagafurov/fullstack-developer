@@ -6,6 +6,12 @@ export const tg: Dict = {
   common: { more: 'Батафсил', viewPricing: 'Дидани тарифҳо ва нархҳо', ctaTitle: 'Барои оғози лоиҳа тайёред?' },
   nav: { work: 'Корҳо', services: 'Хизматҳо', process: 'Раванд', pricing: 'Нархҳо', about: 'Дар бораи ман', contact: 'Тамос', cta: 'Муҳокимаи лоиҳа' },
   hero: {
+    eyebrow: 'Веб-дизайн • Барномасозӣ',
+    titleMain: 'Ман сомонаҳое месозам, ки',
+    titleAccent: 'фурӯш меоранд.',
+    sub: 'Дизайн. Код. Аниматсия. Аз идея то маҳсулоти тайёри рақамӣ.',
+    bigTop: 'Маҳсулоти',
+    bigBottom: 'Рақамӣ',
     badge: 'Барои лоиҳаҳои нав дастрасам',
     roleA: 'Full-Stack барномасоз', roleB: 'Сайтҳои омода',
     ctaWork: 'Дидани корҳо', ctaContact: 'Муҳокимаи лоиҳа',

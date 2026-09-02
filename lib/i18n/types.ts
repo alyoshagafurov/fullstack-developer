@@ -11,7 +11,19 @@ export type Lang = 'ru' | 'tg' | 'en';
 export interface Dict {
   common: { more: string; viewPricing: string; ctaTitle: string };
   nav: { work: string; services: string; process: string; pricing: string; about: string; contact: string; cta: string };
-  hero: { badge: string; roleA: string; roleB: string; ctaWork: string; ctaContact: string; marker: string; scroll: string };
+  hero: {
+    badge: string; roleA: string; roleB: string;
+    ctaWork: string; ctaContact: string; marker: string; scroll: string;
+    /* The rebuilt hero. `titleAccent` is the clause the headline lands on and
+       is set apart from `titleMain`; `bigTop`/`bigBottom` are the two lines of
+       the large word the composition is built around. */
+    eyebrow: string;
+    titleMain: string;
+    titleAccent: string;
+    sub: string;
+    bigTop: string;
+    bigBottom: string;
+  };
   marquee: { title: string };
   /* The figures carry their own heading. They used to sit under the
      testimonials one, which promised quotes and delivered numbers — and the
