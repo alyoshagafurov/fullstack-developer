@@ -13,7 +13,9 @@ import { useI18n } from '@/lib/i18n';
  */
 
 const LINKS = [
-  { href: '#work', key: 'work' as const },
+  // A route, not an anchor: the case register left the landing page and now
+  // has its own address, so this link has to work from /work itself too.
+  { href: '/work', key: 'work' as const },
   { href: '#capabilities', key: 'services' as const },
   { href: '#process', key: 'process' as const },
   { href: '#studio', key: 'about' as const },

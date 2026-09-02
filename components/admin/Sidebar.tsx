@@ -1,6 +1,6 @@
 'use client';
 
-import { Inbox, LayoutDashboard, LogOut } from 'lucide-react';
+import { FolderGit2, Inbox, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -26,6 +26,7 @@ import type { AdminUser } from '@/lib/admin-api/types';
 const LINKS = [
   { href: '/admin', label: 'Обзор', icon: LayoutDashboard, exact: true },
   { href: '/admin/leads', label: 'Заявки', icon: Inbox, exact: false },
+  { href: '/admin/cases', label: 'Кейсы', icon: FolderGit2, exact: false },
 ] as const;
 
 export default function Sidebar({

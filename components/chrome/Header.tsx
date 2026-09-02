@@ -13,11 +13,22 @@ import { useI18n } from '@/lib/i18n';
  * transparent over the opening, then a hairline and a blur once you leave it.
  */
 
+/*
+ * Absolute hrefs, not bare fragments.
+ *
+ * The header now renders on /work and /work/[slug] as well as the landing, and
+ * a bare `#capabilities` there points at a section that lives on another page
+ * — it would scroll nowhere. Prefixing with `/` makes each link mean the same
+ * thing from anywhere on the site.
+ *
+ * Work is a route rather than a fragment at all: the case register moved off
+ * the landing page and has its own address now.
+ */
 const SECTIONS = [
-  { id: 'work', key: 'work' as const },
-  { id: 'capabilities', key: 'services' as const },
-  { id: 'process', key: 'process' as const },
-  { id: 'studio', key: 'about' as const },
+  { href: '/work', key: 'work' as const },
+  { href: '/#capabilities', key: 'services' as const },
+  { href: '/#process', key: 'process' as const },
+  { href: '/#studio', key: 'about' as const },
 ];
 
 export default function Header() {
@@ -45,8 +56,8 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6 lg:gap-9" aria-label="Разделы">
           {SECTIONS.map((s, i) => (
             <a
-              key={s.id}
-              href={`#${s.id}`}
+              key={s.href}
+              href={s.href}
               className="group inline-flex items-baseline gap-2 whitespace-nowrap py-[12px] min-h-[44px] text-micro text-ink-2 hover:text-ink transition-colors"
             >
               <span className="font-mono text-[0.625rem] text-ink-3 group-hover:text-signal transition-colors">

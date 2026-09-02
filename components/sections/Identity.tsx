@@ -1,134 +1,117 @@
 'use client';
 
-import Image from 'next/image';
-import Shell from '@/components/ui/Shell';
-import Action from '@/components/ui/Action';
+import Link from 'next/link';
+import WaveField from '@/components/ui/WaveField';
 import { useI18n } from '@/lib/i18n';
 
 /*
  * 01 — Identity.
  *
- * The opening had to become the largest thing on the site rather than the
- * smallest. It now holds a full viewport, and the name is set in the serif at
- * display scale so it reads as a masthead, not a headline.
+ * Rebuilt to the reference: one dark panel, an abstract object holding the
+ * middle of it, and the words kept deliberately small underneath.
  *
- * Composition: the photograph is a cropped object on the right half, cut off
- * by the viewport edge instead of framed; the name is hung against it from the
- * left and allowed to overlap its dark side. A vertical label rides the left
- * margin, the meta ledger sits on the bottom rule. Nothing is centred, and the
- * only turquoise is the availability dot and the full stop after the surname.
+ * That restraint is the whole idea, and it is the opposite of what stood here
+ * before — a portrait photograph with the name set enormous in a serif. A
+ * masthead that shouts has to be believed; an object that is simply well made,
+ * with four quiet lines under it, is believed before it is read.
+ *
+ * So: no photograph, no serif, no italic. The type is the grotesk at text
+ * scale, the controls are pills, and the only filled element on the screen is
+ * the primary action — which is what makes it read as primary without a colour
+ * to announce it.
  */
 export default function Identity() {
   const { t } = useI18n();
 
   return (
-    <section
-      id="top"
-      className="relative min-h-[100svh] w-full overflow-hidden flex flex-col justify-end"
-    >
-      {/* ── The photograph — a cropped object, right half, bleeding out ── */}
-      <div className="hero-settle absolute inset-y-0 right-0 w-full lg:w-[58%]">
-        <Image
-          src="/hero-workspace.jpg"
-          alt="Алишер Гафуров за работой"
-          fill
-          priority
-          quality={88}
-          sizes="(max-width: 1024px) 100vw, 58vw"
-          className="object-cover object-[20%_26%] lg:object-[62%_38%]"
-        />
-        {/* dissolve the photo into the canvas on its inner edge */}
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'linear-gradient(90deg, #0c0d0f 0%, rgba(12,13,15,0.72) 34%, rgba(12,13,15,0.18) 72%, rgba(12,13,15,0.45) 100%)',
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(12,13,15,0.82) 0%, rgba(12,13,15,0.1) 30%, rgba(12,13,15,0.55) 78%, #0c0d0f 100%)',
-          }}
-        />
-      </div>
-
-      {/* Narrow screens: the name spans nearly the whole frame, so the
-          photograph drops further back and its subject is cropped clear of the
-          type rather than sitting under it. */}
+    <section id="top" className="relative w-full px-gutter pt-[88px]">
+      {/* The panel. Inset from the viewport on every side, because a bordered
+          object floating on the page is the reference's basic unit — a
+          full-bleed hero would be a different design language. */}
       <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none lg:hidden"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(12,13,15,0.60) 0%, rgba(12,13,15,0.34) 32%, rgba(12,13,15,0.88) 66%, #0c0d0f 100%)',
-        }}
-      />
-
-      {/* ── Vertical label riding the left margin ────────────────────── */}
-      <div
-        aria-hidden
-        className="hero-fade pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 hidden xl:block"
-        style={{ animationDelay: '0.8s' }}
+        className="relative w-full max-w-shell mx-auto overflow-hidden
+                   rounded-panel border border-line bg-base-deep
+                   min-h-[680px] md:min-h-[720px] lg:min-h-[calc(100svh-136px)]
+                   flex flex-col justify-end"
       >
-        <span className="label" style={{ writingMode: 'vertical-rl' }}>
-          Dushanbe · Tajikistan
-        </span>
-      </div>
+        <WaveField className="absolute inset-0 h-full w-full" />
 
-      <Shell className="relative pt-[128px] pb-[48px] md:pb-[64px]">
-        {/* status */}
+        {/* The type sits on the panel's own floor so the object above it has
+            room. A gradient rather than a flat overlay: a flat one would put a
+            visible edge across the artwork. */}
         <div
-          className="hero-fade flex items-center gap-3 mb-[32px] md:mb-[48px]"
-          style={{ animationDelay: '0.5s' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-signal" aria-hidden />
-          <span className="label">{t.hero.badge}</span>
-        </div>
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-[58%] pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.55) 32%, rgba(5,5,5,0.93) 62%, rgba(5,5,5,0.99) 100%)',
+          }}
+        />
 
-        {/* the masthead */}
-        <h1 className="display display-hero text-ink max-w-[11ch]">
-          <span className="hero-mask">
-            <span className="hero-rise" style={{ animationDelay: '0.1s' }}>Alisher</span>
-          </span>
-          <span className="hero-mask">
-            <span className="hero-rise italic" style={{ animationDelay: '0.22s' }}>
-              Gafurov<span className="text-signal not-italic">.</span>
-            </span>
-          </span>
-          <span className="sr-only"> — {t.hero.roleA}, {t.hero.roleB}. Душанбе, Таджикистан.</span>
-        </h1>
-
-        {/* the rule and the ledger */}
-        <div
-          className="hero-fade mt-[48px] md:mt-[64px] pt-[24px] border-t border-line
-                     grid-12 gap-y-[24px] items-baseline"
-          style={{ animationDelay: '0.7s' }}
-        >
-          <p className="col-span-12 md:col-span-5 text-[17px] md:text-[18px] leading-[1.6] text-ink-2 max-w-[34ch]">
-            {t.hero.roleA} · {t.hero.roleB}
-          </p>
-
-          <div className="col-span-12 md:col-span-4 md:col-start-6 flex flex-wrap gap-[12px]">
-            <Action href="#work" variant="solid">{t.hero.ctaWork}</Action>
-            <Action href="/start-project" variant="ghost">{t.hero.ctaContact}</Action>
+        <div className="relative px-6 pb-8 md:px-10 md:pb-10 lg:px-14 lg:pb-14">
+          <div className="hero-fade flex items-center gap-2.5 mb-6" style={{ animationDelay: '0.5s' }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-ink" aria-hidden />
+            <span className="label">{t.hero.badge}</span>
           </div>
 
-          <dl className="col-span-12 md:col-span-2 md:col-start-11 flex md:flex-col gap-[24px] md:gap-[12px]">
-            <div>
-              <dt className="label text-[11px]">Focus</dt>
-              <dd className="text-[13px] text-ink-2 mt-[4px]">Web · Product</dd>
+          <div
+            className="hero-fade grid gap-y-8 lg:grid-cols-12 lg:items-end"
+            style={{ animationDelay: '0.62s' }}
+          >
+            {/* The name, at text scale. */}
+            <div className="lg:col-span-4">
+              <h1 className="text-[clamp(1.75rem,1.2rem+1.8vw,2.6rem)] leading-[1.08] tracking-[-0.03em] font-medium text-ink">
+                Alisher Gafurov
+              </h1>
+              <p className="mt-3 text-[15px] leading-[1.6] text-ink-2 max-w-[36ch]">
+                {t.hero.roleA} · {t.hero.roleB}
+              </p>
             </div>
-            <div>
-              <dt className="label text-[11px]">Since</dt>
-              <dd className="text-[13px] text-ink-2 mt-[4px]">2022</dd>
+
+            {/* Four short columns, as the reference sets them — a ledger, not a
+                paragraph. They read as specification, which is the tone the
+                whole page is aiming for. */}
+            <dl className="lg:col-span-4 grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4 lg:gap-x-5">
+              {[
+                ['Focus', 'Web · Product'],
+                ['Since', '2022'],
+                ['Base', 'Dushanbe'],
+                ['Stack', 'Full-Stack'],
+              ].map(([term, value]) => (
+                <div key={term}>
+                  <dt className="label text-[10px]">{term}</dt>
+                  {/* A ledger entry that wraps stops being a ledger entry —
+                      "Web · Product" breaking after the dot reads as two
+                      separate values rather than one. */}
+                  <dd className="mt-1.5 text-[13px] leading-[1.4] text-ink-2 whitespace-nowrap">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {/* One filled, one outlined. The reference never puts two filled
+                controls next to each other, and neither does this. */}
+            <div className="lg:col-span-4 flex flex-wrap gap-2.5 lg:flex-nowrap lg:justify-end">
+              <Link
+                href="/work"
+                className="inline-flex items-center rounded-pill bg-ink px-5 py-2.5 text-[13px]
+                           font-medium text-base transition-colors duration-200 hover:bg-signal-deep"
+              >
+                {t.hero.ctaWork}
+              </Link>
+              <Link
+                href="/start-project"
+                className="inline-flex items-center rounded-pill border border-line-2 px-5 py-2.5
+                           text-[13px] font-medium text-ink transition-colors duration-200
+                           hover:border-ink hover:bg-[rgba(255,255,255,0.06)]"
+              >
+                {t.hero.ctaContact}
+              </Link>
             </div>
-          </dl>
+          </div>
         </div>
-      </Shell>
+      </div>
     </section>
   );
 }

@@ -21,15 +21,15 @@ module.exports = {
         /* Canvas — matte black. Not pure #000: a hair of warmth keeps it
            reading as a matte material rather than a switched-off screen. */
         base: {
-          DEFAULT: '#0C0D0F',
-          deep: '#070809', // the floor — footer, overlays, deepest areas
+          DEFAULT: '#0A0A0A',
+          deep: '#050505', // the floor — footer, overlays, deepest areas
         },
         /* Raised surfaces. The palette greys live here now, as material
            against the black rather than as the canvas itself. */
         surface: {
-          DEFAULT: '#222831',
-          low: '#15181C', // barely lifted off the black
-          high: '#393E46', // panels, frames, graphic blocks
+          DEFAULT: '#161616',
+          low: '#101010', // barely lifted off the black
+          high: '#1E1E1E', // panels, frames, graphic blocks
         },
         /* Light — primary text, and inverted blocks.
            These match the CSS custom properties in globals.css exactly. They
@@ -37,20 +37,31 @@ module.exports = {
            and `color: var(--ink-3)` were two different greys depending on
            which system a component happened to use. */
         ink: {
-          DEFAULT: '#EEEEEE',
-          2: 'rgba(238,238,238,0.66)', // secondary text
-          3: 'rgba(238,238,238,0.50)', // meta, disabled — 4.6:1 on --base
+          DEFAULT: '#FFFFFF',
+          2: 'rgba(255,255,255,0.68)', // secondary text
+          3: 'rgba(255,255,255,0.48)', // meta, disabled — 5.0:1 on --base
         },
-        /* The one signal colour. Small doses only. */
+        /* The accent, and there is no colour in it. White on black is the
+           loudest thing this palette can do, so a filled white control is the
+           accent — the same role the teal held, and the same discipline about
+           how rarely it is allowed to appear. */
         signal: {
-          DEFAULT: '#00ADB5',
-          deep: '#00868D', // pressed / hover on filled
-          wash: 'rgba(0,173,181,0.12)', // faint backing
+          DEFAULT: '#FFFFFF',
+          deep: '#D0D0D0', // pressed / hover on filled
+          wash: 'rgba(255,255,255,0.08)', // faint backing
         },
         line: {
-          DEFAULT: 'rgba(238,238,238,0.12)',
-          2: 'rgba(238,238,238,0.24)',
+          DEFAULT: 'rgba(255,255,255,0.09)',
+          2: 'rgba(255,255,255,0.18)',
         },
+      },
+
+      /* The bento panel is the unit of layout — see globals.css. */
+      borderRadius: {
+        panel: '28px',
+        card: '20px',
+        control: '14px',
+        pill: '999px',
       },
 
       /* Two families only, both self-hosted from public/fonts. `mono` is

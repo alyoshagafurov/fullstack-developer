@@ -85,22 +85,34 @@
    * Tailwind already described this matte-black scheme while `:root` still
    * carried the old grey canvas, so `bg-base` and `var(--base)` were two
    * different colours. */
-  --base: #0c0d0f;
-  --base-deep: #070809;
-  --surface-low: #15181c;
-  --surface: #222831;
-  --surface-high: #393e46;
-  --ink: #eeeeee;
-  --ink-2: rgba(238, 238, 238, 0.66);
-  /* Raised from 0.42. On the old grey canvas this sat at 3.2:1 and on black
-     it reached 3.67 — still short of 4.5:1, and it carries the micro labels,
-     which are 11–12px. 0.50 clears AA at 4.6:1 while staying quiet enough to
-     read as secondary. The black canvas is what made the headroom available. */
-  --ink-3: rgba(238, 238, 238, 0.5);
-  --signal: #00adb5;
-  --signal-deep: #00868d;
-  --line: rgba(238, 238, 238, 0.12);
-  --line-2: rgba(238, 238, 238, 0.24);
+  --base: #0a0a0a;
+  --base-deep: #050505;
+  --surface-low: #101010;
+  --surface: #161616;
+  --surface-high: #1e1e1e;
+  --ink: #ffffff;
+  --ink-2: rgba(255, 255, 255, 0.68);
+  /* Carries the micro labels at 11–12px, so it has to clear AA rather than
+     merely look quiet. Composited over --base it lands on #808080, which is
+     5.0:1 — the old value cleared 4.6:1 against the old canvas, and that
+     headroom is kept rather than spent on a dimmer grey. */
+  --ink-3: rgba(255, 255, 255, 0.48);
+  /* There is no colour in this system. The accent is white: on a black page a
+     filled white control is the loudest thing available, which is exactly what
+     an accent is for. Everything else is a step on the grey ramp. */
+  --signal: #ffffff;
+  --signal-deep: #d0d0d0;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.18);
+
+  /* ── Radius — the bento panel is the unit of layout ───────────────────
+   * Large soft rectangles on a near-black field, separated by a hairline
+   * rather than a shadow. One radius per role, so a card, a pill and a
+   * control never disagree by two pixels. */
+  --r-panel: 28px;
+  --r-card: 20px;
+  --r-control: 14px;
+  --r-pill: 999px;
 
   /* ── Spacing — a fixed scale, no arbitrary values ─────────────────────*/
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
@@ -153,10 +165,10 @@ body {
  * tracking, and it is expected to be cropped, overlapped and hung off the
  * grid rather than centred in a box. */
 .display {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.02em;
+  font-family: 'Onest', system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 .display-hero {

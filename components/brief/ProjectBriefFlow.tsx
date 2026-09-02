@@ -220,7 +220,7 @@ export default function ProjectBriefFlow() {
 
           <div className="flex flex-wrap gap-3">
             <Action href="/" variant="solid">{b.ok.home}</Action>
-            <Action href="/#work" variant="ghost">{b.ok.work}</Action>
+            <Action href="/work" variant="ghost">{b.ok.work}</Action>
           </div>
         </div>
       </Shell>

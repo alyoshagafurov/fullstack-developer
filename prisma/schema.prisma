@@ -16,6 +16,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// A case study, written by the owner in the admin and rendered on /work.
+///
+/// Separate from ProjectLead on purpose: a lead is something a stranger sent
+/// in and is a record that must not be edited, while a case is the owner's own
+/// published writing. They share a database and nothing else.
+///
+/// Screenshots are Vercel Blob URLs rather than bytes. A case carries four or
+/// five images; storing them here would put megabytes into a row the register
+/// has to read, and every /work render would pay for it.
+model Project {
+  id String @id @default(cuid())
+
+  /// URL segment — /work/<slug>. Stable once published, because changing it
+  /// breaks every link anyone has shared.
+  slug String @unique
+
+  title String
+  /// One line under the title in the register.
+  summary String @default("")
+  /// The body, plain text; blank lines become paragraphs when rendered.
+  description String @default("")
+  /// Stack labels in display order — "Next.js", "PostgreSQL", "Django".
+  technologies String[] @default([])
+  /// The live site, when there still is one.
+  liveUrl String @default("")
+  /// Blob URLs in display order. The first is the cover.
+  screenshots String[] @default([])
+  year        String   @default("")
+
+  /// Nothing reaches /work until the owner says so, so a half-written case is
+  /// never one refresh away from being public.
+  published Boolean @default(false)
+  /// Manual ordering on /work; ties break by createdAt.
+  position Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// The only query /work makes: published cases, in order.
+  @@index([published, position])
+}
+
 /// Pipeline state. Deliberately small — the admin panel is a later phase.
 enum LeadStatus {
   NEW

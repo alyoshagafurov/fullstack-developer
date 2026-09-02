@@ -1,6 +1,5 @@
 import Header from '@/components/chrome/Header';
 import Identity from '@/components/sections/Identity';
-import SelectedWork from '@/components/sections/SelectedWork';
 import Capabilities from '@/components/sections/Capabilities';
 import Method from '@/components/sections/Method';
 import Studio from '@/components/sections/Studio';
@@ -38,7 +37,6 @@ export default function Home() {
       <Header />
       <main id="main">
         <Identity />
-        <SelectedWork />
         <Capabilities />
         <Method />
         <Studio />
