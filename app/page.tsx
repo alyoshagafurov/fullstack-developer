@@ -5,7 +5,6 @@ import Method from '@/components/sections/Method';
 import Studio from '@/components/sections/Studio';
 import Principles from '@/components/sections/Principles';
 import Technology from '@/components/sections/Technology';
-import Proof from '@/components/sections/Proof';
 import StartProject from '@/components/sections/StartProject';
 import SiteFooter from '@/components/sections/SiteFooter';
 import JsonLd from '@/components/JsonLd';
@@ -42,7 +41,6 @@ export default function Home() {
         <Studio />
         <Principles />
         <Technology />
-        <Proof />
         <StartProject />
       </main>
       <SiteFooter />

@@ -28,6 +28,21 @@ export interface Dict {
   /* The figures carry their own heading. They used to sit under the
      testimonials one, which promised quotes and delivered numbers — and the
      quotes are still placeholders, so nothing renders them. */
+  /* The services section's own chrome. The fourteen service descriptions
+     themselves live in lib/services.ts and are Russian only — see the note at
+     the top of that file. These strings are short enough to carry properly. */
+  servicesSection: {
+    eyebrow: string;
+    titleA: string;
+    /** Set in copper. The clause the headline lands on. */
+    titleB: string;
+    sub: string;
+    cta: string;
+    stats: { value: string; label: string }[];
+    helpTitle: string;
+    helpSub: string;
+    helpCta: string;
+  };
   stats: {
     eyebrow: string;
     title: string;

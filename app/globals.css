@@ -85,25 +85,33 @@
    * Tailwind already described this matte-black scheme while `:root` still
    * carried the old grey canvas, so `bg-base` and `var(--base)` were two
    * different colours. */
-  --base: #0a0a0a;
-  --base-deep: #050505;
-  --surface-low: #101010;
-  --surface: #161616;
-  --surface-high: #1e1e1e;
-  --ink: #ffffff;
-  --ink-2: rgba(255, 255, 255, 0.68);
+  /* Graphite, not ink. #0a0a0a sat so close to pure black that the page read
+     as a void rather than a surface; two points of lift give it a material
+     that can catch the hero's light without turning grey. */
+  --base: #0c0c0e;
+  --base-deep: #060607;
+  --surface-low: #111113;
+  --surface: #171719;
+  --surface-high: #1f1f21;
+  /* Warm white. A pure #fff on a black page reads clinical; a few points
+     toward the cream of the About spread makes the same text look printed
+     rather than emitted. */
+  --ink: #f7f4f0;
+  --ink-2: rgba(247, 244, 240, 0.68);
   /* Carries the micro labels at 11–12px, so it has to clear AA rather than
-     merely look quiet. Composited over --base it lands on #808080, which is
-     5.0:1 — the old value cleared 4.6:1 against the old canvas, and that
-     headroom is kept rather than spent on a dimmer grey. */
-  --ink-3: rgba(255, 255, 255, 0.48);
-  /* There is no colour in this system. The accent is white: on a black page a
-     filled white control is the loudest thing available, which is exactly what
-     an accent is for. Everything else is a step on the grey ramp. */
-  --signal: #ffffff;
-  --signal-deep: #d0d0d0;
-  --line: rgba(255, 255, 255, 0.09);
-  --line-2: rgba(255, 255, 255, 0.18);
+     merely look quiet. Composited over --base it lands just under #808080 —
+     still above 4.5:1, which is the line that matters. */
+  --ink-3: rgba(247, 244, 240, 0.48);
+  /* Still white: on a black page a filled white control is the loudest thing
+     available, which is what an accent is for. */
+  --signal: #f7f4f0;
+  --signal-deep: #cfcac3;
+  /* The one colour in the system. A muted bronze, deliberately short of gold —
+     it appears on a single word and a single dot and nowhere else. Used more
+     widely it stops being an accent and becomes a theme. */
+  --copper: #c0996f;
+  --line: rgba(247, 244, 240, 0.09);
+  --line-2: rgba(247, 244, 240, 0.18);
 
   /* ── Radius — the bento panel is the unit of layout ───────────────────
    * Large soft rectangles on a near-black field, separated by a hairline

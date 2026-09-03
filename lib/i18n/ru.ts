@@ -2,7 +2,7 @@ import type { Dict } from './types';
 
 export const ru: Dict = {
   common: { more: 'Подробнее', viewPricing: 'Смотреть тарифы и цены', ctaTitle: 'Готовы начать проект?' },
-  nav: { work: 'Работы', services: 'Услуги', process: 'Процесс', pricing: 'Тарифы', about: 'О себе', contact: 'Контакт', cta: 'Обсудить проект' },
+  nav: { work: 'Проекты', services: 'Услуги', process: 'Процесс', pricing: 'Тарифы', about: 'Обо мне', contact: 'Контакты', cta: 'Обсудить проект' },
   hero: {
     eyebrow: 'Веб-дизайн • Разработка',
     titleMain: 'Я создаю сайты, которые',
@@ -16,6 +16,21 @@ export const ru: Dict = {
     marker: 'Портфолио', scroll: 'Листайте',
   },
   marquee: { title: 'Технологии, на которых я строю' },
+  servicesSection: {
+    eyebrow: 'Услуги',
+    titleA: 'Решаю задачи бизнеса через',
+    titleB: 'дизайн и технологии',
+    sub: 'Создаю цифровые продукты, которые помогают бизнесу расти и зарабатывать.',
+    cta: 'Обсудить проект',
+    stats: [
+      { value: '30+', label: 'проектов запущено' },
+      { value: '3+', label: 'года в разработке' },
+      { value: '20+', label: 'технологий в стеке' },
+    ],
+    helpTitle: 'Не знаете, что вам нужно?',
+    helpSub: 'Опишите задачу — я предложу оптимальное решение.',
+    helpCta: 'Описать проект',
+  },
   stats: {
     eyebrow: 'Цифры',
     title: 'Коротко о работе',

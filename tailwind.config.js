@@ -21,15 +21,15 @@ module.exports = {
         /* Canvas — matte black. Not pure #000: a hair of warmth keeps it
            reading as a matte material rather than a switched-off screen. */
         base: {
-          DEFAULT: '#0A0A0A',
-          deep: '#050505', // the floor — footer, overlays, deepest areas
+          DEFAULT: '#0C0C0E', // graphite, not ink — see globals.css
+          deep: '#060607', // the floor — footer, overlays, deepest areas
         },
         /* Raised surfaces. The palette greys live here now, as material
            against the black rather than as the canvas itself. */
         surface: {
-          DEFAULT: '#161616',
-          low: '#101010', // barely lifted off the black
-          high: '#1E1E1E', // panels, frames, graphic blocks
+          DEFAULT: '#171719',
+          low: '#111113', // barely lifted off the black
+          high: '#1F1F21', // panels, frames, graphic blocks
         },
         /* Light — primary text, and inverted blocks.
            These match the CSS custom properties in globals.css exactly. They
@@ -37,22 +37,28 @@ module.exports = {
            and `color: var(--ink-3)` were two different greys depending on
            which system a component happened to use. */
         ink: {
-          DEFAULT: '#FFFFFF',
-          2: 'rgba(255,255,255,0.68)', // secondary text
-          3: 'rgba(255,255,255,0.48)', // meta, disabled — 5.0:1 on --base
+          DEFAULT: '#F7F4F0', // warm white — printed, not emitted
+          2: 'rgba(247,244,240,0.68)', // secondary text
+          3: 'rgba(247,244,240,0.48)', // meta, disabled — clears AA on --base
         },
-        /* The accent, and there is no colour in it. White on black is the
-           loudest thing this palette can do, so a filled white control is the
-           accent — the same role the teal held, and the same discipline about
-           how rarely it is allowed to appear. */
+        /* The filled accent, and there is no colour in it. White on black is
+           the loudest thing this palette can do, so a filled white control is
+           the accent — and the same discipline about how rarely it appears. */
         signal: {
-          DEFAULT: '#FFFFFF',
-          deep: '#D0D0D0', // pressed / hover on filled
-          wash: 'rgba(255,255,255,0.08)', // faint backing
+          DEFAULT: '#F7F4F0',
+          deep: '#CFCAC3', // pressed / hover on filled
+          wash: 'rgba(247,244,240,0.08)', // faint backing
+        },
+        /* The one colour. A muted bronze, deliberately short of gold: it earns
+           a single word in the hero and a single dot in the wordmark. Spread
+           any wider it stops being an accent and becomes a theme. */
+        copper: {
+          DEFAULT: '#C0996F',
+          soft: 'rgba(192,153,111,0.55)',
         },
         line: {
-          DEFAULT: 'rgba(255,255,255,0.09)',
-          2: 'rgba(255,255,255,0.18)',
+          DEFAULT: 'rgba(247,244,240,0.09)',
+          2: 'rgba(247,244,240,0.18)',
         },
       },
 

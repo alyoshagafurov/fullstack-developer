@@ -26,9 +26,10 @@ import { useI18n } from '@/lib/i18n';
  */
 const SECTIONS = [
   { href: '/work', key: 'work' as const },
-  { href: '/#capabilities', key: 'services' as const },
-  { href: '/#process', key: 'process' as const },
+  { href: '/#services', key: 'services' as const },
   { href: '/#studio', key: 'about' as const },
+  { href: '/#process', key: 'process' as const },
+  { href: '/#start', key: 'contact' as const },
 ];
 
 export default function Header() {
@@ -49,20 +50,31 @@ export default function Header() {
       }`}
     >
       <div className="shell h-16 md:h-20 flex items-center justify-between gap-6">
-        <a href="#top" aria-label="ALY" className="shrink-0 inline-flex items-center min-h-[44px] opacity-90 hover:opacity-100 transition-opacity">
-          <Logo priority className="h-[15px] md:h-4 w-auto" />
+        {/* The wordmark, with the one dot of colour on the page beside it. The
+            logo itself is the owner's own file and is never redrawn as text —
+            the dot is set next to it rather than baked into it. */}
+        <a
+          href="/#top"
+          aria-label="ALY"
+          className="inline-flex min-h-[44px] shrink-0 items-baseline gap-[3px] opacity-90 transition-opacity hover:opacity-100"
+        >
+          <Logo priority className="h-[15px] w-auto md:h-4" />
+          <span aria-hidden className="text-copper text-[15px] leading-none md:text-base">
+            .
+          </span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-6 lg:gap-9" aria-label="Разделы">
-          {SECTIONS.map((s, i) => (
+        {/* Small, thin and evenly spaced — the numbering is gone. Numbered
+            items read as a table of contents, which competes with the hero
+            instead of getting out of its way. */}
+        <nav className="hidden items-center gap-7 md:flex lg:gap-10" aria-label="Разделы">
+          {SECTIONS.map((s) => (
             <a
               key={s.href}
               href={s.href}
-              className="group inline-flex items-baseline gap-2 whitespace-nowrap py-[12px] min-h-[44px] text-micro text-ink-2 hover:text-ink transition-colors"
+              className="inline-flex min-h-[44px] items-center whitespace-nowrap py-3 text-[11px]
+                         uppercase tracking-[0.18em] text-ink-3 transition-colors hover:text-ink"
             >
-              <span className="font-mono text-[0.625rem] text-ink-3 group-hover:text-signal transition-colors">
-                {String(i + 1).padStart(2, '0')}
-              </span>
               {t.nav[s.key]}
             </a>
           ))}

@@ -2,7 +2,7 @@ import type { Dict } from './types';
 
 export const en: Dict = {
   common: { more: 'Learn more', viewPricing: 'View pricing & plans', ctaTitle: 'Ready to start a project?' },
-  nav: { work: 'Work', services: 'Services', process: 'Process', pricing: 'Pricing', about: 'About', contact: 'Contact', cta: 'Start a project' },
+  nav: { work: 'Projects', services: 'Services', process: 'Process', pricing: 'Pricing', about: 'About me', contact: 'Contacts', cta: 'Start a project' },
   hero: {
     eyebrow: 'Web design • Development',
     titleMain: 'I build websites that',
@@ -16,6 +16,21 @@ export const en: Dict = {
     marker: 'Portfolio', scroll: 'Scroll',
   },
   marquee: { title: 'The stack I build with' },
+  servicesSection: {
+    eyebrow: 'Services',
+    titleA: 'I solve business problems through',
+    titleB: 'design and technology',
+    sub: 'I build digital products that help a business grow and earn.',
+    cta: 'Start a project',
+    stats: [
+      { value: '30+', label: 'projects shipped' },
+      { value: '3+', label: 'years building' },
+      { value: '20+', label: 'technologies in my stack' },
+    ],
+    helpTitle: 'Not sure what you need?',
+    helpSub: 'Describe the task — I will propose the right solution.',
+    helpCta: 'Describe the project',
+  },
   stats: {
     eyebrow: 'Numbers',
     title: 'The work, in short',

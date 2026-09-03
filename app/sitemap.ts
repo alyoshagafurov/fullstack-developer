@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { listPublishedCases } from '@/lib/cases';
 import { SITE_URL } from '@/lib/seo';
+import { services } from '@/lib/services';
 
 /*
  * The landing page, the case register, and one entry per published case.
@@ -45,6 +46,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    ...services.map((service) => ({
+      url: `${SITE_URL}/services/${service.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
     ...cases.map((item) => ({
       url: `${SITE_URL}/work/${item.slug}`,
       lastModified: new Date(item.updatedAt),
