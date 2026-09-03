@@ -15,7 +15,7 @@ export default function NotFound() {
       />
       <div className="shell relative">
         <a href="/" aria-label="ALY" className="inline-block mb-14 opacity-90 hover:opacity-100 transition-opacity">
-          <Logo className="h-5 w-auto" />
+          <Logo className="h-8 w-auto" />
         </a>
 
         <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-signal mb-6">Error 404</p>

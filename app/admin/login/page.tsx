@@ -38,7 +38,7 @@ export default async function LoginPage(
     <div className="min-h-[100svh] grid place-items-center px-5 py-16">
       <div className="w-full max-w-[380px]">
         <Link href="/" className="a-brand mb-10" aria-label="ALY — на сайт">
-          <Logo className="h-[15px] w-auto" />
+          <Logo className="h-6 w-auto" />
           <span className="a-brand-tag">Панель</span>
         </Link>
 

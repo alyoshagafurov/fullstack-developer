@@ -58,8 +58,8 @@ export default function Header() {
           aria-label="ALY"
           className="inline-flex min-h-[44px] shrink-0 items-baseline gap-[3px] opacity-90 transition-opacity hover:opacity-100"
         >
-          <Logo priority className="h-[15px] w-auto md:h-4" />
-          <span aria-hidden className="text-copper text-[15px] leading-none md:text-base">
+          <Logo priority className="h-6 w-auto md:h-7" />
+          <span aria-hidden className="text-copper text-[20px] leading-none md:text-[24px]">
             .
           </span>
         </a>

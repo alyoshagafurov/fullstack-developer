@@ -30,7 +30,7 @@ export default function SiteFooter() {
       <Shell grid className="gap-y-12">
         <div className="col-span-12 md:col-span-5">
           <a href="#top" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-90 hover:opacity-100 transition-opacity">
-            <Logo className="h-7 md:h-9 w-auto" />
+            <Logo className="h-10 md:h-14 w-auto" />
           </a>
           <p className="text-body text-ink-2 mt-6 max-w-[28ch]">{t.footer.tagline}</p>
           <p className="mt-6 inline-flex items-center gap-2 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3">

@@ -450,7 +450,7 @@ export default function ProjectBriefFlow() {
       {/* masthead */}
       <div className="flex items-center gap-6 mb-14 md:mb-20">
         <Link href="/" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-80 hover:opacity-100 transition-opacity">
-          <Logo className="h-4 w-auto" />
+          <Logo className="h-6 w-auto" />
         </Link>
         <span aria-hidden className="h-px flex-1 bg-line" />
         <span className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-3">

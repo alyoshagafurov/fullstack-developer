@@ -8,7 +8,7 @@ import Image from 'next/image';
  * SVG and never replaced with text — this file is the brand.
  */
 export default function Logo({
-  className = 'h-4 w-auto',
+  className = 'h-6 w-auto',
   priority = false,
 }: {
   className?: string;

@@ -77,7 +77,7 @@ export default function StartProject() {
         {/* The wordmark signs off the story. */}
         <Reveal delay={2}>
           <div className="mt-10 flex items-center gap-6">
-            <Logo className="h-6 w-auto opacity-80 md:h-7" />
+            <Logo className="h-9 w-auto opacity-90 md:h-11" />
             <span aria-hidden className="h-px flex-1 bg-line" />
             <span className="label text-[10px]">Dushanbe · Tajikistan</span>
           </div>
