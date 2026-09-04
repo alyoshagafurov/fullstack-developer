@@ -1,5 +1,8 @@
-import Logo from '@/components/ui/Logo';
+import Link from 'next/link';
+
 import Action from '@/components/ui/Action';
+import Logo from '@/components/ui/Logo';
+import Rail from '@/components/ui/Rail';
 
 /*
  * 404 — built from the same primitives as the rest of the site, so a wrong URL
@@ -7,23 +10,18 @@ import Action from '@/components/ui/Action';
  */
 export default function NotFound() {
   return (
-    <main id="main" className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden">
-      <div
-        aria-hidden
-        className="dot-field pointer-events-none absolute inset-x-0 top-0 h-[50vh] opacity-30
-                   [mask-image:radial-gradient(60%_60%_at_50%_10%,#000,transparent)]"
-      />
-      <div className="shell relative">
-        <a href="/" aria-label="ALY" className="inline-block mb-14 opacity-90 hover:opacity-100 transition-opacity">
-          <Logo className="h-8 w-auto" />
-        </a>
+    <main id="main" className="shell relative flex min-h-[100svh] flex-col justify-center py-24">
+      <Link href="/" aria-label="aly — на главную" className="mb-12 inline-flex min-h-[44px] items-center self-start">
+        <Logo className="h-8 w-auto" />
+      </Link>
 
-        <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-signal mb-6">Error 404</p>
-        <h1 className="display text-d-xl text-ink leading-[0.9] mb-8">404</h1>
-        <p className="text-lead text-ink-2 max-w-sm mb-12">
-          Страница не найдена. Возможно, ссылка устарела или её больше нет.
-        </p>
+      <Rail label="Ошибка">404</Rail>
+      <h1 className="display text-d-xl text-ink">404</h1>
+      <p className="mt-6 max-w-[40ch] text-[16px] leading-[1.6] text-ink-2">
+        Страница не найдена. Возможно, ссылка устарела или её больше нет.
+      </p>
 
+      <div className="mt-10">
         <Action href="/" variant="solid">На главную</Action>
       </div>
     </main>

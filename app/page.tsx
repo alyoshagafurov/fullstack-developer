@@ -7,7 +7,6 @@ import Principles from '@/components/sections/Principles';
 import Technology from '@/components/sections/Technology';
 import StartProject from '@/components/sections/StartProject';
 import SiteFooter from '@/components/sections/SiteFooter';
-import LightField from '@/components/ui/LightField';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 
@@ -35,7 +34,6 @@ export default function Home() {
   return (
     <>
       <JsonLd data={profilePage} />
-      <LightField />
       <Header />
       <main id="main">
         <Identity />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 /*
  * The cursor as a light source.
@@ -17,6 +18,9 @@ import { useEffect } from 'react';
  * lit element per frame and never causes a layout thrash. There is no canvas
  * and no per-frame React render; this component renders nothing.
  *
+ * Mounted once in the root layout for the public site. The admin has no lit
+ * elements and gets nothing — not even the listener.
+ *
  * Three modes, written to <html data-light> for the stylesheet:
  *
  *   cursor   a fine pointer that can hover — the light follows it
@@ -24,7 +28,11 @@ import { useEffect } from 'react';
  *   static   prefers-reduced-motion — everything lit, nothing moves
  */
 export default function LightField() {
+  const pathname = usePathname();
+  const active = !(pathname?.startsWith('/admin') ?? false);
+
   useEffect(() => {
+    if (!active) return;
     const root = document.documentElement;
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -108,7 +116,7 @@ export default function LightField() {
       reduced.removeEventListener('change', apply);
       delete root.dataset.light;
     };
-  }, []);
+  }, [active]);
 
   return null;
 }

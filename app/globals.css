@@ -481,10 +481,8 @@ html { scrollbar-width: thin; scrollbar-color: var(--surface-raised) var(--base)
 
 /* ── Small parts ───────────────────────────────────────────────────────*/
 
-/* An edge held on — the active segment of the process track. */
+/* An edge held on (active track segment); a chip is a very small panel. */
 .led-on::before { opacity: 1 !important; }
-
-/* A chip is a very small panel: a plate with its own lit top edge. */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -497,3 +495,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--surface-raised) var(--base)
   line-height: 1;
   color: var(--ink-2);
 }
+/* Track segments and form controls: no resting pool, explicit states. */
+.led-flat::after { display: none; }
+.led-done::before { opacity: 0.4 !important; } .led-off::before { opacity: 0 !important; }

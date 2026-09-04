@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import JsonLd from '@/components/JsonLd';
+import LightField from '@/components/ui/LightField';
 import { LanguageProvider } from '@/lib/i18n';
 import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, siteGraph } from '@/lib/seo';
 
@@ -18,6 +19,8 @@ import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, 
  * The page scrolls natively. The smooth-scroll layer that used to mount here
  * cost two libraries on every route for an effect the world no longer asks
  * for; the light follows the pointer, and the scroll is the browser's.
+ * LightField mounts here once so every public page is lit the same way; it
+ * stays out of /admin by itself.
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -95,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <a href="#main" className="skip-link">Перейти к содержимому</a>
+        <LightField />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

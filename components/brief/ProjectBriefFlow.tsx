@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Shell from '@/components/ui/Shell';
 import Action from '@/components/ui/Action';
 import Logo from '@/components/ui/Logo';
+import Panel, { Led } from '@/components/ui/Panel';
+import Rail from '@/components/ui/Rail';
 import { Choice, Field } from './BriefControls';
 import BriefSummary from './BriefSummary';
 import { useI18n } from '@/lib/i18n';
@@ -24,11 +26,14 @@ import { submitBrief, newSubmissionId, BriefSubmitResult } from '@/lib/brief/sub
  * everything before submitting, so nobody is told about a mistake on a screen
  * they have not reached.
  *
- * Submission goes through lib/brief/submit — the one boundary Phase 6
- * replaces. Its outcomes stay distinct here: fields to fix, a backend that is
- * not wired up yet, and the network failing. There is no client-side success
- * path: the confirmation only renders when the server returns a real
- * reference, so it can never claim a brief was saved when it was not.
+ * Submission goes through lib/brief/submit. Its outcomes stay distinct here:
+ * fields to fix, a backend that is not wired up yet, and the network failing.
+ * There is no client-side success path: the confirmation only renders when
+ * the server returns a real reference, so it can never claim a brief was
+ * saved when it was not.
+ *
+ * The progress is the site's LED track: one segment per step, the ones behind
+ * the visitor lit low, the current one held on, the ones ahead dark.
  */
 
 const DRAFT_KEY = 'aly-brief-v2';
@@ -37,6 +42,18 @@ type Draft = { data: ProjectBrief; step: number; startedAt: string; submissionId
 
 /** Steps where typing is the point — focus the field, not the heading. */
 const TEXT_FIRST = new Set(['goal', 'scope', 'references', 'contact']);
+
+function Masthead({ label }: { label: string }) {
+  return (
+    <div className="mb-12 flex items-center gap-6 md:mb-16">
+      <Link href="/" aria-label="aly — на главную" className="inline-flex min-h-[44px] min-w-[44px] items-center">
+        <Logo className="h-6 w-auto md:h-7" />
+      </Link>
+      <span aria-hidden className="h-px flex-1 bg-edge" />
+      <span className="label">{label}</span>
+    </div>
+  );
+}
 
 export default function ProjectBriefFlow() {
   const { t, lang } = useI18n();
@@ -197,28 +214,27 @@ export default function ProjectBriefFlow() {
   /* ── Confirmation — only reachable with a server-issued reference ──── */
   if (reference) {
     return (
-      <Shell className="py-rhythm-l">
+      <Shell className="py-rhythm-m">
+        <Masthead label={b.eyebrow} />
         <div className="max-w-2xl">
-          <span className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-signal">
-            {b.ok.refLabel}
-          </span>
-          <p className="font-mono text-lead text-ink tracking-[0.08em] mt-3">{reference}</p>
-          <h1 className="display text-d-l text-ink mt-10 mb-6">{b.ok.title}</h1>
-          <p className="text-lead text-ink-2 max-w-md mb-14">{b.ok.lead}</p>
+          <Rail label={b.ok.refLabel} />
+          <p className="display m-0 text-d-s tracking-[0.06em] text-copper">{reference}</p>
+          <h1 className="display mt-10 text-d-l text-ink">{b.ok.title}</h1>
+          <p className="mt-5 max-w-[46ch] text-[16px] leading-[1.6] text-ink-2">{b.ok.lead}</p>
 
-          <p className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-3 mb-6">
-            {b.ok.whatNext}
-          </p>
-          <ol className="border-t border-line mb-14">
-            {[b.ok.n1, b.ok.n2, b.ok.n3].map((s, i) => (
-              <li key={s} className="flex gap-5 border-b border-line py-4">
-                <span className="font-mono text-[0.625rem] text-ink-3 pt-1">0{i + 1}</span>
-                <span className="text-body text-ink-2">{s}</span>
-              </li>
-            ))}
-          </ol>
+          <Panel className="mt-12">
+            <p className="label m-0 px-5 pt-5 md:px-6">{b.ok.whatNext}</p>
+            <ol className="m-0 mt-3 list-none p-0">
+              {[b.ok.n1, b.ok.n2, b.ok.n3].map((s, i) => (
+                <li key={s} className="flex gap-5 border-t border-edge px-5 py-4 md:px-6">
+                  <span className="text-[11px] tabular-nums text-ink-3 pt-1">0{i + 1}</span>
+                  <span className="text-[15px] leading-[1.6] text-ink-2">{s}</span>
+                </li>
+              ))}
+            </ol>
+          </Panel>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap gap-3">
             <Action href="/" variant="solid">{b.ok.home}</Action>
             <Action href="/work" variant="ghost">{b.ok.work}</Action>
           </div>
@@ -349,7 +365,7 @@ export default function ProjectBriefFlow() {
               onChange={(v) => pickAndAdvance('budget', v)}
               error={err('budget')}
             />
-            <p className="text-micro text-ink-3 max-w-md">{b.budgetNote}</p>
+            <p className="m-0 max-w-[52ch] text-[13px] leading-[1.6] text-ink-3">{b.budgetNote}</p>
           </>
         );
 
@@ -363,7 +379,7 @@ export default function ProjectBriefFlow() {
               onChange={(v) => pickAndAdvance('timeline', v)}
               error={err('timeline')}
             />
-            <p className="text-micro text-ink-3 max-w-md">{b.timelineNote}</p>
+            <p className="m-0 max-w-[52ch] text-[13px] leading-[1.6] text-ink-3">{b.timelineNote}</p>
           </>
         );
 
@@ -386,7 +402,7 @@ export default function ProjectBriefFlow() {
               onChange={(v) => set('company', v)} error={err('company')}
               optional={b.optional} maxLength={LIMITS.company} autoComplete="organization"
             />
-            <div className="grid sm:grid-cols-2 gap-8">
+            <div className="grid gap-6 sm:grid-cols-2">
               <Field
                 label={b.f.telegramL} placeholder={b.f.telegramP} value={data.telegram}
                 onChange={(v) => set('telegram', v)} error={err('telegram')}
@@ -400,22 +416,25 @@ export default function ProjectBriefFlow() {
             </div>
 
             <div>
-              <label className="flex items-start gap-3 cursor-pointer group">
+              <label className="group flex cursor-pointer items-start gap-3">
                 <input
                   type="checkbox"
                   checked={data.consent}
                   onChange={(e) => set('consent', e.target.checked)}
                   aria-invalid={!!errors.consent || undefined}
                   aria-describedby={errors.consent ? 'consent-err' : undefined}
-                  className="sr-only peer"
+                  className="peer sr-only"
                 />
                 <span
                   aria-hidden
-                  className={`mt-0.5 shrink-0 w-[18px] h-[18px] border grid place-items-center
-                              transition-colors peer-focus-visible:ring-1 peer-focus-visible:ring-signal
+                  className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-chip
+                              peer-focus-visible:outline peer-focus-visible:outline-1
+                              peer-focus-visible:outline-offset-[3px] peer-focus-visible:outline-led
                               ${data.consent
-                                ? 'border-signal bg-signal text-base'
-                                : errors.consent ? 'border-signal' : 'border-line-2'}`}
+                                ? 'bg-copper text-base'
+                                : errors.consent
+                                  ? 'shadow-[inset_0_0_0_1px_var(--copper)]'
+                                  : 'shadow-[inset_0_0_0_1px_var(--edge-2)]'}`}
                 >
                   {data.consent && (
                     <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -424,12 +443,12 @@ export default function ProjectBriefFlow() {
                     </svg>
                   )}
                 </span>
-                <span className="text-micro text-ink-2 group-hover:text-ink transition-colors">
+                <span className="text-[14px] leading-[1.5] text-ink-2 group-hover:text-ink">
                   {b.f.consentL}
                 </span>
               </label>
               {errors.consent && (
-                <p id="consent-err" role="alert" className="mt-2 text-micro text-signal">
+                <p id="consent-err" role="alert" className="mt-2 text-[13px] text-copper">
                   {err('consent')}
                 </p>
               )}
@@ -447,51 +466,42 @@ export default function ProjectBriefFlow() {
 
   return (
     <Shell className="py-rhythm-m">
-      {/* masthead */}
-      <div className="flex items-center gap-6 mb-14 md:mb-20">
-        <Link href="/" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-80 hover:opacity-100 transition-opacity">
-          <Logo className="h-6 w-auto" />
-        </Link>
-        <span aria-hidden className="h-px flex-1 bg-line" />
-        <span className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-3">
-          {b.eyebrow}
-        </span>
-      </div>
+      <Masthead label={b.eyebrow} />
 
       <div className="grid-12 gap-y-12">
-        {/* progress rail */}
+        {/* ── The track ────────────────────────────────────────────── */}
         <div className="col-span-12 lg:col-span-3">
           <div className="lg:sticky lg:top-28">
-            <div className="flex items-baseline gap-3 mb-4">
-              <span className="font-mono text-[0.625rem] text-signal tabular-nums">
+            <div className="mb-4 flex items-baseline gap-3">
+              <span className="display text-[13px] tabular-nums text-copper">
                 {String(step + 1).padStart(2, '0')}
               </span>
-              <span className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-3">
+              <span className="label">
                 {b.step} {step + 1} {b.of} {STEPS.length}
               </span>
             </div>
             <div
-              className="h-px w-full bg-line overflow-hidden"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={progress}
               aria-label={`${b.step} ${step + 1} ${b.of} ${STEPS.length}`}
+              className="grid gap-1"
+              style={{ gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))` }}
             >
-              <div
-                className="h-full w-full bg-signal origin-left transition-transform duration-500 ease-out"
-                style={{ transform: `scaleX(${Math.max(progress, 4) / 100})` }}
-              />
+              {STEPS.map((s, i) => (
+                <span key={s.id} data-light="" className="relative block h-3">
+                  <Led className={`led-flat ${i === step ? 'led-on' : i < step ? 'led-done' : 'led-off'}`} />
+                </span>
+              ))}
             </div>
             {current.optional && (
-              <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-3">
-                {b.optional}
-              </p>
+              <p className="label mt-4">{b.optional}</p>
             )}
           </div>
         </div>
 
-        {/* the question */}
+        {/* ── The question ─────────────────────────────────────────── */}
         <div className="col-span-12 lg:col-span-8 lg:col-start-5">
           <p aria-live="polite" className="sr-only">
             {b.step} {step + 1} {b.of} {STEPS.length}. {b.q[current.id].t}
@@ -501,43 +511,46 @@ export default function ProjectBriefFlow() {
             onKeyDown={onKeyDown} noValidate>
             {/* honeypot — off-screen, never announced, never focusable */}
             <input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true"
-              className="absolute w-px h-px -left-[9999px] opacity-0"
+              className="absolute -left-[9999px] h-px w-px opacity-0"
               onChange={(e) => { hp.current = e.target.value; }} />
 
             <h1
               ref={headingRef}
               tabIndex={-1}
               data-brief-heading
-              className="display text-d-m text-ink leading-[1.06] mb-4 outline-none max-w-[18ch]"
+              className="display mb-4 max-w-[18ch] text-d-m text-ink outline-none"
             >
               {b.q[current.id].t}
             </h1>
             {b.q[current.id].hint && (
-              <p className="text-body text-ink-2 max-w-lg mb-12">{b.q[current.id].hint}</p>
+              <p className="mb-10 max-w-[52ch] text-[15px] leading-[1.6] text-ink-2">{b.q[current.id].hint}</p>
             )}
 
-            <div className="space-y-10">{renderStep()}</div>
+            <div className="space-y-6">{renderStep()}</div>
 
             {/* outcome — the three failure modes stay distinct */}
             {outcome && outcome.status !== 'ok' && (
-              <p role="alert" className="mt-10 border-l-2 border-signal pl-4 text-body text-ink-2">
-                {outcome.status === 'invalid' && b.fail.validation}
-                {outcome.status === 'unavailable' && b.fail.unavailable}
-                {outcome.status === 'rateLimited' && b.fail.tooMany}
-                {outcome.status === 'error' && b.fail.network}
-              </p>
+              <Panel tone="raised" role="alert" className="mt-8 px-5 py-4 md:px-6">
+                <p className="m-0 text-[15px] leading-[1.6] text-ink">
+                  {outcome.status === 'invalid' && b.fail.validation}
+                  {outcome.status === 'unavailable' && b.fail.unavailable}
+                  {outcome.status === 'rateLimited' && b.fail.tooMany}
+                  {outcome.status === 'error' && b.fail.network}
+                </p>
+              </Panel>
             )}
 
             {/* navigation */}
-            <div className="mt-14 flex flex-wrap items-center gap-4">
+            <div className="mt-12 flex flex-wrap items-center gap-6">
               {step > 0 && (
                 <button
                   type="button"
                   onClick={() => goTo(step - 1)}
-                  className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-3
-                             hover:text-ink transition-colors outline-none focus-visible:text-signal"
+                  className="lnk inline-flex min-h-[44px] items-center gap-2 text-[11px] uppercase
+                             tracking-[0.18em] text-ink-3 hover:text-ink"
                 >
-                  ← {b.back}
+                  <span aria-hidden>←</span>
+                  {b.back}
                 </button>
               )}
               <Action type="submit" variant="signal" disabled={sending}>

@@ -3,16 +3,24 @@ import type { Metadata } from 'next';
 
 import Header from '@/components/chrome/Header';
 import SiteFooter from '@/components/sections/SiteFooter';
+import Action from '@/components/ui/Action';
+import Panel from '@/components/ui/Panel';
+import Rail from '@/components/ui/Rail';
+import { ru } from '@/lib/i18n/ru';
 import { SITE_URL } from '@/lib/seo';
 import { services } from '@/lib/services';
 
 /*
  * /services — the whole catalogue.
  *
- * The landing section shows five cards, which is the right number for a
- * section and the wrong number for a catalogue. All fourteen live here, as a
- * list rather than as cards: at this length a grid of tiles becomes a wall,
- * and a numbered index is faster to scan than anything decorated.
+ * The landing shows five services; all fourteen live here as one ledger
+ * inside one panel — a numbered index is faster to scan than a wall of
+ * tiles, and at fourteen a grid of cards would be a wall. Each row is a link
+ * to its page, and the line under a row lights as the pointer reaches it.
+ *
+ * The service texts are the owner's and Russian only (see lib/services.ts);
+ * the section's own strings are read straight from the Russian dictionary
+ * for the same reason.
  */
 
 export const dynamic = 'force-static';
@@ -24,61 +32,66 @@ export const metadata: Metadata = {
 };
 
 export default function ServicesIndex() {
+  const s = ru.servicesSection;
+
   return (
     <>
       <Header />
-      <main id="main" className="px-gutter pb-24 pt-[104px]">
-        <div className="mx-auto w-full max-w-shell">
-          <header className="mb-12 md:mb-16">
-            <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-ink-3">
-              Услуги
-              <span aria-hidden className="h-px w-8 bg-line-2" />
-              <span aria-hidden className="h-1 w-1 rounded-full bg-copper" />
-            </span>
-            <h1
-              className="mt-7 max-w-[20ch] text-[clamp(2rem,1.2rem+2.6vw,3.4rem)] font-light
-                         uppercase leading-[1.08] tracking-[-0.015em] text-ink"
-            >
-              Что я делаю
-            </h1>
-          </header>
+      <main id="main" className="shell pb-24 pt-28 md:pt-32">
+        <Rail label={s.eyebrow}>{String(services.length).padStart(2, '0')}</Rail>
 
-          <ul className="m-0 list-none p-0">
-            {services.map((service) => (
-              <li key={service.slug}>
+        <header className="mb-10 grid gap-6 md:mb-14 md:grid-cols-12 md:items-end">
+          <h1 className="display max-w-[16ch] text-d-l text-ink md:col-span-7">Что я делаю</h1>
+          <p className="m-0 max-w-[44ch] text-[15px] leading-[1.6] text-ink-2 md:col-span-5">{s.sub}</p>
+        </header>
+
+        <Panel>
+          <ol className="m-0 list-none p-0">
+            {services.map((service, index) => (
+              <li key={service.slug} className={index > 0 ? 'border-t border-edge' : ''}>
                 <Link
                   href={`/services/${service.slug}`}
-                  className="group grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 gap-y-2
-                             border-b border-line py-6 transition-colors hover:border-line-2
-                             md:grid-cols-[auto_minmax(0,22ch)_1fr_auto] md:gap-x-10"
+                  className="lnk group grid min-h-[64px] grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-x-4
+                             px-5 py-4 md:grid-cols-[3rem_minmax(0,22rem)_minmax(0,1fr)_auto] md:gap-x-8 md:px-8"
                 >
                   <span
                     aria-hidden
-                    className="text-[12px] tabular-nums text-ink-3 transition-colors duration-300 group-hover:text-copper"
+                    className="display text-[13px] tabular-nums text-ink-3 transition-colors duration-200 group-hover:text-copper"
                   >
                     {service.num}
                   </span>
-
-                  <span className="text-[17px] font-light uppercase tracking-[0.01em] text-ink md:text-[19px]">
+                  <span className="text-[15px] font-medium uppercase leading-[1.25] tracking-[0.02em] text-ink">
                     {service.title}
                   </span>
-
-                  <span className="col-span-2 text-[13px] leading-[1.55] text-ink-3 md:col-span-1">
-                    {service.tagline}
-                  </span>
-
                   <span
                     aria-hidden
-                    className="justify-self-end text-ink-3 transition-all duration-300
-                               group-hover:translate-x-1 group-hover:text-copper"
+                    className="justify-self-end text-ink-3 transition-transform duration-300 ease-out
+                               group-hover:translate-x-1 group-hover:text-copper md:col-start-4"
                   >
                     →
+                  </span>
+                  <span className="col-span-3 row-start-2 text-[13px] leading-[1.5] text-ink-3 md:col-span-1 md:col-start-3 md:row-start-1">
+                    {service.tagline}
                   </span>
                 </Link>
               </li>
             ))}
-          </ul>
-        </div>
+          </ol>
+        </Panel>
+
+        <Panel
+          tone="raised"
+          className="mt-3 flex flex-col gap-6 px-6 py-7 md:flex-row md:items-center md:justify-between md:px-9"
+        >
+          <div>
+            <p className="m-0 text-[15px] font-medium uppercase tracking-[0.04em] text-ink">{s.helpTitle}</p>
+            <p className="m-0 mt-1.5 max-w-[48ch] text-[13px] leading-[1.55] text-ink-3">{s.helpSub}</p>
+          </div>
+          <Action href="/start-project" variant="ghost" className="shrink-0">
+            {s.helpCta}
+            <span aria-hidden>→</span>
+          </Action>
+        </Panel>
       </main>
       <SiteFooter />
     </>
