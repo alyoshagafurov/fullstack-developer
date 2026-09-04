@@ -3,36 +3,31 @@
 @tailwind utilities;
 
 /*
- * ALY — foundation.
+ * aly — foundation. A dark room where light picks the details out of the
+ * graphite; everything the page may look like is a token here, and the
+ * components never invent a value.
  *
- * Two families, self-hosted. No Google Fonts, no CDN: the woff2 files live in
- * public/fonts and are declared below with unicode-range so a Latin-only
- * visitor never downloads the Cyrillic slice.
- *
- *   Playfair Display — the voice. A high-contrast serif set enormous on a dark
- *   frame reads as an editorial spread rather than a product landing page.
- *   Variable 400–900, so weight is real, never synthesised.
- *
- *   Onest — everything else. A quiet modern grotesk with proper Cyrillic that
- *   stays out of the serif's way. It also carries the micro labels via wide
- *   tracking, which keeps the system to two families.
+ * Two families, self-hosted from public/fonts, four files in total:
+ * Unbounded 300 (display — wide, light, never bold; 400 resolves to the
+ * same file so a headline never falls back mid-word) and Onest (text, UI,
+ * labels; variable 300–700).
  */
 
-/* ── Playfair Display (variable 400–900) ──────────────────────────────── */
+/* ── Unbounded (300) ─────────────────────────────────────────────────── */
 @font-face {
-  font-family: 'Playfair Display';
+  font-family: 'Unbounded';
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 300 400;
   font-display: swap;
-  src: url('/fonts/playfair-cyrillic.woff2') format('woff2');
+  src: url('/fonts/unbounded-cyrillic-300.woff2') format('woff2');
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 @font-face {
-  font-family: 'Playfair Display';
+  font-family: 'Unbounded';
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 300 400;
   font-display: swap;
-  src: url('/fonts/playfair-latin.woff2') format('woff2');
+  src: url('/fonts/unbounded-latin-300.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
@@ -59,83 +54,65 @@
 }
 
 :root {
-  /* ── Colour ────────────────────────────────────────────────────────────
-   * Matte black is the site. Not #000 — pure black reads as a switched-off
-   * screen, and on an OLED phone it makes the panel physically stop emitting,
-   * so edges crush and the page looks like a hole rather than a material.
-   * #0C0D0F keeps a hair of tone in it: the same difference as matte paint
-   * against a void.
-   *
-   * The greys are no longer the canvas; they are things ON the canvas.
-   * #222831 and #393E46 stayed in the system — demoted from background to
-   * surface, which is what they were always better at.
-   *
-   *   base         the site. Almost everything.
-   *   base-deep    the floor — footer, overlays, deepest areas
-   *   surface-low  barely lifted; panels that should not announce themselves
-   *   surface      a real panel, readable as a separate plane
-   *   surface-high frames and graphic blocks
-   *
-   * #00ADB5 remains the ONLY saturated value anywhere on the site, so
-   * anything blue means "this does something". Against black it reads
-   * considerably brighter than it did against #222831 — which is a reason to
-   * use it on fewer elements, not more.
-   *
-   * These now match tailwind.config.js exactly. They previously disagreed:
-   * Tailwind already described this matte-black scheme while `:root` still
-   * carried the old grey canvas, so `bg-base` and `var(--base)` were two
-   * different colours. */
-  /* Graphite, not ink. #0a0a0a sat so close to pure black that the page read
-     as a void rather than a surface; two points of lift give it a material
-     that can catch the hero's light without turning grey. */
-  --base: #0c0c0e;
-  --base-deep: #060607;
-  --surface-low: #111113;
-  --surface: #171719;
-  --surface-high: #1f1f21;
-  /* Warm white. A pure #fff on a black page reads clinical; a few points
-     toward the cream of the About spread makes the same text look printed
-     rather than emitted. */
-  --ink: #f7f4f0;
-  --ink-2: rgba(247, 244, 240, 0.68);
-  /* Carries the micro labels at 11–12px, so it has to clear AA rather than
-     merely look quiet. Composited over --base it lands just under #808080 —
-     still above 4.5:1, which is the line that matters. */
-  --ink-3: rgba(247, 244, 240, 0.48);
-  /* Still white: on a black page a filled white control is the loudest thing
-     available, which is what an accent is for. */
-  --signal: #f7f4f0;
-  --signal-deep: #cfcac3;
-  /* The one colour in the system. A muted bronze, deliberately short of gold —
-     it appears on a single word and a single dot and nowhere else. Used more
-     widely it stops being an accent and becomes a theme. */
-  --copper: #c0996f;
-  --line: rgba(247, 244, 240, 0.09);
-  --line-2: rgba(247, 244, 240, 0.18);
+  /* ── Material — graphite, not ink: #0C0C0E keeps a hair of tone so the
+   * page reads as matte stone that can catch light, not a switched-off
+   * screen. Panels are the same stone a step lighter. The RGB triplets let
+   * Tailwind compose an alpha onto the same value (text-ink/50). */
+  --base-rgb: 12 12 14;
+  --base: #0C0C0E;
+  --base-deep: #070708;
+  --surface: #121214;
+  --surface-raised: #18181B;
 
-  /* ── Radius — the bento panel is the unit of layout ───────────────────
-   * Large soft rectangles on a near-black field, separated by a hairline
-   * rather than a shadow. One radius per role, so a card, a pill and a
-   * control never disagree by two pixels. */
-  --r-panel: 28px;
-  --r-card: 20px;
-  --r-control: 14px;
-  --r-pill: 999px;
+  /* Warm white. Printed, not emitted. */
+  --ink-rgb: 247 244 240;
+  --ink: #F7F4F0;
+  --ink-bright: #FFFFFF;
+  --ink-2: rgb(247 244 240 / 0.72);
+  /* Carries the 11px labels: 5.3:1 on --base and on --surface-raised. */
+  --ink-3: rgb(247 244 240 / 0.52);
 
-  /* ── Spacing — a fixed scale, no arbitrary values ─────────────────────*/
-  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
-  --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
-  --s-9: 96px;  --s-10: 128px; --s-11: 160px; --s-12: 200px;
+  /* The one colour. It appears on a single word, the primary action and the
+     dot beside the wordmark; the light of the room is only tinted by it. */
+  --copper-rgb: 192 153 111;
+  --copper: #C0996F;
+  --copper-bright: #D4AF87;
+  --copper-deep: #A8845B;
 
-  /* ── Grid ─────────────────────────────────────────────────────────────*/
+  /* Light: warm white for the LED, a low-alpha copper halo around it.
+     --edge is the same line switched off. */
+  --led-rgb: 255 233 206;
+  --edge: rgb(247 244 240 / 0.10);
+  --edge-2: rgb(247 244 240 / 0.20);
+
+  /* Daylight. One panel on the page is lit by a window instead of an LED. */
+  --day: #EDE8E1;
+  --day-ink-rgb: 23 20 15;
+  --day-ink: #17140F;
+  --day-ink-2: rgb(23 20 15 / 0.66);
+  --day-edge: rgb(23 20 15 / 0.14);
+
+  /* ── Geometry — straight lines, almost no radius ──────────────────────*/
+  --r-panel: 6px;
+  --r-control: 4px;
+  --r-chip: 3px;
+
   --shell: 1440px;
   --gutter: clamp(16px, 4vw, 48px);
 
-  /* ── Motion — micro / reveal / cinematic ──────────────────────────────*/
+  /* ── Motion — one ease, nothing longer than 300 ms ────────────────────*/
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --t-micro: 0.2s;
-  --t-reveal: 0.6s;
-  --t-cine: 1s;
+  --t-fast: 0.18s;
+  --t-base: 0.26s;
+  --t-max: 0.3s;
+
+  /* ── Texture — grain for the room, a tighter skin for raised panels:
+   * inline desaturated SVG noise, no request, felt rather than seen. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  --skin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23s)' opacity='0.16'/%3E%3C/svg%3E");
+
+  --font-display: 'Unbounded', 'Onest', system-ui, sans-serif;
+  --font-text: 'Onest', system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; min-width: 0; }
@@ -143,23 +120,17 @@
 html {
   background: var(--base);
   color-scheme: dark;
-  scroll-behavior: auto; /* Lenis owns scrolling */
+  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   overflow-x: clip;
 }
-
-html.lenis,
-html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-stopped { overflow: clip; }
 
 body {
   margin: 0;
   background: var(--base);
   color: var(--ink);
-  font-family: 'Onest', system-ui, sans-serif;
-  font-size: 17px;
+  font-family: var(--font-text);
+  font-size: 16px;
   line-height: 1.6;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
@@ -168,39 +139,82 @@ body {
   overflow-x: clip;
 }
 
-/* ── Type ──────────────────────────────────────────────────────────────
- * The display face is a compositional object: tight leading, negative
- * tracking, and it is expected to be cropped, overlapped and hung off the
- * grid rather than centred in a box. */
+/* The grain of the room: one fixed layer over everything, never repainted
+   on scroll, transparent to the pointer. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-repeat: repeat;
+  opacity: 0.042;
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────*/
 .display {
-  font-family: 'Onest', system-ui, sans-serif;
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
   text-wrap: balance;
-}
-.display-hero {
-  font-size: clamp(4rem, 10vw, 11rem);
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-}
-.display-section {
-  font-size: clamp(2.5rem, 6vw, 6rem);
-  line-height: 0.96;
-  letter-spacing: -0.025em;
 }
 
 /* Micro labels carry the technical voice through tracking, not a third font */
 .label {
-  font-family: 'Onest', system-ui, sans-serif;
-  font-size: 12px;
+  font-family: var(--font-text);
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
 
-::selection { background: var(--signal); color: var(--base); }
+/* A nameplate sitting on a rail: the label interrupts the line. */
+.plate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-50%);
+  padding-right: 12px;
+  background: var(--base);
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+::selection { background: var(--copper); color: var(--base); }
+
+a { color: inherit; text-decoration: none; }
+
+/* ── Focus — a thin ring of the same light, offset so it never touches
+   the edge it would otherwise merge with. ─────────────────────────────*/
+:focus-visible {
+  outline: 1px solid rgb(var(--led-rgb) / 0.9);
+  outline-offset: 3px;
+}
+.panel-day :focus-visible { outline-color: var(--day-ink); }
+[data-brief-heading]:focus,
+[data-brief-heading]:focus-visible { outline: none; }
+
+.skip-link {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 200;
+  padding: 12px 24px;
+  background: var(--ink);
+  color: var(--base);
+  font-size: 13px;
+  transform: translateY(-120%);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.skip-link:focus { transform: translateY(0); }
 
 /* ── Grid shell ────────────────────────────────────────────────────────*/
 .shell {
@@ -215,81 +229,271 @@ body {
   column-gap: clamp(16px, 2vw, 32px);
 }
 
-/* ── Section rhythm — deliberately uneven ──────────────────────────────
- * Three densities so the page breathes instead of droning: a compressed
- * beat, a normal one, and a held one. */
+/* A full-bleed grid: children sit in the shell column, anything marked
+   .full runs edge to edge. This is how the LED track crosses the screen
+   while the words beside it stay on the grid. */
+.stage {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gutter), 1fr)
+    [shell-start] minmax(0, calc(var(--shell) - 2 * var(--gutter)))
+    [shell-end] minmax(var(--gutter), 1fr)
+    [full-end];
+}
+.stage > * { grid-column: shell; }
+.stage > .full { grid-column: full; }
+
+/* ── Section rhythm — deliberately uneven ──────────────────────────────*/
 .beat-tight { padding-block: 64px; }
-.beat       { padding-block: 96px; }
-.beat-wide  { padding-block: 128px; }
+.beat       { padding-block: 88px; }
+.beat-wide  { padding-block: 120px; }
 @media (min-width: 768px) {
-  .beat-tight { padding-block: 120px; }
-  .beat       { padding-block: 160px; }
-  .beat-wide  { padding-block: 200px; }
+  .beat-tight { padding-block: 88px; }
+  .beat       { padding-block: 112px; }
+  .beat-wide  { padding-block: 144px; }
 }
 
-/* ── Links ─────────────────────────────────────────────────────────────*/
-a { color: inherit; text-decoration: none; }
+/* ── Light ─────────────────────────────────────────────────────────────
+ * Every lit element carries --mx / --my, the pointer in its own box, written
+ * by components/ui/LightField; with no pointer the light rests at the top
+ * centre, where a ceiling lamp would put it. .led is the edge: an overlay
+ * the size of its host drawing the line switched off (a 1px background
+ * layer), ::before the line switched on (faded in by opacity for hover,
+ * focus, active and reveal) and ::after the pool — a radial of light at the
+ * pointer, masked to the line and a short band beside it. */
+[data-light] { --mx: 50%; --my: 0px; }
 
-/* ── Focus ─────────────────────────────────────────────────────────────*/
-:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
-  border-radius: 2px;
+.led {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  --led-line: 0%;
+  --led-lit: 0px;
+  background: linear-gradient(var(--edge), var(--edge)) 0 var(--led-line) / 100% 1px no-repeat;
+  transition: opacity var(--t-base) var(--ease-out);
 }
-[data-brief-heading]:focus,
-[data-brief-heading]:focus-visible { outline: none; }
-
-.skip-link {
-  position: fixed;
-  top: 0; left: 0;
-  z-index: 200;
-  padding: 12px 24px;
-  background: var(--ink);
-  color: var(--base);
-  font-size: 13px;
-  transform: translateY(-120%);
-  transition: transform var(--t-reveal) var(--ease-out);
-}
-.skip-link:focus { transform: translateY(0); }
-
-/* ── Scroll reveal (components/ui/Reveal) ──────────────────────────────*/
-[data-reveal] {
+.led::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: var(--led-lit);
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgb(var(--led-rgb) / 0) 0%,
+    rgb(var(--led-rgb) / 0.9) 14%,
+    rgb(var(--led-rgb) / 0.9) 86%,
+    rgb(var(--led-rgb) / 0) 100%);
+  box-shadow: 0 0 14px 1px rgb(var(--copper-rgb) / 0.35);
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out);
+  transition: opacity var(--t-base) var(--ease-out);
 }
-[data-reveal].is-in { opacity: 1; transform: none; }
-
-/* ── Texture ───────────────────────────────────────────────────────────*/
-.dot-field {
-  background-image: radial-gradient(var(--line-2) 1px, transparent 1px);
-  background-size: 24px 24px;
+.led::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(480px 300px at var(--mx) var(--my),
+    rgb(var(--led-rgb) / 1) 0%,
+    rgb(var(--copper-rgb) / 0.45) 30%,
+    transparent 62%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 1px, rgb(0 0 0 / 0.3) 1px, transparent 48px);
+  mask-image: linear-gradient(to bottom, #000 0, #000 1px, rgb(0 0 0 / 0.3) 1px, transparent 48px);
+}
+.led-b { --led-line: 100%; --led-lit: calc(100% - 1px); }
+.led-b::after {
+  -webkit-mask-image: linear-gradient(to top, #000 0, #000 1px, rgb(0 0 0 / 0.3) 1px, transparent 48px);
+  mask-image: linear-gradient(to top, #000 0, #000 1px, rgb(0 0 0 / 0.3) 1px, transparent 48px);
+}
+.led-mid { --led-line: 50%; --led-lit: 50%; }
+.led-mid::after {
+  -webkit-mask-image: linear-gradient(to bottom, transparent calc(50% - 1px), #000 calc(50% - 1px), #000 calc(50% + 1px), rgb(0 0 0 / 0.2) calc(50% + 1px), transparent calc(50% + 56px));
+  mask-image: linear-gradient(to bottom, transparent calc(50% - 1px), #000 calc(50% - 1px), #000 calc(50% + 1px), rgb(0 0 0 / 0.2) calc(50% + 1px), transparent calc(50% + 56px));
 }
 
-/* ── Hero motion — one cinematic settle, once, on load ─────────────────*/
-@keyframes heroRise { from { transform: translateY(110%); } to { transform: none; } }
-@keyframes heroFade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-@keyframes heroSettle { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
-@keyframes heroDraw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* States as events: hover brightens the edge, focus lights it fully (plus
+   the ring), active is the full edge on a raised surface. Opacity only. */
+.lit:hover .led::before { opacity: 0.55; }
+.lit:focus-visible .led::before,
+.lit:focus-within .led::before { opacity: 1; }
+.lit:active .led::before { opacity: 1; }
+a.lit:active, button.lit:active { background: var(--surface-raised); }
 
-.hero-mask { display: block; overflow: hidden; }
-.hero-rise { display: block; animation: heroRise 0.9s var(--ease-out) both; }
-.hero-fade { animation: heroFade 0.5s var(--ease-out) both; }
-.hero-settle { animation: heroSettle var(--t-cine) var(--ease-out) both; }
-.hero-draw { transform-origin: left; animation: heroDraw var(--t-reveal) var(--ease-out) both; }
+/* No pointer that can hover: the edges rest half-lit and the pool stays
+   where a lamp would be. Reduced motion: everything lit, nothing tracks. */
+html:not([data-light='cursor']) .led::before { opacity: 0.32; }
+html[data-light='static'] .led::before { opacity: 0.8; }
+html[data-light='static'] .led::after { display: none; }
 
-/* ── Scrollbar ─────────────────────────────────────────────────────────*/
-html { scrollbar-width: thin; scrollbar-color: var(--line-2) var(--base); }
+/* ── Panels — no border; the edge is light ─────────────────────────────*/
+.panel {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r-panel);
+  background: var(--surface);
+}
+.panel-raised {
+  background: var(--skin), var(--surface-raised);
+  background-blend-mode: soft-light, normal;
+}
+.panel-day {
+  background: var(--day);
+  color: var(--day-ink);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+/* ── Actions — hover: a ring of light (opacity in); focus: the ring plus
+   the offset outline; active: the control settles by a pixel and its fill
+   darkens. Colour changes are instant; only light and depth move. */
+.act {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r-control);
+  transition: transform var(--t-fast) var(--ease-out);
+}
+.act::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 1px rgb(var(--led-rgb) / 0.55),
+    0 0 22px 2px rgb(var(--copper-rgb) / 0.24);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-out);
+}
+.act:hover::after, .act:focus-visible::after { opacity: 1; }
+.act:active { transform: translateY(1px); }
+.act:active::after { opacity: 1; }
+.act-ghost { box-shadow: inset 0 0 0 1px var(--edge-2); }
+.act-ghost:active { background: rgb(var(--ink-rgb) / 0.05); }
+
+/* Text links with a line of light under them. */
+.lnk { position: relative; }
+.lnk::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: rgb(var(--led-rgb) / 0.85);
+  box-shadow: 0 0 10px rgb(var(--copper-rgb) / 0.35);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease-out);
+}
+.lnk:hover::after, .lnk:focus-visible::after { opacity: 1; }
+.lnk:active { color: var(--copper); }
+
+/* ── Reveal — a section is switched on once when reached: opacity only,
+   and the edges inside flash to full and settle. No movement, no stagger. */
+[data-reveal] { opacity: 0; transition: opacity var(--t-max) var(--ease-out); }
+[data-reveal].is-on { opacity: 1; }
+@keyframes ledOn { 0% { opacity: 0; } 45% { opacity: 1; } 100% { opacity: 0; } }
+[data-reveal].is-on .led::before { animation: ledOn var(--t-max) var(--ease-out) 1; }
+html:not([data-light='cursor']) [data-reveal].is-on .led::before { animation: none; }
+
+/* ── Hero ──────────────────────────────────────────────────────────────*/
+
+/* The ceiling: ribs of light in slight perspective — one drawing barely
+   on, its twin bright and masked to a pool around the pointer. */
+.ribs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 16%, transparent 34%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 16%, transparent 34%);
+}
+.ribs svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ribs-base { opacity: 0.06; }
+.ribs-lit {
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(640px 440px at var(--mx) var(--my), #000 0%, rgb(0 0 0 / 0.45) 42%, transparent 100%);
+  mask-image: radial-gradient(640px 440px at var(--mx) var(--my), #000 0%, rgb(0 0 0 / 0.45) 42%, transparent 100%);
+}
+html:not([data-light='cursor']) .ribs-lit {
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(70% 70% at 50% 0%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(70% 70% at 50% 0%, #000 0%, transparent 100%);
+}
+html[data-light='static'] .ribs-lit { opacity: 0.35; -webkit-mask-image: none; mask-image: none; }
+
+/* The photograph as a window: feathered only at its edges, with the light
+   of the room pooling along its sill. */
+.window-feather-x {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 24%);
+}
+.window-feather-y {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 100%);
+}
+.window-glow {
+  background: linear-gradient(to top,
+    rgb(var(--led-rgb) / 0.26) 0%,
+    rgb(var(--copper-rgb) / 0.10) 42%,
+    transparent 100%);
+}
+.window-sill {
+  background: rgb(var(--led-rgb) / 0.7);
+  box-shadow: 0 0 20px 2px rgb(var(--copper-rgb) / 0.35);
+}
+
+/* The headline's reflection in the floor: flipped, blurred, six percent,
+   fading with distance the way a reflection does. */
+.reflect {
+  transform: scaleY(-1);
+  filter: blur(5px);
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+}
+
+/* The hero's own light comes up once on load — opacity only, 300 ms. */
+@keyframes lightUp { from { opacity: 0; } to { opacity: 1; } }
+.light-up { animation: lightUp var(--t-max) var(--ease-out) both; }
+
+/* ── Scrollbar — the same material as the page ─────────────────────────*/
+html { scrollbar-width: thin; scrollbar-color: var(--surface-raised) var(--base); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--base); }
-::-webkit-scrollbar-thumb { background: var(--surface-high); border: 3px solid var(--base); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--line-2); }
+::-webkit-scrollbar-thumb { background: var(--surface-raised); border: 3px solid var(--base); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--edge-2); }
 
+/* Reduced motion is an intentional alternative, not a kill switch: the
+   decorative motion goes (reveals, the hero's light-up, the flash of an
+   edge, every nudge and press), while state feedback stays as a short fade
+   so hover and focus still read. The light field itself switches to its
+   static, fully lit mode — see html[data-light='static'] above. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  html { scroll-behavior: auto; }
+  [data-reveal] { opacity: 1 !important; transition: none; }
+  [data-reveal].is-on .led::before { animation: none; }
+  .light-up { animation: none; }
+  .led, .led::before, .act::after, .lnk::after { transition-duration: 0.15s; }
+  .act, .act:active { transform: none; transition: none; }
+  .skip-link { transition: none; }
+  .transition-transform { transition: none !important; }
+}
+
+/* ── Small parts ───────────────────────────────────────────────────────*/
+
+/* An edge held on — the active segment of the process track. */
+.led-on::before { opacity: 1 !important; }
+
+/* A chip is a very small panel: a plate with its own lit top edge. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: var(--r-chip);
+  background: rgb(var(--ink-rgb) / 0.04);
+  box-shadow: inset 0 1px 0 var(--edge);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-2);
 }

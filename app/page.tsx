@@ -7,6 +7,7 @@ import Principles from '@/components/sections/Principles';
 import Technology from '@/components/sections/Technology';
 import StartProject from '@/components/sections/StartProject';
 import SiteFooter from '@/components/sections/SiteFooter';
+import LightField from '@/components/ui/LightField';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 
@@ -23,16 +24,18 @@ const profilePage = {
 };
 
 /*
- * The site is one continuous composition, read top to bottom.
+ * The site is one room, read top to bottom.
  *
  * The order below is the story, and the rhythm between blocks is deliberately
- * uneven — see the py-rhythm-* tokens inside each section. Nothing here is a
- * repeated section template; every block owns its own layout.
+ * uneven — see the beat-* classes inside each section. Nothing here is a
+ * repeated section template; every block owns its own layout, and every one
+ * of them is lit by the same field.
  */
 export default function Home() {
   return (
     <>
       <JsonLd data={profilePage} />
+      <LightField />
       <Header />
       <main id="main">
         <Identity />

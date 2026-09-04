@@ -1,14 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 
 /*
- * ALY — design tokens.
+ * aly — design tokens.
  *
- * Four colours, three type families, one fluid scale. Everything the site is
- * allowed to look like is declared here; components pick from this and never
- * invent a hex value.
+ * Every value here points at a custom property declared in app/globals.css,
+ * so `bg-surface` and `var(--surface)` can never disagree. Colours that take
+ * an alpha (text-ink/50, stroke-copper/40) are declared through an RGB
+ * triplet; the rest are plain references.
  *
- * The signal colour (#00ADB5) is intentionally the only saturated value in the
- * system, so any place it appears reads as "this does something".
+ * Copper is the only colour in the system. `signal` and `line` remain as
+ * aliases for the inner pages until they move to this world.
  */
 module.exports = {
   content: [
@@ -18,92 +19,91 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /* Canvas — matte black. Not pure #000: a hair of warmth keeps it
-           reading as a matte material rather than a switched-off screen. */
         base: {
-          DEFAULT: '#0C0C0E', // graphite, not ink — see globals.css
-          deep: '#060607', // the floor — footer, overlays, deepest areas
+          DEFAULT: 'rgb(var(--base-rgb) / <alpha-value>)',
+          deep: 'var(--base-deep)',
         },
-        /* Raised surfaces. The palette greys live here now, as material
-           against the black rather than as the canvas itself. */
         surface: {
-          DEFAULT: '#171719',
-          low: '#111113', // barely lifted off the black
-          high: '#1F1F21', // panels, frames, graphic blocks
+          DEFAULT: 'var(--surface)',
+          raised: 'var(--surface-raised)',
+          low: 'var(--surface)',
+          high: 'var(--surface-raised)',
         },
-        /* Light — primary text, and inverted blocks.
-           These match the CSS custom properties in globals.css exactly. They
-           used to differ by a few points of alpha, which meant `text-ink-3`
-           and `color: var(--ink-3)` were two different greys depending on
-           which system a component happened to use. */
         ink: {
-          DEFAULT: '#F7F4F0', // warm white — printed, not emitted
-          2: 'rgba(247,244,240,0.68)', // secondary text
-          3: 'rgba(247,244,240,0.48)', // meta, disabled — clears AA on --base
+          DEFAULT: 'rgb(var(--ink-rgb) / <alpha-value>)',
+          bright: 'var(--ink-bright)',
+          2: 'var(--ink-2)',
+          3: 'var(--ink-3)',
         },
-        /* The filled accent, and there is no colour in it. White on black is
-           the loudest thing this palette can do, so a filled white control is
-           the accent — and the same discipline about how rarely it appears. */
-        signal: {
-          DEFAULT: '#F7F4F0',
-          deep: '#CFCAC3', // pressed / hover on filled
-          wash: 'rgba(247,244,240,0.08)', // faint backing
-        },
-        /* The one colour. A muted bronze, deliberately short of gold: it earns
-           a single word in the hero and a single dot in the wordmark. Spread
-           any wider it stops being an accent and becomes a theme. */
         copper: {
-          DEFAULT: '#C0996F',
-          soft: 'rgba(192,153,111,0.55)',
+          DEFAULT: 'rgb(var(--copper-rgb) / <alpha-value>)',
+          bright: 'var(--copper-bright)',
+          deep: 'var(--copper-deep)',
+          soft: 'rgb(var(--copper-rgb) / 0.55)',
+        },
+        led: 'rgb(var(--led-rgb) / <alpha-value>)',
+        edge: {
+          DEFAULT: 'var(--edge)',
+          2: 'var(--edge-2)',
         },
         line: {
-          DEFAULT: 'rgba(247,244,240,0.09)',
-          2: 'rgba(247,244,240,0.18)',
+          DEFAULT: 'var(--edge)',
+          2: 'var(--edge-2)',
+        },
+        signal: {
+          DEFAULT: 'rgb(var(--copper-rgb) / <alpha-value>)',
+          deep: 'var(--copper-deep)',
+          wash: 'rgb(var(--copper-rgb) / 0.10)',
+        },
+        day: {
+          DEFAULT: 'var(--day)',
+          ink: 'rgb(var(--day-ink-rgb) / <alpha-value>)',
+          2: 'var(--day-ink-2)',
+          edge: 'var(--day-edge)',
         },
       },
 
-      /* The bento panel is the unit of layout — see globals.css. */
+      /* Straight lines. Panels 6px, controls 4px, chips 3px, nothing round.
+         `pill` and `card` are kept as names so the inner pages still build. */
       borderRadius: {
-        panel: '28px',
-        card: '20px',
-        control: '14px',
-        pill: '999px',
+        panel: 'var(--r-panel)',
+        card: 'var(--r-control)',
+        control: 'var(--r-control)',
+        chip: 'var(--r-chip)',
+        pill: 'var(--r-panel)',
       },
 
-      /* Two families only, both self-hosted from public/fonts. `mono` is
-         intentionally mapped to Onest: the technical voice comes from wide
-         tracking on micro labels, not from a third typeface. */
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
+        display: ['Unbounded', 'Onest', 'system-ui', 'sans-serif'],
         sans: ['Onest', 'system-ui', 'sans-serif'],
         mono: ['Onest', 'system-ui', 'sans-serif'],
       },
 
-      /* Fluid scale — headings are compositional elements, so they move with
-         the viewport rather than stepping at breakpoints. */
+      /* Display sizes are modest on purpose: lettering on a wall, not a
+         poster. The section heading is the same size everywhere; only the
+         hero is allowed to be larger. */
       fontSize: {
         meta: ['0.6875rem', { lineHeight: '1.2', letterSpacing: '0.16em' }],
         micro: ['0.8125rem', { lineHeight: '1.5' }],
         body: ['0.9375rem', { lineHeight: '1.65' }],
-        lead: ['clamp(1.0625rem,0.9rem + 0.7vw,1.375rem)', { lineHeight: '1.55' }],
-        'd-s': ['clamp(1.5rem,1.2rem + 1.4vw,2.25rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
-        'd-m': ['clamp(2rem,1.5rem + 2.6vw,3.5rem)', { lineHeight: '1.06', letterSpacing: '-0.03em' }],
-        'd-l': ['clamp(2.75rem,1.8rem + 4.6vw,5.5rem)', { lineHeight: '0.98', letterSpacing: '-0.035em' }],
-        'd-xl': ['clamp(3.25rem,1.5rem + 8.4vw,9rem)', { lineHeight: '0.92', letterSpacing: '-0.04em' }],
+        lead: ['clamp(1.0625rem,0.95rem + 0.5vw,1.25rem)', { lineHeight: '1.55' }],
+        'd-s': ['clamp(1.375rem,1.1rem + 1.1vw,1.9rem)', { lineHeight: '1.15', letterSpacing: '-0.01em' }],
+        'd-m': ['clamp(1.6rem,1.15rem + 1.6vw,2.4rem)', { lineHeight: '1.12', letterSpacing: '-0.012em' }],
+        'd-l': ['clamp(1.9rem,1.1rem + 2.6vw,3.3rem)', { lineHeight: '1.08', letterSpacing: '-0.015em' }],
+        'd-xl': ['clamp(2.4rem,1.4rem + 3.8vw,4.5rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
       },
 
       maxWidth: {
-        shell: '1440px', // outer grid
-        text: '68ch',    // long-form measure
+        shell: '1440px',
+        text: '68ch',
         narrow: '640px',
       },
 
       spacing: {
-        gutter: 'clamp(1.25rem,4vw,2.5rem)',
-        /* Section rhythm is deliberately uneven — see globals.css */
-        'rhythm-s': 'clamp(4rem,8vw,7rem)',
-        'rhythm-m': 'clamp(6rem,12vw,11rem)',
-        'rhythm-l': 'clamp(8rem,18vw,16rem)',
+        gutter: 'clamp(1rem,4vw,3rem)',
+        'rhythm-s': 'clamp(4rem,8vw,6.5rem)',
+        'rhythm-m': 'clamp(5.5rem,10vw,8.5rem)',
+        'rhythm-l': 'clamp(7rem,14vw,10.5rem)',
       },
 
       screens: { xs: '480px' },

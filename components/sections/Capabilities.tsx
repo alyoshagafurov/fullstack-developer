@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 
+import Action from '@/components/ui/Action';
+import Panel from '@/components/ui/Panel';
+import Rail from '@/components/ui/Rail';
 import Reveal from '@/components/ui/Reveal';
 import ServicePreview from '@/components/ui/ServicePreview';
 import Shell from '@/components/ui/Shell';
@@ -11,212 +14,113 @@ import { featuredServices, services } from '@/lib/services';
 /*
  * Services.
  *
- * Three bands, in the reference's proportions: a wide header with the claim on
- * the left and three figures on the right, five equal cards in one row, and a
- * single help panel closing the section.
+ * The claim and the owner's three figures on one line, then the five
+ * featured services as a stack of low, wide drawers: no border, no handle,
+ * a seam of light along the top of each that brightens under the pointer.
+ * The drawing sits at the far end of the drawer, the arrow past it. Every
+ * drawer is a link to its page — that is the point of the section.
  *
- * Five cards, not fourteen. The catalogue in lib/services.ts holds all
- * fourteen and every one of them has a page; showing them all here would turn
- * a section into a price list. The five are the ones marked `featured`.
- *
- * Each card is a link, and that is the point of the section — the brief asks
- * for a page per service explaining what it is, what it gives you and who it
- * is for, and the card is how you reach it.
- *
- * The numerals are large and nearly unlit: decoration that gives the row a
- * rhythm, not information anybody reads.
+ * Five, not fourteen. The catalogue in lib/services.ts holds all fourteen and
+ * every one of them has a page; the line under the stack leads there.
  */
 export default function Capabilities() {
   const { t } = useI18n();
   const s = t.servicesSection;
 
   return (
-    <section id="services" className="relative beat">
+    <section id="services" className="beat relative scroll-mt-20">
       <Shell>
-        {/* ── Header ────────────────────────────────────────────────── */}
+        <Rail label={s.eyebrow}>{String(services.length).padStart(2, '0')}</Rail>
+
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">
-            <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-ink-3">
-              {s.eyebrow}
-              <span aria-hidden className="h-px w-8 bg-line-2" />
-              <span aria-hidden className="h-1 w-1 rounded-full bg-copper" />
-            </span>
-
-            <h2
-              className="mt-7 max-w-[18ch] text-[clamp(1.9rem,1.1rem+2.5vw,3.1rem)] font-light
-                         uppercase leading-[1.1] tracking-[-0.015em] text-ink"
-            >
+            <h2 className="display max-w-[22ch] text-d-m text-ink">
               {s.titleA} <span className="text-copper">{s.titleB}</span>
             </h2>
-
-            <p className="mt-6 max-w-[42ch] text-[15px] leading-[1.7] text-ink-2">{s.sub}</p>
-
-            <Link
-              href="/start-project"
-              className="group mt-9 inline-flex min-h-[44px] items-center gap-4 text-[12px]
-                         uppercase tracking-[0.2em] text-ink transition-colors duration-300
-                         hover:text-copper"
-            >
-              {s.cta}
-              <span
-                aria-hidden
-                className="h-px w-10 bg-line-2 transition-all duration-300
-                           group-hover:w-16 group-hover:bg-copper"
-              />
-              <span
-                aria-hidden
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </Link>
+            <p className="mt-5 max-w-[46ch] text-[15px] leading-[1.7] text-ink-2">{s.sub}</p>
           </div>
 
           {/* Three figures on one line, divided by hairlines rather than boxed. */}
-          <dl className="m-0 grid grid-cols-3 self-start lg:col-span-5 lg:mt-2">
+          <dl className="m-0 grid grid-cols-3 self-end lg:col-span-5">
             {s.stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={index > 0 ? 'border-l border-line pl-5 lg:pl-7' : 'pr-5'}
-              >
-                <dt className="text-[clamp(1.5rem,1.1rem+1vw,2rem)] font-light leading-none text-ink tabular-nums">
+              <div key={stat.label} className={index > 0 ? 'border-l border-edge pl-5 lg:pl-7' : ''}>
+                <dt className="display text-[clamp(1.4rem,1rem+1vw,1.9rem)] leading-none text-ink tabular-nums">
                   {stat.value}
                 </dt>
-                <dd className="m-0 mt-3 max-w-[14ch] text-[12px] leading-[1.45] text-ink-3">
-                  {stat.label}
-                </dd>
+                <dd className="m-0 mt-2 max-w-[14ch] text-[12px] leading-[1.45] text-ink-3">{stat.label}</dd>
               </div>
             ))}
           </dl>
         </div>
 
-        {/* ── The five cards ───────────────────────────────────────── */}
-        <ul className="m-0 mt-14 grid list-none gap-3 p-0 sm:grid-cols-2 lg:mt-20 lg:grid-cols-5">
-          {featuredServices.map((service, index) => (
-            <Reveal as="li" key={service.slug} delay={index % 3}>
-              <Link
-                href={`/services/${service.slug}`}
-                className="group flex h-full flex-col rounded-[18px] border border-line
-                           bg-surface-low p-6 transition-all duration-300
-                           hover:border-line-2 hover:bg-surface"
-              >
-                <span
-                  aria-hidden
-                  className="text-[clamp(2.5rem,3.4vw,3.4rem)] font-extralight leading-none
-                             tracking-[-0.03em] text-ink/[0.13] transition-colors duration-300
-                             group-hover:text-copper/40"
+        <Reveal className="mt-12 lg:mt-16">
+          <ol className="m-0 grid list-none gap-2 p-0">
+            {featuredServices.map((service) => (
+              <li key={service.slug}>
+                <Panel
+                  as={Link}
+                  href={`/services/${service.slug}`}
+                  className="group grid min-h-[96px] grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-x-4 px-5 py-5
+                             md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.1fr)_8rem_auto] md:gap-x-8 md:px-8 md:py-4"
                 >
-                  {service.num}
-                </span>
+                  <span
+                    aria-hidden
+                    className="display text-[13px] text-ink-3 tabular-nums transition-colors duration-200 group-hover:text-copper"
+                  >
+                    {service.num}
+                  </span>
+                  <h3 className="m-0 text-[15px] font-medium uppercase leading-[1.25] tracking-[0.02em] text-ink">
+                    {service.title}
+                  </h3>
+                  <span
+                    aria-hidden
+                    className="justify-self-end text-ink-3 transition-transform duration-300 ease-out
+                               group-hover:translate-x-1 group-hover:text-copper md:col-start-5"
+                  >
+                    →
+                  </span>
+                  <span className="col-span-3 row-start-2 text-[13px] leading-[1.55] text-ink-3 md:col-span-1 md:col-start-3 md:row-start-1">
+                    {service.tagline}
+                  </span>
+                  <span aria-hidden className="hidden h-[64px] w-32 md:col-start-4 md:row-start-1 md:block">
+                    {service.preview && <ServicePreview kind={service.preview} />}
+                  </span>
+                </Panel>
+              </li>
+            ))}
+          </ol>
 
-                <h3 className="mt-10 text-[15px] font-medium uppercase leading-[1.25] tracking-[0.01em] text-ink">
-                  {service.title}
-                </h3>
-
-                <p className="mt-3 text-[13px] leading-[1.55] text-ink-3">{service.tagline}</p>
-
-                {/* The drawing sits at the foot of the card and grows a little
-                    on hover — the whole interaction, and nothing more. */}
-                <div className="mt-8 h-[104px] w-full overflow-hidden">
-                  {service.preview && (
-                    <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.04]">
-                      <ServicePreview kind={service.preview} />
-                    </div>
-                  )}
-                </div>
-
-                <span
-                  aria-hidden
-                  className="mt-4 self-end text-[15px] text-ink-3 transition-all duration-300
-                             group-hover:translate-x-1 group-hover:text-copper"
-                >
-                  →
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </ul>
-
-        {/* Five cards are a section; the catalogue is fourteen. Without this
-            the other nine exist and are unreachable from the landing page. */}
-        <div className="mt-6 flex justify-end">
-          <Link
-            href="/services"
-            className="group inline-flex min-h-[44px] items-center gap-3 text-[12px]
-                       uppercase tracking-[0.18em] text-ink-3 transition-colors
-                       duration-300 hover:text-ink"
-          >
-            Все услуги
-            <span aria-hidden className="tabular-nums text-copper">
-              {String(services.length).padStart(2, '0')}
-            </span>
-            <span
-              aria-hidden
-              className="transition-transform duration-300 group-hover:translate-x-1"
+          <div className="mt-5 flex justify-end">
+            <Link
+              href="/services"
+              className="lnk group inline-flex min-h-[44px] items-center gap-3 text-[12px] uppercase
+                         tracking-[0.18em] text-ink-3 hover:text-ink"
             >
-              →
-            </span>
-          </Link>
-        </div>
-
-        {/* ── Help panel ───────────────────────────────────────────── */}
-        <Reveal>
-          <div
-            className="relative mt-3 overflow-hidden rounded-[18px] border border-line
-                       bg-surface-low px-6 py-7 md:px-9"
-          >
-            {/* One thin wave, drawn rather than imported, sitting behind the
-                text at the opacity of a watermark. */}
-            <svg
-              aria-hidden
-              viewBox="0 0 900 120"
-              fill="none"
-              preserveAspectRatio="none"
-              className="pointer-events-none absolute inset-y-0 left-1/4 hidden h-full w-1/2 lg:block"
-            >
-              {[0, 7, 14, 21, 28].map((offset) => (
-                <path
-                  key={offset}
-                  d={`M0 ${70 + offset} C 220 ${20 + offset} 420 ${104 + offset} 900 ${34 + offset}`}
-                  stroke="rgba(192,153,111,0.30)"
-                  strokeWidth="0.7"
-                />
-              ))}
-            </svg>
-
-            <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-5">
-                <span
-                  aria-hidden
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line-2 text-[15px] text-ink-2"
-                >
-                  ?
-                </span>
-                <div>
-                  <p className="m-0 text-[15px] font-medium uppercase tracking-[0.04em] text-ink">
-                    {s.helpTitle}
-                  </p>
-                  <p className="m-0 mt-1.5 text-[13px] leading-[1.55] text-ink-3">{s.helpSub}</p>
-                </div>
-              </div>
-
-              <Link
-                href="/start-project"
-                className="group inline-flex min-h-[48px] shrink-0 items-center gap-4 rounded-pill
-                           border border-line-2 px-7 text-[12px] uppercase tracking-[0.18em]
-                           text-ink transition-colors duration-300 hover:border-copper
-                           hover:text-copper"
-              >
-                {s.helpCta}
-                <span
-                  aria-hidden
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                >
-                  →
-                </span>
-              </Link>
-            </div>
+              Все услуги
+              <span aria-hidden className="tabular-nums text-copper">
+                {String(services.length).padStart(2, '0')}
+              </span>
+              <span aria-hidden className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
           </div>
+        </Reveal>
+
+        <Reveal className="mt-4">
+          <Panel
+            tone="raised"
+            className="flex flex-col gap-6 px-6 py-7 md:flex-row md:items-center md:justify-between md:px-9"
+          >
+            <div>
+              <p className="m-0 text-[15px] font-medium uppercase tracking-[0.04em] text-ink">{s.helpTitle}</p>
+              <p className="m-0 mt-1.5 max-w-[48ch] text-[13px] leading-[1.55] text-ink-3">{s.helpSub}</p>
+            </div>
+            <Action href="/start-project" variant="ghost" className="shrink-0">
+              {s.helpCta}
+              <span aria-hidden>→</span>
+            </Action>
+          </Panel>
         </Reveal>
       </Shell>
     </section>

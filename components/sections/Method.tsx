@@ -1,80 +1,138 @@
 'use client';
 
 import Image from 'next/image';
+import { useId, useRef, useState } from 'react';
 
-import Panel from '@/components/ui/Panel';
+import Panel, { Led } from '@/components/ui/Panel';
+import Rail from '@/components/ui/Rail';
 import Reveal from '@/components/ui/Reveal';
 import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * Process — the steps as a bento row.
+ * Process — the steps as segments of one track.
  *
- * Was a ladder zig-zagging across a central spine, which is a good device and
- * the wrong one here: it needs a great deal of height to read, and it aligns
- * to nothing, so it cannot sit in a grid with the sections around it. The
- * steps are now panels of equal weight, in order, left to right.
+ * From md up the seven steps sit on a single LED track, each holding a
+ * segment whose length is its share of a project, and the segment being
+ * read is the one held on. Its text appears in the readout below, beside
+ * the workspace photograph. Below md the steps are simply listed in full.
  *
- * The workspace photograph stays, but as a cell in the same grid rather than
- * an object floating beneath it — in the references a photo is a panel like
- * any other. It is a 735px source, so it is only ever cropped, never stretched.
+ * The dictionary carries no durations and none are claimed on screen. The
+ * weights only give the track the proportions of a real project — the build
+ * is the long stretch, the launch is short, support is open-ended — instead
+ * of seven equal boxes. A step beyond the seventh takes the last weight.
+ *
+ * The segments are tabs: arrow keys move along the track, focus selects.
  */
+const WEIGHTS = [1, 1.4, 2, 4, 1.4, 1, 2];
+
 export default function Method() {
   const { t } = useI18n();
+  const steps = t.process.steps;
+  const [active, setActive] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const id = useId();
+  const current = steps[Math.min(active, steps.length - 1)];
+
+  const onKey = (e: React.KeyboardEvent, i: number) => {
+    const n = steps.length;
+    let next = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % n;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + n) % n;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = n - 1;
+    if (next < 0) return;
+    e.preventDefault();
+    setActive(next);
+    tabs.current[next]?.focus();
+  };
+
+  const columns = steps
+    .map((_, i) => `${WEIGHTS[Math.min(i, WEIGHTS.length - 1)]}fr`)
+    .join(' ');
 
   return (
-    <section id="process" className="relative beat overflow-x-clip">
+    <section id="process" className="beat relative scroll-mt-20">
       <Shell>
-        <header className="mb-8 grid gap-4 md:mb-10 md:grid-cols-12 md:items-end">
-          <div className="md:col-span-6">
-            <span className="label">{t.process.eyebrow}</span>
-            <h2 className="display text-d-s text-ink mt-3">{t.process.title}</h2>
-          </div>
+        <Rail label={t.process.eyebrow}>{String(steps.length).padStart(2, '0')}</Rail>
+
+        <header className="grid gap-4 md:grid-cols-12 md:items-end">
+          <h2 className="display text-d-m text-ink md:col-span-6">{t.process.title}</h2>
           <p className="m-0 text-[14px] leading-[1.6] text-ink-2 md:col-span-5 md:col-start-8">
             {t.process.sub}
           </p>
         </header>
 
-        <ol className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
-          {t.process.steps.map((step, index) => (
-            <Reveal as="li" key={step.n} delay={index % 3}>
-              <Panel className="group h-full p-6 transition-colors duration-200 hover:border-line-2 md:p-7">
-                <span
-                  aria-hidden
-                  className="font-mono text-[11px] tracking-[0.16em] text-ink-3
-                             transition-colors duration-200 group-hover:text-ink-2"
+        {/* ── The track ─────────────────────────────────────────────── */}
+        <Reveal className="mt-12 hidden md:block">
+          <div role="tablist" aria-label={t.process.title} className="grid" style={{ gridTemplateColumns: columns }}>
+            {steps.map((step, i) => {
+              const on = i === active;
+              return (
+                <button
+                  key={step.n}
+                  ref={(el) => {
+                    tabs.current[i] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`${id}-tab-${i}`}
+                  aria-selected={on}
+                  aria-controls={`${id}-panel`}
+                  tabIndex={on ? 0 : -1}
+                  onClick={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  onKeyDown={(e) => onKey(e, i)}
+                  data-light=""
+                  className={`lit relative min-h-[92px] px-3 pb-3 pt-5 text-left ${
+                    on ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
+                  }`}
                 >
-                  {step.n}
-                </span>
-                <h3 className="mb-2 mt-4 text-[17px] font-medium leading-tight tracking-tight text-ink">
-                  {step.t}
-                </h3>
-                <p className="m-0 text-[14px] leading-[1.6] text-ink-2">{step.d}</p>
-              </Panel>
-            </Reveal>
-          ))}
-
-          {/* The photograph closes the row, cropped to a letterbox so it reads
-              as a band rather than competing with the step panels above it. */}
-          <Reveal as="li" className="sm:col-span-2 lg:col-span-4">
-            <Panel className="overflow-hidden p-0">
-              <figure className="m-0">
-                <div className="relative aspect-[735/247] w-full overflow-hidden">
-                  <Image
-                    src="/workspace-detail.jpg"
-                    alt="Рабочий стол поздним вечером"
-                    fill
-                    quality={86}
-                    sizes="(max-width: 1200px) 100vw, 1200px"
-                    className="object-cover object-center"
+                  <Led className={on ? 'led-on' : ''} />
+                  <span
+                    aria-hidden
+                    className={`absolute left-0 top-0 h-3 w-px ${on ? 'bg-led' : 'bg-edge-2'}`}
                   />
-                </div>
-                <figcaption className="label text-[11px] px-6 py-4 md:px-7">
-                  Dushanbe · 23:11
-                </figcaption>
-              </figure>
+                  <span className="block text-[11px] tabular-nums tracking-[0.16em]">{step.n}</span>
+                  <span className="mt-2 block text-[13px] font-medium leading-tight">{step.t}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-3 grid gap-2 lg:grid-cols-12">
+            <Panel
+              tone="raised"
+              role="tabpanel"
+              id={`${id}-panel`}
+              aria-labelledby={`${id}-tab-${active}`}
+              className="px-7 py-8 md:px-9 md:py-9 lg:col-span-7"
+            >
+              <span className="display text-[13px] text-copper tabular-nums">{current.n}</span>
+              <h3 className="display mt-3 text-d-s text-ink">{current.t}</h3>
+              <p className="m-0 mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-ink-2">{current.d}</p>
             </Panel>
-          </Reveal>
+            <Panel edge="none" className="relative min-h-[240px] overflow-hidden lg:col-span-5">
+              <Image
+                src="/workspace-detail.jpg"
+                alt="Рабочий стол поздним вечером"
+                fill
+                sizes="(max-width:1024px) 100vw, 40vw"
+                className="object-cover"
+              />
+            </Panel>
+          </div>
+        </Reveal>
+
+        {/* ── Below md: the steps in full ───────────────────────────── */}
+        <ol className="m-0 mt-10 grid list-none gap-2 p-0 md:hidden">
+          {steps.map((step) => (
+            <Panel as="li" key={step.n} className="px-5 py-5">
+              <span className="display text-[12px] text-ink-3 tabular-nums">{step.n}</span>
+              <h3 className="m-0 mt-2 text-[16px] font-medium leading-tight text-ink">{step.t}</h3>
+              <p className="m-0 mt-2 text-[14px] leading-[1.6] text-ink-2">{step.d}</p>
+            </Panel>
+          ))}
         </ol>
       </Shell>
     </section>
