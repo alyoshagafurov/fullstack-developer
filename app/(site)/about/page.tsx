@@ -22,12 +22,12 @@ export default function AboutPage() {
         <div className="grid gap-14 md:grid-cols-2 md:gap-20">
           <div className="relative aspect-3/2 w-full overflow-hidden bg-ground md:aspect-4/5">
             <Image
-              src="/photo/portrait-work.webp"
+              src="/photo/about.webp"
               alt={`${site.name} за работой`}
               fill
               priority
               sizes="(min-width: 768px) 46vw, 92vw"
-              className="object-cover"
+              className="object-cover object-[55%_35%]"
             />
           </div>
 

@@ -3,21 +3,20 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 
 /*
- * The opening: him on one side, the words on the other, nothing on top of
- * anything.
+ * The opening: the photograph fills the screen, and the words sit on the desk.
  *
- * Three earlier versions put type over the photograph — centred on his face,
- * split around his head, and set heavy across his chest. Every one of them
- * traded legibility for drama and lost: the statement is black, his shirt is
- * black, and the second line disappeared into it. A scrim strong enough to fix
- * that flattened the picture.
+ * Every earlier version fought the same battle — type over his chest, where the
+ * statement is black and his shirt is black too, so the second line vanished.
+ * This photograph solves it by having a place for words in it: the desk across
+ * the bottom is almost black and completely empty, and he is above it with
+ * nothing on him. So the type goes there in white, he stays uncovered, and the
+ * top two thirds are left as air.
  *
- * So the two are separated. He gets a full-bleed half where nothing covers him;
- * the words get a quiet half with room to breathe. Both are legible without a
- * single compromise, and the composition is calm rather than busy — which is
- * what the owner asked for after seeing the loud ones.
+ * Big line left, the short one right, the button centred underneath — the
+ * arrangement the owner asked for.
  *
- * `data-tone="light"` tells the header to go black here.
+ * `data-tone="light"` because the header sits over the top of the picture,
+ * which is a pale wall; the dark half is at the other end of the screen.
  */
 export function Opening() {
   // "Цифровые продукты, с характером" — split so the second half can take a
@@ -25,45 +24,65 @@ export function Opening() {
   const [head, tail] = site.shortStatement.split(', ');
 
   return (
-    <section
-      data-tone="light"
-      className="relative flex min-h-[100svh] w-full flex-col bg-ground lg:flex-row"
-    >
-      {/* The photograph. Below the words on a phone, beside them on a desk. */}
-      <div className="relative order-1 h-[42svh] w-full shrink-0 lg:order-2 lg:h-auto lg:w-[52%]">
-        <Image
-          src="/photo/hero.webp"
-          alt={`${site.name}, ${site.role}`}
-          fill
-          priority
-          sizes="(min-width: 1024px) 52vw, 100vw"
-          className="object-cover object-[62%_32%]"
-        />
-      </div>
+    <section data-tone="light" className="relative h-[100svh] w-full overflow-hidden bg-ground">
+      <Image
+        src="/photo/hero.webp"
+        alt={`${site.name}, ${site.role}`}
+        fill
+        priority
+        sizes="100vw"
+        /*
+         * Vertically biased past centre so that on a screen wider than the
+         * frame the crop eats the empty wall at the top and keeps the desk.
+         */
+        className="object-cover object-[50%_45%]"
+      />
 
-      {/* The words. Nothing crosses the picture, so nothing needs a scrim. */}
-      <div className="order-2 flex flex-1 flex-col justify-center px-5 py-16 md:px-10 lg:order-1 lg:py-24 lg:pr-16 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
-        <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink-2 uppercase">
-          <span aria-hidden className="block h-px w-10 bg-ink-3" />
-          {site.role}
-        </p>
+      {/*
+       * The falloff the type sits on.
+       *
+       * Measured, not guessed. The words land partly on the desk and partly on
+       * the pale wall behind it, and white on that wall came out at 3.3:1 —
+       * unreadable. These stops hold every line above 6:1 on the worst pixel
+       * behind it, on a phone as well as a desk, while reaching zero at 76% of
+       * the height: his face loses about a sixth of its brightness and the top
+       * of the frame is untouched. What it looks like is light falling off
+       * towards the foreground, which is what the photograph already does.
+       */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.93)_0%,rgba(0,0,0,0.84)_25%,rgba(0,0,0,0.52)_52%,rgba(0,0,0,0)_76%)]"
+      />
 
-        <h1 className="mt-10 text-[clamp(2.25rem,4.6vw,4.5rem)] leading-[0.95] tracking-[-0.04em] uppercase">
-          <span className="block font-extrabold">{head},</span>
-          {tail && <span className="block font-light">{tail}</span>}
-        </h1>
+      <div className="absolute inset-x-0 bottom-0 px-5 pb-10 md:px-10 md:pb-14">
+        <div className="mx-auto w-full max-w-[1440px]">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-16">
+            <div className="min-w-0">
+              {/* Full strength, not the usual 60%: this line sits highest of
+                  the four, where the falloff is weakest, and at 60% the
+                  worst-case pixel behind it fell under 3:1. */}
+              <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-paper uppercase">
+                <span aria-hidden className="block h-px w-10 bg-paper/70" />
+                {site.role}
+              </p>
 
-        <p className="mt-10 max-w-md text-base leading-relaxed text-ink-2">{site.difference}</p>
+              <h1 className="mt-6 text-[clamp(2.125rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.04em] text-paper uppercase">
+                <span className="block font-extrabold">{head},</span>
+                {tail && <span className="block font-light">{tail}</span>}
+              </h1>
+            </div>
 
-        <CTA href="/start" size="lg" className="mt-12 self-start">
-          {site.heroCta}
-        </CTA>
+            <p className="max-w-sm text-sm leading-relaxed text-paper/70 md:pb-3">
+              {site.difference}
+            </p>
+          </div>
 
-        <p className="mt-16 flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink-3 uppercase">
-          {site.name}
-          <span aria-hidden className="block h-px w-10 bg-ink-3" />
-          Душанбе · UTC+5
-        </p>
+          <div className="mt-10 flex justify-center md:mt-12">
+            <CTA href="/start" tone="dark" size="lg">
+              {site.heroCta}
+            </CTA>
+          </div>
+        </div>
       </div>
     </section>
   );

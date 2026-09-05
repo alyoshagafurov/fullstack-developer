@@ -126,11 +126,13 @@ export function AboutSpread() {
       {/* Its own column, flush to the top, bottom and right of the section. */}
       <div className="relative h-80 w-full sm:h-[28rem] lg:h-auto">
         <Image
-          src="/photo/portrait-work.webp"
+          src="/photo/about.webp"
           alt={`${site.name} за работой`}
           fill
           sizes="(min-width: 1024px) 40vw, 100vw"
-          className="object-cover object-center"
+          /* Biased right and up: the frame is square, the column is tall, and
+             a plain centre crop cuts him in half down the middle. */
+          className="object-cover object-[62%_32%]"
         />
       </div>
     </section>
