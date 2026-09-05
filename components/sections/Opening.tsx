@@ -3,104 +3,68 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 
 /*
- * The opening, in three layers.
+ * The opening: the photograph is the screen, the words sit in the middle of it.
  *
- *   1. the photograph, full bleed — wall, plant, desk, all of it
- *   2. the words, on top of it
- *   3. the same frame with the background cut away, on top of the words
+ * A scrim carries the type. It is not decoration — over the lit wall behind him
+ * white letters simply vanish. Centred type has to cross the picture, so the
+ * picture is darkened enough to hold the words and no more: the plant, the desk
+ * and his face all survive.
  *
- * Because layers one and three are the same shot at the same size with the same
- * fit and the same object-position, the cut-out lands exactly over the man in
- * the photograph. The words slip behind him while the room stays visible — an
- * effect that is impossible with one image and trivial with two.
+ * Two other compositions were built and put aside on the owner's word: a
+ * split screen with the type beside him, and a three-layer version with the
+ * words slipping behind a cut-out of him. Both are in the history at 0b17c5e
+ * and 247c09e if either is ever wanted again.
  *
- * The registration is the fragile part. Both files are exported from the same
- * crop at the same pixel dimensions, and both images below must keep identical
- * sizing classes. Change the fit on one and a ghost edge appears around him.
+ * `data-tone="dark"` tells the header to go white here.
  */
-
-// The single source of truth for how both layers are placed.
-const FRAME = 'object-cover object-[58%_30%]';
-
 export function Opening() {
   return (
     <section
-      data-tone="light"
-      className="relative flex h-[100svh] flex-col justify-end overflow-hidden bg-ground"
+      data-tone="dark"
+      className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden bg-void px-5 py-28 text-center"
     >
-      {/* 1. The room. */}
       <Image
         src="/photo/hero.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className={`z-0 ${FRAME}`}
-      />
-
-      {/*
-        2. The words, over the wall behind him.
-        Ink rather than paper: at this height the frame is the lit wall, and
-        white letters would disappear into it.
-      */}
-      <div
-        aria-hidden
-        className="shell absolute inset-x-0 top-[26%] z-10 flex items-start justify-between gap-4 md:top-[20%]"
-      >
-        <span className="text-[clamp(1.5rem,7.2vw,6.5rem)] leading-[0.85] font-extrabold tracking-[-0.045em] text-ink uppercase">
-          Цифровые
-        </span>
-        <span className="text-[clamp(1.5rem,7.2vw,6.5rem)] leading-[0.85] font-extrabold tracking-[-0.045em] text-ink uppercase">
-          продукты,
-        </span>
-      </div>
-
-      {/* 3. Him, cut out, in front of the words. */}
-      <Image
-        src="/photo/hero-cut.webp"
         alt={`${site.name}, ${site.role}`}
         fill
         priority
         sizes="100vw"
-        className={`z-20 ${FRAME}`}
+        className="object-cover object-[58%_32%]"
       />
 
-      {/*
-        A light strip the height of the header, and no taller.
-        The plant occupies the top-left of this frame, and the wordmark is cut
-        black — over the leaves it vanished. Lifting only the strip the chrome
-        occupies costs the photograph nothing anyone looks at.
-      */}
+      {/* Denser at the top and bottom, where the header and the button sit. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 z-30 h-28 bg-gradient-to-b from-white/85 to-transparent md:h-32"
+        className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/30 to-black/75"
       />
 
-      <h1 className="sr-only">
-        {site.shortStatement}. {site.name}, {site.role}.
-      </h1>
-
       {/*
-        The closing block sits over the desk, which is nearly black in the
-        photograph — so this is the one part of the opening set in paper. A
-        gradient carries it, because the desk's edge crosses the text and a flat
-        scrim would flatten the room behind it.
+        The headline is deliberately smaller than the display-1 used elsewhere.
+        At thirteen viewport widths it filled the screen on its own and pushed
+        the button below the fold — which defeats the point of a first screen
+        whose whole job is to get the button pressed.
       */}
-      <div className="relative z-30 w-full bg-gradient-to-t from-black/80 via-black/55 to-transparent pt-24 pb-10">
-        <div className="shell text-center">
-          <p className="text-[clamp(1.375rem,4.4vw,3.25rem)] leading-[0.9] font-extrabold tracking-[-0.04em] text-paper uppercase">
-            С характером
-          </p>
+      <div className="relative flex w-full max-w-4xl flex-col items-center">
+        <p className="text-[0.6875rem] tracking-[0.18em] text-paper/70 uppercase">
+          {site.name} · {site.role}
+        </p>
 
-          <p className="mx-auto mt-5 max-w-lg text-sm leading-relaxed text-paper/75 md:text-base">
-            {site.difference}
-          </p>
+        <h1 className="mt-7 text-[clamp(2rem,6.4vw,5rem)] leading-[0.92] font-extrabold tracking-[-0.04em] text-paper uppercase">
+          {site.shortStatement}
+        </h1>
 
-          <CTA href="/start" tone="dark" size="lg" className="mt-8">
-            {site.heroCta}
-          </CTA>
-        </div>
+        <p className="mt-7 max-w-lg text-sm leading-relaxed text-paper/75 md:text-base">
+          {site.difference}
+        </p>
+
+        <CTA href="/start" tone="dark" size="lg" className="mt-10">
+          {site.heroCta}
+        </CTA>
       </div>
+
+      <p className="absolute inset-x-0 bottom-8 text-center text-[0.6875rem] tracking-[0.18em] text-paper/35 uppercase">
+        Душанбе · UTC+5
+      </p>
     </section>
   );
 }
