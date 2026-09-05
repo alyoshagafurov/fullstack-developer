@@ -8,13 +8,16 @@ import type { ReactNode } from 'react';
  * floating cards with shadows: they are bands of studio floor.
  */
 
-type Tone = 'ground' | 'paper' | 'shelf' | 'ink';
+type Tone = 'ground' | 'paper' | 'shelf' | 'ink' | 'void';
 
 const tones: Record<Tone, string> = {
   ground: 'bg-ground text-ink',
   paper: 'bg-paper text-ink',
   shelf: 'bg-shelf text-ink',
   ink: 'bg-ink text-paper',
+  // True black. Studio objects must never sit on this: their `darken` blend
+  // would clip everything to black. Type and photographs only.
+  void: 'bg-void text-paper',
 };
 
 export function Band({

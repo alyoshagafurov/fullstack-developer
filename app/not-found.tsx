@@ -30,7 +30,7 @@ export default function NotFound() {
 
         <div className="relative aspect-square w-40 justify-self-start md:w-full md:justify-self-end">
           <StudioObject
-            src="/objects/fig-sphere.webp"
+            src="/objects/phone.webp"
             alt=""
             sizes="(min-width: 768px) 18rem, 10rem"
           />

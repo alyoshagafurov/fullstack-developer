@@ -55,7 +55,7 @@ export default async function ThanksPage({
         </div>
 
         <div className="relative aspect-square w-40 justify-self-start md:w-full md:justify-self-end">
-          <StudioObject src="/objects/fig-ring.webp" alt="" sizes="(min-width: 768px) 16rem, 10rem" />
+          <StudioObject src="/objects/laptop.webp" alt="" sizes="(min-width: 768px) 16rem, 10rem" />
         </div>
       </div>
     </Band>

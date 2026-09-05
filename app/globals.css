@@ -13,6 +13,8 @@
   --color-paper: #ffffff;
   --color-ground: #f1f0ee;
   --color-shelf: #e4e3e0;
+  /* True black, for the bands where type is the only thing on screen. */
+  --color-void: #050505;
 
   --color-ink: #0b0b0b;
   --color-ink-2: #6b6b68;
@@ -110,6 +112,71 @@
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--color-ink-3);
+  }
+
+  /*
+   * The display scale.
+   *
+   * Type is the loudest thing on this site, so it is set the way a magazine
+   * sets it and not the way an interface does: heavy, enormous, tracked in
+   * hard, and leaded so tight the lines lock into a block. Below roughly 5rem
+   * these settings stop working — letters collide — which is why each step has
+   * its own tracking rather than one value for all.
+   */
+  .display-1 {
+    font-weight: 800;
+    font-size: clamp(2.75rem, 13vw, 14rem);
+    line-height: 0.84;
+    letter-spacing: -0.045em;
+  }
+
+  .display-2 {
+    font-weight: 700;
+    font-size: clamp(2.25rem, 7.5vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.038em;
+  }
+
+  .display-3 {
+    font-weight: 600;
+    font-size: clamp(1.625rem, 4.4vw, 3.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  /* Body copy that has to hold its own next to display type. */
+  .lede {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+
+  /*
+   * A line that runs.
+   *
+   * Two identical halves scroll as one track, so the seam never shows. The
+   * animation is decoration and nothing depends on it: reduced motion stops it
+   * dead and the first half stays legible.
+   */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 42s linear infinite;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      animation: none;
+    }
   }
 
   /*

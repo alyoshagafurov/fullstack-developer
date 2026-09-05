@@ -1,15 +1,20 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { Logo } from '@/components/ui/Logo';
 
 /*
- * Site chrome.
+ * Site chrome, with as little chrome as possible.
  *
- * Transparent over the vitrine, then a hairline and a ground once the visitor
- * leaves the first screen — the header is a caption, not a bar. Five
- * destinations and one action; the reference sites never exceed that.
+ * No bar, no background, no blur — the header sits directly on the band behind
+ * it and simply changes colour.
+ *
+ * It did that with `mix-blend-mode: difference` first, which needs no state at
+ * all. That failed in the one place it mattered: difference against a mid-grey
+ * returns a mid-grey, so over the photograph in the opening the links vanished
+ * into the wall behind them. The observer below is more code and always legible,
+ * which is the right trade for navigation.
  */
 
 const NAV = [
@@ -17,24 +22,45 @@ const NAV = [
   { href: '/services', label: 'Услуги' },
   { href: '/about', label: 'Обо мне' },
   { href: '/#process', label: 'Процесс' },
-  { href: '/#start', label: 'Контакты' },
 ];
 
 export function Header() {
-  const [lifted, setLifted] = useState(false);
   const [open, setOpen] = useState(false);
+  const [onDark, setOnDark] = useState(true);
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
 
+  /*
+   * Is the header currently sitting on a dark opening?
+   *
+   * A page marks its dark first screen with `data-opening`; pages without one
+   * start light. Measured against the header's own height rather than a fixed
+   * scroll offset, so it stays correct when the opening is shorter than the
+   * viewport on a small phone in landscape.
+   */
   useEffect(() => {
-    const onScroll = () => setLifted(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const opening = document.querySelector('[data-opening]');
+    if (!opening) {
+      setOnDark(false);
+      return;
+    }
+
+    const check = () => {
+      const rect = opening.getBoundingClientRect();
+      setOnDark(rect.bottom > 96);
+    };
+
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
   // An open menu owns the screen: the page behind it must not scroll, Escape
-  // must close it, and focus must not wander out of it into hidden content.
+  // must close it, and focus must not wander into the hidden content.
   useEffect(() => {
     if (!open) return;
 
@@ -70,99 +96,100 @@ export function Header() {
     };
   }, [open]);
 
+  // Over the opening everything is paper; everywhere else it is ink. The
+  // wordmark file is cut black, so it is inverted only on the dark side.
+  const dark = onDark && !open;
+  const tone = dark ? 'text-paper' : 'text-ink';
+  const bar = open || dark ? 'bg-paper' : 'bg-ink';
+
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ease-[var(--ease-studio)] ${
-        lifted || open
-          ? 'border-b border-line bg-ground/90 backdrop-blur-md'
-          : 'border-b border-transparent'
-      }`}
-    >
-      <div className="shell flex h-16 items-center justify-between gap-6 md:h-20">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+      <div className="shell flex h-20 items-center justify-between gap-6 md:h-24">
         <Link
           href="/"
           aria-label="aly, на главную"
-          className="inline-flex min-h-11 shrink-0 items-center transition-opacity hover:opacity-70"
+          className="pointer-events-auto inline-flex min-h-11 shrink-0 items-center"
         >
-          <Logo priority className="h-5 w-auto md:h-6" />
+          <Image
+            src="/brand/wordmark.webp"
+            alt="aly"
+            width={663}
+            height={462}
+            priority
+            className={`h-5 w-auto transition-[filter] duration-300 md:h-6 ${
+              open || dark ? 'invert' : ''
+            }`}
+            draggable={false}
+          />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex lg:gap-11" aria-label="Разделы сайта">
+        <nav
+          className={`pointer-events-auto hidden items-center gap-9 transition-colors duration-300 md:flex lg:gap-12 ${tone}`}
+          aria-label="Разделы сайта"
+        >
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="label inline-flex min-h-11 items-center whitespace-nowrap transition-colors hover:text-ink"
+              className="inline-flex min-h-11 items-center text-[0.6875rem] tracking-[0.18em] whitespace-nowrap uppercase transition-opacity hover:opacity-60"
             >
               {item.label}
             </Link>
           ))}
-        </nav>
-
-        <div className="flex items-center gap-3">
           <Link
             href="/start"
-            className="hidden min-h-11 items-center rounded-full bg-ink px-5 text-[0.75rem] font-medium tracking-[0.04em] text-paper transition-colors hover:bg-ink-2 sm:inline-flex"
+            className="inline-flex min-h-11 items-center border-b border-current text-[0.6875rem] tracking-[0.18em] uppercase"
           >
-            Обсудить проект
+            Заявка
           </Link>
+        </nav>
 
-          <button
-            ref={trigger}
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label={open ? 'Закрыть меню' : 'Открыть меню'}
-            className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink md:hidden"
-          >
-            <span aria-hidden className="relative block h-3 w-4">
-              <span
-                className={`absolute inset-x-0 block h-px bg-ink transition-transform duration-200 ${
-                  open ? 'top-1/2 rotate-45' : 'top-0'
-                }`}
-              />
-              <span
-                className={`absolute inset-x-0 block h-px bg-ink transition-transform duration-200 ${
-                  open ? 'top-1/2 -rotate-45' : 'top-full'
-                }`}
-              />
-            </span>
-          </button>
-        </div>
+        <button
+          ref={trigger}
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? 'Закрыть меню' : 'Открыть меню'}
+          className="pointer-events-auto inline-flex size-11 items-center justify-center md:hidden"
+        >
+          <span aria-hidden className="relative block h-3 w-6">
+            <span
+              className={`absolute inset-x-0 block h-0.5 transition-transform duration-200 ${bar} ${
+                open ? 'top-1/2 rotate-45' : 'top-0'
+              }`}
+            />
+            <span
+              className={`absolute inset-x-0 block h-0.5 transition-transform duration-200 ${bar} ${
+                open ? 'top-1/2 -rotate-45' : 'top-full'
+              }`}
+            />
+          </span>
+        </button>
       </div>
 
       {open && (
-        <>
-          <div
-            className="fixed inset-0 top-16 -z-10 md:hidden"
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
-          <div
-            id="mobile-nav"
-            ref={panel}
-            className="shell flex flex-col gap-1 border-t border-line bg-ground pt-4 pb-8 md:hidden"
-          >
-            {NAV.map((item) => (
+        <div
+          id="mobile-nav"
+          ref={panel}
+          className="pointer-events-auto fixed inset-0 top-20 flex flex-col justify-between bg-void px-5 pt-10 pb-12 md:hidden"
+        >
+          <nav aria-label="Разделы сайта">
+            {[...NAV, { href: '/start', label: 'Оставить заявку' }].map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="flex min-h-14 items-center border-b border-line text-[1.375rem] tracking-[-0.02em]"
+                className="display-3 block py-3 text-paper"
               >
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/start"
-              onClick={() => setOpen(false)}
-              className="mt-5 inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-6 text-[0.8125rem] font-medium tracking-[0.04em] text-paper"
-            >
-              Обсудить проект
-            </Link>
-          </div>
-        </>
+          </nav>
+          <p className="text-[0.6875rem] tracking-[0.18em] text-white/40 uppercase">
+            Душанбе · UTC+5
+          </p>
+        </div>
       )}
     </header>
   );

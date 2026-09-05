@@ -66,7 +66,7 @@ export const services: Service[] = [
       'Главная, страницы услуг, о компании, команда, проекты, контакты, блог при необходимости, админка и другие нужные разделы.',
     duration: '1–3 недели',
     budget: 'От 5 000 сомони',
-    object: '/objects/fig-stack.webp',
+    object: '/objects/display.webp',
   },
   {
     num: '04',
@@ -105,7 +105,7 @@ export const services: Service[] = [
       'Клиенты, заявки, сделки, статусы, сотрудники, роли, задачи, уведомления, аналитика и другие нужные функции.',
     duration: '2–3 недели',
     budget: 'От 5 000 сомони',
-    object: '/objects/fig-cube.webp',
+    object: '/objects/display.webp',
   },
   {
     num: '07',
@@ -117,7 +117,7 @@ export const services: Service[] = [
       'Автоматические заявки, уведомления, обработка данных, интеграции между сервисами, боты и другие решения под конкретный процесс.',
     duration: 'От нескольких дней до недели',
     budget: 'От 700 сомони',
-    object: '/objects/fig-ring.webp',
+    object: '/objects/cluster.webp',
   },
   {
     num: '08',
@@ -129,7 +129,7 @@ export const services: Service[] = [
       'Новый дизайн, улучшенную структуру, адаптив, современный UI и при необходимости новую версию самого сайта.',
     duration: '1–2 недели',
     budget: 'От 2 000 сомони',
-    object: '/objects/fig-ribbon.webp',
+    object: '/objects/laptop.webp',
   },
   {
     num: '09',
@@ -155,7 +155,7 @@ export const services: Service[] = [
       'Исправления, обновления, новые функции, оптимизацию, техническую поддержку и дальнейшее развитие проекта.',
     duration: 'Постоянно или по отдельным задачам',
     budget: 'Отдельно рассчитывается под задачу',
-    object: '/objects/fig-sphere.webp',
+    object: '/objects/laptop.webp',
   },
   {
     num: '11',
@@ -192,7 +192,7 @@ export const services: Service[] = [
       'Бот с командами, меню, заявками, базой данных, уведомлениями, интеграциями и нужной логикой.',
     duration: 'От 3 дней до 2 недель',
     budget: 'От 700 сомони',
-    object: '/objects/fig-prism.webp',
+    object: '/objects/phone.webp',
   },
   {
     num: '14',

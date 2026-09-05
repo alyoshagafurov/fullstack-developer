@@ -159,16 +159,11 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
       <div className="shell relative">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
-            <p className="label mb-3">{current.kind === 'case' ? 'Работа' : 'Услуга'}</p>
-            <h2
-              aria-live="polite"
-              className="text-[clamp(1.75rem,5vw,3.25rem)] leading-[1.05] tracking-[-0.03em]"
-            >
+            <p className="label mb-4">{current.kind === 'case' ? 'Работа' : 'Услуга'}</p>
+            <h2 aria-live="polite" className="display-2 uppercase">
               {current.title}
             </h2>
-            <p className="mt-3 max-w-prose text-sm leading-relaxed text-ink-2 md:text-base">
-              {current.caption}
-            </p>
+            <p className="lede mt-5 max-w-prose text-ink-2">{current.caption}</p>
           </div>
 
           <div className="flex shrink-0 items-center gap-3">

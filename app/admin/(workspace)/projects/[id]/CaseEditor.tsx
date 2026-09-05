@@ -22,12 +22,6 @@ const OBJECTS = [
   { file: '/objects/display.webp', label: 'Монитор' },
   { file: '/objects/phone-watch.webp', label: 'Телефон и часы' },
   { file: '/objects/cluster.webp', label: 'Кластер устройств' },
-  { file: '/objects/fig-sphere.webp', label: 'Сфера' },
-  { file: '/objects/fig-ribbon.webp', label: 'Лента' },
-  { file: '/objects/fig-stack.webp', label: 'Стопка' },
-  { file: '/objects/fig-cube.webp', label: 'Куб' },
-  { file: '/objects/fig-ring.webp', label: 'Кольцо' },
-  { file: '/objects/fig-prism.webp', label: 'Призма' },
 ];
 
 export type CaseValues = {

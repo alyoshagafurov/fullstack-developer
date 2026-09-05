@@ -1,9 +1,11 @@
+import { Opening } from '@/components/sections/Opening';
 import { Vitrine, type VitrineItem } from '@/components/vitrine/Vitrine';
 import {
-  AboutStudio,
+  AboutSpread,
   Manifesto,
+  Marquee,
   ProcessTrack,
-  ServicesShelf,
+  ServicesIndex,
   StartBand,
   Voices,
 } from '@/components/sections/home';
@@ -11,7 +13,12 @@ import { getFeaturedCases, getTestimonials } from '@/lib/cases';
 import { featuredServices } from '@/lib/content/services';
 
 /*
- * The landing page.
+ * The landing page, read as one sequence rather than a stack of sections.
+ *
+ * The rhythm is deliberate and uneven: black, black, white, grey, black,
+ * white, grey, black. A visitor scrolling should keep hitting a change of
+ * ground and a change of scale, because that is what makes a page feel like an
+ * art direction instead of a template.
  *
  * Revalidated rather than fully static: the owner publishes cases and
  * testimonials from the admin, and a publish has to reach the site without a
@@ -25,11 +32,10 @@ export default async function HomePage() {
   /*
    * What the vitrine shows.
    *
-   * Cases are the point of the display, but there are none on the day the site
-   * launches — the owner adds them from the admin. Rather than open on an empty
-   * stage or on invented work, the vitrine shows the three services he named as
-   * his main ones, each on its own object. The first published case takes the
-   * stage back automatically.
+   * Cases are the point of it, but there are none on the day the site launches
+   * — the owner adds them from the admin. Rather than open on an empty stage or
+   * on invented work, it shows the three services he named as his main ones.
+   * The first published case takes the stage back automatically.
    */
   const items: VitrineItem[] =
     cases.length > 0
@@ -54,10 +60,12 @@ export default async function HomePage() {
 
   return (
     <>
-      <Vitrine items={items} />
+      <Opening />
+      <Marquee />
       <Manifesto />
-      <ServicesShelf />
-      <AboutStudio />
+      <Vitrine items={items} />
+      <ServicesIndex />
+      <AboutSpread />
       <ProcessTrack />
       <Voices items={testimonials.slice(0, 3)} total={testimonials.length} />
       <StartBand />
