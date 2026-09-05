@@ -87,13 +87,14 @@ export function Opening() {
        */}
       <div className="absolute inset-x-0 top-0 px-5 pt-24 md:px-10 md:pt-32">
         <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
-          <div className="min-w-0 md:w-1/2 md:text-right">
-            <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse">
+          {/* Centred and as large as the width allows on a phone; ranged right on a desk. */}
+          <div className="min-w-0 text-center md:w-1/2 md:text-right">
+            <p className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-start">
               <span aria-hidden className="block h-px w-10 bg-ink/50" />
               {site.role}
             </p>
 
-            <h1 className="mt-3 text-[clamp(2.25rem,4.4vw,5.25rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4">
+            <h1 className="mt-3 text-[min(11.5vw,2.75rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4 md:text-[clamp(2.25rem,4.4vw,5.25rem)]">
               {lines.map((line, index) => (
                 <span
                   key={line}
@@ -105,7 +106,7 @@ export function Opening() {
             </h1>
           </div>
 
-          <p className="mt-6 max-w-sm text-sm leading-relaxed text-ink md:mt-1 md:text-[0.9375rem]">
+          <p className="mx-auto mt-6 max-w-sm text-center text-base leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left md:text-[0.9375rem]">
             {site.difference}
           </p>
         </div>
