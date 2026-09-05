@@ -94,13 +94,22 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
   if (!current) return null;
 
   return (
+    /*
+     * Exactly one screen tall, never more.
+     *
+     * The object, the caption and the controls have to be visible together —
+     * a visitor who has to scroll to find the arrows does not know the thing
+     * switches. That is why the height is fixed rather than a minimum, and why
+     * the object is sized off the viewport's short side.
+     */
     <section
-      className="stage relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ground pt-24 pb-8 md:pt-28"
+      data-tone="light"
+      className="stage relative flex h-[100svh] flex-col justify-between overflow-hidden bg-ground pt-24 pb-6 md:pt-28"
       aria-roledescription={interactive ? 'карусель' : undefined}
       aria-label="Витрина работ"
     >
       {/* The wordmark, enormous and faint, is the backdrop of the whole stage. */}
-      <GhostMark className="absolute inset-x-0 top-1/2 -translate-y-[58%] px-4 md:px-10" />
+      <GhostMark className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 md:px-10" />
 
       <div
         ref={stage}
@@ -123,7 +132,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
         }`}
         style={{ touchAction: 'pan-y' }}
       >
-        <div className="relative aspect-square w-[76vw] max-w-[520px] md:w-[46vw] lg:w-[38vw]">
+        <div className="relative aspect-square h-[min(46svh,420px)] max-w-[86vw]">
           {items.map((item, i) => {
             const active = i === index;
             return (
@@ -159,11 +168,13 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
       <div className="shell relative">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
-            <p className="label mb-4">{current.kind === 'case' ? 'Работа' : 'Услуга'}</p>
-            <h2 aria-live="polite" className="display-2 uppercase">
+            <p className="label mb-3">{current.kind === 'case' ? 'Работа' : 'Услуга'}</p>
+            <h2 aria-live="polite" className="display-3 uppercase">
               {current.title}
             </h2>
-            <p className="lede mt-5 max-w-prose text-ink-2">{current.caption}</p>
+            <p className="mt-4 max-w-prose text-sm leading-relaxed text-ink-2 md:text-base">
+              {current.caption}
+            </p>
           </div>
 
           <div className="flex shrink-0 items-center gap-3">

@@ -14,19 +14,28 @@ type Size = 'sm' | 'md';
 
 const base =
   'inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap ' +
-  'font-medium transition-[background-color,color,border-color,opacity] duration-200 ' +
+  'transition-[background-color,color,border-color,opacity] duration-200 ' +
   'ease-[var(--ease-studio)] disabled:opacity-40 disabled:pointer-events-none';
 
+/*
+ * `solid` is the one shape on the site that has to be unmistakably a button.
+ *
+ * Everything else here is a hairline and a letterspaced label, which is right
+ * for navigation and wrong for the action the page exists to produce. So the
+ * filled variant is heavier and taller than the others rather than the same
+ * pill in a different colour.
+ */
 const variants: Record<Variant, string> = {
-  solid: 'bg-ink text-paper hover:bg-ink-2',
-  outline: 'border border-line-2 text-ink hover:border-ink hover:bg-ink hover:text-paper',
-  quiet: 'text-ink-2 hover:text-ink',
+  solid: 'bg-ink text-paper font-semibold hover:bg-ink-2',
+  outline:
+    'border border-line-2 text-ink font-medium hover:border-ink hover:bg-ink hover:text-paper',
+  quiet: 'text-ink-2 font-medium hover:text-ink',
 };
 
-// 44px minimum on both sizes: a touch target is not a place to save space.
+// 44px minimum everywhere: a touch target is not a place to save space.
 const sizes: Record<Size, string> = {
-  sm: 'min-h-11 px-4 text-[0.75rem] tracking-[0.06em]',
-  md: 'min-h-12 px-6 text-[0.8125rem] tracking-[0.04em]',
+  sm: 'min-h-11 px-5 text-[0.8125rem]',
+  md: 'min-h-14 px-8 text-[0.875rem]',
 };
 
 type Common = { variant?: Variant; size?: Size; className?: string; children: ReactNode };

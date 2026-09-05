@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
+import { PageOpening } from '@/components/ui/PageOpening';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { services } from '@/lib/content/services';
@@ -25,13 +26,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-24">
-        <p className="label mb-6">Услуги</p>
-        <h1 className="max-w-4xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
-          {site.shortStatement}
-        </h1>
-        <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-2">{site.difference}</p>
-      </Band>
+      <PageOpening eyebrow="Услуги" title={site.shortStatement} lede={site.difference} />
 
       <Band tone="paper" innerClassName="py-12 md:py-20">
         <ol className="divide-y divide-line">

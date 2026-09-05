@@ -31,23 +31,33 @@ export function Header() {
   const trigger = useRef<HTMLButtonElement>(null);
 
   /*
-   * Is the header currently sitting on a dark opening?
+   * Which band is under the header right now?
    *
-   * A page marks its dark first screen with `data-opening`; pages without one
-   * start light. Measured against the header's own height rather than a fixed
-   * scroll offset, so it stays correct when the opening is shorter than the
-   * viewport on a small phone in landscape.
+   * Every band declares `data-tone`, and the header takes the tone of whichever
+   * one its own midline is crossing. That keeps it legible the whole way down a
+   * page that alternates black and white eight times, rather than only over the
+   * first screen — which is all the earlier version handled.
+   *
+   * The bands are collected once and re-measured on scroll: reading the DOM on
+   * every frame would be the expensive part, and their order never changes.
    */
   useEffect(() => {
-    const opening = document.querySelector('[data-opening]');
-    if (!opening) {
+    const bands = Array.from(document.querySelectorAll<HTMLElement>('[data-tone]'));
+    if (bands.length === 0) {
       setOnDark(false);
       return;
     }
 
+    // The line the header actually occupies, in viewport coordinates.
+    const midline = 44;
+
     const check = () => {
-      const rect = opening.getBoundingClientRect();
-      setOnDark(rect.bottom > 96);
+      let tone: string | undefined;
+      for (const band of bands) {
+        const rect = band.getBoundingClientRect();
+        if (rect.top <= midline && rect.bottom > midline) tone = band.dataset.tone;
+      }
+      setOnDark(tone === 'dark');
     };
 
     check();

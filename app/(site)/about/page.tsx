@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Band } from '@/components/ui/Band';
+import { PageOpening } from '@/components/ui/PageOpening';
 import { PillLink } from '@/components/ui/Pill';
 import { about } from '@/lib/content/about';
 import { site } from '@/lib/content/site';
@@ -14,13 +15,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-24">
-        <p className="label mb-6">Обо мне</p>
-        <h1 className="max-w-4xl text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.04em]">
-          {site.name}
-        </h1>
-        <p className="mt-6 text-base text-ink-2">{site.role}</p>
-      </Band>
+      <PageOpening eyebrow="Обо мне" title={site.name} lede={site.role} />
 
       <Band tone="paper" innerClassName="py-20 md:py-28">
         <div className="grid gap-14 md:grid-cols-2 md:gap-20">

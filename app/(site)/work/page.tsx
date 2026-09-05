@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
+import { PageOpening } from '@/components/ui/PageOpening';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getPublishedCases } from '@/lib/cases';
@@ -26,13 +27,7 @@ export default async function WorkPage() {
 
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-24">
-        <p className="label mb-6">Проекты</p>
-        <h1 className="max-w-4xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
-          Работы
-        </h1>
-        <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-2">{site.difference}</p>
-      </Band>
+      <PageOpening eyebrow="Проекты" title="Работы, собранные целиком" lede={site.difference} />
 
       {cases.length === 0 ? (
         <Band tone="paper" innerClassName="py-24 md:py-36">

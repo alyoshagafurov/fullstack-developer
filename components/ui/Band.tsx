@@ -39,7 +39,14 @@ export function Band({
     // `stage` isolates the band so studio objects inside it have this band's
     // background to blend against. Without it their `darken` reaches the
     // viewport canvas and paints nothing.
-    <Tag id={id} className={`stage relative w-full ${tones[tone]} ${className}`}>
+    //
+    // `data-tone` is what the header reads on scroll to decide whether it
+    // should be white or black over this particular band.
+    <Tag
+      id={id}
+      data-tone={tone === 'void' || tone === 'ink' ? 'dark' : 'light'}
+      className={`stage relative w-full ${tones[tone]} ${className}`}
+    >
       <div className={`shell ${innerClassName}`}>{children}</div>
     </Tag>
   );

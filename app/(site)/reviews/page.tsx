@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
+import { PageOpening } from '@/components/ui/PageOpening';
 import { PillLink } from '@/components/ui/Pill';
 import { getTestimonials } from '@/lib/cases';
 import { site } from '@/lib/content/site';
@@ -26,12 +27,7 @@ export default async function ReviewsPage() {
 
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-24">
-        <p className="label mb-6">Отзывы</p>
-        <h1 className="max-w-3xl text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.04em]">
-          Что говорят клиенты
-        </h1>
-      </Band>
+      <PageOpening eyebrow="Отзывы" title="Что говорят клиенты" />
 
       <Band tone="paper" innerClassName="py-16 md:py-24">
         <div className="grid gap-x-12 gap-y-14 md:grid-cols-2 lg:grid-cols-3">

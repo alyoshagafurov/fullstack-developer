@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
-import { StudioObject } from '@/components/ui/StudioObject';
+import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
@@ -140,7 +140,14 @@ export function ServicesIndex() {
   );
 }
 
-/** The portrait and the person, laid out as a spread rather than two columns. */
+/**
+ * Who he is, on the landing page — strictly the working half.
+ *
+ * His biography mentions the delivery job, teaching English and four years of
+ * MMA. All of it is true and all of it belongs on /about, where a visitor has
+ * already decided he is interested. Here a visitor is still deciding whether
+ * this person can build the thing, so this band answers only that.
+ */
 export function AboutSpread() {
   return (
     <Band tone="paper" id="studio" innerClassName="py-28 md:py-40">
@@ -148,7 +155,8 @@ export function AboutSpread() {
         <div className="lg:col-span-7">
           <p className="label mb-10">Обо мне</p>
           <p className="display-2 max-w-3xl uppercase">{site.name}</p>
-          <p className="lede mt-10 max-w-xl text-ink-2">{about.bio}</p>
+          <p className="lede mt-10 max-w-xl">{site.difference}</p>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-2">{site.why[1]}</p>
 
           <dl className="mt-16 grid grid-cols-2 gap-x-10 gap-y-10 border-t border-line pt-10 sm:grid-cols-4">
             {about.facts.map((fact) => (
@@ -163,7 +171,7 @@ export function AboutSpread() {
             href="/about"
             className="mt-12 inline-flex min-h-11 items-center gap-4 text-[0.6875rem] tracking-[0.18em] uppercase"
           >
-            Подробнее
+            Подробнее обо мне
             <span aria-hidden className="block h-px w-12 bg-ink" />
           </Link>
         </div>
@@ -173,14 +181,13 @@ export function AboutSpread() {
         <div className="lg:col-span-5 lg:pt-24">
           <div className="relative aspect-4/5 w-full overflow-hidden bg-ground">
             <Image
-              src="/photo/portrait-hero.webp"
-              alt={`${site.name}, ${site.role}`}
+              src="/photo/portrait-work.webp"
+              alt={`${site.name} за работой`}
               fill
               sizes="(min-width: 1024px) 40vw, 92vw"
-              className="object-cover object-top"
+              className="object-cover object-center"
             />
           </div>
-          <p className="mt-5 text-xs text-ink-3">{about.offDuty}</p>
         </div>
       </div>
     </Band>
@@ -326,26 +333,28 @@ function Avatar({ name, src }: { name: string; src: string | null }) {
   );
 }
 
-/** The closing. One sentence of his, the size of a poster. */
+/** The closing. One sentence of his, centred, the size of a poster. */
 export function StartBand() {
   const { contact } = site;
 
   return (
-    <Band tone="void" id="start" innerClassName="py-28 md:py-44">
+    <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
       <p className="text-[0.6875rem] tracking-[0.18em] text-paper/40 uppercase">Заявка</p>
 
-      <Link href="/start" className="group mt-12 block">
-        <p className="display-1 max-w-6xl text-paper uppercase">{site.contactInvite}</p>
-        <span className="mt-14 inline-flex items-center gap-5 text-[0.6875rem] tracking-[0.18em] text-paper uppercase">
-          {site.heroCta}
-          <span
-            aria-hidden
-            className="block h-px w-16 bg-paper transition-[width] duration-300 ease-[var(--ease-studio)] group-hover:w-28"
-          />
-        </span>
-      </Link>
+      <p className="display-1 mx-auto mt-12 max-w-6xl text-paper uppercase">
+        {site.contactInvite}
+      </p>
 
-      <dl className="mt-24 grid gap-10 border-t border-white/12 pt-10 text-sm sm:grid-cols-3">
+      <div className="mt-14 flex flex-col items-center">
+        <CTA href="/start" tone="dark" size="lg">
+          {site.heroCta}
+        </CTA>
+        <p className="mt-5 text-xs text-paper/45">
+          Пара минут, никаких обязательств. Отвечаю {site.responseTime.toLowerCase()}.
+        </p>
+      </div>
+
+      <dl className="mx-auto mt-24 grid max-w-3xl gap-10 border-t border-white/12 pt-10 text-sm sm:grid-cols-3">
         <div>
           <dt className="label mb-3 text-paper/40">Ответ</dt>
           <dd className="text-paper/70">{site.responseTime}</dd>

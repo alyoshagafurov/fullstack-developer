@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Band } from '@/components/ui/Band';
+import { PageOpening } from '@/components/ui/PageOpening';
 import { BriefForm } from '@/components/brief/BriefForm';
-import { kickoff } from '@/lib/content/process';
 import { site } from '@/lib/content/site';
 
 export const metadata: Metadata = {
@@ -10,38 +10,80 @@ export const metadata: Metadata = {
   alternates: { canonical: '/start' },
 };
 
+/*
+ * The brief page.
+ *
+ * The greeting carries no button: the visitor already pressed the one that
+ * brought them here, and a second pointing at the same place is noise.
+ *
+ * The column beside the form answers what people actually want to know before
+ * filling one in — how long it takes, what happens next, what to do when they
+ * do not know an answer — rather than listing what the owner would like to
+ * receive.
+ */
 export default function StartPage() {
+  const steps = [
+    {
+      step: '1',
+      title: 'Вы заполняете форму',
+      body: 'Четыре шага, меньше двух минут. Технические слова не нужны.',
+    },
+    {
+      step: '2',
+      title: 'Я читаю и отвечаю',
+      body: `${site.responseTime}. Напишу на почту или в Telegram — куда вам удобнее.`,
+    },
+    {
+      step: '3',
+      title: 'Созваниваемся',
+      body: 'Задаю вопросы, предлагаю, как это лучше сделать. Ни к чему не обязывает.',
+    },
+    {
+      step: '4',
+      title: 'Присылаю предложение',
+      body: 'Что делаем, за сколько и в какой срок. Дальше решаете вы.',
+    },
+  ];
+
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-20">
-        <p className="label mb-6">Заявка</p>
-        <h1 className="max-w-3xl text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.04em]">
-          {site.contactInvite}
-        </h1>
-        <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-2">
-          Отвечаю {site.responseTime.toLowerCase()}. {site.hours}
-        </p>
-      </Band>
+      <PageOpening
+        eyebrow="Заявка"
+        title={site.contactInvite}
+        lede={`Четыре коротких шага. Отвечаю ${site.responseTime.toLowerCase()}.`}
+        cta={false}
+      />
 
-      <Band tone="paper" innerClassName="py-16 md:py-24">
+      <Band tone="paper" innerClassName="py-20 md:py-28">
         <div className="grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <BriefForm />
 
           <aside className="lg:pt-4">
-            <p className="label mb-6">Что мне пригодится</p>
-            <p className="text-sm leading-relaxed text-ink-2">{kickoff.intro}</p>
-            <ul className="mt-5 space-y-2 text-sm leading-relaxed text-ink-2">
-              {kickoff.items.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span aria-hidden className="mt-2 h-px w-3 shrink-0 bg-line-2" />
-                  <span>{item}</span>
+            <p className="label mb-6">Как это работает</p>
+
+            <ol className="space-y-6">
+              {steps.map((item) => (
+                <li key={item.step} className="flex gap-4">
+                  <span className="tabular mt-0.5 shrink-0 text-sm text-ink-3">{item.step}</span>
+                  <span>
+                    <span className="block text-sm font-semibold">{item.title}</span>
+                    <span className="mt-1 block text-sm leading-relaxed text-ink-2">
+                      {item.body}
+                    </span>
+                  </span>
                 </li>
               ))}
-            </ul>
-            <p className="mt-6 text-sm leading-relaxed text-ink-3">{kickoff.outro}</p>
+            </ol>
 
             <div className="mt-12 border-t border-line pt-8">
-              <p className="label mb-4">Или просто напишите</p>
+              <p className="text-sm leading-relaxed text-ink-2">
+                Не знаете, что писать в каком-то поле? Пропустите его или напишите как есть.
+                Разберёмся вместе — так бывает почти всегда.
+              </p>
+            </div>
+
+            <div className="mt-10 border-t border-line pt-8">
+              <p className="label mb-4">Написать напрямую</p>
               <ul className="space-y-3 text-sm">
                 <li>
                   <a
