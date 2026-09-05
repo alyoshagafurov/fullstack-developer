@@ -12,16 +12,18 @@ import { site } from '@/lib/content/site';
  *
  * So the photograph is never scaled past its own framing. It stands at the
  * bottom of the screen at a height set off the window — nine tenths of it on a
- * desk screen, just over half on a phone — and the section around it continues
- * the two planes the picture is made of: the white wall above the desk line,
- * the grey desk below it. The photograph's top and right edges are feathered
- * into those planes so there is no rectangle, just a room that carries on past
- * the frame. On a desk screen it sits flush left, so the plant stays in.
+ * desk screen, half on a phone — and the section around it continues the two
+ * planes the picture is made of: the white wall above the desk line, the grey
+ * desk below it. The photograph's top and right edges are feathered into those
+ * planes so there is no rectangle, just a room that carries on past the frame.
+ * On a desk screen it sits flush left, so the plant stays in.
  *
- * That gives the words a permanent home. The statement stands on the wall at
- * the top left, black, above the plant; the paragraph on the wall at the top
- * right; the button on the desk, centred, white. None of it ever overlaps him
- * and none of it needs a scrim or a media-query gate.
+ * Desk screen: the words are laid over the wall — paragraph top left,
+ * statement top right ranged right so it never reaches his head, the button
+ * on the desk, centred. Phone: the section is a column instead — label,
+ * statement, paragraph and button centred at the top, the photograph pushed
+ * to the bottom underneath them. In flow, not layered, so a short phone grows
+ * the section rather than dropping the button onto his face.
  *
  * Measured off the file, not chosen: wall #ebe9e7→#e5e3e3 across, desk #787373,
  * desk line at 85.9% of the frame height, plant no higher than 37% of it, his
@@ -39,7 +41,7 @@ export function Opening() {
     <section
       data-tone="light"
       /* `--ph` is the photograph's height; everything else is derived from it. */
-      className="relative h-[100svh] w-full overflow-hidden [--ph:min(58svh,150vw)] md:[--ph:min(90svh,56vw)]"
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden [--ph:min(50svh,150vw)] md:block md:h-[100svh] md:[--ph:min(90svh,56vw)]"
       style={{
         background: 'linear-gradient(96deg, #f4f2f0 0%, #ecebe9 55%, #e5e3e2 100%)',
       }}
@@ -51,46 +53,13 @@ export function Opening() {
         style={{ background: 'linear-gradient(180deg, #7b7776 0%, #767271 60%, #6e6a69 100%)' }}
       />
 
-      {/*
-       * The photograph, whole, at its own framing. Flush left on a desk screen,
-       * where it is narrower than the window; on a phone it is wider than the
-       * screen and is shifted so that he, not the frame's centre, is centred.
-       */}
-      <div
-        className="absolute bottom-0 left-1/2 aspect-[1672/941] h-[var(--ph)] -translate-x-[62%] md:left-0 md:translate-x-0"
-        style={{
-          maskImage:
-            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
-          maskComposite: 'intersect',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
-          WebkitMaskComposite: 'source-in',
-        }}
-      >
-        {/* A new name, not a new version of the old one: the optimiser and the
-            CDN cache by URL, and this file has already been replaced twice. */}
-        <Image
-          src="/photo/hero-wide.webp"
-          alt={`${site.name}, ${site.role}`}
-          fill
-          priority
-          sizes="(min-width: 768px) 100vw, 220vw"
-          className="object-cover object-center"
-        />
-      </div>
-
-      {/*
-       * The words, on the wall. On a desk screen the statement stands on the
-       * right, ranged right so it hugs the edge and never reaches his head,
-       * and the paragraph takes the left; on a phone they stack in reading
-       * order, statement first.
-       */}
-      <div className="absolute inset-x-0 top-0 px-5 pt-24 md:px-10 md:pt-32">
+      {/* The words. Above the photograph in paint order on a desk screen. */}
+      <div className="relative px-5 pt-24 pb-4 md:absolute md:inset-0 md:z-10 md:pt-32 md:pb-0 md:px-10">
         <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
-          {/* Centred and as large as the width allows on a phone; ranged right on a desk. */}
           <div className="min-w-0 text-center md:w-1/2 md:text-right">
             <p className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-start">
-              <span aria-hidden className="block h-px w-10 bg-ink/50" />
+              {/* The rule is a desk-screen device: centred type has no edge for it to hang off. */}
+              <span aria-hidden className="hidden h-px w-10 bg-ink/50 md:block" />
               {site.role}
             </p>
 
@@ -110,13 +79,44 @@ export function Opening() {
             {site.difference}
           </p>
         </div>
+
+        {/* The button: under the words on a phone, on the desk on a desk screen. */}
+        <div className="mt-8 flex justify-center md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2">
+          <CTA href="/start" tone="dark" size="lg">
+            {site.heroCta}
+          </CTA>
+        </div>
       </div>
 
-      {/* The button, centred on the desk, lifted a little off its edge. */}
-      <div className="absolute inset-x-0 bottom-[calc(var(--ph)*0.0705+20px)] flex translate-y-1/2 justify-center px-5">
-        <CTA href="/start" tone="dark" size="lg">
-          {site.heroCta}
-        </CTA>
+      {/*
+       * The photograph, whole, at its own framing. Flush left on a desk screen,
+       * where it is narrower than the window; on a phone it is wider than the
+       * screen and shifted so that he, not the frame's centre, is centred, and
+       * pushed to the bottom of the column.
+       */}
+      {/* `self-start`: a column flex item is stretched to the column's width
+          otherwise, which overrides the aspect ratio and crops the frame. */}
+      <div
+        className="relative left-1/2 mt-auto aspect-[1672/941] h-[var(--ph)] shrink-0 self-start -translate-x-[62%] md:absolute md:bottom-0 md:left-0 md:mt-0 md:translate-x-0"
+        style={{
+          maskImage:
+            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
+          maskComposite: 'intersect',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
+          WebkitMaskComposite: 'source-in',
+        }}
+      >
+        {/* A new name, not a new version of the old one: the optimiser and the
+            CDN cache by URL, and this file has already been replaced twice. */}
+        <Image
+          src="/photo/hero-wide.webp"
+          alt={`${site.name}, ${site.role}`}
+          fill
+          priority
+          sizes="(min-width: 768px) 100vw, 220vw"
+          className="object-cover object-center"
+        />
       </div>
     </section>
   );

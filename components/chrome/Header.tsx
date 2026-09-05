@@ -166,12 +166,12 @@ export function Header() {
    * Over a dark band everything is paper; everywhere else it is ink. The
    * wordmark file is cut black, so it is inverted only on the dark side.
    *
-   * An open menu is its own case: the strip the wordmark and the cross sit in
-   * gets a paper ground of its own, and both go ink. They used to go paper
-   * while the strip stayed transparent, which over the pale opening left a
-   * white wordmark and a white cross on a near-white wall — invisible.
+   * An open menu is its own case: the whole screen goes black, the strip the
+   * wordmark and the cross sit in included, so both go paper. The strip used
+   * to stay transparent, which over the pale opening left a white wordmark and
+   * a white cross on a near-white wall — invisible.
    */
-  const dark = onDark && !open;
+  const dark = onDark || open;
   const tone = dark ? 'text-paper' : 'text-ink';
   const bar = dark ? 'bg-paper' : 'bg-ink';
 
@@ -179,7 +179,7 @@ export function Header() {
     <header
       className={`pointer-events-none fixed inset-x-0 top-0 z-40 transition-opacity duration-200 ${
         ready || open ? 'opacity-100' : 'opacity-0'
-      } ${open ? 'bg-paper' : ''}`}
+      } ${open ? 'bg-void' : ''}`}
     >
       <div className="shell flex h-20 items-center justify-between gap-6 md:h-24">
         <Link
