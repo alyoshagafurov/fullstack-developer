@@ -161,18 +161,20 @@ export function AboutSpread() {
      * inside an article; one that runs off the top, bottom and right reads as
      * part of the page itself.
      */
-    <section
-      data-tone="light"
-      id="studio"
-      className="relative w-full bg-paper text-ink lg:grid lg:min-h-[92svh] lg:grid-cols-2"
-    >
-      <div className="flex flex-col justify-center px-5 py-24 md:px-10 lg:py-28 lg:pr-16 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
+    <section data-tone="light" id="studio" className="relative w-full bg-paper text-ink">
+      {/*
+       * The text holds the shell and the photograph is pinned to the right edge
+       * of the screen, not to a column. It is deliberately modest: a third of
+       * the width and nothing like the full height. The words are what a
+       * visitor is here to read; the picture is there to say who is saying them.
+       */}
+      <div className="shell py-24 md:py-32 lg:pr-[26rem] xl:pr-[30rem]">
         <p className="label mb-8">Обо мне</p>
         <p className="display-2 uppercase">{site.name}</p>
         <p className="lede mt-8 max-w-xl">{site.difference}</p>
         <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-2">{site.why[1]}</p>
 
-        <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-line pt-8">
+        <dl className="mt-12 grid max-w-xl grid-cols-2 gap-x-8 gap-y-8 border-t border-line pt-8 sm:grid-cols-4">
           {about.facts.map((fact) => (
             <div key={fact.label}>
               <dt className="label mb-3">{fact.label}</dt>
@@ -181,17 +183,29 @@ export function AboutSpread() {
           ))}
         </dl>
 
-        <CTA href="/about" className="mt-12 self-start">
+        <CTA href="/about" className="mt-12">
           Подробнее обо мне
         </CTA>
       </div>
 
-      <div className="relative h-[70svh] w-full lg:h-auto">
+      {/* Pinned to the viewport's right edge on wide screens. */}
+      <div className="absolute top-1/2 right-0 hidden h-[24rem] w-[22rem] -translate-y-1/2 overflow-hidden lg:block xl:h-[28rem] xl:w-[26rem]">
         <Image
           src="/photo/portrait-work.webp"
           alt={`${site.name} за работой`}
           fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
+          sizes="(min-width: 1280px) 26rem, 22rem"
+          className="object-cover object-center"
+        />
+      </div>
+
+      {/* Below the text on narrow screens, still edge to edge. */}
+      <div className="relative h-72 w-full sm:h-96 lg:hidden">
+        <Image
+          src="/photo/portrait-work.webp"
+          alt=""
+          fill
+          sizes="100vw"
           className="object-cover object-center"
         />
       </div>
