@@ -14,7 +14,7 @@ export default function Icon() {
       <div
         style={{
           width: '100%', height: '100%', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', background: '#0C0D0F',
+          alignItems: 'center', justifyContent: 'center', background: '#0C0C0E',
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

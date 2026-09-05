@@ -23,13 +23,10 @@ export default function Technology() {
   return (
     <section id="stack" className="beat-tight relative">
       <Shell>
-        <Rail label={t.stack.eyebrow} />
-        <header className="grid gap-4 md:grid-cols-12 md:items-end">
-          <h2 className="display text-d-m text-ink md:col-span-6">{t.stack.title}</h2>
-          <p className="m-0 text-[14px] leading-[1.6] text-ink-2 md:col-span-5 md:col-start-8">
-            {t.stack.sub}
-          </p>
-        </header>
+        <Rail>
+          <h2 className="display m-0 text-d-m text-ink">{t.stack.title}</h2>
+        </Rail>
+        <p className="m-0 mt-5 max-w-[52ch] text-[14px] leading-[1.6] text-ink-2">{t.stack.sub}</p>
 
         <Reveal className="mt-10">
           <div className="grid gap-2 lg:grid-cols-12">

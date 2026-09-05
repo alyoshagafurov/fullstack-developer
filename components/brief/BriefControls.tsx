@@ -9,7 +9,7 @@ import { Led } from '@/components/ui/Panel';
  *
  * Choice — an editorial selection, not a <select>. Each option is a low panel
  * with a lit edge: the pointer brightens it, the picked one is held on and
- * its number turns copper. It exposes a real radiogroup to assistive tech and
+ * its mark turns copper. It exposes a real radiogroup to assistive tech and
  * uses roving tabindex, so the whole brief is answerable from the keyboard.
  *
  * Field — a labelled input or textarea set into a panel whose bottom edge
@@ -24,7 +24,7 @@ import { Led } from '@/components/ui/Panel';
 export type Option<T extends string> = { value: T; label: string };
 
 export function Choice<T extends string>({
-  legend, options, value, onChange, error, columns = 2,
+  legend, options, value, onChange, error, columns = 2, required,
 }: {
   legend: string;
   options: Option<T>[];
@@ -32,6 +32,7 @@ export function Choice<T extends string>({
   onChange: (v: T) => void;
   error?: string;
   columns?: 1 | 2;
+  required?: boolean;
 }) {
   const groupRef = useRef<HTMLDivElement>(null);
   const errId = useId();
@@ -57,6 +58,7 @@ export function Choice<T extends string>({
         ref={groupRef}
         role="radiogroup"
         aria-label={legend}
+        aria-required={required || undefined}
         aria-invalid={!!error || undefined}
         aria-describedby={error ? errId : undefined}
         className={`grid gap-2 ${columns === 2 ? 'sm:grid-cols-2' : ''}`}
@@ -80,12 +82,9 @@ export function Choice<T extends string>({
             >
               <Led className={`led-flat ${on ? 'led-on' : ''}`} />
               <span
-                className={`shrink-0 text-[11px] tabular-nums tracking-[0.16em] ${
-                  on ? 'text-copper' : 'text-ink-3 group-hover:text-ink-2'
-                }`}
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
+                aria-hidden
+                className={`mt-2 h-[6px] w-[6px] shrink-0 ${on ? 'bg-copper' : 'bg-edge-2 group-hover:bg-ink-3'}`}
+              />
               <span
                 className={`display text-[clamp(1rem,0.9rem+0.5vw,1.2rem)] leading-tight ${
                   on ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
@@ -137,7 +136,7 @@ export function Field({
 
   return (
     <div>
-      <div data-light="" className="lit panel">
+      <div data-light="" className="lit panel field">
         <div className="flex items-baseline justify-between gap-4 px-5 pb-1 pt-4">
           <label htmlFor={id} className="label">
             {label}

@@ -15,8 +15,9 @@ export default function NotFound() {
         <Logo className="h-8 w-auto" />
       </Link>
 
-      <Rail label="Ошибка">404</Rail>
-      <h1 className="display text-d-xl text-ink">404</h1>
+      <Rail count="Ошибка">
+        <h1 className="display m-0 text-d-xl text-ink">404</h1>
+      </Rail>
       <p className="mt-6 max-w-[40ch] text-[16px] leading-[1.6] text-ink-2">
         Страница не найдена. Возможно, ссылка устарела или её больше нет.
       </p>

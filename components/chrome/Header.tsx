@@ -51,6 +51,10 @@ export default function Header() {
     const root = document.documentElement;
     const prev = root.style.overflow;
     root.style.overflow = 'hidden';
+    // The rest of the page is inert while the sheet is open, so a screen
+    // reader's virtual cursor cannot wander behind the dialog.
+    const behind = Array.from(document.querySelectorAll<HTMLElement>('main, footer'));
+    behind.forEach((el) => el.setAttribute('inert', ''));
     // Escape closes; Tab stays inside the sheet, with the close button (the
     // burger, now an X) as the first stop so the loop has a way out.
     const onKey = (e: KeyboardEvent) => {
@@ -85,6 +89,7 @@ export default function Header() {
     first.current?.focus();
     return () => {
       root.style.overflow = prev;
+      behind.forEach((el) => el.removeAttribute('inert'));
       window.removeEventListener('keydown', onKey);
       wide.removeEventListener('change', onWide);
       burger.current?.focus();
@@ -102,6 +107,7 @@ export default function Header() {
           type="button"
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
+          lang={l}
           className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-[11px] uppercase tracking-[0.14em] ${
             lang === l ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
           }`}
@@ -146,10 +152,12 @@ export default function Header() {
 
           <div className="flex items-center gap-1 lg:gap-4">
             {langGroup('hidden items-center lg:flex')}
+            {/* Below sm the control appears once the reader has left the
+                first screen — the hero carries its own copper control there. */}
             <Action
               href="/start-project"
               variant="ghost"
-              className="hidden !min-h-[44px] !px-5 !text-[12px] uppercase tracking-[0.14em] sm:inline-flex"
+              className={`${lifted && !open ? 'inline-flex' : 'hidden'} !min-h-[44px] !px-4 !text-[11px] uppercase tracking-[0.14em] sm:!px-5 sm:!text-[12px] ${open ? 'sm:hidden' : 'sm:inline-flex'}`}
             >
               {t.nav.cta}
             </Action>
@@ -196,7 +204,7 @@ export default function Header() {
           data-light=""
           className="relative bg-base px-gutter pb-8 pt-20"
         >
-          <nav aria-label="Разделы">
+          <nav aria-label="Меню — разделы">
             <ul className="m-0 list-none p-0">
               {SECTIONS.map((s, i) => (
                 <li key={s.href}>

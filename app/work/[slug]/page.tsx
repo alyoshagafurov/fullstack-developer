@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/chrome/Header';
 import SiteFooter from '@/components/sections/SiteFooter';
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import Panel from '@/components/ui/Panel';
 import Rail from '@/components/ui/Rail';
 import { getPublishedCase } from '@/lib/cases';
@@ -50,6 +51,11 @@ export default async function CasePage(props: { params: Promise<{ slug: string }
   // owner writing a case should not have to know a markup language, and
   // rendering their input as HTML would be an injection hole for no gain.
   const paragraphs = item.description.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  // Values written in the admin, rendered as URLs: only http(s) reaches the
+  // page, so a stray scheme can never become a link or an image source.
+  const isHttp = (value: string) => /^https?:\/\//i.test(value);
+  const liveUrl = isHttp(item.liveUrl) ? item.liveUrl : '';
+  const screenshots = item.screenshots.filter(isHttp);
 
   return (
     <>
@@ -61,17 +67,18 @@ export default async function CasePage(props: { params: Promise<{ slug: string }
             className="lnk inline-flex min-h-[44px] items-center gap-3 text-[12px] uppercase
                        tracking-[0.2em] text-ink-3 hover:text-ink"
           >
-            <span aria-hidden>←</span>
+            <Arrow dir="left" />
             Все работы
           </Link>
 
-          <Rail label="Кейс" className="mt-6">{item.year || undefined}</Rail>
+          <Rail count={item.year || undefined} className="mt-6">
+            <h1 className="display m-0 max-w-[18ch] text-d-l text-ink">{item.title}</h1>
+          </Rail>
 
-          <header className="mb-10 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <header className="mb-10 mt-6 grid gap-8 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
-              <h1 className="display m-0 max-w-[18ch] text-d-l text-ink">{item.title}</h1>
               {item.summary && (
-                <p className="mt-5 max-w-[52ch] text-[16px] leading-[1.6] text-ink-2">{item.summary}</p>
+                <p className="m-0 max-w-[52ch] text-[16px] leading-[1.6] text-ink-2">{item.summary}</p>
               )}
             </div>
 
@@ -89,11 +96,11 @@ export default async function CasePage(props: { params: Promise<{ slug: string }
             )}
           </header>
 
-          {item.liveUrl && (
+          {liveUrl && (
             <div className="mb-10">
-              <Action href={item.liveUrl} external variant="ghost">
+              <Action href={liveUrl} external variant="ghost">
                 Открыть сайт
-                <span aria-hidden>↗</span>
+                <Arrow dir="up-right" />
               </Action>
             </div>
           )}
@@ -110,10 +117,10 @@ export default async function CasePage(props: { params: Promise<{ slug: string }
             </Panel>
           )}
 
-          {item.screenshots.length > 0 && (
+          {screenshots.length > 0 && (
             <section className="grid gap-3">
               <h2 className="sr-only">Скриншоты</h2>
-              {item.screenshots.map((src, i) => (
+              {screenshots.map((src, i) => (
                 <Panel as="figure" key={src} className="m-0 overflow-hidden bg-base-deep">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

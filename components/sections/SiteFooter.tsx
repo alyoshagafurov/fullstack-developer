@@ -16,9 +16,9 @@ import { useI18n } from '@/lib/i18n';
 const LINKS = [
   { href: '/work', key: 'work' as const },
   { href: '/#services', key: 'services' as const },
-  { href: '#process', key: 'process' as const },
-  { href: '#studio', key: 'about' as const },
-  { href: '#start', key: 'contact' as const },
+  { href: '/#process', key: 'process' as const },
+  { href: '/#studio', key: 'about' as const },
+  { href: '/#start', key: 'contact' as const },
 ];
 
 export default function SiteFooter() {

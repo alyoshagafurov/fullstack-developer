@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/chrome/Header';
 import SiteFooter from '@/components/sections/SiteFooter';
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import Panel from '@/components/ui/Panel';
 import Rail from '@/components/ui/Rail';
 import { ru } from '@/lib/i18n/ru';
@@ -68,18 +69,21 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
             className="lnk inline-flex min-h-[44px] items-center gap-3 text-[12px] uppercase
                        tracking-[0.2em] text-ink-3 hover:text-ink"
           >
-            <span aria-hidden>←</span>
+            <Arrow dir="left" />
             Все услуги
           </Link>
 
-          <Rail label="Услуга" className="mt-6">
-            <span className="text-copper">{service.num}</span> / {String(services.length).padStart(2, '0')}
+          <Rail
+            className="mt-6"
+            count={
+              <>
+                <span className="text-copper">{service.num}</span> / {String(services.length).padStart(2, '0')}
+              </>
+            }
+          >
+            <h1 className="display m-0 max-w-[18ch] text-d-l text-ink">{service.title}</h1>
           </Rail>
-
-          <header className="mb-10 md:mb-14">
-            <h1 className="display max-w-[18ch] text-d-l text-ink">{service.title}</h1>
-            <p className="mt-5 max-w-[46ch] text-[17px] leading-[1.6] text-ink-2">{service.tagline}</p>
-          </header>
+          <p className="m-0 mb-10 mt-5 max-w-[46ch] text-[17px] leading-[1.6] text-ink-2 md:mb-14">{service.tagline}</p>
 
           <Panel>
             <dl className="m-0">
@@ -114,7 +118,9 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
 
           {/* The rest of the catalogue, so nothing is unreachable. */}
           <nav className="mt-16 md:mt-20" aria-label="Другие услуги">
-            <Rail label="Другие услуги">{String(others.length).padStart(2, '0')}</Rail>
+            <Rail count={String(others.length).padStart(2, '0')} className="mb-6">
+              <h2 className="display m-0 text-d-s text-ink">Другие услуги</h2>
+            </Rail>
             <ul className="m-0 grid list-none gap-x-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
               {others.map((item) => (
                 <li key={item.slug}>
@@ -126,13 +132,10 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
                       {item.num}
                     </span>
                     {item.title}
-                    <span
-                      aria-hidden
+                    <Arrow
                       className="ml-auto text-ink-3 transition-transform duration-300 ease-out
                                  group-hover:translate-x-1 group-hover:text-copper"
-                    >
-                      →
-                    </span>
+                    />
                   </Link>
                 </li>
               ))}

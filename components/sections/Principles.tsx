@@ -22,8 +22,9 @@ export default function Principles() {
   return (
     <section id="principles" className="beat-tight relative">
       <Shell>
-        <Rail label={t.why.eyebrow}>{String(t.why.items.length).padStart(2, '0')}</Rail>
-        <h2 className="display text-d-m text-ink">{t.why.title}</h2>
+        <Rail count={String(t.why.items.length).padStart(2, '0')}>
+          <h2 className="display m-0 text-d-m text-ink">{t.why.title}</h2>
+        </Rail>
 
         <Reveal className="mt-10">
           <div className="grid gap-2 lg:grid-cols-12">

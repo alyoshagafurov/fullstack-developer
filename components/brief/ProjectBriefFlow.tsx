@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Shell from '@/components/ui/Shell';
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import Logo from '@/components/ui/Logo';
 import Panel, { Led } from '@/components/ui/Panel';
 import Rail from '@/components/ui/Rail';
@@ -55,9 +56,12 @@ function Masthead({ label }: { label: string }) {
   );
 }
 
-export default function ProjectBriefFlow() {
+export default function ProjectBriefFlow({ hasCases = false }: { hasCases?: boolean }) {
   const { t, lang } = useI18n();
   const b = t.brief;
+  // The two channels the owner answers first — shown when the site itself
+  // could not take the brief, so «напишите напрямую» points at something.
+  const channels = t.contact.channels.slice(0, 2);
 
   const [hydrated, setHydrated] = useState(false);
   const [data, setData] = useState<ProjectBrief>(emptyBrief);
@@ -68,10 +72,17 @@ export default function ProjectBriefFlow() {
   const [reference, setReference] = useState<string | null>(null);
   const [returnToReview, setReturnToReview] = useState(false);
 
-  const startedAt = useRef(new Date().toISOString());
+  const startedAt = useRef<string>('');
+  if (!startedAt.current) startedAt.current = new Date().toISOString();
   /* Stable for the life of this brief, including across a refresh — a retry
-     must reuse it so the server treats it as the same submission. */
-  const submissionId = useRef(newSubmissionId());
+     must reuse it so the server treats it as the same submission. Assigned
+     once: useRef has no lazy initialiser, so the guard keeps the generator
+     from running on every render. */
+  const submissionId = useRef<string>('');
+  if (!submissionId.current) submissionId.current = newSubmissionId();
+  /* The pending auto-advance, so a second tap replaces it instead of
+     stacking a second step change. */
+  const advanceTimer = useRef<number | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const firstRender = useRef(true);
@@ -79,8 +90,13 @@ export default function ProjectBriefFlow() {
 
   const current = STEPS[step];
   const isReview = current.id === 'review';
-  const reduced = typeof window !== 'undefined'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [reduced] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+
+  useEffect(() => () => {
+    if (advanceTimer.current) window.clearTimeout(advanceTimer.current);
+  }, []);
 
   /* ── Draft: restore once, then mirror ─────────────────────────────── */
   useEffect(() => {
@@ -160,8 +176,12 @@ export default function ProjectBriefFlow() {
   /** Single-choice steps move on by themselves — that is most of the speed. */
   const pickAndAdvance = <K extends keyof ProjectBrief>(key: K, value: ProjectBrief[K]) => {
     set(key, value);
+    if (advanceTimer.current) window.clearTimeout(advanceTimer.current);
     if (key === 'projectType' && value === 'other') return; // needs the follow-up field
-    window.setTimeout(advance, reduced ? 0 : 200);
+    advanceTimer.current = window.setTimeout(() => {
+      advanceTimer.current = null;
+      advance();
+    }, reduced ? 0 : 200);
   };
 
   const submit = async () => {
@@ -217,9 +237,10 @@ export default function ProjectBriefFlow() {
       <Shell className="py-rhythm-m">
         <Masthead label={b.eyebrow} />
         <div className="max-w-2xl">
-          <Rail label={b.ok.refLabel} />
-          <p className="display m-0 text-d-s tracking-[0.06em] text-copper">{reference}</p>
-          <h1 className="display mt-10 text-d-l text-ink">{b.ok.title}</h1>
+          <Rail count={b.ok.refLabel}>
+            <p className="display m-0 text-d-s tracking-[0.06em] text-copper">{reference}</p>
+          </Rail>
+          <h2 className="display mt-10 text-d-l text-ink">{b.ok.title}</h2>
           <p className="mt-5 max-w-[46ch] text-[16px] leading-[1.6] text-ink-2">{b.ok.lead}</p>
 
           <Panel className="mt-12">
@@ -236,7 +257,11 @@ export default function ProjectBriefFlow() {
 
           <div className="mt-10 flex flex-wrap gap-3">
             <Action href="/" variant="solid">{b.ok.home}</Action>
-            <Action href="/work" variant="ghost">{b.ok.work}</Action>
+            {hasCases ? (
+              <Action href="/work" variant="ghost">{b.ok.work}</Action>
+            ) : (
+              <Action href="/services" variant="ghost">{t.nav.services}</Action>
+            )}
           </div>
         </div>
       </Shell>
@@ -257,6 +282,7 @@ export default function ProjectBriefFlow() {
               value={data.projectType}
               onChange={(v) => pickAndAdvance('projectType', v)}
               error={err('projectType')}
+              required
             />
             {data.projectType === 'other' && (
               <Field
@@ -364,6 +390,7 @@ export default function ProjectBriefFlow() {
               value={data.budget}
               onChange={(v) => pickAndAdvance('budget', v)}
               error={err('budget')}
+              required
             />
             <p className="m-0 max-w-[52ch] text-[13px] leading-[1.6] text-ink-3">{b.budgetNote}</p>
           </>
@@ -378,6 +405,7 @@ export default function ProjectBriefFlow() {
               value={data.timeline}
               onChange={(v) => pickAndAdvance('timeline', v)}
               error={err('timeline')}
+              required
             />
             <p className="m-0 max-w-[52ch] text-[13px] leading-[1.6] text-ink-3">{b.timelineNote}</p>
           </>
@@ -416,7 +444,7 @@ export default function ProjectBriefFlow() {
             </div>
 
             <div>
-              <label className="group flex cursor-pointer items-start gap-3">
+              <label className="group flex min-h-[44px] cursor-pointer items-start gap-3 py-2">
                 <input
                   type="checkbox"
                   checked={data.consent}
@@ -427,7 +455,7 @@ export default function ProjectBriefFlow() {
                 />
                 <span
                   aria-hidden
-                  className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-chip
+                  className={`grid h-6 w-6 shrink-0 place-items-center rounded-chip
                               peer-focus-visible:outline peer-focus-visible:outline-1
                               peer-focus-visible:outline-offset-[3px] peer-focus-visible:outline-led
                               ${data.consent
@@ -437,13 +465,13 @@ export default function ProjectBriefFlow() {
                                   : 'shadow-[inset_0_0_0_1px_var(--edge-2)]'}`}
                 >
                   {data.consent && (
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+                    <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden>
                       <path d="M2 6.2l2.6 2.6L10 3.4" stroke="currentColor" strokeWidth="2.2"
                         strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </span>
-                <span className="text-[14px] leading-[1.5] text-ink-2 group-hover:text-ink">
+                <span className="pt-0.5 text-[14px] leading-[1.5] text-ink-2 group-hover:text-ink">
                   {b.f.consentL}
                 </span>
               </label>
@@ -498,6 +526,9 @@ export default function ProjectBriefFlow() {
             {current.optional && (
               <p className="label mt-4">{b.optional}</p>
             )}
+            {step === 0 && (
+              <p className="m-0 mt-5 max-w-[30ch] text-[13px] leading-[1.6] text-ink-2">{b.intro}</p>
+            )}
           </div>
         </div>
 
@@ -514,16 +545,23 @@ export default function ProjectBriefFlow() {
               className="absolute -left-[9999px] h-px w-px opacity-0"
               onChange={(e) => { hp.current = e.target.value; }} />
 
-            <h1
+            {/* The page's h1 is the sr-only title in app/start-project/page.tsx;
+                the question is the section heading, and it takes focus. */}
+            <h2
               ref={headingRef}
               tabIndex={-1}
               data-brief-heading
               className="display mb-4 max-w-[18ch] text-d-m text-ink outline-none"
             >
               {b.q[current.id].t}
-            </h1>
+            </h2>
             {b.q[current.id].hint && (
-              <p className="mb-10 max-w-[52ch] text-[15px] leading-[1.6] text-ink-2">{b.q[current.id].hint}</p>
+              <p className="mb-10 max-w-[52ch] text-[15px] leading-[1.6] text-ink-2">
+                {b.q[current.id].hint}
+                {/* A choice moves on by itself; say so before the first one is
+                    made (WCAG 3.2.2). */}
+                {current.autoAdvance && <> {b.autoAdvance}</>}
+              </p>
             )}
 
             <div className="space-y-6">{renderStep()}</div>
@@ -537,6 +575,22 @@ export default function ProjectBriefFlow() {
                   {outcome.status === 'rateLimited' && b.fail.tooMany}
                   {outcome.status === 'error' && b.fail.network}
                 </p>
+                {(outcome.status === 'unavailable' || outcome.status === 'error') && (
+                  <ul className="m-0 mt-3 flex list-none flex-wrap gap-x-6 gap-y-1 p-0">
+                    {channels.map((c) => (
+                      <li key={c.label}>
+                        <a
+                          href={c.href}
+                          {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                          className="lnk inline-flex min-h-[44px] items-center gap-2 text-[14px] text-ink-2 hover:text-ink"
+                        >
+                          <span className="label text-ink-3">{c.label}</span>
+                          {c.value}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </Panel>
             )}
 
@@ -549,7 +603,7 @@ export default function ProjectBriefFlow() {
                   className="lnk inline-flex min-h-[44px] items-center gap-2 text-[11px] uppercase
                              tracking-[0.18em] text-ink-3 hover:text-ink"
                 >
-                  <span aria-hidden>←</span>
+                  <Arrow dir="left" />
                   {b.back}
                 </button>
               )}

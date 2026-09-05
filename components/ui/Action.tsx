@@ -33,7 +33,7 @@ type Props = {
 
 const VARIANTS: Record<Variant, string> = {
   solid: 'act bg-ink text-base hover:bg-ink-bright',
-  signal: 'act bg-copper text-base hover:bg-copper-bright active:bg-copper-deep',
+  signal: 'act act-signal bg-copper text-base hover:bg-copper-bright active:bg-copper-deep',
   ghost: 'act act-ghost text-ink',
   text: 'lnk text-ink hover:text-copper px-0 py-0',
 };

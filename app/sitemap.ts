@@ -5,7 +5,8 @@ import { SITE_URL } from '@/lib/seo';
 import { services } from '@/lib/services';
 
 /*
- * The landing page, the case register, and one entry per published case.
+ * The landing page, the register, the catalogue, the brief, one entry per
+ * service and one per published case.
  *
  * Case pages have returned — as /work and /work/[slug], reading the database
  * rather than the hard-coded list this file used to point at. So the map is
@@ -45,6 +46,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: cases[0] ? new Date(cases[0].updatedAt) : now,
       changeFrequency: 'weekly',
       priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/services`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/start-project`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.5,
     },
     ...services.map((service) => ({
       url: `${SITE_URL}/services/${service.slug}`,

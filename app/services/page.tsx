@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/chrome/Header';
 import SiteFooter from '@/components/sections/SiteFooter';
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import Panel from '@/components/ui/Panel';
 import Rail from '@/components/ui/Rail';
 import { ru } from '@/lib/i18n/ru';
@@ -38,12 +39,10 @@ export default function ServicesIndex() {
     <>
       <Header />
       <main id="main" className="shell pb-24 pt-28 md:pt-32">
-        <Rail label={s.eyebrow}>{String(services.length).padStart(2, '0')}</Rail>
-
-        <header className="mb-10 grid gap-6 md:mb-14 md:grid-cols-12 md:items-end">
-          <h1 className="display max-w-[16ch] text-d-l text-ink md:col-span-7">Что я делаю</h1>
-          <p className="m-0 max-w-[44ch] text-[15px] leading-[1.6] text-ink-2 md:col-span-5">{s.sub}</p>
-        </header>
+        <Rail count={String(services.length).padStart(2, '0')}>
+          <h1 className="display m-0 max-w-[16ch] text-d-l text-ink">Что я делаю</h1>
+        </Rail>
+        <p className="m-0 mb-10 mt-5 max-w-[44ch] text-[15px] leading-[1.6] text-ink-2 md:mb-14">{s.sub}</p>
 
         <Panel>
           <ol className="m-0 list-none p-0">
@@ -63,13 +62,10 @@ export default function ServicesIndex() {
                   <span className="text-[15px] font-medium uppercase leading-[1.25] tracking-[0.02em] text-ink">
                     {service.title}
                   </span>
-                  <span
-                    aria-hidden
+                  <Arrow
                     className="justify-self-end text-ink-3 transition-transform duration-300 ease-out
                                group-hover:translate-x-1 group-hover:text-copper md:col-start-4"
-                  >
-                    →
-                  </span>
+                  />
                   <span className="col-span-3 row-start-2 text-[13px] leading-[1.5] text-ink-3 md:col-span-1 md:col-start-3 md:row-start-1">
                     {service.tagline}
                   </span>
@@ -89,7 +85,7 @@ export default function ServicesIndex() {
           </div>
           <Action href="/start-project" variant="ghost" className="shrink-0">
             {s.helpCta}
-            <span aria-hidden>→</span>
+            <Arrow />
           </Action>
         </Panel>
       </main>

@@ -14,8 +14,8 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: 'ru',
     dir: 'ltr',
     categories: ['business', 'portfolio', 'productivity', 'technology'],
-    background_color: '#0C0D0F',
-    theme_color: '#0C0D0F',
+    background_color: '#0C0C0E',
+    theme_color: '#0C0C0E',
     icons: [
       { src: '/icon', sizes: '512x512', type: 'image/png', purpose: 'any' },
       { src: '/icon', sizes: '512x512', type: 'image/png', purpose: 'maskable' },

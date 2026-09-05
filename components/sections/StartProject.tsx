@@ -22,19 +22,20 @@ export default function StartProject() {
   return (
     <section id="start" className="beat relative scroll-mt-20">
       <Shell>
-        <Rail label={c.eyebrow} />
-        <Reveal>
+        <Rail>
+          <h2 className="display m-0 max-w-[16ch] text-d-l text-ink">
+            {c.title1}{' '}
+            <br />
+            <span className="text-ink-2">{c.title2}</span>
+          </h2>
+        </Rail>
+        <Reveal className="mt-8">
           <Panel
             tone="raised"
             className="grid gap-10 px-6 py-9 md:px-10 md:py-12 lg:grid-cols-12 lg:gap-12"
           >
             <div className="lg:col-span-7">
-              <h2 className="display max-w-[16ch] text-d-l text-ink">
-                {c.title1}
-                <br />
-                <span className="text-ink-2">{c.title2}</span>
-              </h2>
-              <p className="mt-6 max-w-[44ch] text-[15px] leading-[1.7] text-ink-2">{c.sub}</p>
+              <p className="m-0 max-w-[44ch] text-[15px] leading-[1.7] text-ink-2">{c.sub}</p>
               <div className="mt-8">
                 <Action href="/start-project" variant="signal">
                   {t.nav.cta}
@@ -52,7 +53,7 @@ export default function StartProject() {
                       : {})}
                     className="lnk group flex min-h-[48px] items-baseline justify-between gap-4 py-3"
                   >
-                    <span className="label text-[10px]">{channel.label}</span>
+                    <span className="label">{channel.label}</span>
                     <span className="text-[14px] text-ink-2 group-hover:text-ink">{channel.value}</span>
                   </a>
                 </li>

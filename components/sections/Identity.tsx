@@ -4,8 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import { Led } from '@/components/ui/Panel';
 import { useI18n } from '@/lib/i18n';
+import { services } from '@/lib/services';
 
 /*
  * The first screen.
@@ -60,7 +62,7 @@ function Ribs({ className }: { className: string }) {
   );
 }
 
-export default function Identity() {
+export default function Identity({ hasCases = false }: { hasCases?: boolean }) {
   const { t } = useI18n();
   const h = t.hero;
 
@@ -88,9 +90,10 @@ export default function Identity() {
               fill
               priority
               sizes="(max-width:1024px) 100vw, 50vw"
-              /* 1402×1122 with the subject a little left of centre; this keeps
-                 them in the middle of the window without losing the desk. */
-              className="object-cover object-[38%_50%]"
+              /* 1402×1122 with the subject a little left of centre; at lg this
+                 keeps them in the middle of the window without losing the desk,
+                 and below lg it moves them to the right of the claim. */
+              className="object-cover object-[19%_50%] lg:object-[38%_50%]"
             />
           </div>
         </div>
@@ -106,10 +109,11 @@ export default function Identity() {
         </h1>
       </div>
 
-      {/* 3 — the track, and the one copper control on it. */}
+      {/* 3 — the track, and the one copper control standing on it: the
+             control sits above the line and interrupts it like a switch. */}
       <div data-light="" className="full relative z-10 row-start-3 h-[72px]">
         <Led at="mid" />
-        <div className="shell relative h-full">
+        <div className="shell relative z-[2] h-full">
           <div className="absolute left-gutter top-1/2 -translate-y-1/2 lg:left-1/2 lg:-translate-x-full lg:pr-12">
             <Action href="/start-project" variant="signal">
               {h.ctaContact}
@@ -125,20 +129,24 @@ export default function Identity() {
           {h.titleMain} <span className="block">{h.titleAccent}</span>
         </span>
         <p className="relative mt-7 max-w-[34ch] text-[15px] leading-[1.7] text-ink-2">{h.sub}</p>
+        {/* The way to the work — or, while the register is empty, to the
+            fourteen services, so the first proof click never lands on
+            nothing. */}
         <Link
-          href="/work"
+          href={hasCases ? '/work' : '/services'}
           className="group relative mt-8 inline-flex min-h-[44px] items-center gap-4 text-[12px]
                      uppercase tracking-[0.2em] text-ink hover:text-copper"
         >
-          {h.ctaWork}
+          {hasCases ? h.ctaWork : t.nav.services}
+          {!hasCases && (
+            <span className="tabular-nums text-copper">{String(services.length).padStart(2, '0')}</span>
+          )}
           <span
             aria-hidden
             className="h-px w-10 origin-left bg-edge-2 transition-transform duration-300 ease-out
                        group-hover:scale-x-150 group-hover:bg-copper"
           />
-          <span aria-hidden className="transition-transform duration-300 ease-out group-hover:translate-x-1">
-            →
-          </span>
+          <Arrow className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
         </Link>
       </div>
     </section>

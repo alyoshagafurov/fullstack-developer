@@ -12,8 +12,8 @@ import { useI18n } from '@/lib/i18n';
  * About — daylight.
  *
  * The one panel on the page lit by a window rather than an LED: warm paper,
- * the photograph exactly as shot in the bright room, and the facts as small
- * plaques. It carries no light edge because it needs none; the contrast
+ * the photograph exactly as shot in the bright room, and the facts as a
+ * small ledger. It carries no light edge because it needs none; the contrast
  * with the room around it is the whole idea.
  */
 export default function Studio() {
@@ -23,25 +23,27 @@ export default function Studio() {
   return (
     <section id="studio" className="beat relative scroll-mt-20">
       <Shell>
-        <Rail label={a.eyebrow} />
-        <Reveal>
+        <Rail>
+          <h2 className="display m-0 max-w-[20ch] text-d-m text-ink">{a.title}</h2>
+        </Rail>
+        <Reveal className="mt-8">
           <Panel
             tone="day"
             edge="none"
             className="grid gap-10 px-6 py-8 md:px-10 md:py-12 lg:grid-cols-12 lg:gap-12"
           >
             <div className="lg:col-span-6">
-              <h2 className="display max-w-[20ch] text-d-m text-day-ink">{a.title}</h2>
-              <div className="mt-6 max-w-[48ch] space-y-4">
+              <div className="max-w-[48ch] space-y-4">
                 <p className="m-0 text-[15px] leading-[1.7] text-day-2">{a.p1}</p>
                 <p className="m-0 text-[15px] leading-[1.7] text-day-2">{a.p2}</p>
               </div>
 
-              <dl className="m-0 mt-8 grid grid-cols-1 gap-2 xs:grid-cols-2">
+              {/* The facts as a ledger on hairlines — rows, not boxes in a box. */}
+              <dl className="m-0 mt-8 border-t border-day-edge">
                 {a.facts.map((fact) => (
-                  <div key={fact.k} className="rounded-control px-3.5 py-3 ring-1 ring-inset ring-day-edge">
-                    <dt className="text-[10px] font-medium uppercase tracking-[0.16em] text-day-2">{fact.k}</dt>
-                    <dd className="m-0 mt-1 text-[13px] font-medium text-day-ink">{fact.v}</dd>
+                  <div key={fact.k} className="grid grid-cols-[6rem_1fr] gap-4 border-b border-day-edge py-3">
+                    <dt className="pt-0.5 text-[11px] font-medium uppercase tracking-[0.16em] text-day-2">{fact.k}</dt>
+                    <dd className="m-0 text-[13px] font-medium text-day-ink">{fact.v}</dd>
                   </div>
                 ))}
               </dl>

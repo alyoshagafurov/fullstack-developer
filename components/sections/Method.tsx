@@ -23,6 +23,8 @@ import { useI18n } from '@/lib/i18n';
  * of seven equal boxes. A step beyond the seventh takes the last weight.
  *
  * The segments are tabs: arrow keys move along the track, focus selects.
+ * Between md and lg the segments carry only their number — the short ones
+ * have no room for a word — and the readout names the step.
  */
 const WEIGHTS = [1, 1.4, 2, 4, 1.4, 1, 2];
 
@@ -54,14 +56,10 @@ export default function Method() {
   return (
     <section id="process" className="beat relative scroll-mt-20">
       <Shell>
-        <Rail label={t.process.eyebrow}>{String(steps.length).padStart(2, '0')}</Rail>
-
-        <header className="grid gap-4 md:grid-cols-12 md:items-end">
-          <h2 className="display text-d-m text-ink md:col-span-6">{t.process.title}</h2>
-          <p className="m-0 text-[14px] leading-[1.6] text-ink-2 md:col-span-5 md:col-start-8">
-            {t.process.sub}
-          </p>
-        </header>
+        <Rail count={String(steps.length).padStart(2, '0')}>
+          <h2 className="display m-0 text-d-m text-ink">{t.process.title}</h2>
+        </Rail>
+        <p className="m-0 mt-5 max-w-[52ch] text-[14px] leading-[1.6] text-ink-2">{t.process.sub}</p>
 
         {/* ── The track ─────────────────────────────────────────────── */}
         <Reveal className="mt-12 hidden md:block">
@@ -88,13 +86,13 @@ export default function Method() {
                     on ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
                   }`}
                 >
-                  <Led className={on ? 'led-on' : ''} />
+                  <Led className={on ? 'led-on' : 'led-flat'} />
                   <span
                     aria-hidden
                     className={`absolute left-0 top-0 h-3 w-px ${on ? 'bg-led' : 'bg-edge-2'}`}
                   />
                   <span className="block text-[11px] tabular-nums tracking-[0.16em]">{step.n}</span>
-                  <span className="mt-2 block text-[13px] font-medium leading-tight">{step.t}</span>
+                  <span className="mt-2 hidden text-[13px] font-medium leading-tight lg:block">{step.t}</span>
                 </button>
               );
             })}
@@ -106,6 +104,7 @@ export default function Method() {
               role="tabpanel"
               id={`${id}-panel`}
               aria-labelledby={`${id}-tab-${active}`}
+              tabIndex={0}
               className="px-7 py-8 md:px-9 md:py-9 lg:col-span-7"
             >
               <span className="display text-[13px] text-copper tabular-nums">{current.n}</span>

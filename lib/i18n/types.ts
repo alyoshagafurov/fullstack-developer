@@ -95,6 +95,8 @@ export interface Dict {
     step: string; of: string;
     back: string; next: string; toReview: string; submit: string; sending: string;
     optional: string; edit: string; skip: string; required: string;
+    /** Said before the first single-choice step: picking an option moves on. */
+    autoAdvance: string;
     q: Record<StepId, { t: string; hint: string }>;
     types: Record<ProjectType, string>;
     budgets: Record<Budget, string>;

@@ -101,7 +101,7 @@ export function siteGraph() {
         givenName: 'Alisher',
         familyName: 'Gafurov',
         url: SITE_URL,
-        image: `${SITE_URL}/hero-face.jpg`,
+        image: `${SITE_URL}/hero-portrait.jpg`,
         jobTitle: ['Full-Stack Developer', 'Software Engineer', 'Web Developer', 'UI/UX Designer'],
         description: DEFAULT_DESCRIPTION,
         email: `mailto:${EMAIL}`,

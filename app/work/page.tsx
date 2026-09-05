@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/chrome/Header';
 import SiteFooter from '@/components/sections/SiteFooter';
 import Action from '@/components/ui/Action';
+import Arrow from '@/components/ui/Arrow';
 import Panel from '@/components/ui/Panel';
 import Rail from '@/components/ui/Rail';
 import { listPublishedCases } from '@/lib/cases';
@@ -38,11 +39,9 @@ export default async function WorkPage() {
     <>
       <Header />
       <main id="main" className="shell pb-24 pt-28 md:pt-32">
-        <Rail label="Работы">{cases.length > 0 ? String(cases.length).padStart(2, '0') : undefined}</Rail>
-
-        <header className="mb-10 md:mb-14">
-          <h1 className="display max-w-[18ch] text-d-l text-ink">Проекты, которые уже работают</h1>
-        </header>
+        <Rail count={cases.length > 0 ? String(cases.length).padStart(2, '0') : undefined} className="mb-10 md:mb-14">
+          <h1 className="display m-0 max-w-[18ch] text-d-l text-ink">Проекты, которые уже работают</h1>
+        </Rail>
 
         {cases.length === 0 ? (
           /* Honest rather than decorative: the register is empty, and the two
@@ -54,7 +53,7 @@ export default async function WorkPage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Action href="/services" variant="ghost">
                 Услуги
-                <span aria-hidden>→</span>
+                <Arrow />
               </Action>
               <Action href="/start-project" variant="signal">
                 Обсудить проект
@@ -70,7 +69,7 @@ export default async function WorkPage() {
                       ragged when one case has a tall screenshot and the next
                       a wide one. */}
                   <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-panel bg-base-deep">
-                    {item.cover ? (
+                    {/^https?:\/\//i.test(item.cover) ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={item.cover}
@@ -81,7 +80,7 @@ export default async function WorkPage() {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <span className="label text-[10px]">Без скриншота</span>
+                        <span className="label">Без скриншота</span>
                       </div>
                     )}
                   </div>
@@ -89,7 +88,7 @@ export default async function WorkPage() {
                   <div className="flex flex-1 flex-col gap-3 p-5 md:p-6">
                     <div className="flex items-baseline justify-between gap-4">
                       <h2 className="m-0 text-[16px] font-medium leading-tight text-ink">{item.title}</h2>
-                      {item.year && <span className="label shrink-0 text-[10px]">{item.year}</span>}
+                      {item.year && <span className="label shrink-0">{item.year}</span>}
                     </div>
 
                     {item.summary && (
@@ -104,13 +103,10 @@ export default async function WorkPage() {
                           </span>
                         ))}
                       </div>
-                      <span
-                        aria-hidden
+                      <Arrow
                         className="text-ink-3 transition-transform duration-300 ease-out
                                    group-hover:translate-x-1 group-hover:text-copper"
-                      >
-                        →
-                      </span>
+                      />
                     </div>
                   </div>
                 </Panel>
