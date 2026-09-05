@@ -17,13 +17,17 @@
  * almost all of it, while a squarer or a wider one crops until either his head
  * or the plant reaches the top.
  *
- * The bounds are measured against the file, not guessed. Sweeping 214 window
- * sizes inside this query, the statement clears the plant on every one, and
- * the worst contrast anywhere in it is 11.6:1 for the headline, 12:1 for the
- * label and 9.1:1 for the paragraph.
+ * The bounds are measured against the file, not guessed. Sweeping 696 window
+ * sizes inside this query — every shape from square to 2.5:1 — the statement
+ * clears the plant on every one, and the worst contrast anywhere in it is
+ * 11.8:1 for the headline, 11.6:1 for the label and 9.1:1 for the paragraph.
+ *
+ * What is excluded: anything under 768×660, where the crop closes in until his
+ * head reaches the top of the frame, and anything wider than 2.5:1, where it
+ * shaves the wall off the top instead. Both fall back to white on the desk.
  */
 @custom-variant wall (
-  @media (min-width: 1024px) and (min-height: 660px) and (min-aspect-ratio: 3/2) and (max-aspect-ratio: 2/1)
+  @media (min-width: 768px) and (min-height: 660px) and (max-aspect-ratio: 5/2)
 );
 
 @theme {

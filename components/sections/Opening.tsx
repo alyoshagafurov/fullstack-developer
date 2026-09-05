@@ -11,18 +11,19 @@ import { site } from '@/lib/content/site';
  * belongs high on the wall — nothing darkening the picture, nothing on top of
  * him.
  *
- * Whether there is room is a question about the window's shape rather than its
- * size, because the frame is 16:9: a window near that ratio shows nearly all of
- * it, a squarer or a wider one crops until his head or the plant reaches the
- * top. That is what the `wall` variant in globals.css tests, and its bounds
- * come from sweeping the photograph itself across 214 window sizes.
+ * Whether there is room depends on the crop, and the crop depends on the shape
+ * of the window as much as its size. The `wall` variant in globals.css carries
+ * the bounds; they come from sweeping the photograph itself across 696 window
+ * sizes, and inside them the statement clears the plant every time.
  *
- * Outside those bounds the words go back down onto the desk in white over a
- * short falloff — which is what the desk looks like anyway.
+ * Outside them — under 768×660, or wider than 2.5:1 — the words go back down
+ * onto the desk in white over a short falloff, which is what the desk looks
+ * like anyway.
  *
- * The headline is sized off the shorter of the two axes (`min(3.4vw, 5.4svh)`)
- * so that it shrinks with the wall it stands on instead of running into the
- * plant when the window gets short.
+ * The headline is sized off the shorter of the two axes (`min(3vw, 5svh)`) so
+ * that it shrinks with the wall it stands on instead of running into the plant
+ * when the window gets short, and the column it sits in is held to 34% of the
+ * width, which is where his shoulder starts on the widest crop.
  *
  * The button is centred at the bottom either way: the strip it sits in never
  * measured above 60 average luminance on any window tested, so a white pill
@@ -57,18 +58,18 @@ export function Opening() {
         className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-black/90 via-black/55 to-transparent wall:hidden"
       />
 
-      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 wall:pt-22 wall:pb-14">
+      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 wall:pt-19 wall:pb-14">
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end wall:justify-start">
           <div className="wall:flex wall:items-start wall:justify-between wall:gap-16">
-            {/* Held to 38% of the window: past that the column runs into his
+            {/* Held to 34% of the window: past that the column runs into his
                 shoulder and the wall behind it stops being empty. */}
-            <div className="min-w-0 wall:w-[38%]">
+            <div className="min-w-0 wall:w-[34%]">
               <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-paper uppercase wall:text-ink-2">
                 <span aria-hidden className="block h-px w-10 bg-paper/70 wall:bg-ink-3" />
                 {site.role}
               </p>
 
-              <h1 className="mt-6 text-[clamp(2rem,min(3.4vw,5.4svh),4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase wall:text-ink">
+              <h1 className="mt-6 text-[clamp(2rem,4vw,4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase wall:mt-4 wall:text-[min(3vw,5svh,4rem)] wall:text-ink">
                 {lines.map((line, index) => (
                   <span
                     key={line}
