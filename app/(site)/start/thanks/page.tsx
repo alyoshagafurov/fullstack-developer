@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Band } from '@/components/ui/Band';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { thanksMessage } from '@/lib/content/brief';
@@ -45,9 +46,7 @@ export default async function ThanksPage({
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
-            <PillLink href={`https://t.me/${site.contact.telegram}`} variant="solid">
-              Написать в Telegram
-            </PillLink>
+            <CTA href={`https://t.me/${site.contact.telegram}`}>Написать в Telegram</CTA>
             <PillLink href="/" variant="outline">
               На главную
             </PillLink>

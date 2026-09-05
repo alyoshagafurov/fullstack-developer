@@ -57,7 +57,17 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+
+    /*
+     * `clip`, not `hidden`.
+     *
+     * `overflow-x: hidden` on the body makes the body a scroll container, and
+     * scroll events then stop reaching `window` — which is where the header
+     * listens to decide whether it should be white or black. That is why the
+     * header kept the colour of whichever band it happened to start on.
+     * `clip` cuts the same overflow without creating a scroller.
+     */
+    overflow-x: clip;
   }
 
   ::selection {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getService, services } from '@/lib/content/services';
@@ -110,9 +111,9 @@ export default async function ServicePage({ params }: Params) {
             <p className="max-w-2xl text-[clamp(1.5rem,3.4vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
               {site.contactInvite}
             </p>
-            <PillLink href="/start" variant="solid" className="mt-8">
+            <CTA href="/start" className="mt-8">
               {site.heroCta}
-            </PillLink>
+            </CTA>
           </div>
           <p className="text-sm text-ink-2 md:text-right">
             Отвечаю {site.responseTime.toLowerCase()}.

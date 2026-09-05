@@ -115,19 +115,24 @@ export function ServicesIndex() {
                 </span>
               </span>
 
-              <span className="hidden max-w-xs items-center gap-6 md:flex">
+              <span className="hidden max-w-md items-center gap-8 md:flex">
                 <span className="text-sm leading-relaxed text-paper/50 opacity-0 transition-opacity duration-400 group-hover:opacity-100">
                   {service.tagline}
                 </span>
-                <span className="block w-16 shrink-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100">
+                {/*
+                  Always on screen, not only on hover. The device is what tells
+                  a scanner what kind of thing this service produces, and at the
+                  old sixty-four pixels it was a smudge nobody could identify.
+                */}
+                <span className="block w-36 shrink-0 opacity-45 transition-opacity duration-400 group-hover:opacity-100 lg:w-44">
                   {/* The object is a photograph on a near-white sweep, so it is
                       inverted here to sit on black instead of glowing on it. */}
                   <Image
                     src={service.object}
                     alt=""
-                    width={200}
-                    height={200}
-                    sizes="64px"
+                    width={400}
+                    height={400}
+                    sizes="176px"
                     className="h-auto w-full invert"
                   />
                 </span>
@@ -150,46 +155,107 @@ export function ServicesIndex() {
  */
 export function AboutSpread() {
   return (
-    <Band tone="paper" id="studio" innerClassName="py-28 md:py-40">
-      <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-7">
-          <p className="label mb-10">Обо мне</p>
-          <p className="display-2 max-w-3xl uppercase">{site.name}</p>
-          <p className="lede mt-10 max-w-xl">{site.difference}</p>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-2">{site.why[1]}</p>
+    /*
+     * Built without the shared Band so the photograph can reach three edges of
+     * the screen. A picture with a margin around it reads as an illustration
+     * inside an article; one that runs off the top, bottom and right reads as
+     * part of the page itself.
+     */
+    <section
+      data-tone="light"
+      id="studio"
+      className="relative w-full bg-paper text-ink lg:grid lg:min-h-[92svh] lg:grid-cols-2"
+    >
+      <div className="flex flex-col justify-center px-5 py-24 md:px-10 lg:py-28 lg:pr-16 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
+        <p className="label mb-8">Обо мне</p>
+        <p className="display-2 uppercase">{site.name}</p>
+        <p className="lede mt-8 max-w-xl">{site.difference}</p>
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-2">{site.why[1]}</p>
 
-          <dl className="mt-16 grid grid-cols-2 gap-x-10 gap-y-10 border-t border-line pt-10 sm:grid-cols-4">
-            {about.facts.map((fact) => (
-              <div key={fact.label}>
-                <dt className="label mb-3">{fact.label}</dt>
-                <dd className="text-sm leading-snug">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
+        <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-line pt-8">
+          {about.facts.map((fact) => (
+            <div key={fact.label}>
+              <dt className="label mb-3">{fact.label}</dt>
+              <dd className="text-sm leading-snug">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
 
-          <Link
-            href="/about"
-            className="mt-12 inline-flex min-h-11 items-center gap-4 text-[0.6875rem] tracking-[0.18em] uppercase"
-          >
-            Подробнее обо мне
-            <span aria-hidden className="block h-px w-12 bg-ink" />
-          </Link>
-        </div>
-
-        {/* Offset down and out of alignment on purpose: a portrait that lines up
-            with the text baseline reads as a form field. */}
-        <div className="lg:col-span-5 lg:pt-24">
-          <div className="relative aspect-4/5 w-full overflow-hidden bg-ground">
-            <Image
-              src="/photo/portrait-work.webp"
-              alt={`${site.name} за работой`}
-              fill
-              sizes="(min-width: 1024px) 40vw, 92vw"
-              className="object-cover object-center"
-            />
-          </div>
-        </div>
+        <CTA href="/about" className="mt-12 self-start">
+          Подробнее обо мне
+        </CTA>
       </div>
+
+      <div className="relative h-[70svh] w-full lg:h-auto">
+        <Image
+          src="/photo/portrait-work.webp"
+          alt={`${site.name} за работой`}
+          fill
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="object-cover object-center"
+        />
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Contacts.
+ *
+ * The closing band asks for a brief; this one is for the people who would
+ * rather just write. Every channel he listed, each a real link, on the same
+ * black ground as the rest of the loud parts of the page.
+ */
+export function Contacts() {
+  const { contact } = site;
+
+  const channels = [
+    { label: 'Telegram', value: `@${contact.telegram}`, href: `https://t.me/${contact.telegram}` },
+    { label: 'Почта', value: contact.email, href: `mailto:${contact.email}` },
+    { label: 'WhatsApp', value: contact.phone, href: `https://wa.me/${contact.phoneHref.replace(/\D/g, '')}` },
+    { label: 'Телефон', value: contact.phone, href: `tel:${contact.phoneHref}` },
+    {
+      label: 'Instagram',
+      value: `@${contact.instagram}`,
+      href: `https://instagram.com/${contact.instagram}`,
+    },
+    { label: 'GitHub', value: 'alyoshagafurov', href: contact.github },
+  ];
+
+  return (
+    <Band tone="void" id="contacts" innerClassName="py-28 md:py-40">
+      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/40 uppercase">Контакты</p>
+      <h2 className="display-2 mt-10 max-w-3xl text-paper uppercase">Напишите напрямую</h2>
+      <p className="mt-8 max-w-lg text-base leading-relaxed text-paper/55">
+        Если заполнять форму не хочется — просто напишите. Отвечаю{' '}
+        {site.responseTime.toLowerCase()}. {site.hours}
+      </p>
+
+      <ul className="mt-16 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
+        {channels.map((channel) => (
+          <li key={channel.label} className="border-t border-white/12">
+            <a
+              href={channel.href}
+              target={channel.href.startsWith('http') ? '_blank' : undefined}
+              rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="group flex min-h-20 items-center justify-between gap-6 py-6"
+            >
+              <span className="min-w-0">
+                <span className="label mb-2 block text-paper/40">{channel.label}</span>
+                <span className="block truncate text-lg text-paper transition-opacity group-hover:opacity-70">
+                  {channel.value}
+                </span>
+              </span>
+              <span
+                aria-hidden
+                className="shrink-0 text-paper/40 transition-transform duration-300 ease-[var(--ease-studio)] group-hover:translate-x-1 group-hover:text-paper"
+              >
+                →
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </Band>
   );
 }

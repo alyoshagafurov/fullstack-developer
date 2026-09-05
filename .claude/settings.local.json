@@ -252,7 +252,10 @@
       "Bash(env -u DATABASE_URL npx next build)",
       "Bash(curl -s -L --max-time 20 https://aly.lat/admin/login -o /tmp/a.html)",
       "Bash(grep -oE '>[^<>]{4,60}<' /tmp/a.html)",
-      "Bash(grep -vE '^\\\\s*$')"
+      "Bash(grep -vE '^\\\\s*$')",
+      "Bash(awk '{print \"  \" $5, $9, $10, $11}')",
+      "Bash(cp ~/Desktop/\"hero without background.png\" /tmp/cut.png)",
+      "Bash(cwebp -quiet -q 88 -alpha_q 100 -resize 1800 0 /tmp/cut.png -o public/photo/hero-cut.webp)"
     ]
   }
 }

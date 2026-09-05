@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getCase, getPublishedCases } from '@/lib/cases';
@@ -133,9 +134,9 @@ export default async function CasePage({ params }: Params) {
           {site.contactInvite}
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <PillLink href="/start" variant="solid">
+          <CTA href="/start">
             {site.heroCta}
-          </PillLink>
+          </CTA>
           <PillLink href="/work" variant="outline">
             Все проекты
           </PillLink>

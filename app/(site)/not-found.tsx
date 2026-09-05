@@ -1,4 +1,5 @@
 import { Band } from '@/components/ui/Band';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 
@@ -19,9 +20,9 @@ export default function NotFound() {
             Возможно, ссылка устарела или в адресе опечатка. Витрина на месте.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <PillLink href="/" variant="solid">
+            <CTA href="/">
               На главную
-            </PillLink>
+            </CTA>
             <PillLink href="/services" variant="outline">
               Смотреть услуги
             </PillLink>

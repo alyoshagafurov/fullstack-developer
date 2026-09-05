@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getPublishedCases } from '@/lib/cases';
@@ -43,9 +44,9 @@ export default async function WorkPage() {
               <PillLink href="/services" variant="outline">
                 Смотреть услуги
               </PillLink>
-              <PillLink href="/start" variant="solid">
+              <CTA href="/start">
                 {site.heroCta}
-              </PillLink>
+              </CTA>
             </div>
           </div>
         </Band>
@@ -100,9 +101,9 @@ export default async function WorkPage() {
         <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
           {site.contactInvite}
         </p>
-        <PillLink href="/start" variant="solid" className="mt-10">
+        <CTA href="/start" className="mt-10">
           {site.heroCta}
-        </PillLink>
+        </CTA>
       </Band>
     </>
   );

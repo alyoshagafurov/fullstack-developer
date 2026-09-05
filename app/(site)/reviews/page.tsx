@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
+import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { getTestimonials } from '@/lib/cases';
 import { site } from '@/lib/content/site';
@@ -81,9 +82,9 @@ export default async function ReviewsPage() {
         <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
           {site.contactInvite}
         </p>
-        <PillLink href="/start" variant="solid" className="mt-10">
+        <CTA href="/start" className="mt-10">
           {site.heroCta}
-        </PillLink>
+        </CTA>
       </Band>
     </>
   );
