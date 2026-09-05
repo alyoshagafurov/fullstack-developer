@@ -273,6 +273,7 @@ export const en: Dict = {
     back: 'Back', next: 'Continue', toReview: 'Review',
     submit: 'Send brief', sending: 'Sending…',
     optional: 'optional', edit: 'Edit', skip: 'Skip', required: 'required',
+    autoAdvance: 'Choosing an option opens the next step right away.',
     q: {
       project: { t: 'What are you building?', hint: 'Pick the closest option — we can refine the details later.' },
       goal: { t: 'What do you want to achieve?', hint: 'The business goal, the problem, or the result you are after. This matters more than a feature list.' },

@@ -2,17 +2,21 @@
 
 import { useId, useRef } from 'react';
 
+import { Led } from '@/components/ui/Panel';
+
 /*
  * The two controls the brief is built from.
  *
- * Choice — an editorial selection, not a <select>. Options are hairline rows
- * with a hung number and a rule that fills with the signal colour when picked.
- * It exposes a real radiogroup to assistive tech and uses roving tabindex, so
- * the whole brief is answerable from the keyboard.
+ * Choice — an editorial selection, not a <select>. Each option is a low panel
+ * with a lit edge: the pointer brightens it, the picked one is held on and
+ * its mark turns copper. It exposes a real radiogroup to assistive tech and
+ * uses roving tabindex, so the whole brief is answerable from the keyboard.
  *
- * Field — a labelled input or textarea. The <label> is bound with htmlFor/id,
- * the hint and the error are wired through aria-describedby, and the error
- * carries role="alert" so it is announced the moment it appears.
+ * Field — a labelled input or textarea set into a panel whose bottom edge
+ * lights while the field has focus and stays lit while it has an error. The
+ * <label> is bound with htmlFor/id, the error is wired through
+ * aria-describedby and carries role="alert" so it is announced the moment it
+ * appears.
  */
 
 /* ── Choice ────────────────────────────────────────────────────────────── */
@@ -20,7 +24,7 @@ import { useId, useRef } from 'react';
 export type Option<T extends string> = { value: T; label: string };
 
 export function Choice<T extends string>({
-  legend, options, value, onChange, error, columns = 2,
+  legend, options, value, onChange, error, columns = 2, required,
 }: {
   legend: string;
   options: Option<T>[];
@@ -28,6 +32,7 @@ export function Choice<T extends string>({
   onChange: (v: T) => void;
   error?: string;
   columns?: 1 | 2;
+  required?: boolean;
 }) {
   const groupRef = useRef<HTMLDivElement>(null);
   const errId = useId();
@@ -53,9 +58,10 @@ export function Choice<T extends string>({
         ref={groupRef}
         role="radiogroup"
         aria-label={legend}
+        aria-required={required || undefined}
         aria-invalid={!!error || undefined}
         aria-describedby={error ? errId : undefined}
-        className={`grid ${columns === 2 ? 'sm:grid-cols-2 sm:gap-x-10' : ''} border-t border-line`}
+        className={`grid gap-2 ${columns === 2 ? 'sm:grid-cols-2' : ''}`}
       >
         {options.map((o, i) => {
           const on = value === o.value;
@@ -64,41 +70,36 @@ export function Choice<T extends string>({
               key={o.value}
               type="button"
               data-opt
+              data-light=""
               role="radio"
               aria-checked={on}
               tabIndex={on || (!anySelected && i === 0) ? 0 : -1}
               onClick={() => onChange(o.value)}
               onKeyDown={(e) => onKeyDown(e, i)}
-              className="group relative flex items-baseline gap-5 border-b border-line py-4 text-left
-                         outline-none transition-colors duration-200
-                         focus-visible:ring-1 focus-visible:ring-signal/70 focus-visible:ring-offset-4
-                         focus-visible:ring-offset-base"
+              className={`lit panel group flex min-h-[64px] items-baseline gap-4 px-5 py-4 text-left ${
+                on ? 'panel-raised' : ''
+              }`}
             >
+              <Led className={`led-flat ${on ? 'led-on' : ''}`} />
               <span
-                className={`shrink-0 font-mono text-[0.625rem] transition-colors duration-200
-                            ${on ? 'text-signal' : 'text-ink-3 group-hover:text-ink-2'}`}
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
+                aria-hidden
+                className={`mt-2 h-[6px] w-[6px] shrink-0 ${on ? 'bg-copper' : 'bg-edge-2 group-hover:bg-ink-3'}`}
+              />
               <span
-                className={`display text-[clamp(1.05rem,1.5vw,1.5rem)] leading-tight transition-colors duration-200
-                            ${on ? 'text-ink' : 'text-ink-2 group-hover:text-ink'}`}
+                className={`display text-[clamp(1rem,0.9rem+0.5vw,1.2rem)] leading-tight ${
+                  on ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
+                }`}
               >
                 {o.label}
               </span>
-              {/* the rule fills to mark the selection */}
-              <span
-                aria-hidden
-                className={`absolute left-0 -bottom-px h-px w-full origin-left bg-signal
-                            transition-transform duration-300 ease-out
-                            ${on ? 'scale-x-100' : 'scale-x-0'}`}
-              />
             </button>
           );
         })}
       </div>
       {error && (
-        <p id={errId} role="alert" className="mt-3 text-micro text-signal">{error}</p>
+        <p id={errId} role="alert" className="mt-3 text-[13px] text-copper">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -129,60 +130,65 @@ export function Field({
   const errId = `${id}-err`;
   const nearLimit = !!maxLength && value.length > maxLength * 0.75;
 
-  const base =
-    'w-full bg-transparent border-b px-0 py-3 text-ink text-lead placeholder:text-ink-3 ' +
-    'outline-none transition-colors duration-200 ' +
-    (error ? 'border-signal' : 'border-line focus:border-signal/60');
+  const control =
+    'block w-full bg-transparent px-5 pb-4 pt-1 text-[17px] leading-[1.5] text-ink ' +
+    'placeholder:text-ink-3 outline-none';
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-4 mb-1">
-        <label htmlFor={id} className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-3">
-          {label}
-          {required && <span aria-hidden="true"> *</span>}
-          {optional && <span className="ml-2 normal-case tracking-normal">({optional})</span>}
-        </label>
-        {counter && nearLimit && (
-          <span className="font-mono text-[0.625rem] tabular-nums text-ink-3">
-            {value.length} / {maxLength}
-          </span>
+      <div data-light="" className="lit panel field">
+        <div className="flex items-baseline justify-between gap-4 px-5 pb-1 pt-4">
+          <label htmlFor={id} className="label">
+            {label}
+            {required && <span aria-hidden="true"> *</span>}
+            {optional && <span className="ml-2 normal-case tracking-normal">({optional})</span>}
+          </label>
+          {counter && nearLimit && (
+            <span className="text-[11px] tabular-nums text-ink-3">
+              {value.length} / {maxLength}
+            </span>
+          )}
+        </div>
+
+        {multiline ? (
+          <textarea
+            id={id}
+            rows={rows}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            required={required}
+            aria-required={required || undefined}
+            aria-invalid={!!error || undefined}
+            aria-describedby={error ? errId : undefined}
+            className={`${control} resize-y`}
+          />
+        ) : (
+          <input
+            id={id}
+            type={type}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            required={required}
+            aria-required={required || undefined}
+            aria-invalid={!!error || undefined}
+            aria-describedby={error ? errId : undefined}
+            autoComplete={autoComplete}
+            inputMode={inputMode}
+            className={control}
+          />
         )}
+
+        <Led at="bottom" className={`led-flat ${error ? 'led-on' : ''}`} />
       </div>
 
-      {multiline ? (
-        <textarea
-          id={id}
-          rows={rows}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          maxLength={maxLength}
-          required={required}
-          aria-required={required || undefined}
-          aria-invalid={!!error || undefined}
-          aria-describedby={error ? errId : undefined}
-          className={`${base} resize-y leading-relaxed`}
-        />
-      ) : (
-        <input
-          id={id}
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          maxLength={maxLength}
-          required={required}
-          aria-required={required || undefined}
-          aria-invalid={!!error || undefined}
-          aria-describedby={error ? errId : undefined}
-          autoComplete={autoComplete}
-          inputMode={inputMode}
-          className={base}
-        />
-      )}
-
       {error && (
-        <p id={errId} role="alert" className="mt-2 text-micro text-signal">{error}</p>
+        <p id={errId} role="alert" className="mt-2 text-[13px] text-copper">
+          {error}
+        </p>
       )}
     </div>
   );

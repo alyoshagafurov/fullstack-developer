@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-04T19:01:34.980Z",
+  "title": "Design System: aly — penthouse-noir",
+  "extensions": {
+    "colorMeta": {
+      "copper": {
+        "role": "primary",
+        "displayName": "Copper",
+        "canonical": "oklch(70.9% 0.074 68.3)",
+        "tonalRamp": [
+          "#140800",
+          "#361f03",
+          "#5b3a0e",
+          "#7d5930",
+          "#a07a51",
+          "#c49d73",
+          "#eac196",
+          "#ffebd6"
+        ]
+      },
+      "copper-bright": {
+        "role": "primary",
+        "displayName": "Copper, lit",
+        "canonical": "oklch(77.7% 0.069 68.7)",
+        "tonalRamp": [
+          "#140800",
+          "#361f01",
+          "#5a3a13",
+          "#7b5a34",
+          "#9e7b54",
+          "#c29e76",
+          "#e7c299",
+          "#feebd8"
+        ]
+      },
+      "copper-deep": {
+        "role": "primary",
+        "displayName": "Copper, pressed",
+        "canonical": "oklch(63.8% 0.072 69.6)",
+        "tonalRamp": [
+          "#130800",
+          "#352004",
+          "#5a3a10",
+          "#7b5a31",
+          "#9e7b52",
+          "#c39d74",
+          "#e8c297",
+          "#feebd6"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "oklch(15.5% 0.004 285.9)",
+        "tonalRamp": [
+          "#0b0b0d",
+          "#252527",
+          "#424244",
+          "#616164",
+          "#828285",
+          "#a5a5a8",
+          "#c9c9cc",
+          "#eeeef1"
+        ]
+      },
+      "graphite-deep": {
+        "role": "neutral",
+        "displayName": "Graphite, the floor",
+        "canonical": "oklch(12.9% 0.003 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "oklch(18.3% 0.004 286.0)",
+        "tonalRamp": [
+          "#0b0b0d",
+          "#252527",
+          "#424244",
+          "#616163",
+          "#828285",
+          "#a5a5a7",
+          "#c9c9cc",
+          "#eeeef1"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Surface, raised",
+        "canonical": "oklch(21.0% 0.006 285.9)",
+        "tonalRamp": [
+          "#0b0b0e",
+          "#252528",
+          "#424245",
+          "#616164",
+          "#828286",
+          "#a4a4a9",
+          "#c9c9cd",
+          "#eeeef2"
+        ]
+      },
+      "warm-white": {
+        "role": "neutral",
+        "displayName": "Warm white",
+        "canonical": "oklch(96.8% 0.006 75.4)",
+        "tonalRamp": [
+          "#0d0b08",
+          "#272522",
+          "#44423e",
+          "#63615d",
+          "#84827e",
+          "#a7a4a1",
+          "#cbc9c5",
+          "#f1eeea"
+        ]
+      },
+      "led": {
+        "role": "neutral",
+        "displayName": "LED light",
+        "canonical": "oklch(94.5% 0.043 72.9)",
+        "tonalRamp": [
+          "#130900",
+          "#32210b",
+          "#503e28",
+          "#705e46",
+          "#927f66",
+          "#b6a188",
+          "#dbc5ab",
+          "#ffebd3"
+        ]
+      },
+      "day": {
+        "role": "neutral",
+        "displayName": "Daylight paper",
+        "canonical": "oklch(93.3% 0.011 76.6)",
+        "tonalRamp": [
+          "#0e0b06",
+          "#28241f",
+          "#45413c",
+          "#65605b",
+          "#86827b",
+          "#a9a49e",
+          "#cdc8c1",
+          "#f3eee7"
+        ]
+      },
+      "day-ink": {
+        "role": "neutral",
+        "displayName": "Day ink",
+        "canonical": "oklch(19.3% 0.011 80.5)",
+        "tonalRamp": [
+          "#0e0b06",
+          "#28251f",
+          "#45413c",
+          "#64615a",
+          "#86827b",
+          "#a9a49e",
+          "#cdc8c1",
+          "#f2eee7"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The hero claim and page titles; Unbounded 300 only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section heading standing on its rail."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Names of services, panels and ledger rows; small caps with tracking."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Text at 44–62ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Counts on rails, field labels, navigation."
+      }
+    },
+    "shadows": [
+      {
+        "name": "edge-glow",
+        "value": "0 0 14px 1px rgb(192 153 111 / 0.35)",
+        "purpose": "Light under a lit edge line."
+      },
+      {
+        "name": "control-ring",
+        "value": "0 0 0 1px rgb(255 233 206 / 0.55), 0 0 22px 2px rgb(192 153 111 / 0.24)",
+        "purpose": "Hover/focus ring of light around a control, faded by opacity."
+      },
+      {
+        "name": "stamp",
+        "value": "inset 0 1px 0 rgb(255 255 255 / 0.22), inset 0 -1px 0 rgb(0 0 0 / 0.4)",
+        "purpose": "The copper control is stamped, not printed."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The only ease."
+      },
+      {
+        "name": "t-fast",
+        "value": "0.18s",
+        "purpose": "Press and link light."
+      },
+      {
+        "name": "t-base",
+        "value": "0.26s",
+        "purpose": "Edge light, control ring."
+      },
+      {
+        "name": "t-max",
+        "value": "0.3s",
+        "purpose": "Section switch-on, edge flash, hero light-up. Nothing longer."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xs",
+        "value": "480px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one copper control on a screen — the way to the brief.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Обсудить проект</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border:0;border-radius:4px;font:500 14px/1 Onest,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;position:relative;isolation:isolate;transition:transform .18s cubic-bezier(.22,1,.36,1)}.ds-btn::after{content:\"\";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;box-shadow:0 0 0 1px rgb(255 233 206/.55),0 0 22px 2px rgb(192 153 111/.24);opacity:0;transition:opacity .26s cubic-bezier(.22,1,.36,1)}.ds-btn:hover::after,.ds-btn:focus-visible::after{opacity:1}.ds-btn:active{transform:translateY(1px)}.ds-btn:focus-visible{outline:1px solid rgb(255 233 206/.9);outline-offset:3px}.ds-btn-primary{background:var(--copper,#C0996F);color:var(--base,#0C0C0E);box-shadow:inset 0 1px 0 rgb(255 255 255/.22),inset 0 -1px 0 rgb(0 0 0/.4)}.ds-btn-primary:hover{background:var(--copper-bright,#D4AF87)}.ds-btn-primary:active{background:var(--copper-deep,#A8845B)}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "A control drawn as a lit edge; secondary actions and the header CTA.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Описать проект</button>",
+      "css": ".ds-btn-ghost{background:transparent;color:var(--ink,#F7F4F0);box-shadow:inset 0 0 0 1px rgb(247 244 240/.2)}.ds-btn-ghost:active{background:rgb(247 244 240/.05)}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A fact as a very small panel with its own lit top edge.",
+      "html": "<span class=\"ds-chip\">Next.js</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:3px;background:rgb(247 244 240/.04);box-shadow:inset 0 1px 0 rgb(247 244 240/.10);font:400 12px/1 Onest,system-ui,sans-serif;color:rgb(247 244 240/.72)}"
+    },
+    {
+      "name": "Panel with lit edge",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The unit of layout: no border, a warm line along the top that lights on hover and focus.",
+      "html": "<a class=\"ds-panel\" href=\"#\"><span class=\"ds-led\"></span><span class=\"ds-panel-title\">Сайт под ключ</span><span class=\"ds-panel-sub\">Полный цикл разработки для вашего бизнеса.</span></a>",
+      "css": ".ds-panel{position:relative;isolation:isolate;display:flex;flex-direction:column;gap:6px;min-height:96px;padding:20px 24px;border-radius:6px;background:var(--surface,#121214);color:var(--ink,#F7F4F0);text-decoration:none;font-family:Onest,system-ui,sans-serif}.ds-led{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;overflow:hidden;background:linear-gradient(rgb(247 244 240/.10),rgb(247 244 240/.10)) 0 0/100% 1px no-repeat}.ds-led::before{content:\"\";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgb(255 233 206/0),rgb(255 233 206/.9) 14%,rgb(255 233 206/.9) 86%,rgb(255 233 206/0));box-shadow:0 0 14px 1px rgb(192 153 111/.35);opacity:0;transition:opacity .26s cubic-bezier(.22,1,.36,1)}.ds-panel:hover .ds-led::before{opacity:.55}.ds-panel:focus-visible .ds-led::before,.ds-panel:active .ds-led::before{opacity:1}.ds-panel:focus-visible{outline:1px solid rgb(255 233 206/.9);outline-offset:3px}.ds-panel-title{font-weight:500;font-size:15px;letter-spacing:.02em;text-transform:uppercase}.ds-panel-sub{font-size:13px;line-height:1.55;color:rgb(247 244 240/.52)}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "A labelled input set into a panel whose bottom edge lights while focused and stays lit on error.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email *</span><input class=\"ds-field-input\" type=\"email\" placeholder=\"you@company.com\"><span class=\"ds-led ds-led-b\"></span></label>",
+      "css": ".ds-field{position:relative;isolation:isolate;display:block;border-radius:6px;background:var(--surface,#121214);font-family:Onest,system-ui,sans-serif}.ds-field-label{display:block;padding:16px 20px 4px;font:500 11px/1.2 Onest,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgb(247 244 240/.52)}.ds-field-input{display:block;width:100%;box-sizing:border-box;padding:4px 20px 16px;border:0;background:transparent;font:400 17px/1.5 Onest,system-ui,sans-serif;color:var(--ink,#F7F4F0);outline:none}.ds-field-input::placeholder{color:rgb(247 244 240/.52)}.ds-led-b{background-position:0 100%}.ds-led-b::before{top:auto;bottom:0}.ds-field:focus-within .ds-led::before{opacity:1}"
+    },
+    {
+      "name": "Nav link",
+      "kind": "nav",
+      "refersTo": "label",
+      "description": "A header item: small caps with tracking, a line of light under it on hover.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Проекты</a><a class=\"ds-nav-link\" href=\"#\">Услуги</a><a class=\"ds-nav-link\" href=\"#\">Обо мне</a></nav>",
+      "css": ".ds-nav{display:flex;gap:36px;background:var(--base,#0C0C0E);padding:8px 16px}.ds-nav-link{position:relative;display:inline-flex;align-items:center;min-height:44px;font:400 11px/1 Onest,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgb(247 244 240/.52);text-decoration:none}.ds-nav-link:hover{color:var(--ink,#F7F4F0)}.ds-nav-link::after{content:\"\";position:absolute;left:0;right:0;bottom:0;height:1px;background:rgb(255 233 206/.85);box-shadow:0 0 10px rgb(192 153 111/.35);opacity:0;transition:opacity .18s cubic-bezier(.22,1,.36,1)}.ds-nav-link:hover::after,.ds-nav-link:focus-visible::after{opacity:1}"
+    },
+    {
+      "name": "Rail",
+      "kind": "custom",
+      "refersTo": "headline",
+      "description": "A section opener: the heading stands on a line of light, the count sits at its end.",
+      "html": "<div class=\"ds-rail\"><span class=\"ds-rail-line\"></span><h2 class=\"ds-rail-title\">Процесс</h2><span class=\"ds-rail-count\">07</span></div>",
+      "css": ".ds-rail{position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;background:var(--base,#0C0C0E);padding:8px 0}.ds-rail-line{position:absolute;left:0;right:0;top:50%;height:1px;background:rgb(247 244 240/.10)}.ds-rail-title{position:relative;margin:0;padding-right:20px;background:var(--base,#0C0C0E);font:300 clamp(1.6rem,1.15rem + 1.6vw,2.4rem)/1.12 Unbounded,Onest,system-ui,sans-serif;letter-spacing:-.012em;color:var(--ink,#F7F4F0)}.ds-rail-count{position:relative;padding-left:16px;background:var(--base,#0C0C0E);font:500 11px/1.2 Onest,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgb(247 244 240/.52)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Пентхаус ночью",
+    "overview": "Сайт — одна тёмная комната из графита, в которой свет выхватывает детали. Стены и панели не отделены бордюрами: каждую поднятую плоскость выдаёт одна тёплая линия по верхней кромке, и она загорается там, где проходит курсор. Один цвет — медь — появляется на слове, на котором заканчивается заявление, на главной кнопке и на точке у логотипа; остальное — тёплый белый на графите, зерно и «кожа» на поднятых панелях. Свет здесь — материал, а не украшение: он делает работу бордюров, теней, ховеров и фокуса.\n\nПлотность — editorial: заголовки некрупные и лёгкие (Unbounded 300), текст короткими мерами, между секциями воздух неравной длины. Ничего не въезжает и не скользит: секция включается один раз, когда до неё дошли, и кромки в ней вспыхивают на 300 мс. Отвергнуто явно: градиентный текст, стекло, ряды одинаковых карточек с иконками, гигантские заголовки в каждой секции, параллакс, круглые «пилюли» и одинаковые большие радиусы.",
+    "keyCharacteristics": [
+      "Кромка вместо бордюра: 1px тёплая линия, которая горит.",
+      "Курсор — источник света; без курсора свет отдыхает у «лампы», при reduced-motion — горит всё.",
+      "Один цвет (медь `{colors.copper}`), одна дисплейная гарнитура в одном весе.",
+      "Прямые линии, радиусы 3–6 px, никаких скруглённых пилюль.",
+      "Панели читаются как ступени одного камня: графит → surface → surface-raised."
+    ],
+    "rules": [
+      {
+        "name": "The One Colour Rule.",
+        "body": "Медь — единственный цвет. Она появляется на одном слове, на главной кнопке экрана и на знаках состояния; свет комнаты лишь подкрашен ею. Второго цвета нет и для ошибок: ошибка — это медь плюс текст.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Line Rule.",
+        "body": "Любая граница — это свет, а не бордюр: 1px `rgb(247 244 240 / 0.10)` выключенная, `{colors.led}` включённая. `border` допустим только как волосяная линейка между строками одного леджера.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Bold Rule.",
+        "body": "Ни один заголовок не тяжелее 300 в Unbounded и 500 в Onest; иерархия строится размером и светом, не весом.",
+        "section": "colors"
+      },
+      {
+        "name": "The Nameplate Rule.",
+        "body": "Над заголовком нет кикера: заголовок сам стоит на рейке и прерывает линию, счётчик — в конце рейки.",
+        "section": "colors"
+      },
+      {
+        "name": "The Light-Not-Shadow Rule.",
+        "body": "Поверхности плоские; всё, что похоже на тень, — свет от кромки и появляется только как ответ на состояние (hover, focus, active, включение секции).",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Bold Rule.",
+        "body": "Ни один заголовок не тяжелее 300 в Unbounded и 500 в Onest; иерархия строится размером и светом, не весом.",
+        "section": "typography"
+      },
+      {
+        "name": "The Nameplate Rule.",
+        "body": "Над заголовком нет кикера: заголовок сам стоит на рейке и прерывает линию, счётчик — в конце рейки.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light-Not-Shadow Rule.",
+        "body": "Поверхности плоские; всё, что похоже на тень, — свет от кромки и появляется только как ответ на состояние (hover, focus, active, включение секции).",
+        "section": "typography"
+      },
+      {
+        "name": "The Light-Not-Shadow Rule.",
+        "body": "Поверхности плоские; всё, что похоже на тень, — свет от кромки и появляется только как ответ на состояние (hover, focus, active, включение секции).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do делать границу светом: `.led` на верхней кромке панели, `border` — только как линейка внутри леджера.",
+      "Do держать медь редкой: одно слово, одна кнопка на экран, знаки состояния.",
+      "Do ставить заголовок на рейку и счётчик в её конец; секцию открывает рейка, не кикер.",
+      "Do оставлять фото как сняты: маски по кромкам, `object-fit: cover`, без фильтров и перекраски.",
+      "Do анимировать только opacity и transform, ≤ 300 мс, `cubic-bezier(0.22, 1, 0.36, 1)`; под `prefers-reduced-motion` — статичный полностью освещённый вариант."
+    ],
+    "donts": [
+      "Don't использовать градиентный текст, стекло, блобы, параллакс, въезжающие секции.",
+      "Don't рисовать пилюли и радиусы больше 6px; не скруглять фотографии.",
+      "Don't ставить второй цвет ни для ошибок, ни для ссылок, ни для графики.",
+      "Don't делать заголовки жирными и «гигантскими» в каждой секции; иерархию несут размер и свет.",
+      "Don't выкладывать ряды одинаковых карточек с иконками и карточку в карточке; список — леджер в одной панели.",
+      "Don't заменять логотип текстом или перерисовывать его; `public/aly-logo.png` — единственный знак."
+    ]
+  }
+}

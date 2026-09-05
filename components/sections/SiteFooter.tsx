@@ -1,52 +1,55 @@
 'use client';
 
-import Shell from '@/components/ui/Shell';
 import Logo from '@/components/ui/Logo';
+import { Led } from '@/components/ui/Panel';
+import Shell from '@/components/ui/Shell';
 import { useI18n } from '@/lib/i18n';
 
 /*
- * 09 — Footer.
+ * Footer — the floor of the room.
  *
- * Composition: a colophon. The wordmark is set large at the foot of the page
- * as the closing object, with the index and contacts as mono columns beside
- * it. Deepest surface on the site, so the page visibly ends.
+ * The wordmark set large as the closing object, the index and the two
+ * channels beside it. Deepest surface on the site with a lit edge above it,
+ * so the page visibly ends.
  */
 
 const LINKS = [
-  // A route, not an anchor: the case register left the landing page and now
-  // has its own address, so this link has to work from /work itself too.
   { href: '/work', key: 'work' as const },
   { href: '/#services', key: 'services' as const },
-  { href: '#process', key: 'process' as const },
-  { href: '#studio', key: 'about' as const },
-  { href: '#start', key: 'contact' as const },
+  { href: '/#process', key: 'process' as const },
+  { href: '/#studio', key: 'about' as const },
+  { href: '/#start', key: 'contact' as const },
 ];
 
 export default function SiteFooter() {
   const { t } = useI18n();
+  // Telegram and email — the two channels the owner answers first.
+  const channels = t.contact.channels.slice(0, 2);
 
   return (
-    <footer className="relative bg-base-deep border-t border-line pt-rhythm-s pb-12">
+    <footer data-light="" className="relative bg-base-deep pb-10 pt-16 md:pt-20">
+      <Led />
       <Shell grid className="gap-y-12">
         <div className="col-span-12 md:col-span-5">
-          <a href="#top" aria-label="ALY" className="inline-flex items-center min-h-[44px] opacity-90 hover:opacity-100 transition-opacity">
-            <Logo className="h-10 md:h-14 w-auto" />
+          <a href="#top" aria-label="aly — наверх" className="inline-flex min-h-[44px] items-center">
+            <Logo className="h-16 w-auto md:h-24" />
           </a>
-          <p className="text-body text-ink-2 mt-6 max-w-[28ch]">{t.footer.tagline}</p>
-          <p className="mt-6 inline-flex items-center gap-2 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-signal" aria-hidden />
+          <p className="mt-6 max-w-[30ch] text-[14px] leading-[1.6] text-ink-2">{t.footer.tagline}</p>
+          <p className="mt-6 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-ink-3">
+            <span className="h-1.5 w-1.5 bg-copper" aria-hidden />
             {t.footer.location}
           </p>
         </div>
 
-        <nav className="col-span-6 md:col-span-3 md:col-start-7" aria-label={t.footer.navTitle}>
-          <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 mb-5">
-            {t.footer.navTitle}
-          </p>
-          <ul className="space-y-3">
+        <nav className="col-span-12 xs:col-span-6 md:col-span-3 md:col-start-7" aria-label={t.footer.navTitle}>
+          <p className="label mb-3">{t.footer.navTitle}</p>
+          <ul className="m-0 list-none p-0">
             {LINKS.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors">
+                <a
+                  href={l.href}
+                  className="lnk inline-flex min-h-[44px] items-center text-[14px] text-ink-2 hover:text-ink"
+                >
                   {t.nav[l.key]}
                 </a>
               </li>
@@ -54,34 +57,30 @@ export default function SiteFooter() {
           </ul>
         </nav>
 
-        <div className="col-span-6 md:col-span-3">
-          <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 mb-5">
-            {t.footer.contactTitle}
-          </p>
-          <ul className="space-y-3">
-            <li>
-              <a href="mailto:gafurovalyosha@gmail.com" className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors break-all">
-                gafurovalyosha@gmail.com
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://t.me/alishergafurovv"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center min-h-[44px] text-body text-ink-2 hover:text-signal transition-colors"
-              >
-                @alishergafurovv
-              </a>
-            </li>
+        <div className="col-span-12 xs:col-span-6 md:col-span-3">
+          <p className="label mb-3">{t.footer.contactTitle}</p>
+          <ul className="m-0 list-none p-0">
+            {channels.map((c) => (
+              <li key={c.label}>
+                <a
+                  href={c.href}
+                  {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="lnk inline-flex min-h-[44px] items-center break-all text-[14px] text-ink-2 hover:text-ink"
+                >
+                  {c.value}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
-        <div className="col-span-12 mt-8 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-4">
-          <span className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3">
-            {t.footer.rights}
-          </span>
-          <a href="#top" className="inline-flex items-center min-h-[44px] font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3 hover:text-signal transition-colors">
+        <div className="col-span-12 mt-4 flex flex-wrap items-center justify-between gap-4">
+          <span aria-hidden className="h-px w-full bg-edge" />
+          <span className="text-[11px] uppercase tracking-[0.16em] text-ink-3">{t.footer.rights}</span>
+          <a
+            href="#top"
+            className="lnk inline-flex min-h-[44px] items-center text-[11px] uppercase tracking-[0.16em] text-ink-3 hover:text-ink"
+          >
             {t.footer.up}
           </a>
         </div>

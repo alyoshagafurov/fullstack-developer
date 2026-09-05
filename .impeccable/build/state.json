@@ -12,14 +12,31 @@
       "status": "open",
       "openedAt": "2026-09-04T10:39:00.553Z",
       "closedAt": null,
-      "attempts": 0,
+      "attempts": 1,
       "notes": [
         {
           "at": "2026-09-04T10:41:29.654Z",
           "text": "CODE-LED: no image generation in this harness (context.mjs reported converters only: cwebp, sips, ffmpeg). Per new-work §5 code-led is the only path; the comp round cannot run. Ambition lives in the direction contract FIRST VIEWPORT block (.impeccable/surfaces/app-page-tsx.md); the finish reviewer audits it in behavior. Direction: brief-pinned 'penthouse-noir' world; roll #6 binds topology/state vocabulary. Seed 50918d29."
+        },
+        {
+          "at": "2026-09-04T11:23:34.381Z",
+          "text": "Stage 1 (2026-09-04): code-led build executed per the owner's stage prompt — comps/spec/plates gates are not run (no image generation in this harness); the direction contract FIRST VIEWPORT block is the ambition and the finish reviewer audits it in behaviour. Tokens, LightField, Panel/Led, chrome and all eight landing sections rebuilt in the penthouse-noir world."
+        },
+        {
+          "at": "2026-09-05T09:37:15.437Z",
+          "text": "Stage 3 (2026-09-05): finish review returned fix; all eight material fixes applied except two owner-pinned ones (mobile photo as muted ground per the owner's prompt; three panel photos named by the owner, recorded in PRODUCT.md as [to confirm]). Critique A 26/36, B clean; a11y and React reviews applied (inert sheet, auto-advance notice, cancellable auto-advance, http(s)-only DB links, tabpanel focus, field ring). DESIGN.md + .impeccable/design.json written. Production verification: console 0, network 0, contrast ≥ 5.18, targets ≥ 44, overflow none, detector 0."
         }
       ],
-      "gate": null,
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "0 comps under .impeccable/mocks; the comp round puts three compositional options of the chosen direction in front of the user (reference/visualize.md). Generate the missing ones (harness image tool or generate-image.mjs), each with a .json sidecar holding its prompt.",
+          "no comp is approved: put the three comps in front of the user (decision page via serve-question.mjs, or the structured question tool), then set \"approved\": true in the chosen comp's sidecar. A delegated pick is recorded the same way and disclosed."
+        ],
+        "summary": "0 comps, 0 approved",
+        "approved": null,
+        "at": "2026-09-05T09:38:31.078Z"
+      },
       "forced": null
     },
     "spec": {

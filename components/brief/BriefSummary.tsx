@@ -1,5 +1,6 @@
 'use client';
 
+import Panel from '@/components/ui/Panel';
 import type { Dict } from '@/lib/i18n';
 import type { ProjectBrief } from '@/lib/brief/schema';
 
@@ -7,10 +8,10 @@ import type { ProjectBrief } from '@/lib/brief/schema';
  * The last screen before sending: everything said, in the order it was said,
  * with a way back into any answer.
  *
- * A definition list on hairlines rather than a stack of cards — it should read
- * like a document being handed over, not a settings panel. Each Edit button
- * names its section for screen readers, so a list of seven "Edit" buttons is
- * still navigable out of context.
+ * A definition list on hairlines inside one panel rather than a stack of
+ * cards — it should read like a document being handed over, not a settings
+ * panel. Each Edit button names its section for screen readers, so a list of
+ * seven "Edit" buttons is still navigable out of context.
  */
 export default function BriefSummary({
   data, t, onEdit,
@@ -48,35 +49,35 @@ export default function BriefSummary({
   ];
 
   return (
-    <dl className="border-t border-line">
-      {rows.map((r) => (
-        <div
-          key={r.k}
-          className="grid grid-cols-[1fr_auto] sm:grid-cols-[140px_1fr_auto] gap-x-6 gap-y-2
-                     items-start border-b border-line py-5"
-        >
-          <dt className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-3 pt-1">
-            {r.k}
-          </dt>
-          <dd
-            className={`col-span-2 sm:col-span-1 text-body ${
-              r.v === none ? 'text-ink-3' : 'text-ink'
-            } ${r.wrap ? 'whitespace-pre-line break-words' : ''}`}
+    <Panel>
+      <dl className="m-0">
+        {rows.map((r, index) => (
+          <div
+            key={r.k}
+            className={`grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-2 px-5 py-5 sm:grid-cols-[140px_1fr_auto] md:px-6 ${
+              index > 0 ? 'border-t border-edge' : ''
+            }`}
           >
-            {r.v}
-          </dd>
-          <button
-            type="button"
-            onClick={() => onEdit(r.step)}
-            className="row-start-1 col-start-2 sm:col-start-3 font-mono text-[0.625rem] uppercase
-                       tracking-[0.16em] text-ink-3 hover:text-signal transition-colors
-                       outline-none focus-visible:text-signal focus-visible:underline"
-          >
-            {t.edit}
-            <span className="sr-only"> — {r.k}</span>
-          </button>
-        </div>
-      ))}
-    </dl>
+            <dt className="label pt-1">{r.k}</dt>
+            <dd
+              className={`col-span-2 m-0 text-[15px] leading-[1.6] sm:col-span-1 ${
+                r.v === none ? 'text-ink-3' : 'text-ink'
+              } ${r.wrap ? 'whitespace-pre-line break-words' : ''}`}
+            >
+              {r.v}
+            </dd>
+            <button
+              type="button"
+              onClick={() => onEdit(r.step)}
+              className="lnk col-start-2 row-start-1 min-h-[28px] text-[11px] uppercase tracking-[0.16em]
+                         text-ink-3 hover:text-ink sm:col-start-3"
+            >
+              {t.edit}
+              <span className="sr-only"> — {r.k}</span>
+            </button>
+          </div>
+        ))}
+      </dl>
+    </Panel>
   );
 }
