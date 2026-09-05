@@ -15,22 +15,39 @@ import { PrismaNeon } from '@prisma/adapter-neon';
  */
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-function createClient(): PrismaClient {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    // Thrown lazily rather than at import time: a missing URL must not stop the
-    // build, only the reads that actually need the database, and every one of
-    // those is already wrapped in `safely` below.
-    throw new Error('DATABASE_URL is not set');
-  }
+let client: PrismaClient | undefined;
 
-  return new PrismaClient({
+function getClient(): PrismaClient {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma;
+  if (client) return client;
+
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error('DATABASE_URL is not set');
+
+  client = new PrismaClient({
     adapter: new PrismaNeon({ connectionString }),
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   });
+  if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;
+  return client;
 }
 
-export const prisma: PrismaClient = globalForPrisma.prisma ?? createClient();
+/**
+ * The client, built on first use rather than on import.
+ *
+ * This matters on a preview deployment that has no DATABASE_URL: building the
+ * client at module scope threw during the build itself, before any page could
+ * run, and the whole deployment failed with an error that named an env var and
+ * nothing else. Behind this proxy the same missing variable surfaces inside the
+ * query — which on every public path is already wrapped in `safely`, so the
+ * section renders empty and the site still ships.
+ */
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, property, receiver) {
+    const value = Reflect.get(getClient(), property, receiver) as unknown;
+    return typeof value === 'function' ? value.bind(getClient()) : value;
+  },
+});
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 

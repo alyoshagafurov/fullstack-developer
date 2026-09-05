@@ -248,7 +248,8 @@
       "Bash(echo \"код: $?\")",
       "Bash(node -e \"require.resolve\\('server-only'\\); console.log\\('server-only: есть'\\)\")",
       "Bash(echo \"код tsc: $?\")",
-      "Bash(sips -g pixelWidth -g pixelHeight ~/Desktop/hero.png)"
+      "Bash(sips -g pixelWidth -g pixelHeight ~/Desktop/hero.png)",
+      "Bash(env -u DATABASE_URL npx next build)"
     ]
   }
 }
