@@ -1,147 +1,140 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-
-import Header from '@/components/chrome/Header';
-import SiteFooter from '@/components/sections/SiteFooter';
-import { SITE_URL } from '@/lib/seo';
-import { getService, services } from '@/lib/services';
+import { Band } from '@/components/ui/Band';
+import { PillLink } from '@/components/ui/Pill';
+import { StudioObject } from '@/components/ui/StudioObject';
+import { getService, services } from '@/lib/content/services';
+import { site } from '@/lib/content/site';
 
 /*
- * /services/[slug] — one service.
- *
- * Three questions in a fixed order, because that is what the owner asked the
- * page to answer: what it is, what it gives you, who it is for. Every service
- * answers all three, so the pages are comparable — a reader who has opened two
- * of them can put them side by side without re-reading.
- *
- * The other thirteen are listed at the foot as a plain index. Only five are
- * cards on the landing page, so without this the remaining nine would exist
- * and be unreachable.
- *
- * Statically generated: fourteen pages from a constant array, so there is
- * nothing to render per request.
+ * One service, one object, three answers: what it is, what the client gets, who
+ * it is for. Every line here is the owner's own wording.
  */
 
-export const dynamic = 'force-static';
+type Params = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
 }
 
-export async function generateMetadata(
-  props: { params: Promise<{ slug: string }> },
-): Promise<Metadata> {
-  const { slug } = await props.params;
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
   const service = getService(slug);
-  if (!service) return { title: 'Услуга не найдена' };
+  if (!service) return {};
 
   return {
-    title: `${service.title} — Alisher Gafurov`,
+    title: service.title,
     description: service.tagline,
-    alternates: { canonical: `${SITE_URL}/services/${service.slug}` },
+    alternates: { canonical: `/services/${service.slug}` },
   };
 }
 
-function Block({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <section className="border-t border-line py-8 md:grid md:grid-cols-12 md:gap-8">
-      <h2 className="m-0 text-[11px] uppercase tracking-[0.22em] text-ink-3 md:col-span-3">
-        {label}
-      </h2>
-      <p className="m-0 mt-4 max-w-[62ch] text-[16px] leading-[1.75] text-ink-2 md:col-span-9 md:mt-0">
-        {children}
-      </p>
-    </section>
-  );
-}
-
-export default async function ServicePage(props: { params: Promise<{ slug: string }> }) {
-  const { slug } = await props.params;
+export default async function ServicePage({ params }: Params) {
+  const { slug } = await params;
   const service = getService(slug);
   if (!service) notFound();
 
-  const others = services.filter((item) => item.slug !== service.slug);
+  const others = services.filter((item) => item.slug !== service.slug).slice(0, 6);
 
   return (
     <>
-      <Header />
-      <main id="main" className="px-gutter pb-24 pt-[104px]">
-        <article className="mx-auto w-full max-w-shell">
-          <Link
-            href="/#services"
-            className="inline-flex min-h-[44px] items-center gap-3 text-[12px] uppercase tracking-[0.2em] text-ink-3 transition-colors hover:text-ink"
-          >
-            <span aria-hidden>←</span>
-            Все услуги
+      <Band tone="ground" innerClassName="pt-36 pb-20 md:pt-44 md:pb-28">
+        <nav className="label mb-10">
+          <Link href="/services" className="transition-colors hover:text-ink">
+            Услуги
           </Link>
+          <span className="mx-2 text-ink-3">/</span>
+          <span className="text-ink-2">{service.num}</span>
+        </nav>
 
-          <header className="mb-12 mt-8">
-            <span aria-hidden className="block text-[13px] tracking-[0.2em] text-copper">
-              {service.num}
-            </span>
-            <h1
-              className="mt-5 max-w-[20ch] text-[clamp(2rem,1.2rem+2.6vw,3.4rem)] font-light
-                         uppercase leading-[1.08] tracking-[-0.015em] text-ink"
-            >
+        <div className="grid gap-12 md:grid-cols-[1fr_20rem] md:items-center md:gap-16">
+          <div>
+            <h1 className="max-w-3xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
               {service.title}
             </h1>
-            <p className="mt-6 max-w-[46ch] text-[17px] leading-[1.6] text-ink-2">
-              {service.tagline}
-            </p>
-          </header>
-
-          <Block label="Что это">{service.what}</Block>
-          <Block label="Чем поможет">{service.help}</Block>
-          <Block label="Для кого">{service.who}</Block>
-
-          <div className="border-t border-line pt-10">
-            <Link
-              href="/start-project"
-              className="group inline-flex min-h-[48px] items-center gap-4 rounded-pill
-                         border border-line-2 px-7 text-[12px] uppercase tracking-[0.18em]
-                         text-ink transition-colors duration-300 hover:border-copper hover:text-copper"
-            >
-              Обсудить проект
-              <span
-                aria-hidden
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </Link>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-2">{service.tagline}</p>
           </div>
+          <div className="relative aspect-square w-56 justify-self-start md:w-full md:justify-self-end">
+            <StudioObject
+              src={service.object}
+              alt=""
+              priority
+              sizes="(min-width: 768px) 20rem, 14rem"
+            />
+          </div>
+        </div>
+      </Band>
 
-          {/* The rest of the catalogue, so nothing is unreachable. */}
-          <nav className="mt-20 border-t border-line pt-8" aria-label="Другие услуги">
-            <h2 className="m-0 text-[11px] uppercase tracking-[0.22em] text-ink-3">
-              Другие услуги
-            </h2>
-            <ul className="m-0 mt-6 grid list-none gap-x-8 gap-y-1 p-0 sm:grid-cols-2 lg:grid-cols-3">
-              {others.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/services/${item.slug}`}
-                    className="group flex min-h-[44px] items-center gap-4 border-b border-line text-[14px] text-ink-2 transition-colors hover:text-ink"
-                  >
-                    <span aria-hidden className="text-[11px] tabular-nums text-ink-3">
-                      {item.num}
-                    </span>
-                    {item.title}
-                    <span
-                      aria-hidden
-                      className="ml-auto text-ink-3 transition-all duration-300 group-hover:translate-x-1 group-hover:text-copper"
-                    >
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </article>
-      </main>
-      <SiteFooter />
+      <Band tone="paper" innerClassName="py-20 md:py-28">
+        <div className="grid gap-12 md:grid-cols-3 md:gap-16">
+          <section>
+            <h2 className="label mb-5">Что это</h2>
+            <p className="text-base leading-relaxed">{service.tagline}</p>
+          </section>
+          <section>
+            <h2 className="label mb-5">Что вы получаете</h2>
+            <p className="text-base leading-relaxed">{service.deliverable}</p>
+          </section>
+          <section>
+            <h2 className="label mb-5">Для кого</h2>
+            <p className="text-base leading-relaxed">{service.who}</p>
+          </section>
+        </div>
+
+        {(service.duration || service.budget) && (
+          <dl className="mt-16 grid gap-8 border-t border-line pt-8 sm:grid-cols-2">
+            {service.duration && (
+              <div>
+                <dt className="label mb-3">Сроки</dt>
+                <dd className="text-[clamp(1.25rem,2.4vw,1.75rem)] tracking-[-0.02em]">
+                  {service.duration}
+                </dd>
+              </div>
+            )}
+            {service.budget && (
+              <div>
+                <dt className="label mb-3">Бюджет</dt>
+                <dd className="text-[clamp(1.25rem,2.4vw,1.75rem)] tracking-[-0.02em]">
+                  {service.budget}
+                </dd>
+              </div>
+            )}
+          </dl>
+        )}
+      </Band>
+
+      <Band tone="ground" innerClassName="py-20 md:py-28">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
+          <div>
+            <p className="max-w-2xl text-[clamp(1.5rem,3.4vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
+              {site.contactInvite}
+            </p>
+            <PillLink href="/start" variant="solid" className="mt-8">
+              {site.heroCta}
+            </PillLink>
+          </div>
+          <p className="text-sm text-ink-2 md:text-right">
+            Отвечаю {site.responseTime.toLowerCase()}.
+          </p>
+        </div>
+
+        <div className="mt-20 border-t border-line pt-8">
+          <p className="label mb-6">Другие услуги</p>
+          <ul className="flex flex-wrap gap-3">
+            {others.map((other) => (
+              <li key={other.slug}>
+                <Link
+                  href={`/services/${other.slug}`}
+                  className="inline-flex min-h-11 items-center rounded-full border border-line px-4 text-sm text-ink-2 transition-colors hover:border-ink hover:text-ink"
+                >
+                  {other.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Band>
     </>
   );
 }

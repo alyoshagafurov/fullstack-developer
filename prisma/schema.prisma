@@ -1,64 +1,159 @@
-// Project Brief — persistence.
+// Aly Portfolio 3.0 — "Студийная витрина"
 //
-// One model for now. The brief the site collects (lib/brief/schema.ts) maps
-// field-for-field onto ProjectLead, plus the columns an operator needs: a
-// quotable reference, a pipeline status, and the idempotency key that stops a
-// retried request from creating a second row.
-//
-// The connection string is read from the environment only — never committed.
+// This schema shares a Neon database with the previous version of the site.
+// Every model below maps to a table name that did NOT exist before
+// (the old build owned "Project" and "ProjectLead"), so `prisma db push`
+// only ever CREATES tables here and never rewrites the owner's live leads.
 
 generator client {
   provider = "prisma-client-js"
 }
 
+// Prisma 7 moved the connection URL out of the schema. Migrations and
+// introspection read it from prisma.config.ts; the runtime gets it through the
+// Neon driver adapter in lib/prisma.ts.
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
-/// A case study, written by the owner in the admin and rendered on /work.
-///
-/// Separate from ProjectLead on purpose: a lead is something a stranger sent
-/// in and is a record that must not be edited, while a case is the owner's own
-/// published writing. They share a database and nothing else.
-///
-/// Screenshots are Vercel Blob URLs rather than bytes. A case carries four or
-/// five images; storing them here would put megabytes into a row the register
-/// has to read, and every /work render would pay for it.
-model Project {
-  id String @id @default(cuid())
+/// A project request submitted from the site or, later, from the bot.
+model Lead {
+  id  String @id @default(cuid())
+  /// Human-readable number shown to the client: ALY-2026-014
+  ref String @unique
 
-  /// URL segment — /work/<slug>. Stable once published, because changing it
-  /// breaks every link anyone has shared.
-  slug String @unique
+  name        String
+  email       String
+  company     String?
+  /// Telegram / WhatsApp / phone — whatever the client prefers.
+  contact     String?
+  projectType String
+  budget      String
+  timeline    String
+  goal        String
+  description String
+  audience    String?
+  features    String?
+  links       String?
+  extra       String?
 
-  title String
-  /// One line under the title in the register.
-  summary String @default("")
-  /// The body, plain text; blank lines become paragraphs when rendered.
-  description String @default("")
-  /// Stack labels in display order — "Next.js", "PostgreSQL", "Django".
-  technologies String[] @default([])
-  /// The live site, when there still is one.
-  liveUrl String @default("")
-  /// Blob URLs in display order. The first is the cover.
-  screenshots String[] @default([])
-  year        String   @default("")
+  status LeadStatus @default(NEW)
+  /// "site" | "telegram" — where the request came from.
+  source String     @default("site")
 
-  /// Nothing reaches /work until the owner says so, so a half-written case is
-  /// never one refresh away from being public.
-  published Boolean @default(false)
-  /// Manual ordering on /work; ties break by createdAt.
-  position Int @default(0)
+  /// Set the first time the owner moves the lead out of NEW.
+  firstRepliedAt DateTime?
+
+  /// The agreed value of the deal, once there is one. Money is never a float:
+  /// a rounding error here is a rounding error in the owner's income.
+  dealAmount   Decimal? @db.Decimal(12, 2)
+  /// Stored beside the amount, not in a setting. The owner works in сомони,
+  /// rubles and dollars, and a sum only means something with its currency.
+  dealCurrency String?
+
+  payments Payment[]
+  expenses Expense[]
+  notes    Note[]
+  events   StatusEvent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  /// The only query /work makes: published cases, in order.
-  @@index([published, position])
+  @@index([status, createdAt])
+  @@map("aly_lead")
 }
 
-/// Pipeline state. Deliberately small — the admin panel is a later phase.
+/// Money actually received, or expected by a date. Income is counted when it
+/// arrives, which is how the owner said he counts it (answer 13.5).
+model Payment {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  amount   Decimal     @db.Decimal(12, 2)
+  currency String
+  kind     PaymentKind @default(STAGE)
+
+  /// Null until the money is in. That is what makes it income.
+  paidAt DateTime?
+  /// Null when nothing was promised for a date. A past dueAt with no paidAt is
+  /// what the finance screen calls a debt.
+  dueAt  DateTime?
+  note   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([paidAt])
+  @@map("aly_payment")
+}
+
+enum PaymentKind {
+  PREPAYMENT
+  STAGE
+  FINAL
+  SUPPORT
+
+  @@map("aly_payment_kind")
+}
+
+/// A cost. Categories are the eleven the owner listed in answer 13.4 and live
+/// in lib/content/finance.ts, not in a table: they are his list, not data.
+model Expense {
+  id       String  @id @default(cuid())
+  title    String
+  amount   Decimal @db.Decimal(12, 2)
+  currency String
+  category String
+
+  spentAt DateTime
+  note    String?
+
+  /// Set when the cost belongs to one project rather than to the business.
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([spentAt])
+  @@index([category])
+  @@map("aly_expense")
+}
+
+/// The owner's private note on a lead. Never leaves the admin: no public route
+/// selects it, and it is never sent to a client through the bot.
+model Note {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+  @@map("aly_note")
+}
+
+/// Every status change, so the lead has a history rather than just a state.
+model StatusEvent {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  from LeadStatus?
+  to   LeadStatus
+
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+  @@map("aly_status_event")
+}
+
+/// Mapped to its own Postgres type. The database already carries a `LeadStatus`
+/// enum belonging to the previous build; sharing that name would make this
+/// schema alter a type the old application still depends on.
 enum LeadStatus {
   NEW
   CONTACTED
@@ -66,61 +161,81 @@ enum LeadStatus {
   PROPOSAL
   IN_PROGRESS
   COMPLETED
+  ON_HOLD
   DECLINED
+  CANCELLED
+
+  @@map("aly_lead_status")
 }
 
-model ProjectLead {
-  id String @id @default(cuid())
+/// A published case study. The owner fills these in from the admin.
+model Case {
+  id    String @id @default(cuid())
+  slug  String @unique
+  title String
 
-  /// Server-issued, human-quotable: ALY-2026-4F7K2. Shown to the client.
-  reference String @unique
+  client String?
+  year   String
 
-  /// Client-generated once per completed brief. A retry reuses it, so the
-  /// unique constraint turns a duplicate POST into a lookup rather than a
-  /// second lead.
-  submissionId String @unique
+  task     String
+  solution String
+  result   String
 
-  // ── The brief itself ──────────────────────────────────────────────────
-  projectType      String
-  projectTypeOther String @default("")
-  goal             String
-  description      String
-  functionality    String @default("")
-  existingUrl      String @default("")
-  referenceLinks   String @default("")
-  notes            String @default("")
-  budget           String
-  timeline         String
+  technologies String[]
+  liveUrl      String?
 
-  // ── Contact ───────────────────────────────────────────────────────────
-  name     String
-  company  String @default("")
-  email    String
-  telegram String @default("")
-  whatsapp String @default("")
+  /// File under /public/objects — the object shown in the vitrine.
+  objectImage String   @default("/objects/laptop.webp")
+  /// Word set huge and faint behind the object.
+  ghostWord   String?
+  /// Real screenshots of the work. The only colour on the whole site.
+  screenshots String[]
 
-  /// The visitor agreed to be contacted about this brief. Stored as proof.
-  consent Boolean @default(true)
+  featured  Boolean @default(false)
+  order     Int     @default(0)
+  published Boolean @default(false)
 
-  // ── Provenance ────────────────────────────────────────────────────────
-  /// UI language the brief was filled in — useful when replying.
-  locale String @default("ru")
-  /// Client clock, from the brief's own meta.
-  startedAt   DateTime
-  completedAt DateTime
-  /// Server clock. The one to trust.
+  testimonial Testimonial?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // ── Operator fields (admin panel, later phase) ────────────────────────
-  status LeadStatus @default(NEW)
-  /// Private note for the owner. Never returned by the public API.
-  internalNote String @default("")
+  @@index([published, order])
+  @@map("aly_case")
+}
 
-  // Indexes the admin panel will actually query on: the pipeline board
-  // (status + newest first), the inbox (newest first), and lookup by client.
-  // `reference` and `submissionId` are already indexed by @unique.
-  @@index([status, createdAt])
-  @@index([createdAt])
-  @@index([email])
+/// A client testimonial. Never generated, never invented — owner-entered only.
+model Testimonial {
+  id      String  @id @default(cuid())
+  name    String
+  company String?
+  role    String?
+  text    String
+
+  /// Real client photo or company logo. Empty means a drawn monogram.
+  avatarUrl String?
+
+  /// Testimonials belong to the case they are about, when there is one.
+  caseId String? @unique
+  case   Case?   @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  featured  Boolean @default(false)
+  order     Int     @default(0)
+  published Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, order])
+  @@map("aly_testimonial")
+}
+
+/// The single owner account for the admin. Passwords are bcrypt hashes.
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  @@map("aly_admin_user")
 }

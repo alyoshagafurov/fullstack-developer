@@ -1,149 +1,146 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
-import type { Metadata } from 'next';
+import { Band } from '@/components/ui/Band';
+import { PillLink } from '@/components/ui/Pill';
+import { StudioObject } from '@/components/ui/StudioObject';
+import { getCase, getPublishedCases } from '@/lib/cases';
+import { site } from '@/lib/content/site';
 
-import Header from '@/components/chrome/Header';
-import SiteFooter from '@/components/sections/SiteFooter';
-import { getPublishedCase } from '@/lib/cases';
-import { SITE_URL } from '@/lib/seo';
+export const revalidate = 300;
 
-/*
- * /work/[slug] — one case.
- *
- * Reads as a document: what it is, what it runs on, where to see it, then the
- * screenshots at full width. The images are the argument, so they get the whole
- * measure rather than being boxed into a gallery grid.
- *
- * `getPublishedCase` filters on `published` inside the query, so an unpublished
- * case 404s exactly as a non-existent one does — a draft is not reachable by
- * knowing its address.
- *
- * `params` is a Promise: Next 15 resolves route params lazily.
- */
+type Params = { params: Promise<{ slug: string }> };
 
-export const dynamic = 'force-dynamic';
+export async function generateStaticParams() {
+  const cases = await getPublishedCases();
+  return cases.map((row) => ({ slug: row.slug }));
+}
 
-export async function generateMetadata(
-  props: { params: Promise<{ slug: string }> },
-): Promise<Metadata> {
-  const { slug } = await props.params;
-  const item = await getPublishedCase(slug);
-  if (!item) return { title: 'Кейс не найден' };
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const row = await getCase(slug);
+  if (!row) return {};
 
   return {
-    title: `${item.title} — работы Alisher Gafurov`,
-    description: item.summary || undefined,
-    alternates: { canonical: `${SITE_URL}/work/${item.slug}` },
-    openGraph: item.cover ? { images: [{ url: item.cover }] } : undefined,
+    title: row.title,
+    description: row.task.slice(0, 180),
+    alternates: { canonical: `/work/${row.slug}` },
   };
 }
 
-export default async function CasePage(props: { params: Promise<{ slug: string }> }) {
-  const { slug } = await props.params;
-  const item = await getPublishedCase(slug);
-  if (!item) notFound();
+/*
+ * A case reads like a product page: the object first, then the three sections
+ * the owner wrote, then the real screenshots.
+ *
+ * Those screenshots are the only colour on the entire site. Everything around
+ * them is studio-neutral so the work is the thing that carries it.
+ */
+export default async function CasePage({ params }: Params) {
+  const { slug } = await params;
+  const row = await getCase(slug);
+  if (!row) notFound();
 
-  // Blank lines separate paragraphs. The field is plain text on purpose: an
-  // owner writing a case should not have to know a markup language, and
-  // rendering their input as HTML would be an injection hole for no gain.
-  const paragraphs = item.description.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const sections = [
+    { title: 'Задача', body: row.task },
+    { title: 'Решение', body: row.solution },
+    { title: 'Результат', body: row.result },
+  ];
 
   return (
     <>
-      <Header />
-      <main id="main" className="px-gutter pt-[104px] pb-24">
-        <article className="mx-auto w-full max-w-shell">
-          <Link
-            href="/work"
-            className="inline-flex items-center gap-2 text-[13px] text-ink-2 transition-colors hover:text-ink"
-          >
-            <ArrowLeft size={14} aria-hidden />
-            Все работы
+      <Band tone="ground" innerClassName="pt-36 pb-20 md:pt-44 md:pb-28">
+        <nav className="label mb-10">
+          <Link href="/work" className="transition-colors hover:text-ink">
+            Проекты
           </Link>
+          <span className="mx-2 text-ink-3">/</span>
+          <span className="text-ink-2">{row.year}</span>
+        </nav>
 
-          <header className="mt-6 mb-10 grid gap-6 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-7">
-              <h1 className="display m-0 text-[clamp(1.9rem,1.3rem+2.4vw,3.25rem)] text-ink">
-                {item.title}
-              </h1>
-              {item.summary && (
-                <p className="mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-ink-2">
-                  {item.summary}
-                </p>
-              )}
-            </div>
+        <div className="grid gap-12 md:grid-cols-[1fr_22rem] md:items-center md:gap-16">
+          <div>
+            {row.client && <p className="label mb-6">{row.client}</p>}
+            <h1 className="max-w-3xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
+              {row.title}
+            </h1>
+            {row.liveUrl && (
+              <PillLink href={row.liveUrl} variant="outline" size="sm" className="mt-8">
+                Открыть проект
+              </PillLink>
+            )}
+          </div>
+          <div className="relative aspect-square w-56 justify-self-start md:w-full md:justify-self-end">
+            <StudioObject
+              src={row.objectImage}
+              alt={row.title}
+              priority
+              sizes="(min-width: 768px) 22rem, 14rem"
+            />
+          </div>
+        </div>
+      </Band>
 
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:col-span-5">
-              {item.year && (
-                <div>
-                  <dt className="label text-[10px]">Год</dt>
-                  <dd className="mt-1.5 text-[13px] text-ink-2">{item.year}</dd>
-                </div>
-              )}
-              {item.technologies.length > 0 && (
-                <div className="col-span-2">
-                  <dt className="label text-[10px]">Технологии</dt>
-                  <dd className="mt-2 flex flex-wrap gap-1.5">
-                    {item.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="inline-flex items-center rounded-pill border border-line px-2.5 py-1 text-[11px] leading-none text-ink-2"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </header>
-
-          {item.liveUrl && (
-            <a
-              href={item.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mb-10 inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5
-                         text-[13px] font-medium text-base transition-colors hover:bg-signal-deep"
-            >
-              Открыть сайт
-              <ArrowUpRight size={15} aria-hidden />
-            </a>
-          )}
-
-          {paragraphs.length > 0 && (
-            <div className="mb-12 max-w-text">
-              {paragraphs.map((text, i) => (
-                <p key={i} className="mb-4 text-[16px] leading-[1.7] text-ink-2 last:mb-0">
-                  {text}
-                </p>
-              ))}
-            </div>
-          )}
-
-          {item.screenshots.length > 0 && (
-            <section className="grid gap-4">
-              <h2 className="sr-only">Скриншоты</h2>
-              {item.screenshots.map((src, i) => (
-                <figure
-                  key={src}
-                  className="m-0 overflow-hidden rounded-panel border border-line bg-base-deep"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={`${item.title} — экран ${i + 1}`}
-                    className="block h-auto w-full"
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                  />
-                </figure>
-              ))}
+      <Band tone="paper" innerClassName="py-20 md:py-28">
+        <div className="grid gap-12 md:grid-cols-3 md:gap-16">
+          {sections.map((section) => (
+            <section key={section.title}>
+              <h2 className="label mb-5">{section.title}</h2>
+              <p className="text-base leading-relaxed whitespace-pre-line">{section.body}</p>
             </section>
-          )}
-        </article>
-      </main>
-      <SiteFooter />
+          ))}
+        </div>
+
+        {row.technologies.length > 0 && (
+          <div className="mt-16 border-t border-line pt-8">
+            <p className="label mb-6">Технологии</p>
+            <ul className="flex flex-wrap gap-2">
+              {row.technologies.map((tech) => (
+                <li
+                  key={tech}
+                  className="inline-flex items-center rounded-full border border-line px-4 py-2 text-sm text-ink-2"
+                >
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Band>
+
+      {row.screenshots.length > 0 && (
+        <Band tone="shelf" innerClassName="py-20 md:py-28">
+          <p className="label mb-10">Экраны</p>
+          <div className="space-y-8 md:space-y-16">
+            {row.screenshots.map((shot, index) => (
+              <figure key={shot} className="relative w-full overflow-hidden bg-paper">
+                <Image
+                  src={shot}
+                  alt={`${row.title}: экран ${index + 1}`}
+                  width={2400}
+                  height={1500}
+                  sizes="(min-width: 1440px) 1376px, 92vw"
+                  className="h-auto w-full"
+                />
+              </figure>
+            ))}
+          </div>
+        </Band>
+      )}
+
+      <Band tone="ground" innerClassName="py-24 md:py-32">
+        <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
+          {site.contactInvite}
+        </p>
+        <div className="mt-10 flex flex-wrap gap-3">
+          <PillLink href="/start" variant="solid">
+            {site.heroCta}
+          </PillLink>
+          <PillLink href="/work" variant="outline">
+            Все проекты
+          </PillLink>
+        </div>
+      </Band>
     </>
   );
 }

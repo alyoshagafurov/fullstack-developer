@@ -1,105 +1,196 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Logo from '@/components/ui/Logo';
-import Action from '@/components/ui/Action';
-import { useI18n } from '@/lib/i18n';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 
 /*
- * Site chrome.
+ * Site chrome, with as little chrome as possible.
  *
- * The site is one continuous composition now, so navigation points at
- * positions in the story rather than at routes. It stays out of the way:
- * transparent over the opening, then a hairline and a blur once you leave it.
+ * No bar, no background, no blur — the header sits directly on the band behind
+ * it and simply changes colour.
+ *
+ * It did that with `mix-blend-mode: difference` first, which needs no state at
+ * all. That failed in the one place it mattered: difference against a mid-grey
+ * returns a mid-grey, so over the photograph in the opening the links vanished
+ * into the wall behind them. The observer below is more code and always legible,
+ * which is the right trade for navigation.
  */
 
-/*
- * Absolute hrefs, not bare fragments.
- *
- * The header now renders on /work and /work/[slug] as well as the landing, and
- * a bare `#capabilities` there points at a section that lives on another page
- * — it would scroll nowhere. Prefixing with `/` makes each link mean the same
- * thing from anywhere on the site.
- *
- * Work is a route rather than a fragment at all: the case register moved off
- * the landing page and has its own address now.
- */
-const SECTIONS = [
-  { href: '/work', key: 'work' as const },
-  { href: '/#services', key: 'services' as const },
-  { href: '/#studio', key: 'about' as const },
-  { href: '/#process', key: 'process' as const },
-  { href: '/#start', key: 'contact' as const },
+const NAV = [
+  { href: '/work', label: 'Проекты' },
+  { href: '/services', label: 'Услуги' },
+  { href: '/about', label: 'Обо мне' },
+  { href: '/#process', label: 'Процесс' },
 ];
 
-export default function Header() {
-  const { t, lang, setLang } = useI18n();
-  const [lifted, setLifted] = useState(false);
+export function Header() {
+  const [open, setOpen] = useState(false);
+  const [onDark, setOnDark] = useState(true);
+  const panel = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
 
+  /*
+   * Is the header currently sitting on a dark opening?
+   *
+   * A page marks its dark first screen with `data-opening`; pages without one
+   * start light. Measured against the header's own height rather than a fixed
+   * scroll offset, so it stays correct when the opening is shorter than the
+   * viewport on a small phone in landscape.
+   */
   useEffect(() => {
-    const onScroll = () => setLifted(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const opening = document.querySelector('[data-opening]');
+    if (!opening) {
+      setOnDark(false);
+      return;
+    }
+
+    const check = () => {
+      const rect = opening.getBoundingClientRect();
+      setOnDark(rect.bottom > 96);
+    };
+
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ease-out ${
-        lifted ? 'bg-base/80 backdrop-blur-xl border-b border-line' : 'border-b border-transparent'
-      }`}
-    >
-      <div className="shell h-16 md:h-20 flex items-center justify-between gap-6">
-        {/* The wordmark, with the one dot of colour on the page beside it. The
-            logo itself is the owner's own file and is never redrawn as text —
-            the dot is set next to it rather than baked into it. */}
-        <a
-          href="/#top"
-          aria-label="ALY"
-          className="inline-flex min-h-[44px] shrink-0 items-baseline gap-[3px] opacity-90 transition-opacity hover:opacity-100"
-        >
-          <Logo priority className="h-6 w-auto md:h-7" />
-          <span aria-hidden className="text-copper text-[20px] leading-none md:text-[24px]">
-            .
-          </span>
-        </a>
+  // An open menu owns the screen: the page behind it must not scroll, Escape
+  // must close it, and focus must not wander into the hidden content.
+  useEffect(() => {
+    if (!open) return;
 
-        {/* Small, thin and evenly spaced — the numbering is gone. Numbered
-            items read as a table of contents, which competes with the hero
-            instead of getting out of its way. */}
-        <nav className="hidden items-center gap-7 md:flex lg:gap-10" aria-label="Разделы">
-          {SECTIONS.map((s) => (
-            <a
-              key={s.href}
-              href={s.href}
-              className="inline-flex min-h-[44px] items-center whitespace-nowrap py-3 text-[11px]
-                         uppercase tracking-[0.18em] text-ink-3 transition-colors hover:text-ink"
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab' || !panel.current) return;
+
+      const focusable = panel.current.querySelectorAll<HTMLElement>('a[href], button');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  // Over the opening everything is paper; everywhere else it is ink. The
+  // wordmark file is cut black, so it is inverted only on the dark side.
+  const dark = onDark && !open;
+  const tone = dark ? 'text-paper' : 'text-ink';
+  const bar = open || dark ? 'bg-paper' : 'bg-ink';
+
+  return (
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+      <div className="shell flex h-20 items-center justify-between gap-6 md:h-24">
+        <Link
+          href="/"
+          aria-label="aly, на главную"
+          className="pointer-events-auto inline-flex min-h-11 shrink-0 items-center"
+        >
+          <Image
+            src="/brand/wordmark.webp"
+            alt="aly"
+            width={663}
+            height={462}
+            priority
+            className={`h-5 w-auto transition-[filter] duration-300 md:h-6 ${
+              open || dark ? 'invert' : ''
+            }`}
+            draggable={false}
+          />
+        </Link>
+
+        <nav
+          className={`pointer-events-auto hidden items-center gap-9 transition-colors duration-300 md:flex lg:gap-12 ${tone}`}
+          aria-label="Разделы сайта"
+        >
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="inline-flex min-h-11 items-center text-[0.6875rem] tracking-[0.18em] whitespace-nowrap uppercase transition-opacity hover:opacity-60"
             >
-              {t.nav[s.key]}
-            </a>
+              {item.label}
+            </Link>
           ))}
+          <Link
+            href="/start"
+            className="inline-flex min-h-11 items-center border-b border-current text-[0.6875rem] tracking-[0.18em] uppercase"
+          >
+            Заявка
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden xs:flex items-center gap-1" role="group" aria-label="Язык">
-            {(['ru', 'tg', 'en'] as const).map((l) => (
-              <button
-                key={l}
-                onClick={() => setLang(l)}
-                aria-pressed={lang === l}
-                className={`font-mono text-[0.625rem] uppercase tracking-[0.14em] px-2 min-h-[44px] inline-flex items-center transition-colors ${
-                  lang === l ? 'text-signal' : 'text-ink-3 hover:text-ink-2'
-                }`}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
-          <Action href="/start-project" variant="ghost" className="!px-5 !py-3 !text-micro !min-h-[44px]">
-            {t.nav.cta}
-          </Action>
-        </div>
+        <button
+          ref={trigger}
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? 'Закрыть меню' : 'Открыть меню'}
+          className="pointer-events-auto inline-flex size-11 items-center justify-center md:hidden"
+        >
+          <span aria-hidden className="relative block h-3 w-6">
+            <span
+              className={`absolute inset-x-0 block h-0.5 transition-transform duration-200 ${bar} ${
+                open ? 'top-1/2 rotate-45' : 'top-0'
+              }`}
+            />
+            <span
+              className={`absolute inset-x-0 block h-0.5 transition-transform duration-200 ${bar} ${
+                open ? 'top-1/2 -rotate-45' : 'top-full'
+              }`}
+            />
+          </span>
+        </button>
       </div>
+
+      {open && (
+        <div
+          id="mobile-nav"
+          ref={panel}
+          className="pointer-events-auto fixed inset-0 top-20 flex flex-col justify-between bg-void px-5 pt-10 pb-12 md:hidden"
+        >
+          <nav aria-label="Разделы сайта">
+            {[...NAV, { href: '/start', label: 'Оставить заявку' }].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="display-3 block py-3 text-paper"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <p className="text-[0.6875rem] tracking-[0.18em] text-white/40 uppercase">
+            Душанбе · UTC+5
+          </p>
+        </div>
+      )}
     </header>
   );
 }
