@@ -79,16 +79,20 @@ export function Opening() {
         />
       </div>
 
-      {/* The words, on the wall. */}
-      <div className="absolute inset-x-0 top-0 px-5 pt-24 md:px-10">
-        <div className="mx-auto w-full max-w-[1440px] md:flex md:items-start md:justify-between md:gap-16">
-          <div className="min-w-0 md:w-[58%]">
-            <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase">
+      {/*
+       * The words, on the wall. On a desk screen the statement stands on the
+       * right, ranged right so it hugs the edge and never reaches his head,
+       * and the paragraph takes the left; on a phone they stack in reading
+       * order, statement first.
+       */}
+      <div className="absolute inset-x-0 top-0 px-5 pt-24 md:px-10 md:pt-32">
+        <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
+          <div className="min-w-0 md:w-1/2 md:text-right">
+            <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse">
               <span aria-hidden className="block h-px w-10 bg-ink/50" />
               {site.role}
             </p>
 
-            {/* Sized to end above the plant on every window from 1280×700 up. */}
             <h1 className="mt-3 text-[clamp(2.25rem,4.4vw,5.25rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4">
               {lines.map((line, index) => (
                 <span
@@ -107,8 +111,8 @@ export function Opening() {
         </div>
       </div>
 
-      {/* The button, centred on the desk. */}
-      <div className="absolute inset-x-0 bottom-[calc(var(--ph)*0.0705)] flex translate-y-1/2 justify-center px-5">
+      {/* The button, centred on the desk, lifted a little off its edge. */}
+      <div className="absolute inset-x-0 bottom-[calc(var(--ph)*0.0705+20px)] flex translate-y-1/2 justify-center px-5">
         <CTA href="/start" tone="dark" size="lg">
           {site.heroCta}
         </CTA>
