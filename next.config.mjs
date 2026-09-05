@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Nothing about the stack belongs in a response header.
+  poweredByHeader: false,
 
   images: {
     formats: ['image/avif', 'image/webp'],

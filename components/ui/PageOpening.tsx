@@ -27,7 +27,7 @@ export function PageOpening({
       data-tone="dark"
       className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
     >
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/40 uppercase">{eyebrow}</p>
+      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">{eyebrow}</p>
 
       <h1 className="display-1 mt-10 max-w-6xl uppercase">{title}</h1>
 

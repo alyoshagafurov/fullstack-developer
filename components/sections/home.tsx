@@ -216,7 +216,7 @@ export function Voices({ items, total }: { items: TestimonialRow[]; total: numbe
               <div className="min-w-0">
                 <p className="text-sm text-paper">{voice.name}</p>
                 {(voice.role || voice.company) && (
-                  <p className="text-xs text-paper/45">
+                  <p className="text-xs text-paper/60">
                     {[voice.role, voice.company].filter(Boolean).join(', ')}
                   </p>
                 )}
@@ -344,7 +344,7 @@ export function StartBand() {
 
   return (
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/40 uppercase">Заявка</p>
+      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">Заявка</p>
 
       <p className="display-1 mx-auto mt-12 max-w-6xl text-paper uppercase">
         {site.contactInvite}
@@ -354,18 +354,18 @@ export function StartBand() {
         <CTA href="/start" tone="dark" size="lg">
           {site.heroCta}
         </CTA>
-        <p className="mt-5 text-xs text-paper/45">
+        <p className="mt-5 text-xs text-paper/60">
           Пара минут, никаких обязательств. Отвечаю {site.responseTime.toLowerCase()}.
         </p>
       </div>
 
       <dl className="mx-auto mt-24 grid max-w-3xl gap-10 border-t border-white/12 pt-10 text-sm sm:grid-cols-3">
         <div>
-          <dt className="label mb-3 text-paper/40">Ответ</dt>
+          <dt className="label mb-3 text-paper/55">Ответ</dt>
           <dd className="text-paper/70">{site.responseTime}</dd>
         </div>
         <div>
-          <dt className="label mb-3 text-paper/40">Почта</dt>
+          <dt className="label mb-3 text-paper/55">Почта</dt>
           <dd>
             <a
               href={`mailto:${contact.email}`}
@@ -376,7 +376,7 @@ export function StartBand() {
           </dd>
         </div>
         <div>
-          <dt className="label mb-3 text-paper/40">Telegram</dt>
+          <dt className="label mb-3 text-paper/55">Telegram</dt>
           <dd>
             <a
               href={`https://t.me/${contact.telegram}`}

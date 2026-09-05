@@ -43,7 +43,7 @@ export function Footer() {
 
           {columns.map((column) => (
             <nav key={column.title} aria-label={column.title}>
-              <p className="label mb-5 text-paper/35">{column.title}</p>
+              <p className="label mb-5 text-paper/55">{column.title}</p>
               <ul className="space-y-3">
                 {column.links.map((link) => (
                   <li key={link.href}>
@@ -57,7 +57,7 @@ export function Footer() {
           ))}
 
           <div>
-            <p className="label mb-5 text-paper/35">Связь</p>
+            <p className="label mb-5 text-paper/55">Связь</p>
             <ul className="space-y-3 text-sm">
               <li>
                 <a href={`mailto:${contact.email}`} className={quiet}>
@@ -93,7 +93,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-white/12 pt-6 text-xs text-paper/35 md:flex-row md:items-center md:justify-between">
+        <div className="mt-16 flex flex-col gap-3 border-t border-white/12 pt-6 text-xs text-paper/55 md:flex-row md:items-center md:justify-between">
           <p>{site.footerLegal}</p>
           <p>{site.hours}</p>
         </div>

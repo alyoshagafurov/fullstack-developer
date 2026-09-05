@@ -34,11 +34,13 @@ export const metadata: Metadata = {
     siteName: site.brand,
     title: site.seo.title,
     description: site.seo.description,
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: site.seo.title }],
   },
   twitter: {
     card: 'summary_large_image',
     title: site.seo.title,
     description: site.seo.description,
+    images: ['/og.png'],
   },
   robots: { index: true, follow: true },
 };
@@ -48,10 +50,51 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
+/*
+ * What a search engine is told about the person behind the site. Every value
+ * is one he gave; nothing here is inferred.
+ */
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${site.url}/#person`,
+      name: site.name,
+      alternateName: site.brand,
+      jobTitle: site.role,
+      url: site.url,
+      email: site.contact.email,
+      telephone: site.contact.phoneHref,
+      address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
+      sameAs: [
+        `https://t.me/${site.contact.telegram}`,
+        `https://instagram.com/${site.contact.instagram}`,
+        site.contact.github,
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site.url}/#website`,
+      url: site.url,
+      name: site.brand,
+      description: site.seo.description,
+      inLanguage: 'ru',
+      publisher: { '@id': `${site.url}/#person` },
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </body>
     </html>
   );
 }

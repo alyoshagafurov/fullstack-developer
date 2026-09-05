@@ -32,15 +32,20 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <PageOpening eyebrow="Услуги" title={site.shortStatement} lede={site.difference} />
+      {/*
+       * The greeting says what the page is, not the site's statement again —
+       * the statement is already on the first screen, in the marquee and in the
+       * footer, and a fourth repetition read as a template filling a slot.
+       */}
+      <PageOpening eyebrow="Услуги" title="Что я делаю" lede={site.difference} />
 
       {/*
        * On paper rather than on black: the greeting above is already black, and
        * two dark bands in a row would read as one long section with a heading
        * floating in the middle of it.
        */}
-      <Band tone="paper" id="services" innerClassName="py-24 md:py-32">
-        <h2 className="display-2 mb-16 max-w-2xl uppercase">Что я делаю</h2>
+      <Band tone="paper" id="services" innerClassName="py-20 md:py-28">
+        <h2 className="label mb-12">{services.length} услуг</h2>
 
         <ol>
           {services.map((service) => (

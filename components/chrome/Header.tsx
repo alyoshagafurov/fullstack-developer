@@ -256,7 +256,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <p className="text-[0.6875rem] tracking-[0.18em] text-white/40 uppercase">
+          <p className="text-[0.6875rem] tracking-[0.18em] text-white/55 uppercase">
             Душанбе · UTC+5
           </p>
         </div>

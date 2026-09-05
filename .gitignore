@@ -13,4 +13,5 @@ tsconfig.tsbuildinfo
 # Working copies of the source images. The Desktop originals stay with the
 # owner; only the compressed WebP the site actually serves is committed.
 public/**/*.png
-!public/aly-logo.png
+# The share card is generated from the wordmark and is the one PNG that ships.
+!public/og.png

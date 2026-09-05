@@ -9,36 +9,6 @@
  * owner's own work, inside the screenshots on a case page.
  */
 
-/*
- * The hero photograph has a pale wall in the top half and a near-black desk
- * across the bottom, and type needs opposite colours in the two. Whether the
- * wall is deep enough to hold the statement is a question about the window's
- * shape, not its size: the frame is 16:9, so a window near that ratio shows
- * almost all of it, while a squarer or a wider one crops until either his head
- * or the plant reaches the top.
- *
- * There are two black-on-wall arrangements, because the photograph offers two
- * different empty areas depending on how the window crops it.
- *
- * `wall` — a window wide enough that the frame is not cropped in from the
- * sides. The strip left of his shoulder is clear from the top down past the
- * plant, so the statement stands there and the paragraph goes top right.
- * Swept across 476 window sizes: nothing clips, worst contrast 11.8:1 for the
- * headline, 11.6:1 for the label, 9.1:1 for the paragraph.
- *
- * `crown` — a phone or a tablet, where the crop closes in around him and that
- * strip is gone, but the wall above his head is still 150 to 200 pixels deep.
- * The label and the statement sit in it, across the full width, and the
- * paragraph and the button stay down on the desk. Swept across 817 sizes:
- * nothing clips, worst contrast 10.9:1.
- *
- * Neither applies to a window so short that even the crown is gone — an old
- * phone, or a window flatter than 2.6:1. There everything goes back down onto
- * the desk in white.
- */
-@custom-variant wall (@media (min-width: 1000px) and (max-aspect-ratio: 13/5));
-@custom-variant crown (@media (max-width: 999px) and (min-height: 740px));
-
 @theme {
   --color-paper: #ffffff;
   --color-ground: #f1f0ee;
@@ -47,8 +17,13 @@
   --color-void: #050505;
 
   --color-ink: #0b0b0b;
-  --color-ink-2: #6b6b68;
-  --color-ink-3: #a3a29e;
+  /*
+   * Two greys, both legible at eleven pixels. The lighter one used to be
+   * #a3a29e, which is 2.5:1 on white — every small label on the site failed
+   * AA on every band, the grey shelf included: 6.8:1 and 4.7:1 there.
+   */
+  --color-ink-2: #52524d;
+  --color-ink-3: #63625e;
 
   --color-line: rgb(11 11 11 / 0.1);
   --color-line-2: rgb(11 11 11 / 0.18);

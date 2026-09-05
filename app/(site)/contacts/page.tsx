@@ -102,7 +102,7 @@ export default function ContactsPage() {
         <CTA href="/start" tone="dark" size="lg" className="mt-12">
           {site.heroCta}
         </CTA>
-        <p className="mt-6 text-xs text-paper/45">
+        <p className="mt-6 text-xs text-paper/60">
           Четыре коротких шага. Ни к чему не обязывает.
         </p>
       </Band>
