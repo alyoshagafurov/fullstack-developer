@@ -8,20 +8,28 @@ import { GhostMark } from '@/components/ui/Logo';
 /*
  * The vitrine — the signature of the site.
  *
- * The work is displayed the way an expensive shop displays goods: one object
- * under studio light, the wordmark enormous and faint behind it, a row of small
- * pills underneath. Dragging, arrow keys, swiping and the ‹ › buttons all
- * change the object on show. It is the AirPods product switcher turned into an
- * index of what the owner makes.
+ * The work is displayed the way an expensive shop displays goods: objects under
+ * studio light, the wordmark enormous and faint behind them, one caption at a
+ * time underneath.
  *
- * Why no animation library: the whole behaviour is a pointer delta and two CSS
- * transitions. A motion runtime would cost roughly forty kilobytes on the first
- * screen and buy nothing this file does not already do.
+ * It is a real horizontal scroller, not a slideshow pretending to be one. The
+ * track is an `overflow-x` container with scroll snapping, so a two-finger
+ * sideways swipe on a trackpad, a shift-wheel, a phone swipe and the arrow
+ * buttons all do the same native thing, with the browser's own inertia. The
+ * previous version simulated this with pointer maths and had to be labelled
+ * «тяните вбок» before anyone realised it moved at all; a track that shows the
+ * next object half in frame needs no label.
  *
- * Every object renders at once, stacked, with visibility driven by index. That
- * costs a little markup and removes the two problems the alternative has: no
- * unmount flicker mid-transition, and every neighbour is decoded before it is
- * asked for.
+ * Two rules this file must keep:
+ *
+ *  - nothing between a `StudioObject` and the band may create a stacking
+ *    context (no z-index, transform, opacity or filter on the track or the
+ *    slides). The objects are blended with `darken`, and a stacking context
+ *    would have them blend against their own empty inside, which renders as
+ *    nothing at all.
+ *  - the section grows past one screen rather than clipping. It used to be a
+ *    fixed `100svh` with `overflow-hidden`, which sheared the caption off on a
+ *    short window.
  */
 
 export type VitrineItem = {
@@ -35,30 +43,73 @@ export type VitrineItem = {
   ctaLabel: string;
 };
 
-const SWIPE_THRESHOLD = 56;
-
 export function Vitrine({ items }: { items: VitrineItem[] }) {
   const [index, setIndex] = useState(0);
-  const [drag, setDrag] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  // The hint below the object disappears the moment a visitor switches for the
-  // first time. Before that it is the only thing telling them the stage moves.
-  const [used, setUsed] = useState(false);
-  const stage = useRef<HTMLDivElement>(null);
-  const pointerStart = useRef<{ x: number; id: number } | null>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const slides = useRef<(HTMLLIElement | null)[]>([]);
 
   const count = items.length;
+
+  /** Scroll so that slide `i` lands in the middle of the track. */
+  const scrollTo = useCallback((i: number) => {
+    const el = slides.current[i];
+    const box = track.current;
+    if (!el || !box) return;
+    box.scrollTo({
+      left: el.offsetLeft - (box.clientWidth - el.clientWidth) / 2,
+      behavior: 'smooth',
+    });
+  }, []);
+
   const go = useCallback(
-    (delta: number) => {
-      setUsed(true);
-      setIndex((i) => (i + delta + count) % count);
-    },
-    [count],
+    (delta: number) => scrollTo(Math.min(count - 1, Math.max(0, index + delta))),
+    [count, index, scrollTo],
   );
 
-  // Arrow keys work whenever the stage holds focus. The stage is focusable, so
-  // a keyboard user reaches it by tabbing rather than hunting for the arrow
-  // buttons — which are also real buttons, further down.
+  /*
+   * The caption follows the track rather than driving it: whichever slide is
+   * most visible inside it wins, and that covers the swipe, the wheel, the
+   * buttons and the keyboard without any of them having to report anything.
+   *
+   * An observer rather than a scroll listener on purpose. A listener has to be
+   * told, and it is not told when the browser re-snaps the track itself — after
+   * the images decode, or after a resize — which is exactly when the caption
+   * and the object on screen drift apart. The observer sees the result instead
+   * of the cause, and it fires once on mount, so the first caption is right
+   * whatever the track settles on.
+   */
+  useEffect(() => {
+    const box = track.current;
+    if (!box) return;
+
+    /*
+     * The observer says when to look; the geometry says at what. Ratios alone
+     * are not enough — a wide window can hold three whole objects at once, and
+     * all three would report a ratio of one.
+     */
+    const observer = new IntersectionObserver(
+      () => {
+        const middle = box.getBoundingClientRect().left + box.clientWidth / 2;
+        let best = 0;
+        let bestGap = Infinity;
+        slides.current.forEach((el, i) => {
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          const gap = Math.abs(rect.left + rect.width / 2 - middle);
+          if (gap < bestGap) {
+            bestGap = gap;
+            best = i;
+          }
+        });
+        setIndex(best);
+      },
+      { root: box, threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+
+    slides.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [count]);
+
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowRight') {
       event.preventDefault();
@@ -70,133 +121,58 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
     }
   };
 
-  const onPointerDown = (event: React.PointerEvent) => {
-    if (event.button !== 0) return;
-    pointerStart.current = { x: event.clientX, id: event.pointerId };
-    setDragging(true);
-    setUsed(true);
-    stage.current?.setPointerCapture(event.pointerId);
-  };
-
-  const onPointerMove = (event: React.PointerEvent) => {
-    if (!pointerStart.current) return;
-    setDrag(event.clientX - pointerStart.current.x);
-  };
-
-  const endDrag = (event: React.PointerEvent) => {
-    if (!pointerStart.current) return;
-    const delta = event.clientX - pointerStart.current.x;
-    if (Math.abs(delta) > SWIPE_THRESHOLD) go(delta < 0 ? 1 : -1);
-    pointerStart.current = null;
-    setDrag(0);
-    setDragging(false);
-  };
-
-  useEffect(() => {
-    // Keep the index valid if the owner publishes or unpublishes while a
-    // visitor has the page open and it revalidates underneath them.
-    if (index > count - 1) setIndex(0);
-  }, [count, index]);
-
-  // A single item is a still life, not a carousel: no counter, no arrows.
+  // A single item is a still life, not a scroller: no counter, no arrows.
   const interactive = count > 1;
-  const current = items[index];
+  const current = items[index] ?? items[0];
   if (!current) return null;
 
   return (
-    /*
-     * Exactly one screen tall, never more.
-     *
-     * The object, the caption and the controls have to be visible together —
-     * a visitor who has to scroll to find the arrows does not know the thing
-     * switches. That is why the height is fixed rather than a minimum, and why
-     * the object is sized off the viewport's short side.
-     */
     <section
       data-tone="light"
-      className="stage relative flex h-[100svh] flex-col justify-between overflow-hidden bg-ground pt-24 pb-6 md:pt-28"
+      className="stage relative flex min-h-[100svh] flex-col justify-between overflow-x-clip bg-ground pt-24 pb-6 md:pt-28"
       aria-roledescription={interactive ? 'карусель' : undefined}
       aria-label="Витрина работ"
     >
       {/* The wordmark, enormous and faint, is the backdrop of the whole stage. */}
       <GhostMark className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 md:px-10" />
 
+      {/*
+       * `relative` without a z-index on purpose — see the stacking rule above.
+       * Paint order already puts the track over the ghost mark: both are
+       * positioned and this one comes later in the markup.
+       */}
       <div
-        ref={stage}
+        ref={track}
         tabIndex={interactive ? 0 : -1}
         onKeyDown={onKeyDown}
-        onPointerDown={interactive ? onPointerDown : undefined}
-        onPointerMove={interactive ? onPointerMove : undefined}
-        onPointerUp={interactive ? endDrag : undefined}
-        onPointerCancel={interactive ? endDrag : undefined}
-        /*
-         * `relative` without a z-index on purpose. Any z-index here would make
-         * this a stacking context, and the object's `darken` would then blend
-         * against its empty inside rather than against the band and the ghost
-         * mark behind it — which is what erases the ghost inside a pale square.
-         * Paint order already puts this above the ghost: both are positioned,
-         * and this one comes later in the markup.
-         */
-        /* `pb-10` reserves the strip the hint sits in, so a short viewport
-           cannot push the object down onto the words. */
-        className={`relative flex flex-1 items-center justify-center pb-10 outline-offset-8 ${
-          interactive ? 'cursor-grab active:cursor-grabbing' : ''
-        }`}
-        style={{ touchAction: 'pan-y' }}
+        className="relative flex flex-1 items-center overflow-x-auto overflow-y-hidden overscroll-x-contain py-4 outline-offset-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollSnapType: interactive ? 'x mandatory' : undefined }}
       >
-        <div className="relative aspect-square h-[min(52svh,480px)] max-w-[92vw] md:h-[min(60svh,600px)]">
-          {items.map((item, i) => {
-            const active = i === index;
-            return (
-              /*
-               * Opacity and transform live on the image itself, never on this
-               * wrapper. Either property on a parent creates a stacking
-               * context, and the object's `darken` would then blend against the
-               * empty inside of that context instead of against the band —
-               * which renders as nothing at all.
-               */
-              <div key={item.id} aria-hidden={!active} className="absolute inset-0">
-                <StudioObject
-                  src={item.object}
-                  alt={active ? item.title : ''}
-                  priority={i === 0}
-                  sizes="(min-width: 1024px) 38vw, 76vw"
-                  className="transition-[opacity,transform] duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none"
-                  style={{
-                    opacity: active ? 1 : 0,
-                    transform: active
-                      ? `translate3d(${drag * 0.45}px, 0, 0)`
-                      : 'translate3d(0, 22px, 0)',
-                    transitionDuration: dragging ? '0ms' : undefined,
-                  }}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        {/*
-         * The stage responded to a drag from the first day and nobody knew:
-         * a photograph on a plain ground reads as a picture, not as a control.
-         * So it says so, until the visitor does it once and never needs telling
-         * again. Absolutely positioned, so the words cost the object no height.
-         */}
-        {interactive && (
-          <p
-            aria-hidden
-            className={`pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center gap-3 text-[0.6875rem] tracking-[0.18em] text-ink-2 uppercase transition-opacity duration-500 ${
-              used ? 'opacity-0' : 'opacity-100'
-            }`}
-          >
-            <Arrow direction="left" />
-            Тяните вбок
-            <Arrow direction="right" />
-          </p>
-        )}
+        <ul className="flex items-center gap-10 px-[max(1.25rem,calc(50vw-min(30svh,300px)))] md:gap-16 md:px-[max(2.5rem,calc(50vw-min(30svh,300px)))]">
+          {items.map((item, i) => (
+            <li
+              key={item.id}
+              ref={(el) => {
+                slides.current[i] = el;
+              }}
+              /* The `vw` term is the one that matters on a phone: 52svh alone
+                 comes out wider than the screen and cuts the object's edges. */
+              className="aspect-square w-[min(52svh,480px,86vw)] shrink-0 md:w-[min(60svh,600px,80vw)]"
+              style={{ scrollSnapAlign: 'center' }}
+            >
+              <StudioObject
+                src={item.object}
+                alt={item.title}
+                priority={i === 0}
+                sizes="(min-width: 768px) 600px, 76vw"
+              />
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Caption and controls. One black pill, everything else hairline. */}
-      <div className="shell relative">
+      <div className="shell relative pt-4">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
             <p className="label mb-3">{current.kind === 'case' ? 'Работа' : 'Услуга'}</p>
@@ -217,16 +193,18 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
                 <button
                   type="button"
                   onClick={() => go(-1)}
+                  disabled={index === 0}
                   aria-label="Предыдущая работа"
-                  className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink hover:bg-ink hover:text-paper"
+                  className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink hover:bg-ink hover:text-paper disabled:pointer-events-none disabled:opacity-30"
                 >
                   <Arrow direction="left" />
                 </button>
                 <button
                   type="button"
                   onClick={() => go(1)}
+                  disabled={index === count - 1}
                   aria-label="Следующая работа"
-                  className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink hover:bg-ink hover:text-paper"
+                  className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink hover:bg-ink hover:text-paper disabled:pointer-events-none disabled:opacity-30"
                 >
                   <Arrow direction="right" />
                 </button>

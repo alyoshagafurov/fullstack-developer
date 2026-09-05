@@ -9,6 +9,15 @@
  * owner's own work, inside the screenshots on a case page.
  */
 
+/*
+ * The hero photograph has a pale wall in the top half and a near-black desk
+ * across the bottom, and type needs opposite colours in the two. Whether the
+ * wall is tall enough to hold the statement depends on the window, not just on
+ * its width: a short window crops the frame so that his head reaches the top.
+ * Measured against the file, the wall clears the statement from 1200×780 up.
+ */
+@custom-variant wall (@media (min-width: 1200px) and (min-height: 780px));
+
 @theme {
   --color-paper: #ffffff;
   --color-ground: #f1f0ee;

@@ -2,22 +2,24 @@ import { Opening } from '@/components/sections/Opening';
 import { Vitrine, type VitrineItem } from '@/components/vitrine/Vitrine';
 import {
   AboutSpread,
+  CasesBand,
   Manifesto,
   Marquee,
   ProcessTrack,
   StartBand,
   Voices,
 } from '@/components/sections/home';
-import { getFeaturedCases, getTestimonials } from '@/lib/cases';
+import { getPublishedCases, getTestimonials } from '@/lib/cases';
 import { featuredServices } from '@/lib/content/services';
 
 /*
  * The landing page, read as one sequence rather than a stack of sections.
  *
- * The rhythm is deliberate and uneven: black, black, white, grey, black,
- * white, grey, black. A visitor scrolling should keep hitting a change of
- * ground and a change of scale, because that is what makes a page feel like an
- * art direction instead of a template.
+ * The rhythm is deliberate and uneven: every band changes both the ground
+ * colour and the type scale, so scrolling feels like turning pages rather than
+ * sliding down a template. The middle of the page is the owner's chosen order —
+ * the vitrine, then him, then other people about him on black, then the work
+ * itself back on white.
  *
  * Revalidated rather than fully static: the owner publishes cases and
  * testimonials from the admin, and a publish has to reach the site without a
@@ -26,7 +28,12 @@ import { featuredServices } from '@/lib/content/services';
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [cases, testimonials] = await Promise.all([getFeaturedCases(6), getTestimonials()]);
+  const [cases, testimonials] = await Promise.all([getPublishedCases(), getTestimonials()]);
+
+  // Featured first, then the rest — the vitrine and the cases band both read
+  // from one query so a publish cannot show up in one and not the other.
+  const featured = cases.filter((row) => row.featured);
+  const stageCases = (featured.length > 0 ? featured : cases).slice(0, 6);
 
   /*
    * What the vitrine shows.
@@ -37,8 +44,8 @@ export default async function HomePage() {
    * The first published case takes the stage back automatically.
    */
   const items: VitrineItem[] =
-    cases.length > 0
-      ? cases.map((row) => ({
+    stageCases.length > 0
+      ? stageCases.map((row) => ({
           id: row.id,
           kind: 'case' as const,
           title: row.title,
@@ -64,8 +71,9 @@ export default async function HomePage() {
       <Manifesto />
       <Vitrine items={items} />
       <AboutSpread />
-      <ProcessTrack />
       <Voices items={testimonials.slice(0, 3)} total={testimonials.length} />
+      <CasesBand items={cases.slice(0, 3)} total={cases.length} />
+      <ProcessTrack />
       <StartBand />
     </>
   );

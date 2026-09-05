@@ -5,7 +5,8 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
-import type { TestimonialRow } from '@/lib/cases';
+import { StudioObject } from '@/components/ui/StudioObject';
+import type { CaseRow, TestimonialRow } from '@/lib/cases';
 
 /*
  * The bands of the landing page.
@@ -84,58 +85,47 @@ export function Manifesto() {
 export function AboutSpread() {
   return (
     /*
-     * Built without the shared Band so the photograph can reach three edges of
-     * the screen. A picture with a margin around it reads as an illustration
-     * inside an article; one that runs off the top, bottom and right reads as
-     * part of the page itself.
-     */
-    /*
-     * A two-column spread rather than a picture pinned into the margin.
+     * The same held frame /about uses, mirrored: there the picture is on the
+     * left of the text, here it is on the right.
      *
-     * The earlier version floated the photograph at the right edge with air
-     * above and below it, which read as a rectangle that had drifted there by
-     * accident. Filling its own column top to bottom makes it part of the page
-     * instead: the section's height comes from the text, and the picture simply
-     * occupies whatever that turns out to be.
+     * It used to run off the top, bottom and right edge of the screen. Full
+     * bleed suits a photograph with a subject large in the frame; this one is
+     * a person at a desk seen whole, and a column tall enough to reach both
+     * edges of a long text cropped him down to the top of his head.
      */
-    <section
-      data-tone="light"
-      id="studio"
-      className="relative w-full bg-paper text-ink lg:grid lg:grid-cols-[1.5fr_1fr]"
-    >
-      <div className="px-5 py-24 md:px-10 lg:py-32 lg:pr-20 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
-        <p className="label mb-8">Обо мне</p>
-        <p className="display-2 uppercase">{site.name}</p>
-        <p className="lede mt-8 max-w-xl">{site.difference}</p>
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-2">{site.why[1]}</p>
+    <Band tone="paper" id="studio" innerClassName="py-24 md:py-32">
+      <div className="grid gap-14 md:grid-cols-2 md:items-start md:gap-20">
+        <div className="md:order-1">
+          <p className="label mb-8">Обо мне</p>
+          <p className="display-2 uppercase">{site.name}</p>
+          <p className="lede mt-8">{site.difference}</p>
+          <p className="mt-6 text-base leading-relaxed text-ink-2">{site.why[1]}</p>
 
-        <dl className="mt-12 grid max-w-xl grid-cols-2 gap-x-8 gap-y-8 border-t border-line pt-8 sm:grid-cols-4">
-          {about.facts.map((fact) => (
-            <div key={fact.label}>
-              <dt className="label mb-3">{fact.label}</dt>
-              <dd className="text-sm leading-snug">{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
+          <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-line pt-8">
+            {about.facts.map((fact) => (
+              <div key={fact.label}>
+                <dt className="label mb-3">{fact.label}</dt>
+                <dd className="text-sm leading-snug">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
 
-        <CTA href="/about" className="mt-12">
-          Подробнее обо мне
-        </CTA>
+          <CTA href="/about" className="mt-12">
+            Подробнее обо мне
+          </CTA>
+        </div>
+
+        <div className="relative aspect-3/2 w-full overflow-hidden bg-ground md:order-2 md:aspect-4/5">
+          <Image
+            src="/photo/about.webp"
+            alt={`${site.name} за работой`}
+            fill
+            sizes="(min-width: 768px) 46vw, 92vw"
+            className="object-cover object-[55%_35%]"
+          />
+        </div>
       </div>
-
-      {/* Its own column, flush to the top, bottom and right of the section. */}
-      <div className="relative h-80 w-full sm:h-[28rem] lg:h-auto">
-        <Image
-          src="/photo/about.webp"
-          alt={`${site.name} за работой`}
-          fill
-          sizes="(min-width: 1024px) 40vw, 100vw"
-          /* Biased right and up: the frame is square, the column is tall, and
-             a plain centre crop cuts him in half down the middle. */
-          className="object-cover object-[62%_32%]"
-        />
-      </div>
-    </section>
+    </Band>
   );
 }
 
@@ -200,13 +190,15 @@ export function Voices({ items, total }: { items: TestimonialRow[]; total: numbe
   if (items.length === 0) return null;
 
   return (
-    <Band tone="paper" innerClassName="py-28 md:py-40">
+    /* On black, directly after the white «Обо мне» spread: the page turns over
+       from him talking about himself to other people talking about him. */
+    <Band tone="void" id="voices" innerClassName="py-28 md:py-40">
       <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display-2 uppercase">Отзывы</h2>
+        <h2 className="display-2 text-paper uppercase">Отзывы</h2>
         {total > items.length && (
           <Link
             href="/reviews"
-            className="text-[0.6875rem] tracking-[0.18em] uppercase transition-opacity hover:opacity-60"
+            className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase transition-colors hover:text-paper"
           >
             Все {total}
           </Link>
@@ -215,16 +207,16 @@ export function Voices({ items, total }: { items: TestimonialRow[]; total: numbe
 
       <div className="grid gap-14 md:grid-cols-3">
         {items.map((voice) => (
-          <div key={voice.id} className="border-t border-line pt-8">
-            <blockquote className="text-lg leading-relaxed tracking-[-0.01em]">
+          <div key={voice.id} className="border-t border-white/15 pt-8">
+            <blockquote className="text-lg leading-relaxed tracking-[-0.01em] text-paper">
               {voice.text}
             </blockquote>
             <div className="mt-8 flex items-center gap-3">
               <Avatar name={voice.name} src={voice.avatarUrl} />
               <div className="min-w-0">
-                <p className="text-sm">{voice.name}</p>
+                <p className="text-sm text-paper">{voice.name}</p>
                 {(voice.role || voice.company) && (
-                  <p className="text-xs text-ink-3">
+                  <p className="text-xs text-paper/45">
                     {[voice.role, voice.company].filter(Boolean).join(', ')}
                   </p>
                 )}
@@ -233,7 +225,7 @@ export function Voices({ items, total }: { items: TestimonialRow[]; total: numbe
             {voice.caseSlug && (
               <Link
                 href={`/work/${voice.caseSlug}`}
-                className="label mt-6 inline-flex min-h-11 items-center transition-colors hover:text-ink"
+                className="mt-6 inline-flex min-h-11 items-center text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase transition-colors hover:text-paper"
               >
                 Смотреть кейс
               </Link>
@@ -241,6 +233,74 @@ export function Voices({ items, total }: { items: TestimonialRow[]; total: numbe
           </div>
         ))}
       </div>
+    </Band>
+  );
+}
+
+/**
+ * Published cases, on white, straight after the testimonials.
+ *
+ * Renders nothing until the owner publishes one from the admin — the same rule
+ * the testimonials follow. Rows alternate the side the object sits on, so the
+ * band reads as a walk past a display rather than a grid of equal tiles.
+ */
+export function CasesBand({ items, total }: { items: CaseRow[]; total: number }) {
+  if (items.length === 0) return null;
+
+  return (
+    <Band tone="paper" id="work" innerClassName="py-28 md:py-40">
+      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <h2 className="display-2 uppercase">Кейсы</h2>
+        {total > items.length && (
+          <Link
+            href="/work"
+            className="text-[0.6875rem] tracking-[0.18em] uppercase transition-opacity hover:opacity-60"
+          >
+            Все {total}
+          </Link>
+        )}
+      </div>
+
+      <ol className="divide-y divide-line border-t border-line">
+        {items.map((row, index) => (
+          <li key={row.id}>
+            <Link
+              href={`/work/${row.slug}`}
+              className={`group grid items-center gap-8 py-12 md:py-16 ${
+                index % 2 === 1 ? 'md:grid-cols-[1fr_16rem]' : 'md:grid-cols-[16rem_1fr]'
+              }`}
+            >
+              <div
+                className={`relative aspect-square w-36 md:w-full ${
+                  index % 2 === 1 ? 'md:order-2' : ''
+                }`}
+              >
+                <StudioObject
+                  src={row.objectImage}
+                  alt=""
+                  sizes="(min-width: 768px) 16rem, 9rem"
+                  className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                />
+              </div>
+
+              <div className={`min-w-0 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                <p className="label mb-4">{[row.client, row.year].filter(Boolean).join(' · ')}</p>
+                <h3 className="text-[clamp(1.75rem,4vw,3rem)] leading-tight tracking-[-0.03em]">
+                  {row.title}
+                </h3>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
+                  {row.task}
+                </p>
+                {row.technologies.length > 0 && (
+                  <p className="mt-5 text-xs tracking-[0.06em] text-ink-3">
+                    {row.technologies.join(' · ')}
+                  </p>
+                )}
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ol>
     </Band>
   );
 }
