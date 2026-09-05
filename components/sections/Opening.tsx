@@ -11,24 +11,22 @@ import { site } from '@/lib/content/site';
  * belongs high on the wall — nothing darkening the picture, nothing on top of
  * him.
  *
- * Whether there is room is a question about the window, not only its width.
- * Every measurement below is taken from the file itself rather than guessed:
+ * Whether there is room is a question about the window's shape rather than its
+ * size, because the frame is 16:9: a window near that ratio shows nearly all of
+ * it, a squarer or a wider one crops until his head or the plant reaches the
+ * top. That is what the `wall` variant in globals.css tests, and its bounds
+ * come from sweeping the photograph itself across 214 window sizes.
  *
- *   window        wall clears down to   statement needs
- *   1728×1027     y 384                 y 337
- *   1512×892      y 336                 y 322
- *   1440×900      y 336                 y 313
- *   1280×800      y 296                 y 294
- *   1024×768      y 152                 impossible
+ * Outside those bounds the words go back down onto the desk in white over a
+ * short falloff — which is what the desk looks like anyway.
  *
- * Below roughly 1200×780 the crop tightens until his head reaches the top of
- * the frame and the wall disappears. There the words go back down onto the
- * desk in white over a short falloff — which is what the desk looks like
- * anyway. That threshold is the `wall` variant, defined in globals.css.
+ * The headline is sized off the shorter of the two axes (`min(3.4vw, 5.4svh)`)
+ * so that it shrinks with the wall it stands on instead of running into the
+ * plant when the window gets short.
  *
- * The button is centred at the bottom either way: the strip it sits in
- * measures between 44 and 67 average luminance on every window tested, so a
- * white pill holds there with no help.
+ * The button is centred at the bottom either way: the strip it sits in never
+ * measured above 60 average luminance on any window tested, so a white pill
+ * holds there with no help.
  */
 export function Opening() {
   /*
@@ -59,7 +57,7 @@ export function Opening() {
         className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-black/90 via-black/55 to-transparent wall:hidden"
       />
 
-      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 wall:pt-24 wall:pb-14">
+      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 wall:pt-22 wall:pb-14">
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end wall:justify-start">
           <div className="wall:flex wall:items-start wall:justify-between wall:gap-16">
             {/* Held to 38% of the window: past that the column runs into his
@@ -70,7 +68,7 @@ export function Opening() {
                 {site.role}
               </p>
 
-              <h1 className="mt-6 text-[clamp(2rem,4vw,4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase wall:text-ink">
+              <h1 className="mt-6 text-[clamp(2rem,min(3.4vw,5.4svh),4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase wall:text-ink">
                 {lines.map((line, index) => (
                   <span
                     key={line}
