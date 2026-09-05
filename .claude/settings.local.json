@@ -255,7 +255,9 @@
       "Bash(grep -vE '^\\\\s*$')",
       "Bash(awk '{print \"  \" $5, $9, $10, $11}')",
       "Bash(cp ~/Desktop/\"hero without background.png\" /tmp/cut.png)",
-      "Bash(cwebp -quiet -q 88 -alpha_q 100 -resize 1800 0 /tmp/cut.png -o public/photo/hero-cut.webp)"
+      "Bash(cwebp -quiet -q 88 -alpha_q 100 -resize 1800 0 /tmp/cut.png -o public/photo/hero-cut.webp)",
+      "Bash(cwebp -quiet -q 84 /tmp/bg.png  -o public/photo/hero.webp)",
+      "Bash(cwebp -quiet -q 88 -alpha_q 100 /tmp/cut.png -o public/photo/hero-cut.webp)"
     ]
   }
 }
