@@ -3,31 +3,27 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 
 /*
- * The opening: the photograph fills the screen and the words use the wall.
+ * The opening: the photograph fills the screen and the statement is black on
+ * the wall behind him.
  *
- * The frame has two usable areas and they want opposite treatments. The upper
- * half is a pale wall, so type there must be black; the desk across the bottom
- * is nearly black, so type there must be white. Given the room, the statement
- * belongs high on the wall — nothing darkening the picture, nothing on top of
- * him.
+ * Which piece of wall depends on how the window crops the frame, and there are
+ * two, both defined as variants in globals.css:
  *
- * Whether there is room depends on the crop, and the crop depends on the shape
- * of the window as much as its size. The `wall` variant in globals.css carries
- * the bounds; they come from sweeping the photograph itself across 696 window
- * sizes, and inside them the statement clears the plant every time.
+ *   wall  — a wide window keeps the strip left of his shoulder, clear from the
+ *           top down past the plant. Statement there, paragraph top right.
+ *   crown — a phone crops that strip away but keeps 150–200px of wall directly
+ *           above his head. Label and statement there, across the full width;
+ *           paragraph and button stay down on the desk.
  *
- * Outside them — under 768×660, or wider than 2.5:1 — the words go back down
- * onto the desk in white over a short falloff, which is what the desk looks
- * like anyway.
+ * Both are measured against the photograph rather than guessed — 476 window
+ * sizes for the first, 817 for the second, no clipping in either and never
+ * worse than 9:1 anywhere. Neither reaches the picture: no darkening at all
+ * under `wall`, and under `crown` only the short falloff the desk needs to
+ * carry the paragraph.
  *
- * The headline is sized off the shorter of the two axes (`min(3vw, 5svh)`) so
- * that it shrinks with the wall it stands on instead of running into the plant
- * when the window gets short, and the column it sits in is held to 34% of the
- * width, which is where his shoulder starts on the widest crop.
- *
- * The button is centred at the bottom either way: the strip it sits in never
- * measured above 60 average luminance on any window tested, so a white pill
- * holds there with no help.
+ * A window too short for even the crown — an old phone, or something flatter
+ * than 2.6:1 — puts everything back on the desk in white. There is no third
+ * piece of wall to use.
  */
 export function Opening() {
   /*
@@ -45,31 +41,47 @@ export function Opening() {
         fill
         priority
         sizes="100vw"
-        /*
-         * Biased past centre so that on a window wider than the frame the crop
-         * eats the empty wall at the top and keeps the desk.
-         */
         className="object-cover object-[50%_45%]"
       />
 
-      {/* Only on the windows too small for the wall. */}
+      {/* Carries the paragraph on the desk. Gone entirely on a wide window. */}
       <div
         aria-hidden
         className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-black/90 via-black/55 to-transparent wall:hidden"
       />
 
-      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 wall:pt-19 wall:pb-14">
+      <div className="absolute inset-0 flex flex-col px-5 pt-24 pb-10 md:px-10 crown:pt-15 wall:pt-18 wall:pb-14">
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end wall:justify-start">
-          <div className="wall:flex wall:items-start wall:justify-between wall:gap-16">
+          {/*
+           * One wrapper, three shapes. As a plain block it stacks the two at
+           * the bottom; `crown` makes it fill the screen so the statement is
+           * held at the top and the paragraph falls to the desk; `wall` makes
+           * it a row so they sit side by side across the top.
+           */}
+          <div className="crown:flex crown:flex-1 crown:flex-col crown:justify-between wall:flex wall:items-start wall:justify-between wall:gap-16">
             {/* Held to 34% of the window: past that the column runs into his
                 shoulder and the wall behind it stops being empty. */}
             <div className="min-w-0 wall:w-[34%]">
-              <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-paper uppercase wall:text-ink-2">
-                <span aria-hidden className="block h-px w-10 bg-paper/70 wall:bg-ink-3" />
+              {/*
+               * Full-strength ink, not the muted grey the rest of the site
+               * uses for labels. That grey is chosen against white; against a
+               * wall that measures 203–210 it drops to 3.3:1, under the floor
+               * for eleven-pixel type.
+               */}
+              <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-paper uppercase crown:text-ink wall:text-ink">
+                <span
+                  aria-hidden
+                  className="block h-px w-10 bg-paper/70 crown:bg-ink-2 wall:bg-ink-2"
+                />
                 {site.role}
               </p>
 
-              <h1 className="mt-6 text-[clamp(2rem,4vw,4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase wall:mt-4 wall:text-[min(3vw,5svh,4rem)] wall:text-ink">
+              {/*
+               * Sized off whichever axis runs out first, so the statement
+               * shrinks with the wall it stands on rather than running onto the
+               * plant or into his hair.
+               */}
+              <h1 className="mt-6 text-[clamp(2rem,4vw,4.5rem)] leading-[1.02] tracking-[-0.04em] text-paper uppercase crown:mt-2 crown:text-[min(5.6vw,2.6svh)] crown:text-ink wall:mt-3 wall:text-[min(3vw,5svh,4rem)] wall:text-ink">
                 {lines.map((line, index) => (
                   <span
                     key={line}
@@ -81,12 +93,15 @@ export function Opening() {
               </h1>
             </div>
 
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-paper/70 wall:mt-2 wall:text-ink-2">
+            {/* Ink rather than the muted grey, for the same reason as the
+                label: the wall under this corner measures as low as 173. */}
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-paper/70 crown:mt-0 wall:mt-1 wall:text-ink">
               {site.difference}
             </p>
           </div>
 
-          <div className="mt-10 flex justify-center wall:mt-auto">
+          {/* Centred at the bottom on every size — a white pill on the desk. */}
+          <div className="mt-10 flex justify-center crown:mt-6 wall:mt-auto">
             <CTA href="/start" tone="dark" size="lg">
               {site.heroCta}
             </CTA>
