@@ -1,40 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Logo from '@/components/ui/Logo';
-import Action from '@/components/ui/Action';
-import { useI18n } from '@/lib/i18n';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import { Logo } from '@/components/ui/Logo';
 
 /*
  * Site chrome.
  *
- * The site is one continuous composition now, so navigation points at
- * positions in the story rather than at routes. It stays out of the way:
- * transparent over the opening, then a hairline and a blur once you leave it.
+ * Transparent over the vitrine, then a hairline and a ground once the visitor
+ * leaves the first screen — the header is a caption, not a bar. Five
+ * destinations and one action; the reference sites never exceed that.
  */
 
-/*
- * Absolute hrefs, not bare fragments.
- *
- * The header now renders on /work and /work/[slug] as well as the landing, and
- * a bare `#capabilities` there points at a section that lives on another page
- * — it would scroll nowhere. Prefixing with `/` makes each link mean the same
- * thing from anywhere on the site.
- *
- * Work is a route rather than a fragment at all: the case register moved off
- * the landing page and has its own address now.
- */
-const SECTIONS = [
-  { href: '/work', key: 'work' as const },
-  { href: '/#services', key: 'services' as const },
-  { href: '/#studio', key: 'about' as const },
-  { href: '/#process', key: 'process' as const },
-  { href: '/#start', key: 'contact' as const },
+const NAV = [
+  { href: '/work', label: 'Проекты' },
+  { href: '/services', label: 'Услуги' },
+  { href: '/about', label: 'Обо мне' },
+  { href: '/#process', label: 'Процесс' },
+  { href: '/#start', label: 'Контакты' },
 ];
 
-export default function Header() {
-  const { t, lang, setLang } = useI18n();
+export function Header() {
   const [lifted, setLifted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const panel = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setLifted(window.scrollY > 24);
@@ -43,63 +33,137 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // An open menu owns the screen: the page behind it must not scroll, Escape
+  // must close it, and focus must not wander out of it into hidden content.
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab' || !panel.current) return;
+
+      const focusable = panel.current.querySelectorAll<HTMLElement>('a[href], button');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ease-out ${
-        lifted ? 'bg-base/80 backdrop-blur-xl border-b border-line' : 'border-b border-transparent'
+      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ease-[var(--ease-studio)] ${
+        lifted || open
+          ? 'border-b border-line bg-ground/90 backdrop-blur-md'
+          : 'border-b border-transparent'
       }`}
     >
-      <div className="shell h-16 md:h-20 flex items-center justify-between gap-6">
-        {/* The wordmark, with the one dot of colour on the page beside it. The
-            logo itself is the owner's own file and is never redrawn as text —
-            the dot is set next to it rather than baked into it. */}
-        <a
-          href="/#top"
-          aria-label="ALY"
-          className="inline-flex min-h-[44px] shrink-0 items-baseline gap-[3px] opacity-90 transition-opacity hover:opacity-100"
+      <div className="shell flex h-16 items-center justify-between gap-6 md:h-20">
+        <Link
+          href="/"
+          aria-label="aly, на главную"
+          className="inline-flex min-h-11 shrink-0 items-center transition-opacity hover:opacity-70"
         >
-          <Logo priority className="h-6 w-auto md:h-7" />
-          <span aria-hidden className="text-copper text-[20px] leading-none md:text-[24px]">
-            .
-          </span>
-        </a>
+          <Logo priority className="h-5 w-auto md:h-6" />
+        </Link>
 
-        {/* Small, thin and evenly spaced — the numbering is gone. Numbered
-            items read as a table of contents, which competes with the hero
-            instead of getting out of its way. */}
-        <nav className="hidden items-center gap-7 md:flex lg:gap-10" aria-label="Разделы">
-          {SECTIONS.map((s) => (
-            <a
-              key={s.href}
-              href={s.href}
-              className="inline-flex min-h-[44px] items-center whitespace-nowrap py-3 text-[11px]
-                         uppercase tracking-[0.18em] text-ink-3 transition-colors hover:text-ink"
+        <nav className="hidden items-center gap-8 md:flex lg:gap-11" aria-label="Разделы сайта">
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="label inline-flex min-h-11 items-center whitespace-nowrap transition-colors hover:text-ink"
             >
-              {t.nav[s.key]}
-            </a>
+              {item.label}
+            </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden xs:flex items-center gap-1" role="group" aria-label="Язык">
-            {(['ru', 'tg', 'en'] as const).map((l) => (
-              <button
-                key={l}
-                onClick={() => setLang(l)}
-                aria-pressed={lang === l}
-                className={`font-mono text-[0.625rem] uppercase tracking-[0.14em] px-2 min-h-[44px] inline-flex items-center transition-colors ${
-                  lang === l ? 'text-signal' : 'text-ink-3 hover:text-ink-2'
+        <div className="flex items-center gap-3">
+          <Link
+            href="/start"
+            className="hidden min-h-11 items-center rounded-full bg-ink px-5 text-[0.75rem] font-medium tracking-[0.04em] text-paper transition-colors hover:bg-ink-2 sm:inline-flex"
+          >
+            Обсудить проект
+          </Link>
+
+          <button
+            ref={trigger}
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? 'Закрыть меню' : 'Открыть меню'}
+            className="inline-flex size-11 items-center justify-center rounded-full border border-line-2 transition-colors hover:border-ink md:hidden"
+          >
+            <span aria-hidden className="relative block h-3 w-4">
+              <span
+                className={`absolute inset-x-0 block h-px bg-ink transition-transform duration-200 ${
+                  open ? 'top-1/2 rotate-45' : 'top-0'
                 }`}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
-          <Action href="/start-project" variant="ghost" className="!px-5 !py-3 !text-micro !min-h-[44px]">
-            {t.nav.cta}
-          </Action>
+              />
+              <span
+                className={`absolute inset-x-0 block h-px bg-ink transition-transform duration-200 ${
+                  open ? 'top-1/2 -rotate-45' : 'top-full'
+                }`}
+              />
+            </span>
+          </button>
         </div>
       </div>
+
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 top-16 -z-10 md:hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden
+          />
+          <div
+            id="mobile-nav"
+            ref={panel}
+            className="shell flex flex-col gap-1 border-t border-line bg-ground pt-4 pb-8 md:hidden"
+          >
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="flex min-h-14 items-center border-b border-line text-[1.375rem] tracking-[-0.02em]"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              href="/start"
+              onClick={() => setOpen(false)}
+              className="mt-5 inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-6 text-[0.8125rem] font-medium tracking-[0.04em] text-paper"
+            >
+              Обсудить проект
+            </Link>
+          </div>
+        </>
+      )}
     </header>
   );
 }

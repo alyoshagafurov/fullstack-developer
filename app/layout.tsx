@@ -1,100 +1,67 @@
 import type { Metadata, Viewport } from 'next';
+import '@fontsource-variable/onest';
 import './globals.css';
-import SmoothScroll from '@/components/SmoothScroll';
-import JsonLd from '@/components/JsonLd';
-import { LanguageProvider } from '@/lib/i18n';
-import { SITE_URL, BRAND, PERSON, DEFAULT_TITLE, DEFAULT_DESCRIPTION, KEYWORDS, siteGraph } from '@/lib/seo';
+import { Header } from '@/components/chrome/Header';
+import { Footer } from '@/components/chrome/Footer';
+import { Grain } from '@/components/ui/Grain';
+import { site } from '@/lib/content/site';
 
 /*
- * Two voices, both served from this origin — the woff2 files live in
- * public/fonts and are declared in globals.css. No Google Fonts, no CDN, and
- * no third-party request at runtime or at build.
+ * One typeface for the whole site.
  *
- *   Playfair Display — the display voice. High-contrast serif, real variable
- *   weights, full Cyrillic (non-negotiable: the site is Russian first).
- *   Onest — text, UI and the micro labels.
- *
- * Only the two Cyrillic slices are preloaded: they are what the first screen
- * actually renders for a Russian visitor.
+ * The owner's wordmark is a geometric grotesque and eight of the ten brands he
+ * named as references are set in one too, so a display serif would be a
+ * borrowed voice. Onest Variable ships every weight in a single file per
+ * subset, and the browser fetches only the subset a page actually needs.
+ * Hierarchy comes from size, space and letterspacing instead of a second
+ * family.
  */
+
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: { default: DEFAULT_TITLE, template: `%s — ${PERSON} (${BRAND})` },
-  description: DEFAULT_DESCRIPTION,
-  keywords: KEYWORDS,
-  applicationName: BRAND,
-  authors: [{ name: PERSON, url: SITE_URL }],
-  creator: PERSON,
-  publisher: PERSON,
-  category: 'technology',
-  alternates: { canonical: SITE_URL },
-  manifest: '/manifest.webmanifest',
-  formatDetection: { email: false, telephone: false, address: false },
+  metadataBase: new URL(site.url),
+  title: {
+    default: site.seo.title,
+    template: `%s — ${site.brand}`,
+  },
+  description: site.seo.description,
+  applicationName: site.brand,
+  authors: [{ name: site.name }],
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
-    alternateLocale: ['en_US'],
-    url: SITE_URL,
-    siteName: `${PERSON} — ${BRAND}`,
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
+    url: site.url,
+    siteName: site.brand,
+    title: site.seo.title,
+    description: site.seo.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
+    title: site.seo.title,
+    description: site.seo.description,
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
-  },
-  appleWebApp: { capable: true, title: BRAND, statusBarStyle: 'black-translucent' },
-  // `appleWebApp.capable` emits only the legacy apple-prefixed tag, which
-  // Chrome reports as deprecated. Ship the standard name alongside it.
-  other: { 'mobile-web-app-capable': 'yes' },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
-    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
-  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  // Matches --base. This paints the browser chrome on mobile, so a stale
-  // value here shows as a coloured band above a black page.
-  themeColor: '#0C0D0F',
-  colorScheme: 'dark',
-  width: 'device-width',
-  initialScale: 1,
+  themeColor: '#f1f0ee',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <head>
-        <link
-          rel="preload" href="/fonts/playfair-cyrillic.woff2"
-          as="font" type="font/woff2" crossOrigin="anonymous"
-        />
-        <link
-          rel="preload" href="/fonts/onest-cyrillic.woff2"
-          as="font" type="font/woff2" crossOrigin="anonymous"
-        />
-        <JsonLd data={siteGraph()} />
-        <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important;}`}</style>
-        </noscript>
-      </head>
       <body>
-        <a href="#main" className="skip-link">Перейти к содержимому</a>
-        <SmoothScroll />
-        <LanguageProvider>{children}</LanguageProvider>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-paper"
+        >
+          К содержанию
+        </a>
+        <Header />
+        <main id="main">{children}</main>
+        <Footer />
+        <Grain />
       </body>
     </html>
   );

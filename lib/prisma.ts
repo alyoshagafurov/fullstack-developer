@@ -1,36 +1,52 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
 /*
- * The database handle.
+ * One client per process, talking to Neon through a driver adapter.
  *
- * `getPrisma()` returns null when DATABASE_URL is not configured. That is a
- * deliberate, checkable state rather than a crash: the API answers 503 and the
- * brief tells the visitor plainly that it was not saved. Nothing is faked, and
- * the build never depends on a database being reachable.
+ * Prisma 7 takes the connection through an adapter rather than a URL in the
+ * schema. On Neon that means no query engine binary in the deployment, which is
+ * what keeps cold starts short on Vercel.
  *
- * One client per process. Each PrismaClient opens its own pool, and Next's dev
- * server re-evaluates modules on every edit, so the instance is parked on
- * globalThis outside production to avoid exhausting connections.
- *
- * Serverless note: on Vercel each function instance gets its own pool, so
- * DATABASE_URL should carry `connection_limit=1` (and `pgbouncer=true` when
- * pointing at a pooler such as Neon or Supabase).
+ * Next reloads modules on every edit in development, and a fresh PrismaClient
+ * per reload exhausts the Neon connection pool within minutes. Holding the
+ * instance on globalThis survives the reload; in production the module is
+ * evaluated once and the global is never read.
  */
-
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-export function isDatabaseConfigured(): boolean {
-  return Boolean(process.env.DATABASE_URL);
+function createClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    // Thrown lazily rather than at import time: a missing URL must not stop the
+    // build, only the reads that actually need the database, and every one of
+    // those is already wrapped in `safely` below.
+    throw new Error('DATABASE_URL is not set');
+  }
+
+  return new PrismaClient({
+    adapter: new PrismaNeon({ connectionString }),
+    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  });
 }
 
-export function getPrisma(): PrismaClient | null {
-  if (!isDatabaseConfigured()) return null;
+export const prisma: PrismaClient = globalForPrisma.prisma ?? createClient();
 
-  if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = new PrismaClient({
-      // Never `query` in production — brief bodies would end up in logs.
-      log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
-    });
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+/**
+ * Run a database read the page can live without.
+ *
+ * This site shares its database with the previous build, and the new tables may
+ * not exist yet in a given environment. A missing table must degrade to an
+ * empty section, never to a 500 on the landing page. Only the error class is
+ * logged: these rows carry client contact details and never belong in logs.
+ */
+export async function safely<T>(label: string, read: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await read();
+  } catch (error) {
+    console.error(`[db] ${label} failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
+    return fallback;
   }
-  return globalForPrisma.prisma;
 }

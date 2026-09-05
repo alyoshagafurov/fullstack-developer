@@ -1,86 +1,89 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
-
-import Header from '@/components/chrome/Header';
-import SiteFooter from '@/components/sections/SiteFooter';
-import { SITE_URL } from '@/lib/seo';
-import { services } from '@/lib/services';
-
-/*
- * /services — the whole catalogue.
- *
- * The landing section shows five cards, which is the right number for a
- * section and the wrong number for a catalogue. All fourteen live here, as a
- * list rather than as cards: at this length a grid of tiles becomes a wall,
- * and a numbered index is faster to scan than anything decorated.
- */
-
-export const dynamic = 'force-static';
+import Link from 'next/link';
+import { Band } from '@/components/ui/Band';
+import { PillLink } from '@/components/ui/Pill';
+import { StudioObject } from '@/components/ui/StudioObject';
+import { services } from '@/lib/content/services';
+import { site } from '@/lib/content/site';
 
 export const metadata: Metadata = {
-  title: 'Услуги — Alisher Gafurov',
-  description: 'Сайты, веб-приложения, мобильные приложения, боты, автоматизация и поддержка.',
-  alternates: { canonical: `${SITE_URL}/services` },
+  title: 'Услуги',
+  description: `Что я делаю: ${services
+    .slice(0, 5)
+    .map((s) => s.title.toLowerCase())
+    .join(', ')} и другое.`,
+  alternates: { canonical: '/services' },
 };
 
-export default function ServicesIndex() {
+/*
+ * The full shelf.
+ *
+ * Rows alternate: the object sits left on one and right on the next, so
+ * fourteen entries read as a walk past a display case instead of a table of
+ * contents.
+ */
+export default function ServicesPage() {
   return (
     <>
-      <Header />
-      <main id="main" className="px-gutter pb-24 pt-[104px]">
-        <div className="mx-auto w-full max-w-shell">
-          <header className="mb-12 md:mb-16">
-            <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-ink-3">
-              Услуги
-              <span aria-hidden className="h-px w-8 bg-line-2" />
-              <span aria-hidden className="h-1 w-1 rounded-full bg-copper" />
-            </span>
-            <h1
-              className="mt-7 max-w-[20ch] text-[clamp(2rem,1.2rem+2.6vw,3.4rem)] font-light
-                         uppercase leading-[1.08] tracking-[-0.015em] text-ink"
-            >
-              Что я делаю
-            </h1>
-          </header>
+      <Band tone="ground" innerClassName="pt-36 pb-16 md:pt-44 md:pb-24">
+        <p className="label mb-6">Услуги</p>
+        <h1 className="max-w-4xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
+          {site.shortStatement}
+        </h1>
+        <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-2">{site.difference}</p>
+      </Band>
 
-          <ul className="m-0 list-none p-0">
-            {services.map((service) => (
-              <li key={service.slug}>
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="group grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 gap-y-2
-                             border-b border-line py-6 transition-colors hover:border-line-2
-                             md:grid-cols-[auto_minmax(0,22ch)_1fr_auto] md:gap-x-10"
+      <Band tone="paper" innerClassName="py-12 md:py-20">
+        <ol className="divide-y divide-line">
+          {services.map((service, index) => (
+            <li key={service.slug}>
+              <Link
+                href={`/services/${service.slug}`}
+                className={`group grid items-center gap-6 py-10 md:gap-12 md:py-14 ${
+                  index % 2 === 1 ? 'md:grid-cols-[1fr_10rem]' : 'md:grid-cols-[10rem_1fr]'
+                }`}
+              >
+                <div
+                  className={`relative aspect-square w-24 md:w-40 ${
+                    index % 2 === 1 ? 'md:order-2' : ''
+                  }`}
                 >
-                  <span
-                    aria-hidden
-                    className="text-[12px] tabular-nums text-ink-3 transition-colors duration-300 group-hover:text-copper"
-                  >
-                    {service.num}
-                  </span>
+                  <StudioObject
+                    src={service.object}
+                    alt=""
+                    sizes="160px"
+                    className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                  />
+                </div>
 
-                  <span className="text-[17px] font-light uppercase tracking-[0.01em] text-ink md:text-[19px]">
+                <div className={`min-w-0 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                  <p className="label mb-4">{service.num}</p>
+                  <h2 className="text-[clamp(1.5rem,3.4vw,2.5rem)] leading-tight tracking-[-0.03em]">
                     {service.title}
-                  </span>
-
-                  <span className="col-span-2 text-[13px] leading-[1.55] text-ink-3 md:col-span-1">
+                  </h2>
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
                     {service.tagline}
-                  </span>
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-3">
+                    {service.duration && <span>{service.duration}</span>}
+                    {service.budget && <span>{service.budget}</span>}
+                    <span className="label transition-colors group-hover:text-ink">Подробнее</span>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </Band>
 
-                  <span
-                    aria-hidden
-                    className="justify-self-end text-ink-3 transition-all duration-300
-                               group-hover:translate-x-1 group-hover:text-copper"
-                  >
-                    →
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </main>
-      <SiteFooter />
+      <Band tone="ground" innerClassName="py-24 md:py-32">
+        <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
+          {site.contactInvite}
+        </p>
+        <PillLink href="/start" variant="solid" className="mt-10">
+          {site.heroCta}
+        </PillLink>
+      </Band>
     </>
   );
 }
