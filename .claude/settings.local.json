@@ -249,7 +249,10 @@
       "Bash(node -e \"require.resolve\\('server-only'\\); console.log\\('server-only: есть'\\)\")",
       "Bash(echo \"код tsc: $?\")",
       "Bash(sips -g pixelWidth -g pixelHeight ~/Desktop/hero.png)",
-      "Bash(env -u DATABASE_URL npx next build)"
+      "Bash(env -u DATABASE_URL npx next build)",
+      "Bash(curl -s -L --max-time 20 https://aly.lat/admin/login -o /tmp/a.html)",
+      "Bash(grep -oE '>[^<>]{4,60}<' /tmp/a.html)",
+      "Bash(grep -vE '^\\\\s*$')"
     ]
   }
 }

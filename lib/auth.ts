@@ -114,10 +114,29 @@ export async function requireAdmin(): Promise<Guard> {
   return user ? { status: 'ok', user } : { status: 'refused' };
 }
 
-/** True while nobody has claimed the admin yet, which opens the setup screen. */
+/**
+ * What the login screen should show.
+ *
+ * Three states, not two. The earlier version returned a boolean with a
+ * fallback of "an account exists", so a database it could not reach produced a
+ * sign-in form for an account that had never been created — a screen the owner
+ * could stare at forever without learning why his password never worked.
+ * `unavailable` says so out loud instead.
+ *
+ * The fallback still refuses to open the setup form on an error: a blip in the
+ * database must never become an invitation for a stranger to claim the admin.
+ */
+export type AdminState = 'setup' | 'login' | 'unavailable';
+
+export async function adminState(): Promise<AdminState> {
+  const count = await safely('adminState', () => prisma.adminUser.count(), -1);
+  if (count < 0) return 'unavailable';
+  return count === 0 ? 'setup' : 'login';
+}
+
+/** Guard for the setup action: only true when the table is provably empty. */
 export async function needsSetup(): Promise<boolean> {
-  const count = await safely('needsSetup', () => prisma.adminUser.count(), 1);
-  return count === 0;
+  return (await adminState()) === 'setup';
 }
 
 /*
