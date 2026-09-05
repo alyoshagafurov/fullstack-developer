@@ -80,9 +80,11 @@ export function Opening() {
           </p>
         </div>
 
-        {/* The button: under the words on a phone, on the desk on a desk screen. */}
+        {/* The button: under the words on a phone, on the desk on a desk screen.
+            Ink on both — the owner's call — and the desk is grey, not black,
+            so it still stands off it. */}
         <div className="mt-8 flex justify-center md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2">
-          <CTA href="/start" tone="dark" size="lg">
+          <CTA href="/start" size="lg">
             {site.heroCta}
           </CTA>
         </div>
