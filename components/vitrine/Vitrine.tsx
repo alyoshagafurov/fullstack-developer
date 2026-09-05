@@ -41,11 +41,20 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
   const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
+  // The hint below the object disappears the moment a visitor switches for the
+  // first time. Before that it is the only thing telling them the stage moves.
+  const [used, setUsed] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
   const pointerStart = useRef<{ x: number; id: number } | null>(null);
 
   const count = items.length;
-  const go = useCallback((delta: number) => setIndex((i) => (i + delta + count) % count), [count]);
+  const go = useCallback(
+    (delta: number) => {
+      setUsed(true);
+      setIndex((i) => (i + delta + count) % count);
+    },
+    [count],
+  );
 
   // Arrow keys work whenever the stage holds focus. The stage is focusable, so
   // a keyboard user reaches it by tabbing rather than hunting for the arrow
@@ -65,6 +74,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
     if (event.button !== 0) return;
     pointerStart.current = { x: event.clientX, id: event.pointerId };
     setDragging(true);
+    setUsed(true);
     stage.current?.setPointerCapture(event.pointerId);
   };
 
@@ -127,12 +137,14 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
          * Paint order already puts this above the ghost: both are positioned,
          * and this one comes later in the markup.
          */
-        className={`relative flex flex-1 items-center justify-center outline-offset-8 ${
+        /* `pb-10` reserves the strip the hint sits in, so a short viewport
+           cannot push the object down onto the words. */
+        className={`relative flex flex-1 items-center justify-center pb-10 outline-offset-8 ${
           interactive ? 'cursor-grab active:cursor-grabbing' : ''
         }`}
         style={{ touchAction: 'pan-y' }}
       >
-        <div className="relative aspect-square h-[min(46svh,420px)] max-w-[86vw]">
+        <div className="relative aspect-square h-[min(52svh,480px)] max-w-[92vw] md:h-[min(60svh,600px)]">
           {items.map((item, i) => {
             const active = i === index;
             return (
@@ -153,7 +165,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
                   style={{
                     opacity: active ? 1 : 0,
                     transform: active
-                      ? `translate3d(${drag * 0.28}px, 0, 0)`
+                      ? `translate3d(${drag * 0.45}px, 0, 0)`
                       : 'translate3d(0, 22px, 0)',
                     transitionDuration: dragging ? '0ms' : undefined,
                   }}
@@ -162,6 +174,25 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
             );
           })}
         </div>
+
+        {/*
+         * The stage responded to a drag from the first day and nobody knew:
+         * a photograph on a plain ground reads as a picture, not as a control.
+         * So it says so, until the visitor does it once and never needs telling
+         * again. Absolutely positioned, so the words cost the object no height.
+         */}
+        {interactive && (
+          <p
+            aria-hidden
+            className={`pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center gap-3 text-[0.6875rem] tracking-[0.18em] text-ink-2 uppercase transition-opacity duration-500 ${
+              used ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <Arrow direction="left" />
+            Тяните вбок
+            <Arrow direction="right" />
+          </p>
+        )}
       </div>
 
       {/* Caption and controls. One black pill, everything else hairline. */}

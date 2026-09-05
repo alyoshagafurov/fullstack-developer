@@ -5,7 +5,6 @@ import {
   Manifesto,
   Marquee,
   ProcessTrack,
-  ServicesIndex,
   StartBand,
   Voices,
 } from '@/components/sections/home';
@@ -64,7 +63,6 @@ export default async function HomePage() {
       <Marquee />
       <Manifesto />
       <Vitrine items={items} />
-      <ServicesIndex />
       <AboutSpread />
       <ProcessTrack />
       <Voices items={testimonials.slice(0, 3)} total={testimonials.length} />

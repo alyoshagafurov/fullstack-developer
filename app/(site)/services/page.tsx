@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
 import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
@@ -18,54 +17,72 @@ export const metadata: Metadata = {
 };
 
 /*
- * The full shelf.
+ * The full shelf — «Что я делаю», moved here off the landing page.
  *
- * Rows alternate: the object sits left on one and right on the next, so
- * fourteen entries read as a walk past a display case instead of a table of
- * contents.
+ * It used to run twice: an index on black at home and a set of alternating
+ * rows here, both listing the same fourteen services. The index is the better
+ * of the two — rows of type rather than a grid of equal cards — so it lives on
+ * the page that exists to answer this question, and the landing keeps the
+ * vitrine instead.
+ *
+ * Hovering a row brings its one-liner in from the right and lifts nothing else;
+ * the device stays visible at all times, because the object is what tells a
+ * scanner what kind of thing each service produces.
  */
 export default function ServicesPage() {
   return (
     <>
       <PageOpening eyebrow="Услуги" title={site.shortStatement} lede={site.difference} />
 
-      <Band tone="paper" innerClassName="py-12 md:py-20">
-        <ol className="divide-y divide-line">
-          {services.map((service, index) => (
-            <li key={service.slug}>
+      {/*
+       * On paper rather than on black: the greeting above is already black, and
+       * two dark bands in a row would read as one long section with a heading
+       * floating in the middle of it.
+       */}
+      <Band tone="paper" id="services" innerClassName="py-24 md:py-32">
+        <h2 className="display-2 mb-16 max-w-2xl uppercase">Что я делаю</h2>
+
+        <ol>
+          {services.map((service) => (
+            <li key={service.slug} className="border-t border-line last:border-b">
               <Link
                 href={`/services/${service.slug}`}
-                className={`group grid items-center gap-6 py-10 md:gap-12 md:py-14 ${
-                  index % 2 === 1 ? 'md:grid-cols-[1fr_10rem]' : 'md:grid-cols-[10rem_1fr]'
-                }`}
+                className="group grid grid-cols-[3rem_1fr] items-center gap-4 py-6 md:grid-cols-[4rem_1fr_auto] md:gap-8 md:py-8"
               >
-                <div
-                  className={`relative aspect-square w-24 md:w-40 ${
-                    index % 2 === 1 ? 'md:order-2' : ''
-                  }`}
-                >
-                  <StudioObject
-                    src={service.object}
-                    alt=""
-                    sizes="160px"
-                    className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
-                  />
-                </div>
+                <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3">
+                  {service.num}
+                </span>
 
-                <div className={`min-w-0 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                  <p className="label mb-4">{service.num}</p>
-                  <h2 className="text-[clamp(1.5rem,3.4vw,2.5rem)] leading-tight tracking-[-0.03em]">
+                <span className="min-w-0">
+                  <span className="display-3 block transition-transform duration-400 ease-[var(--ease-studio)] group-hover:translate-x-3">
                     {service.title}
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
+                  </span>
+                  <span className="mt-2 block max-w-xl text-sm leading-relaxed text-ink-2 md:hidden">
                     {service.tagline}
-                  </p>
-                  <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-3">
-                    {service.duration && <span>{service.duration}</span>}
-                    {service.budget && <span>{service.budget}</span>}
-                    <span className="label transition-colors group-hover:text-ink">Подробнее</span>
-                  </div>
-                </div>
+                  </span>
+                  {(service.duration || service.budget) && (
+                    <span className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[0.75rem] text-ink-3">
+                      {service.duration && <span>{service.duration}</span>}
+                      {service.budget && <span>{service.budget}</span>}
+                    </span>
+                  )}
+                </span>
+
+                <span className="hidden max-w-md items-center gap-8 md:flex">
+                  <span className="text-sm leading-relaxed text-ink-2 opacity-0 transition-opacity duration-400 group-hover:opacity-100">
+                    {service.tagline}
+                  </span>
+                  {/* Always on screen, not only on hover: the device is what
+                      tells a scanner what kind of thing this service produces. */}
+                  <span className="relative block aspect-square w-36 shrink-0 lg:w-44">
+                    <StudioObject
+                      src={service.object}
+                      alt=""
+                      sizes="176px"
+                      className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                    />
+                  </span>
+                </span>
               </Link>
             </li>
           ))}

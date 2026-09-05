@@ -5,7 +5,6 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
-import { services } from '@/lib/content/services';
 import type { TestimonialRow } from '@/lib/cases';
 
 /*
@@ -75,77 +74,6 @@ export function Manifesto() {
 }
 
 /**
- * Services as an index, not a grid of cards.
- *
- * Fourteen rows of type on black. Hovering a row brings its one-liner in from
- * the right and lifts its object — so the detail is there when it is wanted and
- * invisible when it is not. Fourteen equal tiles would read as a price list,
- * which is exactly what the owner said he did not want.
- */
-export function ServicesIndex() {
-  return (
-    <Band tone="void" id="services" innerClassName="py-28 md:py-40">
-      <div className="mb-16 flex flex-wrap items-end justify-between gap-8">
-        <h2 className="display-2 max-w-2xl uppercase">Что я делаю</h2>
-        <Link
-          href="/services"
-          className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase transition-colors hover:text-paper"
-        >
-          Все {services.length} услуг
-        </Link>
-      </div>
-
-      <ol>
-        {services.map((service) => (
-          <li key={service.slug} className="border-t border-white/12 last:border-b">
-            <Link
-              href={`/services/${service.slug}`}
-              className="group grid grid-cols-[3rem_1fr] items-center gap-4 py-6 md:grid-cols-[4rem_1fr_auto] md:gap-8 md:py-8"
-            >
-              <span className="tabular text-[0.6875rem] tracking-[0.18em] text-paper/35">
-                {service.num}
-              </span>
-
-              <span className="min-w-0">
-                <span className="display-3 block text-paper transition-transform duration-400 ease-[var(--ease-studio)] group-hover:translate-x-3">
-                  {service.title}
-                </span>
-                <span className="mt-2 block max-w-xl text-sm leading-relaxed text-paper/50 opacity-0 transition-opacity duration-400 group-hover:opacity-100 md:hidden">
-                  {service.tagline}
-                </span>
-              </span>
-
-              <span className="hidden max-w-md items-center gap-8 md:flex">
-                <span className="text-sm leading-relaxed text-paper/50 opacity-0 transition-opacity duration-400 group-hover:opacity-100">
-                  {service.tagline}
-                </span>
-                {/*
-                  Always on screen, not only on hover. The device is what tells
-                  a scanner what kind of thing this service produces, and at the
-                  old sixty-four pixels it was a smudge nobody could identify.
-                */}
-                <span className="block w-36 shrink-0 opacity-45 transition-opacity duration-400 group-hover:opacity-100 lg:w-44">
-                  {/* The object is a photograph on a near-white sweep, so it is
-                      inverted here to sit on black instead of glowing on it. */}
-                  <Image
-                    src={service.object}
-                    alt=""
-                    width={400}
-                    height={400}
-                    sizes="176px"
-                    className="h-auto w-full invert"
-                  />
-                </span>
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ol>
-    </Band>
-  );
-}
-
-/**
  * Who he is, on the landing page — strictly the working half.
  *
  * His biography mentions the delivery job, teaching English and four years of
@@ -161,14 +89,21 @@ export function AboutSpread() {
      * inside an article; one that runs off the top, bottom and right reads as
      * part of the page itself.
      */
-    <section data-tone="light" id="studio" className="relative w-full bg-paper text-ink">
-      {/*
-       * The text holds the shell and the photograph is pinned to the right edge
-       * of the screen, not to a column. It is deliberately modest: a third of
-       * the width and nothing like the full height. The words are what a
-       * visitor is here to read; the picture is there to say who is saying them.
-       */}
-      <div className="shell py-24 md:py-32 lg:pr-[26rem] xl:pr-[30rem]">
+    /*
+     * A two-column spread rather than a picture pinned into the margin.
+     *
+     * The earlier version floated the photograph at the right edge with air
+     * above and below it, which read as a rectangle that had drifted there by
+     * accident. Filling its own column top to bottom makes it part of the page
+     * instead: the section's height comes from the text, and the picture simply
+     * occupies whatever that turns out to be.
+     */
+    <section
+      data-tone="light"
+      id="studio"
+      className="relative w-full bg-paper text-ink lg:grid lg:grid-cols-[1.5fr_1fr]"
+    >
+      <div className="px-5 py-24 md:px-10 lg:py-32 lg:pr-20 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
         <p className="label mb-8">Обо мне</p>
         <p className="display-2 uppercase">{site.name}</p>
         <p className="lede mt-8 max-w-xl">{site.difference}</p>
@@ -188,24 +123,13 @@ export function AboutSpread() {
         </CTA>
       </div>
 
-      {/* Pinned to the viewport's right edge on wide screens. */}
-      <div className="absolute top-1/2 right-0 hidden h-[24rem] w-[22rem] -translate-y-1/2 overflow-hidden lg:block xl:h-[28rem] xl:w-[26rem]">
+      {/* Its own column, flush to the top, bottom and right of the section. */}
+      <div className="relative h-80 w-full sm:h-[28rem] lg:h-auto">
         <Image
           src="/photo/portrait-work.webp"
           alt={`${site.name} за работой`}
           fill
-          sizes="(min-width: 1280px) 26rem, 22rem"
-          className="object-cover object-center"
-        />
-      </div>
-
-      {/* Below the text on narrow screens, still edge to edge. */}
-      <div className="relative h-72 w-full sm:h-96 lg:hidden">
-        <Image
-          src="/photo/portrait-work.webp"
-          alt=""
-          fill
-          sizes="100vw"
+          sizes="(min-width: 1024px) 40vw, 100vw"
           className="object-cover object-center"
         />
       </div>

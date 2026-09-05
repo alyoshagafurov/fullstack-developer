@@ -3,103 +3,66 @@ import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 
 /*
- * The opening.
+ * The opening: him on one side, the words on the other, nothing on top of
+ * anything.
  *
- * The composition follows a reference the owner pinned: the statement set heavy
- * and left, a short line of small caps opposite it on the right, micro-captions
- * in the corners, and the photograph filling the screen behind all of it. Only
- * the typography and the placement were taken from that reference — every word
- * here is his own, from his answers, and the button stays centred at the foot
- * of the screen because he asked for it there.
+ * Three earlier versions put type over the photograph — centred on his face,
+ * split around his head, and set heavy across his chest. Every one of them
+ * traded legibility for drama and lost: the statement is black, his shirt is
+ * black, and the second line disappeared into it. A scrim strong enough to fix
+ * that flattened the picture.
  *
- * The scrims are legibility, not decoration. His photograph has a plant in the
- * left third and the type is ink, so the left is lifted enough to hold letters
- * and no further: the leaves, the shadows on the wall and the desk all survive.
+ * So the two are separated. He gets a full-bleed half where nothing covers him;
+ * the words get a quiet half with room to breathe. Both are legible without a
+ * single compromise, and the composition is calm rather than busy — which is
+ * what the owner asked for after seeing the loud ones.
  *
  * `data-tone="light"` tells the header to go black here.
  */
 export function Opening() {
-  // "Цифровые продукты, с характером" — his line, split so the second half can
-  // carry a lighter weight, as in the reference.
+  // "Цифровые продукты, с характером" — split so the second half can take a
+  // lighter weight and the line reads as one sentence rather than two shouts.
   const [head, tail] = site.shortStatement.split(', ');
 
   return (
     <section
       data-tone="light"
-      className="relative flex h-[100svh] w-full flex-col overflow-hidden bg-ground"
+      className="relative flex min-h-[100svh] w-full flex-col bg-ground lg:flex-row"
     >
-      <Image
-        src="/photo/hero.webp"
-        alt={`${site.name}, ${site.role}`}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-[58%_30%]"
-      />
-
-      {/*
-        One scrim, and only where it is needed: the plant sits in the left
-        third and the statement is ink. It stops before the middle so his face,
-        the shadows on the wall and the desk keep their contrast — an earlier
-        pair of gradients covered the whole frame and left the photograph hazy.
-        The small line on the right needs none: that part of the wall is already
-        the lightest thing in the picture.
-      */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-white/75 from-0% via-white/15 via-30% to-transparent to-45%"
-      />
-
-      <div className="shell relative flex flex-1 flex-col justify-center pt-24 pb-32 md:pt-28">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-16">
-          <div>
-            <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink-2 uppercase">
-              <span aria-hidden className="block h-px w-10 bg-ink-3" />
-              {site.role}
-            </p>
-
-            <h1 className="mt-8 text-[clamp(2rem,6.6vw,5.5rem)] leading-[0.92] tracking-[-0.04em] uppercase">
-              <span className="block font-extrabold">{head},</span>
-              {tail && <span className="block font-light">{tail}</span>}
-            </h1>
-
-            <p className="mt-10 text-[0.6875rem] leading-[2] tracking-[0.22em] text-ink-2 uppercase">
-              {site.name}
-            </p>
-          </div>
-
-          {/* His own sentence, set small and opposite the statement. */}
-          <div className="hidden lg:block lg:justify-self-end lg:text-right">
-            <p className="max-w-xs text-sm leading-[2] tracking-[0.04em] text-ink-2">
-              {site.difference}
-            </p>
-            <span aria-hidden className="mt-8 ml-auto block h-px w-14 bg-ink-3" />
-          </div>
-        </div>
+      {/* The photograph. Below the words on a phone, beside them on a desk. */}
+      <div className="relative order-1 h-[42svh] w-full shrink-0 lg:order-2 lg:h-auto lg:w-[52%]">
+        <Image
+          src="/photo/hero.webp"
+          alt={`${site.name}, ${site.role}`}
+          fill
+          priority
+          sizes="(min-width: 1024px) 52vw, 100vw"
+          className="object-cover object-[62%_32%]"
+        />
       </div>
 
-      {/* The button, centred at the foot, exactly where he asked for it. */}
-      <div className="relative shrink-0 pb-20 text-center md:pb-24">
-        <CTA href="/start" size="lg">
+      {/* The words. Nothing crosses the picture, so nothing needs a scrim. */}
+      <div className="order-2 flex flex-1 flex-col justify-center px-5 py-16 md:px-10 lg:order-1 lg:py-24 lg:pr-16 lg:pl-[max(2.5rem,calc((100vw-1440px)/2+4rem))]">
+        <p className="flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink-2 uppercase">
+          <span aria-hidden className="block h-px w-10 bg-ink-3" />
+          {site.role}
+        </p>
+
+        <h1 className="mt-10 text-[clamp(2.25rem,4.6vw,4.5rem)] leading-[0.95] tracking-[-0.04em] uppercase">
+          <span className="block font-extrabold">{head},</span>
+          {tail && <span className="block font-light">{tail}</span>}
+        </h1>
+
+        <p className="mt-10 max-w-md text-base leading-relaxed text-ink-2">{site.difference}</p>
+
+        <CTA href="/start" size="lg" className="mt-12 self-start">
           {site.heroCta}
         </CTA>
-      </div>
 
-      {/*
-        The corner captions are paper, not ink: this strip of the photograph is
-        the desk, which is nearly black. They are the one part of the opening
-        that does not follow the band's tone, because they do not sit on the
-        band — they sit on the darkest part of the picture.
-      */}
-      <div className="shell relative flex shrink-0 items-end justify-between gap-6 pb-6 text-[0.6875rem] tracking-[0.22em] text-white/55 uppercase">
-        <p className="flex items-center gap-4">
-          <span className="tabular">01</span>
-          <span aria-hidden className="block h-px w-10 bg-white/40" />
+        <p className="mt-16 flex items-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink-3 uppercase">
+          {site.name}
+          <span aria-hidden className="block h-px w-10 bg-ink-3" />
           Душанбе · UTC+5
-        </p>
-        <p className="hidden items-center gap-3 sm:flex">
-          Прокрутите вниз
-          <span aria-hidden>↓</span>
         </p>
       </div>
     </section>
