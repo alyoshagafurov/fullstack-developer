@@ -43,11 +43,112 @@ model Lead {
 
   /// Set the first time the owner moves the lead out of NEW.
   firstRepliedAt DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+
+  /// The agreed value of the deal, once there is one. Money is never a float:
+  /// a rounding error here is a rounding error in the owner's income.
+  dealAmount   Decimal? @db.Decimal(12, 2)
+  /// Stored beside the amount, not in a setting. The owner works in сомони,
+  /// rubles and dollars, and a sum only means something with its currency.
+  dealCurrency String?
+
+  payments Payment[]
+  expenses Expense[]
+  notes    Note[]
+  events   StatusEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
   @@map("aly_lead")
+}
+
+/// Money actually received, or expected by a date. Income is counted when it
+/// arrives, which is how the owner said he counts it (answer 13.5).
+model Payment {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  amount   Decimal     @db.Decimal(12, 2)
+  currency String
+  kind     PaymentKind @default(STAGE)
+
+  /// Null until the money is in. That is what makes it income.
+  paidAt DateTime?
+  /// Null when nothing was promised for a date. A past dueAt with no paidAt is
+  /// what the finance screen calls a debt.
+  dueAt  DateTime?
+  note   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([paidAt])
+  @@map("aly_payment")
+}
+
+enum PaymentKind {
+  PREPAYMENT
+  STAGE
+  FINAL
+  SUPPORT
+
+  @@map("aly_payment_kind")
+}
+
+/// A cost. Categories are the eleven the owner listed in answer 13.4 and live
+/// in lib/content/finance.ts, not in a table: they are his list, not data.
+model Expense {
+  id       String  @id @default(cuid())
+  title    String
+  amount   Decimal @db.Decimal(12, 2)
+  currency String
+  category String
+
+  spentAt DateTime
+  note    String?
+
+  /// Set when the cost belongs to one project rather than to the business.
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([spentAt])
+  @@index([category])
+  @@map("aly_expense")
+}
+
+/// The owner's private note on a lead. Never leaves the admin: no public route
+/// selects it, and it is never sent to a client through the bot.
+model Note {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+  @@map("aly_note")
+}
+
+/// Every status change, so the lead has a history rather than just a state.
+model StatusEvent {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  from LeadStatus?
+  to   LeadStatus
+
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+  @@map("aly_status_event")
 }
 
 /// Mapped to its own Postgres type. The database already carries a `LeadStatus`

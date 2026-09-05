@@ -245,7 +245,9 @@
       "Bash(node -e \"const m=require\\('@prisma/adapter-neon'\\); console.log\\(Object.keys\\(m\\).join\\(', '\\)\\)\")",
       "Bash(awk '/type Datasource = /,/^};/' node_modules/@prisma/config/dist/index.d.ts)",
       "Bash(python3 -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
-      "Bash(echo \"код: $?\")"
+      "Bash(echo \"код: $?\")",
+      "Bash(node -e \"require.resolve\\('server-only'\\); console.log\\('server-only: есть'\\)\")",
+      "Bash(echo \"код tsc: $?\")"
     ]
   }
 }
