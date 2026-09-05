@@ -214,67 +214,6 @@ export function AboutSpread() {
 }
 
 /**
- * Contacts.
- *
- * The closing band asks for a brief; this one is for the people who would
- * rather just write. Every channel he listed, each a real link, on the same
- * black ground as the rest of the loud parts of the page.
- */
-export function Contacts() {
-  const { contact } = site;
-
-  const channels = [
-    { label: 'Telegram', value: `@${contact.telegram}`, href: `https://t.me/${contact.telegram}` },
-    { label: 'Почта', value: contact.email, href: `mailto:${contact.email}` },
-    { label: 'WhatsApp', value: contact.phone, href: `https://wa.me/${contact.phoneHref.replace(/\D/g, '')}` },
-    { label: 'Телефон', value: contact.phone, href: `tel:${contact.phoneHref}` },
-    {
-      label: 'Instagram',
-      value: `@${contact.instagram}`,
-      href: `https://instagram.com/${contact.instagram}`,
-    },
-    { label: 'GitHub', value: 'alyoshagafurov', href: contact.github },
-  ];
-
-  return (
-    <Band tone="void" id="contacts" innerClassName="py-28 md:py-40">
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/40 uppercase">Контакты</p>
-      <h2 className="display-2 mt-10 max-w-3xl text-paper uppercase">Напишите напрямую</h2>
-      <p className="mt-8 max-w-lg text-base leading-relaxed text-paper/55">
-        Если заполнять форму не хочется — просто напишите. Отвечаю{' '}
-        {site.responseTime.toLowerCase()}. {site.hours}
-      </p>
-
-      <ul className="mt-16 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
-        {channels.map((channel) => (
-          <li key={channel.label} className="border-t border-white/12">
-            <a
-              href={channel.href}
-              target={channel.href.startsWith('http') ? '_blank' : undefined}
-              rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="group flex min-h-20 items-center justify-between gap-6 py-6"
-            >
-              <span className="min-w-0">
-                <span className="label mb-2 block text-paper/40">{channel.label}</span>
-                <span className="block truncate text-lg text-paper transition-opacity group-hover:opacity-70">
-                  {channel.value}
-                </span>
-              </span>
-              <span
-                aria-hidden
-                className="shrink-0 text-paper/40 transition-transform duration-300 ease-[var(--ease-studio)] group-hover:translate-x-1 group-hover:text-paper"
-              >
-                →
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </Band>
-  );
-}
-
-/**
  * The process as one track.
  *
  * Each stage takes the share of the line its real duration deserves, so four

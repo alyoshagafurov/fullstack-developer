@@ -17,9 +17,10 @@ const columns = [
     ],
   },
   {
-    title: 'Обо мне',
+    title: 'Связаться',
     links: [
       { href: '/about', label: 'Кто я' },
+      { href: '/contacts', label: 'Контакты' },
       { href: '/start', label: 'Оставить заявку' },
     ],
   },

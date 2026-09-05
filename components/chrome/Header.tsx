@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 /*
@@ -21,11 +22,11 @@ const NAV = [
   { href: '/work', label: 'Проекты' },
   { href: '/services', label: 'Услуги' },
   { href: '/about', label: 'Обо мне' },
-  { href: '/#process', label: 'Процесс' },
-  { href: '/#contacts', label: 'Контакты' },
+  { href: '/contacts', label: 'Контакты' },
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [onDark, setOnDark] = useState(false);
   /*
@@ -49,8 +50,12 @@ export function Header() {
    * page that alternates black and white eight times, rather than only over the
    * first screen — which is all the earlier version handled.
    *
-   * The bands are collected once and re-measured on scroll: reading the DOM on
-   * every frame would be the expensive part, and their order never changes.
+   * The list is rebuilt on every route change, and that is the whole bug this
+   * component spent three attempts on. The App Router keeps this layout mounted
+   * while the page under it swaps, so an effect with an empty dependency array
+   * kept holding the previous page's sections. Detached nodes report a zero box
+   * from getBoundingClientRect, nothing ever crossed the line, and the header
+   * froze on whatever colour the landing page had left it.
    */
   useEffect(() => {
     const bands = Array.from(document.querySelectorAll<HTMLElement>('[data-tone]'));
@@ -118,7 +123,7 @@ export function Header() {
       window.removeEventListener('scroll', check);
       window.removeEventListener('resize', onResize);
     };
-  }, []);
+  }, [pathname]);
 
   // An open menu owns the screen: the page behind it must not scroll, Escape
   // must close it, and focus must not wander into the hidden content.

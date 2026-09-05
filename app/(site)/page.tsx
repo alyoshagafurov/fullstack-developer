@@ -2,7 +2,6 @@ import { Opening } from '@/components/sections/Opening';
 import { Vitrine, type VitrineItem } from '@/components/vitrine/Vitrine';
 import {
   AboutSpread,
-  Contacts,
   Manifesto,
   Marquee,
   ProcessTrack,
@@ -70,7 +69,6 @@ export default async function HomePage() {
       <ProcessTrack />
       <Voices items={testimonials.slice(0, 3)} total={testimonials.length} />
       <StartBand />
-      <Contacts />
     </>
   );
 }
