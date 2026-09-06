@@ -9,16 +9,14 @@ import type * as ThreeNS from 'three';
  *
  * Seven forms, all drawn the same way: not solids but clouds of small white
  * points sitting on a surface — a stone, a knot, a ring, a cut gem, a capsule,
- * a dodecahedron, a sphere. And all of them beat. Every point moves out along
- * the surface's normal and back on a heartbeat — two quick pushes, then rest —
- * so the distance between the points stretches and settles the way a pulse
- * does. On the round forms the whole cloud swells; on the faceted ones the
- * faces slide apart and close again. Each has its own tempo, its own reach and
- * its own way of turning, so no two pages beat alike.
+ * a dodecahedron, a sphere. Each turns in its own manner, leans toward the
+ * pointer and turns a touch with the scroll. Nothing else: the owner tried a
+ * heartbeat in the points and took it out — the mark is a second voice on
+ * these pages, the type is the first, and a beating thing in the corner of
+ * the eye argues with the reading.
  *
  * Which form a page gets follows from its address unless a caller says
- * otherwise, so the pages themselves stay untouched. All of them lean toward
- * the pointer and turn a touch with the scroll.
+ * otherwise, so the pages themselves stay untouched.
  *
  * Three.js is heavy and this is decoration, so the library is fetched only
  * after the page is idle, the scene renders only while it is on screen and the
@@ -43,15 +41,15 @@ function shapeFor(pathname: string): Shape {
   return BY_PATH.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'stone';
 }
 
-/** Tempo in seconds per beat, how far a point travels, and how big a dot is. */
-const RHYTHM: Record<Shape, { period: number; reach: number; dot: number }> = {
-  stone: { period: 1.15, reach: 0.13, dot: 0.075 },
-  knot: { period: 1.4, reach: 0.09, dot: 0.05 },
-  ring: { period: 0.95, reach: 0.11, dot: 0.06 },
-  prism: { period: 1.65, reach: 0.18, dot: 0.07 },
-  capsule: { period: 1.25, reach: 0.1, dot: 0.06 },
-  dodeca: { period: 1.85, reach: 0.15, dot: 0.07 },
-  points: { period: 1.0, reach: 0.14, dot: 0.06 },
+/** How big a dot is: denser clouds get finer dots. */
+const DOT: Record<Shape, number> = {
+  stone: 0.075,
+  knot: 0.05,
+  ring: 0.06,
+  prism: 0.07,
+  capsule: 0.06,
+  dodeca: 0.07,
+  points: 0.06,
 };
 
 export function Sculpture({ className = '', shape }: { className?: string; shape?: Shape }) {
@@ -89,15 +87,6 @@ export function Sculpture({ className = '', shape }: { className?: string; shape
   return <div ref={host} aria-hidden className={`pointer-events-none ${className}`} />;
 }
 
-/**
- * One beat of a heart, as a curve over a cycle of 0…1: a sharp push, a
- * second softer one right behind it, then rest. Peaks at about 1.
- */
-function beat(x: number) {
-  const bump = (centre: number, width: number) => Math.exp(-((x - centre) ** 2) / width);
-  return bump(0.08, 0.0025) + 0.55 * bump(0.26, 0.004);
-}
-
 /** A soft round dot, drawn once, so the points are beads rather than squares. */
 function dotTexture(THREE: Three) {
   const size = 64;
@@ -118,40 +107,32 @@ function dotTexture(THREE: Three) {
 }
 
 /*
- * Points laid on the flat faces of a polyhedron, in a grid on each triangle,
- * each carrying its face's normal rather than a rounded one. Three.js can
- * subdivide a polyhedron, but it pushes the new vertices out onto a sphere
- * and the facets are gone; this keeps them, and because every point moves
- * with its own face, a beat slides the faces apart and back.
+ * Points laid on the flat faces of a polyhedron, in a grid on each triangle.
+ * Three.js can subdivide a polyhedron, but it pushes the new vertices out
+ * onto a sphere and the facets are gone; this keeps them.
  */
 function facets(THREE: Three, source: ThreeNS.BufferGeometry, steps: number) {
   const p = source.getAttribute('position');
   const pos: number[] = [];
-  const nor: number[] = [];
   const a = new THREE.Vector3();
   const b = new THREE.Vector3();
   const c = new THREE.Vector3();
-  const n = new THREE.Vector3();
-  const q = new THREE.Vector3();
   for (let f = 0; f + 2 < p.count; f += 3) {
     a.fromBufferAttribute(p, f);
     b.fromBufferAttribute(p, f + 1);
     c.fromBufferAttribute(p, f + 2);
-    n.copy(b).sub(a).cross(q.copy(c).sub(a)).normalize();
     for (let i = 0; i <= steps; i += 1) {
       for (let j = 0; j <= steps - i; j += 1) {
         const u = i / steps;
         const v = j / steps;
         const w = 1 - u - v;
         pos.push(a.x * w + b.x * u + c.x * v, a.y * w + b.y * u + c.y * v, a.z * w + b.z * u + c.z * v);
-        nor.push(n.x, n.y, n.z);
       }
     }
   }
   source.dispose();
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
   return geometry;
 }
 
@@ -174,20 +155,15 @@ function surface(THREE: Three, shape: Shape): ThreeNS.BufferGeometry {
   }
 }
 
-/** The form itself, its resting positions and normals, and what to dispose. */
+/** The form itself, and what to dispose with it. */
 function build(THREE: Three, shape: Shape) {
   const geometry = surface(THREE, shape);
-  if (!geometry.getAttribute('normal')) geometry.computeVertexNormals();
-  const position = geometry.getAttribute('position') as ThreeNS.BufferAttribute;
-  const normal = geometry.getAttribute('normal') as ThreeNS.BufferAttribute;
-  const rest = Float32Array.from(position.array as Float32Array);
-  const out = Float32Array.from(normal.array as Float32Array);
 
   const texture = dotTexture(THREE);
   const material = new THREE.PointsMaterial({
     map: texture,
     color: 0xffffff,
-    size: RHYTHM[shape].dot,
+    size: DOT[shape],
     transparent: true,
     opacity: 0.85,
     depthWrite: false,
@@ -196,20 +172,13 @@ function build(THREE: Three, shape: Shape) {
   });
   const points = new THREE.Points(geometry, material);
 
-  /** Push every point out along its normal by `k`, from where it rests. */
-  const pulse = (k: number) => {
-    const array = position.array as Float32Array;
-    for (let i = 0; i < array.length; i += 1) array[i] = rest[i] + out[i] * k;
-    position.needsUpdate = true;
-  };
-
   const dispose = () => {
     geometry.dispose();
     material.dispose();
     texture.dispose();
   };
 
-  return { object: points, pulse, dispose };
+  return { object: points, dispose };
 }
 
 /**
@@ -250,7 +219,6 @@ function pose(shape: Shape, group: ThreeNS.Group, t: number, x: number, y: numbe
 
 function mount(THREE: Three, el: HTMLElement, shape: Shape) {
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rhythm = RHYTHM[shape];
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -293,9 +261,8 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    // A box narrower than it is tall would crop the form: scale it to fit,
-    // with a little room for the beat to reach into.
-    group.scale.setScalar(Math.min(1, (width / height) * 1.3) * 0.88);
+    // A box narrower than it is tall would crop the form: scale it to fit.
+    group.scale.setScalar(Math.min(1, (width / height) * 1.3));
   };
   resize();
   const ro = new ResizeObserver(resize);
@@ -316,7 +283,6 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
     eased.spin += (target.spin - eased.spin) * 0.06;
 
     pose(shape, group, t, eased.x, eased.y, eased.spin);
-    form.pulse(rhythm.reach * beat((t / rhythm.period) % 1));
     renderer.render(scene, camera);
     frame = requestAnimationFrame(draw);
   };

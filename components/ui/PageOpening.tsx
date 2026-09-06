@@ -26,10 +26,11 @@ export function PageOpening({
   return (
     <section
       data-tone="dark"
-      className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
+      className="relative flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
     >
-      {/* The stone, the size of a mark, where a masthead would carry one. */}
-      <div data-intro className="mb-8 size-28 md:size-32">
+      {/* The mark, in the corner, out of the column: the type has the screen
+          to itself, and the form is there for whoever looks for it. */}
+      <div data-intro className="absolute right-5 bottom-8 size-16 md:right-10 md:bottom-10 md:size-20">
         <Sculpture className="size-full" />
       </div>
 

@@ -295,8 +295,8 @@ export function StartBand() {
 
   return (
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
-      {/* The stone, the size of a mark, above the label. */}
-      <div data-reveal className="mx-auto mb-8 size-28 md:size-32">
+      {/* The mark, in the corner, out of the column, so the words keep the band. */}
+      <div data-reveal className="absolute right-5 bottom-8 size-16 md:right-10 md:bottom-10 md:size-20">
         <Sculpture shape="knot" className="size-full" />
       </div>
 
