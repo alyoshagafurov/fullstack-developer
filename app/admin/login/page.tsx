@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { AccessForm } from './AccessForm';
 import { adminState, currentAdmin } from '@/lib/auth';
+import { dbDiagnostics } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,12 +16,15 @@ export default async function LoginPage() {
      * Name the actual cause rather than "something went wrong".
      *
      * Only presence is reported, never a value: a connection string carries the
-     * database password, and a diagnostic screen is a page anyone can open.
+     * database password, and a diagnostic screen is a page anyone can open. The
+     * host, though, is shown — a deployment pointed at the wrong database looks
+     * exactly like a dead one otherwise, and the host is what tells them apart.
      */
     const missing = [
       !process.env.DATABASE_URL && 'DATABASE_URL',
       (process.env.ADMIN_SESSION_SECRET ?? '').length < 32 && 'ADMIN_SESSION_SECRET',
     ].filter(Boolean) as string[];
+    const db = missing.length > 0 ? null : await dbDiagnostics();
 
     return (
       <div className="flex min-h-screen items-center justify-center px-5 py-20">
