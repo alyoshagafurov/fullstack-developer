@@ -6,6 +6,8 @@ const nextConfig = {
 
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Case screenshots are uploaded from the admin into Vercel Blob.
+    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
   },
 
   async headers() {

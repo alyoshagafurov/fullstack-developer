@@ -259,6 +259,15 @@ model Testimonial {
   /// Real client photo or company logo. Empty means a drawn monogram.
   avatarUrl String?
 
+  /// 1–5, as the client rated the work. Null when entered without one.
+  rating Int?
+  /// "male" | "female" — picks one of the two fixed avatar photographs the
+  /// owner chose to show on every testimonial instead of real faces.
+  gender String?
+  /// "admin" — typed in by the owner; "site" — left through the form on the
+  /// landing page, unpublished until he approves it.
+  source String @default("admin")
+
   /// Testimonials belong to the case they are about, when there is one.
   caseId String? @unique
   case   Case?   @relation(fields: [caseId], references: [id], onDelete: SetNull)

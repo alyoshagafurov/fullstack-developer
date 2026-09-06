@@ -7,8 +7,8 @@ import {
   Marquee,
   ProcessTrack,
   StartBand,
-  Voices,
 } from '@/components/sections/home';
+import { Reviews } from '@/components/reviews/Reviews';
 import { getPublishedCases, getTestimonials } from '@/lib/cases';
 import { featuredServices } from '@/lib/content/services';
 
@@ -23,7 +23,8 @@ import { featuredServices } from '@/lib/content/services';
  *
  * Revalidated rather than fully static: the owner publishes cases and
  * testimonials from the admin, and a publish has to reach the site without a
- * redeploy.
+ * redeploy. Reviews close the page, just before the footer, with the form
+ * the owner sends clients to.
  */
 export const revalidate = 300;
 
@@ -71,10 +72,10 @@ export default async function HomePage() {
       <Manifesto />
       <Vitrine items={items} />
       <AboutSpread />
-      <Voices items={testimonials.slice(0, 3)} total={testimonials.length} />
       <CasesBand items={cases.slice(0, 3)} total={cases.length} />
       <ProcessTrack />
       <StartBand />
+      <Reviews items={testimonials.slice(0, 3)} total={testimonials.length} />
     </>
   );
 }

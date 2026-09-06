@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 
@@ -83,10 +84,18 @@ export function Opening() {
         {/* The button: under the words on a phone, on the desk on a desk screen.
             Ink on both — the owner's call — and the desk is grey, not black,
             so it still stands off it. */}
-        <div className="mt-8 flex justify-center md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2">
+        <div className="mt-8 flex flex-col items-center gap-4 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:flex-row md:justify-center md:gap-5 md:translate-y-1/2">
           <CTA href="/start" size="lg">
             {site.heroCta}
           </CTA>
+          {/* Quieter than the brief: ink on the wall, paper on the desk. */}
+          <Link
+            href="/#reviews"
+            className="inline-flex min-h-14 items-center gap-3 rounded-full border border-ink px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:border-paper/70 md:text-paper md:hover:bg-paper md:hover:text-ink"
+          >
+            Оставить отзыв
+            <span aria-hidden>→</span>
+          </Link>
         </div>
       </div>
 

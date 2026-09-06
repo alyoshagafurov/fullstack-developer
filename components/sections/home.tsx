@@ -6,7 +6,7 @@ import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
 import { StudioObject } from '@/components/ui/StudioObject';
-import type { CaseRow, TestimonialRow } from '@/lib/cases';
+import type { CaseRow } from '@/lib/cases';
 
 /*
  * The bands of the landing page.
@@ -176,63 +176,6 @@ export function ProcessTrack() {
           </div>
         ))}
       </dl>
-    </Band>
-  );
-}
-
-/**
- * Testimonials.
- *
- * Renders nothing at all until the owner publishes a real one from the admin.
- * An empty band is honest; a placeholder quote is not.
- */
-export function Voices({ items, total }: { items: TestimonialRow[]; total: number }) {
-  if (items.length === 0) return null;
-
-  return (
-    /* On black, directly after the white «Обо мне» spread: the page turns over
-       from him talking about himself to other people talking about him. */
-    <Band tone="void" id="voices" innerClassName="py-28 md:py-40">
-      <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display-2 text-paper uppercase">Отзывы</h2>
-        {total > items.length && (
-          <Link
-            href="/reviews"
-            className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase transition-colors hover:text-paper"
-          >
-            Все {total}
-          </Link>
-        )}
-      </div>
-
-      <div className="grid gap-14 md:grid-cols-3">
-        {items.map((voice) => (
-          <div key={voice.id} className="border-t border-white/15 pt-8">
-            <blockquote className="text-lg leading-relaxed tracking-[-0.01em] text-paper">
-              {voice.text}
-            </blockquote>
-            <div className="mt-8 flex items-center gap-3">
-              <Avatar name={voice.name} src={voice.avatarUrl} />
-              <div className="min-w-0">
-                <p className="text-sm text-paper">{voice.name}</p>
-                {(voice.role || voice.company) && (
-                  <p className="text-xs text-paper/60">
-                    {[voice.role, voice.company].filter(Boolean).join(', ')}
-                  </p>
-                )}
-              </div>
-            </div>
-            {voice.caseSlug && (
-              <Link
-                href={`/work/${voice.caseSlug}`}
-                className="mt-6 inline-flex min-h-11 items-center text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase transition-colors hover:text-paper"
-              >
-                Смотреть кейс
-              </Link>
-            )}
-          </div>
-        ))}
-      </div>
     </Band>
   );
 }

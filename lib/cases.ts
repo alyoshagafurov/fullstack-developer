@@ -1,4 +1,5 @@
 import { prisma, safely } from '@/lib/prisma';
+import type { Gender } from '@/lib/content/review';
 
 /*
  * Reading published cases and testimonials.
@@ -89,6 +90,10 @@ export type TestimonialRow = {
   role: string | null;
   text: string;
   avatarUrl: string | null;
+  /** 1–5, or null for a testimonial entered without a rating. */
+  rating: number | null;
+  /** Which of the two fixed portraits stands beside it; null draws a monogram. */
+  gender: Gender | null;
   caseSlug: string | null;
 };
 
@@ -114,6 +119,8 @@ export async function getTestimonials(limit?: number): Promise<TestimonialRow[]>
           role: true,
           text: true,
           avatarUrl: true,
+          rating: true,
+          gender: true,
           case: { select: { slug: true, published: true } },
         },
       }),
@@ -127,6 +134,8 @@ export async function getTestimonials(limit?: number): Promise<TestimonialRow[]>
     role: row.role,
     text: row.text,
     avatarUrl: row.avatarUrl,
+    rating: row.rating,
+    gender: row.gender === 'male' || row.gender === 'female' ? row.gender : null,
     caseSlug: row.case?.published ? row.case.slug : null,
   }));
 }

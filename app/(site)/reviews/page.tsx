@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ReviewCard } from '@/components/reviews/ReviewCard';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
 import { CTA } from '@/components/ui/CTA';
@@ -30,50 +29,10 @@ export default async function ReviewsPage() {
     <>
       <PageOpening eyebrow="Отзывы" title="Что говорят клиенты" />
 
-      <Band tone="paper" innerClassName="py-16 md:py-24">
-        <div className="grid gap-x-12 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+      <Band tone="ground" innerClassName="py-16 md:py-24">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {voices.map((voice) => (
-            <article key={voice.id} className="border-t border-line pt-8">
-              <blockquote className="text-base leading-relaxed">{voice.text}</blockquote>
-              <div className="mt-6 flex items-center gap-3">
-                {voice.avatarUrl ? (
-                  <Image
-                    src={voice.avatarUrl}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-10 shrink-0 rounded-full object-cover"
-                  />
-                ) : (
-                  <span
-                    aria-hidden
-                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-shelf text-xs tracking-[0.06em] text-ink-2"
-                  >
-                    {voice.name
-                      .split(/\s+/)
-                      .slice(0, 2)
-                      .map((part) => part[0]?.toUpperCase() ?? '')
-                      .join('')}
-                  </span>
-                )}
-                <div className="min-w-0">
-                  <p className="text-sm">{voice.name}</p>
-                  {(voice.role || voice.company) && (
-                    <p className="text-xs text-ink-3">
-                      {[voice.role, voice.company].filter(Boolean).join(', ')}
-                    </p>
-                  )}
-                </div>
-              </div>
-              {voice.caseSlug && (
-                <Link
-                  href={`/work/${voice.caseSlug}`}
-                  className="label mt-5 inline-flex min-h-11 items-center transition-colors hover:text-ink"
-                >
-                  Смотреть кейс
-                </Link>
-              )}
-            </article>
+            <ReviewCard key={voice.id} voice={voice} />
           ))}
         </div>
       </Band>

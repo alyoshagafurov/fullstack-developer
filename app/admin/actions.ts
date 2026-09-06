@@ -400,12 +400,19 @@ export async function saveTestimonial(id: string, form: FormData): Promise<Actio
 
   const caseId = String(form.get('caseId') ?? '').trim() || null;
 
+  // Stars and the portrait choice, as the owner set them; anything else is null.
+  const ratingValue = Number(form.get('rating') ?? 0);
+  const rating = Number.isInteger(ratingValue) && ratingValue >= 1 && ratingValue <= 5 ? ratingValue : null;
+  const genderValue = String(form.get('gender') ?? '');
+  const gender = genderValue === 'male' || genderValue === 'female' ? genderValue : null;
+
   const data = {
     name,
     text,
     company: String(form.get('company') ?? '').trim() || null,
     role: String(form.get('role') ?? '').trim() || null,
-    avatarUrl: String(form.get('avatarUrl') ?? '').trim() || null,
+    rating,
+    gender,
     caseId,
     featured: form.get('featured') === 'on',
     order: Number(form.get('order') ?? 0) || 0,

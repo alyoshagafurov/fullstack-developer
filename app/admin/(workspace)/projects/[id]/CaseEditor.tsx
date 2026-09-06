@@ -2,14 +2,14 @@
 
 import { useState, useTransition } from 'react';
 import { saveCase, type ActionResult } from '@/app/admin/actions';
+import { ScreenshotUploader } from './ScreenshotUploader';
 
 /*
  * The case editor.
  *
- * Text fields only, on purpose: screenshots are entered as paths or URLs rather
- * than uploaded, because the Vercel Blob store has not been created yet and a
- * broken upload button is worse than an honest text field. Put files in
- * public/cases and write their paths here, one per line.
+ * Screenshots are picked from the disk or dropped onto the box and go straight
+ * to Vercel Blob; the form still submits their URLs one per line, so the save
+ * action is unchanged. A path under /public can also be typed in by hand.
  *
  * The object picker offers the studio objects that already exist, so a case
  * cannot point at an image that is not there.
@@ -110,9 +110,13 @@ export function CaseEditor({ values }: { values: CaseValues }) {
         <Field label="Слово-призрак" hint="необязательно">
           <input name="ghostWord" defaultValue={values.ghostWord} className={field} />
         </Field>
-        <Field label="Скриншоты" hint="по одному пути в строке, например /cases/shot-1.webp">
-          <textarea name="screenshots" defaultValue={values.screenshots} rows={4} className={field} />
-        </Field>
+        <div>
+          <span className="label mb-3 flex items-baseline gap-3">
+            Скриншоты
+            <span className="text-ink-3 normal-case tracking-normal">выберите файлы или перетащите</span>
+          </span>
+          <ScreenshotUploader initial={values.screenshots.split('\n').filter(Boolean)} />
+        </div>
       </section>
 
       <section className="grid gap-6 border-t border-line pt-8 sm:grid-cols-3">

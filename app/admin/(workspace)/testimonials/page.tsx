@@ -10,9 +10,10 @@ export const dynamic = 'force-dynamic';
 /*
  * Testimonials.
  *
- * Only real ones ever land here: nothing on this screen generates a quote or a
- * face, and a testimonial with no photo gets a drawn monogram on the site
- * rather than an invented person. Three appear on the landing page and the rest
+ * Only real ones ever land here: nothing on this screen generates a quote, and
+ * the portrait beside a review is one of the two fixed photographs the owner
+ * chose (man or woman), never a client's face. Reviews left through the site
+ * arrive here unpublished and wait for his approval. Three appear on the landing page and the rest
  * on /reviews, which stays a 404 until the first one is published.
  */
 export default async function TestimonialsPage() {
@@ -68,7 +69,8 @@ export default async function TestimonialsPage() {
 
               <p className="text-xs text-ink-3">
                 {row.case ? `Кейс: ${row.case.title}` : 'Без кейса'}
-                {row.avatarUrl ? ' · с фото' : ' · монограмма'}
+                {row.rating ? ` · ${'★'.repeat(row.rating)}` : ''}
+                {row.source === 'site' ? ' · с сайта' : ''}
               </p>
 
               <Toggle id={row.id} published={row.published} action={toggleTestimonialPublished} />

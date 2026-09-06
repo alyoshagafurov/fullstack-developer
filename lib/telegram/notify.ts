@@ -131,3 +131,30 @@ export async function notifyClientStatus(leadId: string, to: LeadStatusName): Pr
     console.error(`[bot] notifyClientStatus failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
   }
 }
+
+/** A review left through the site is waiting. The owner decides in the admin. */
+export async function notifyNewReview(id: string): Promise<void> {
+  if (!botToken()) return;
+  const admins = adminIds();
+  if (admins.size === 0) return;
+  try {
+    const row = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { name: true, company: true, rating: true, text: true },
+    });
+    if (!row) return;
+    const stars = row.rating ? '★'.repeat(row.rating) + '☆'.repeat(5 - row.rating) : '';
+    const excerpt = row.text.length > 300 ? `${row.text.slice(0, 300)}…` : row.text;
+    const text = [
+      '<b>⭐ Новый отзыв на сайте</b> · ждёт проверки',
+      '',
+      `${escapeHtml(row.name)}${row.company ? ` · ${escapeHtml(row.company)}` : ''}${stars ? ` · ${stars}` : ''}`,
+      '',
+      escapeHtml(excerpt),
+    ].join('\n');
+    const keyboard = new InlineKeyboard().url('Открыть отзыв', `${site.url}/admin/testimonials/${id}`);
+    await Promise.all([...admins].map((chat) => sendWithRetry(chat, text, { reply_markup: keyboard })));
+  } catch (error) {
+    console.error(`[bot] notifyNewReview failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
+  }
+}
