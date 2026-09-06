@@ -172,13 +172,22 @@ function build(THREE: Three, shape: Shape) {
   });
   const points = new THREE.Points(geometry, material);
 
+  /*
+   * A dot is sized in world units, so in a small box it shrinks with the box
+   * and a 64-pixel mark turns to dust. Below about 110 pixels the dots grow
+   * back in step, so the form stays legible at any size the mark is drawn.
+   */
+  const fit = (width: number) => {
+    material.size = DOT[shape] * Math.max(1, 110 / width);
+  };
+
   const dispose = () => {
     geometry.dispose();
     material.dispose();
     texture.dispose();
   };
 
-  return { object: points, dispose };
+  return { object: points, fit, dispose };
 }
 
 /**
@@ -263,6 +272,7 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
     camera.updateProjectionMatrix();
     // A box narrower than it is tall would crop the form: scale it to fit.
     group.scale.setScalar(Math.min(1, (width / height) * 1.3));
+    form.fit(width);
   };
   resize();
   const ro = new ResizeObserver(resize);
