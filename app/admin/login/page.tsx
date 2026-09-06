@@ -50,10 +50,26 @@ export default async function LoginPage() {
               )}
             </>
           ) : (
-            <p className="text-sm leading-relaxed text-ink-2">
-              Переменные на месте, но подключиться к базе не вышло. Проверьте, что проект в Neon не
-              на паузе и строка подключения ведёт на действующую базу.
-            </p>
+            <>
+              <p className="text-sm leading-relaxed text-ink-2">
+                Переменные на месте, но подключиться к базе не вышло. Проверьте, что проект в Neon
+                не на паузе и что DATABASE_URL на Vercel ведёт на ту же базу, что и в .env.
+              </p>
+              {db && (
+                <dl className="mt-6 space-y-3 text-sm">
+                  <div>
+                    <dt className="text-ink-3">Хост из DATABASE_URL</dt>
+                    <dd className="mt-1 break-all font-mono text-xs">{db.host ?? '—'}</dd>
+                  </div>
+                  {db.error && (
+                    <div>
+                      <dt className="text-ink-3">Ответ базы</dt>
+                      <dd className="mt-1 break-all font-mono text-xs">{db.error}</dd>
+                    </div>
+                  )}
+                </dl>
+              )}
+            </>
           )}
 
           <p className="mt-10 text-sm text-ink-3">

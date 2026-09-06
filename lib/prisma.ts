@@ -74,3 +74,40 @@ export async function safely<T>(label: string, read: () => Promise<T>, fallback:
     return fallback;
   }
 }
+
+export type DbDiagnostics = {
+  configured: boolean;
+  host: string | null;
+  error: string | null;
+};
+
+/**
+ * What the admin's "database unavailable" screen shows instead of a shrug.
+ *
+ * Only the host of the connection string is ever exposed — enough to see that
+ * a deployment points at the wrong database, and nothing that opens it. The
+ * error is reduced to its class and first line: Prisma's messages name the
+ * host or the missing table, never a row.
+ */
+export async function dbDiagnostics(): Promise<DbDiagnostics> {
+  const url = process.env.DATABASE_URL;
+  let host: string | null = null;
+  try {
+    host = url ? new URL(url).host : null;
+  } catch {
+    host = 'некорректная строка';
+  }
+  if (!url) return { configured: false, host: null, error: null };
+  try {
+    await prisma.$queryRawUnsafe('select 1');
+    return { configured: true, host, error: null };
+  } catch (error) {
+    const name = (error as Error)?.constructor?.name ?? 'Error';
+    const line = String((error as Error)?.message ?? '')
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .pop();
+    return { configured: true, host, error: line ? `${name}: ${line.slice(0, 200)}` : name };
+  }
+}
