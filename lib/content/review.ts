@@ -22,8 +22,8 @@ export const genderLabel: Record<Gender, string> = { male: 'Мужчина', fem
  * Null until then: the card shows a monogram rather than a broken image.
  */
 export const avatarFile: Record<Gender, string | null> = {
-  male: null,
-  female: null,
+  male: '/avatars/man.webp',
+  female: '/avatars/woman.webp',
 };
 
 export const reviewSchema = z.object({
