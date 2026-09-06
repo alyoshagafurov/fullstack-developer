@@ -18,7 +18,7 @@ import { ReviewCard } from '@/components/reviews/ReviewCard';
 export function Reviews({ items, total }: { items: TestimonialRow[]; total: number }) {
   return (
     <Band tone="ground" id="reviews" innerClassName="py-24 md:py-32">
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div data-reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <h2 className="display-2 uppercase">Отзывы</h2>
         {total > items.length && (
           <Link
@@ -31,7 +31,7 @@ export function Reviews({ items, total }: { items: TestimonialRow[]; total: numb
       </div>
 
       {items.length > 0 && (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div data-reveal="group" className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {items.map((voice) => (
             <ReviewCard key={voice.id} voice={voice} />
           ))}
@@ -39,6 +39,7 @@ export function Reviews({ items, total }: { items: TestimonialRow[]; total: numb
       )}
 
       <div
+        data-reveal
         className={`flex flex-wrap items-center gap-x-8 gap-y-6 ${
           items.length > 0 ? 'mt-20 border-t border-line pt-12 md:mt-24' : ''
         }`}

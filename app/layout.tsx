@@ -87,7 +87,22 @@ const structuredData = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    /* The inline script below adds a class to <html> before React hydrates;
+       React would otherwise report the server/client attribute difference. */
+    <html lang="ru" suppressHydrationWarning>
+      <head>
+        {/*
+          Marks the document before first paint so the opening can start hidden
+          and arrive, rather than appear and then re-appear. Only when motion is
+          welcome; and never without JavaScript, when the page is simply there.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion')",
+          }}
+        />
+      </head>
       <body>
         {children}
         <script

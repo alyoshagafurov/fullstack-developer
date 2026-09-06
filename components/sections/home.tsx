@@ -6,6 +6,7 @@ import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
 import { StudioObject } from '@/components/ui/StudioObject';
+import { Sculpture } from '@/components/three/Sculpture';
 import type { CaseRow } from '@/lib/cases';
 
 /*
@@ -59,13 +60,22 @@ export function Marquee() {
 export function Manifesto() {
   return (
     <Band tone="paper" innerClassName="py-28 md:py-40">
-      <p className="label mb-12">Позиция</p>
-      <p className="display-3 max-w-5xl">{site.statement}</p>
+      <p data-reveal className="label mb-12">
+        Позиция
+      </p>
+      <p data-reveal className="display-3 max-w-5xl">
+        {site.statement}
+      </p>
 
-      <div className="mt-24 grid gap-x-10 gap-y-14 border-t border-line pt-14 md:grid-cols-3">
+      <div
+        data-reveal="group"
+        className="mt-24 grid gap-x-10 gap-y-14 border-t border-line pt-14 md:grid-cols-3"
+      >
         {site.stats.map((stat, index) => (
           <div key={stat.label} className={index === 0 ? 'md:col-span-1' : ''}>
-            <p className="display-2 tabular">{stat.value}</p>
+            <p data-count className="display-2 tabular">
+              {stat.value}
+            </p>
             <p className="mt-4 text-sm text-ink-2">{stat.label}</p>
           </div>
         ))}
@@ -95,7 +105,7 @@ export function AboutSpread() {
      */
     <Band tone="paper" id="studio" innerClassName="py-24 md:py-32">
       <div className="grid gap-14 md:grid-cols-2 md:items-start md:gap-20">
-        <div className="md:order-1">
+        <div data-reveal="group" className="md:order-1">
           <p className="label mb-8">Обо мне</p>
           <p className="display-2 uppercase">{site.name}</p>
           <p className="lede mt-8">{site.difference}</p>
@@ -115,7 +125,10 @@ export function AboutSpread() {
           </CTA>
         </div>
 
-        <div className="relative aspect-3/2 w-full overflow-hidden bg-ground md:order-2 md:aspect-4/5">
+        <div
+          data-reveal="image"
+          className="relative aspect-3/2 w-full overflow-hidden bg-ground md:order-2 md:aspect-4/5"
+        >
           <Image
             src="/photo/about.webp"
             alt={`${site.name} за работой`}
@@ -141,10 +154,14 @@ export function ProcessTrack() {
 
   return (
     <Band tone="shelf" id="process" innerClassName="py-28 md:py-40">
-      <h2 className="display-2 mb-16 max-w-2xl uppercase">Как идёт работа</h2>
+      <h2 data-reveal className="display-2 mb-16 max-w-2xl uppercase">
+        Как идёт работа
+      </h2>
 
-      {/* Stage widths are their real share of the timeline. */}
-      <div className="mb-14 hidden h-px w-full bg-line-2 md:flex" aria-hidden>
+      {/* Stage widths are their real share of the timeline. It draws itself
+          left to right as it comes into view: a timeline that is drawn reads
+          as time passing, a line that is simply there reads as a border. */}
+      <div data-draw className="mb-14 hidden h-px w-full bg-line-2 md:flex" aria-hidden>
         {process.map((stage) => (
           <div
             key={stage.num}
@@ -154,7 +171,7 @@ export function ProcessTrack() {
         ))}
       </div>
 
-      <ol className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+      <ol data-reveal="group" className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
         {process.map((stage) => (
           <li key={stage.num}>
             <p className="display-3 text-ink-3 tabular">{stage.num}</p>
@@ -168,7 +185,7 @@ export function ProcessTrack() {
         ))}
       </ol>
 
-      <dl className="mt-20 grid gap-10 border-t border-line-2 pt-10 md:grid-cols-3">
+      <dl data-reveal="group" className="mt-20 grid gap-10 border-t border-line-2 pt-10 md:grid-cols-3">
         {terms.map((term) => (
           <div key={term.label}>
             <dt className="label mb-3">{term.label}</dt>
@@ -192,7 +209,7 @@ export function CasesBand({ items, total }: { items: CaseRow[]; total: number })
 
   return (
     <Band tone="paper" id="work" innerClassName="py-28 md:py-40">
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div data-reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <h2 className="display-2 uppercase">Кейсы</h2>
         {total > items.length && (
           <Link
@@ -204,7 +221,7 @@ export function CasesBand({ items, total }: { items: CaseRow[]; total: number })
         )}
       </div>
 
-      <ol className="divide-y divide-line border-t border-line">
+      <ol data-reveal="group" className="divide-y divide-line border-t border-line">
         {items.map((row, index) => {
           // The register's row, in miniature: mark, words, object when there is
           // a client mark; the alternating pair when there is not.
@@ -276,13 +293,20 @@ export function StartBand() {
 
   return (
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">Заявка</p>
+      {/* The stone, the size of a mark, above the label. */}
+      <div data-reveal className="mx-auto mb-8 size-20 md:size-24">
+        <Sculpture className="size-full" />
+      </div>
 
-      <p className="display-1 mx-auto mt-12 max-w-6xl text-paper uppercase">
+      <p data-reveal className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
+        Заявка
+      </p>
+
+      <p data-reveal className="display-1 mx-auto mt-12 max-w-6xl text-paper uppercase">
         {site.contactInvite}
       </p>
 
-      <div className="mt-14 flex flex-col items-center">
+      <div data-reveal="group" className="mt-14 flex flex-col items-center">
         <CTA href="/start" tone="dark" size="lg">
           {site.heroCta}
         </CTA>
@@ -291,7 +315,10 @@ export function StartBand() {
         </p>
       </div>
 
-      <dl className="mx-auto mt-24 grid max-w-3xl gap-10 border-t border-white/12 pt-10 text-sm sm:grid-cols-3">
+      <dl
+        data-reveal="group"
+        className="mx-auto mt-24 grid max-w-3xl gap-10 border-t border-white/12 pt-10 text-sm sm:grid-cols-3"
+      >
         <div>
           <dt className="label mb-3 text-paper/55">Ответ</dt>
           <dd className="text-paper/70">{site.responseTime}</dd>

@@ -20,7 +20,10 @@ export default function AboutPage() {
 
       <Band tone="paper" innerClassName="py-20 md:py-28">
         <div className="grid gap-14 md:grid-cols-2 md:gap-20">
-          <div className="relative aspect-3/2 w-full overflow-hidden bg-ground md:aspect-4/5">
+          <div
+            data-reveal="image"
+            className="relative aspect-3/2 w-full overflow-hidden bg-ground md:aspect-4/5"
+          >
             <Image
               src="/photo/about.webp"
               alt={`${site.name} за работой`}
@@ -31,7 +34,7 @@ export default function AboutPage() {
             />
           </div>
 
-          <div>
+          <div data-reveal="group">
             <p className="text-[clamp(1.25rem,2.4vw,1.75rem)] leading-[1.35] tracking-[-0.02em]">
               {about.origin}
             </p>

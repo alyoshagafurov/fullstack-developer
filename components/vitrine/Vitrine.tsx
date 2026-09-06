@@ -229,9 +229,15 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
                   className="transition-[opacity,transform] duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none"
                   style={{
                     opacity: active ? 1 : 0,
+                    /* A little perspective on the drag: the object turns a
+                       few degrees as it moves, so it is a thing being handled
+                       rather than a picture being slid. The perspective lives
+                       in the image's own transform, never on a parent — a
+                       parent with perspective is a stacking context, and that
+                       is what breaks the `darken` blend against the ghost. */
                     transform: active
-                      ? `translate3d(${drag * 0.45}px, 0, 0)`
-                      : 'translate3d(0, 22px, 0)',
+                      ? `perspective(1400px) translate3d(${drag * 0.45}px, 0, 0) rotateY(${drag * -0.03}deg)`
+                      : 'perspective(1400px) translate3d(0, 22px, 0)',
                     transitionDuration: dragging ? '0ms' : undefined,
                   }}
                 />

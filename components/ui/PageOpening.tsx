@@ -1,4 +1,5 @@
 import { CTA } from '@/components/ui/CTA';
+import { Sculpture } from '@/components/three/Sculpture';
 import { site } from '@/lib/content/site';
 
 /*
@@ -27,16 +28,31 @@ export function PageOpening({
       data-tone="dark"
       className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
     >
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">{eyebrow}</p>
+      {/* The stone, the size of a mark, where a masthead would carry one. */}
+      <div data-intro className="mb-8 size-20 md:size-24">
+        <Sculpture className="size-full" />
+      </div>
 
-      <h1 className="display-1 mt-10 max-w-6xl uppercase">{title}</h1>
+      <p data-intro className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
+        {eyebrow}
+      </p>
 
-      {lede && <p className="lede mt-10 max-w-xl text-paper/55">{lede}</p>}
+      <h1 data-intro className="display-1 mt-10 max-w-6xl uppercase">
+        {title}
+      </h1>
+
+      {lede && (
+        <p data-intro className="lede mt-10 max-w-xl text-paper/55">
+          {lede}
+        </p>
+      )}
 
       {cta && (
-        <CTA href="/start" tone="dark" size="lg" className="mt-14">
-          {site.heroCta}
-        </CTA>
+        <div data-intro className="mt-14">
+          <CTA href="/start" tone="dark" size="lg">
+            {site.heroCta}
+          </CTA>
+        </div>
       )}
     </section>
   );

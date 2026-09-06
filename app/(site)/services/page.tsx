@@ -45,9 +45,11 @@ export default function ServicesPage() {
        * floating in the middle of it.
        */}
       <Band tone="paper" id="services" innerClassName="py-20 md:py-28">
-        <h2 className="label mb-12">{services.length} услуг</h2>
+        <h2 data-reveal className="label mb-12">
+          {services.length} услуг
+        </h2>
 
-        <ol>
+        <ol data-reveal="group">
           {services.map((service) => (
             <li key={service.slug} className="border-t border-line last:border-b">
               <Link

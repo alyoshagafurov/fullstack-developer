@@ -54,7 +54,7 @@ export default async function WorkPage() {
         </Band>
       ) : (
         <Band tone="paper" innerClassName="py-12 md:py-20">
-          <ol className="divide-y divide-line">
+          <ol data-reveal="group" className="divide-y divide-line">
             {cases.map((row, index) => {
               /*
                * A case that carries the client's mark runs mark, words, object.

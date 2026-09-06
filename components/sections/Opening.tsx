@@ -41,6 +41,7 @@ export function Opening() {
   return (
     <section
       data-tone="light"
+      data-hero-root
       /* `--ph` is the photograph's height; everything else is derived from it. */
       className="relative flex min-h-[100svh] w-full flex-col overflow-hidden [--ph:min(50svh,150vw)] md:block md:h-[100svh] md:[--ph:min(90svh,56vw)]"
       style={{
@@ -58,7 +59,10 @@ export function Opening() {
       <div className="relative px-5 pt-24 pb-4 md:absolute md:inset-0 md:z-10 md:pt-32 md:pb-0 md:px-10">
         <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
           <div className="min-w-0 text-center md:w-1/2 md:text-right">
-            <p className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-start">
+            <p
+              data-hero="eyebrow"
+              className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-start"
+            >
               {/* The rule is a desk-screen device: centred type has no edge for it to hang off. */}
               <span aria-hidden className="hidden h-px w-10 bg-ink/50 md:block" />
               {site.role}
@@ -68,6 +72,7 @@ export function Opening() {
               {lines.map((line, index) => (
                 <span
                   key={line}
+                  data-hero="line"
                   className={`block ${index === lines.length - 1 ? 'font-light' : 'font-extrabold'}`}
                 >
                   {line}
@@ -76,7 +81,10 @@ export function Opening() {
             </h1>
           </div>
 
-          <p className="mx-auto mt-6 max-w-sm text-center text-base leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left md:text-[0.9375rem]">
+          <p
+            data-hero="lede"
+            className="mx-auto mt-6 max-w-sm text-center text-base leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left md:text-[0.9375rem]"
+          >
             {site.difference}
           </p>
         </div>
@@ -84,7 +92,10 @@ export function Opening() {
         {/* The button: under the words on a phone, on the desk on a desk screen.
             Ink on both — the owner's call — and the desk is grey, not black,
             so it still stands off it. */}
-        <div className="mt-8 flex flex-col items-center gap-4 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:flex-row md:justify-center md:gap-5 md:translate-y-1/2">
+        <div
+          data-hero-cta
+          className="mt-8 flex flex-col items-center gap-4 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:flex-row md:justify-center md:gap-5 md:translate-y-1/2"
+        >
           {/*
             On a phone the button sits on the light wall, where ink is the only
             legible fill. On a wide screen it stands on the grey desk, and there
@@ -118,6 +129,7 @@ export function Opening() {
       {/* `self-start`: a column flex item is stretched to the column's width
           otherwise, which overrides the aspect ratio and crops the frame. */}
       <div
+        data-hero="photo"
         className="relative left-1/2 mt-auto aspect-[1672/941] h-[var(--ph)] shrink-0 self-start -translate-x-[62%] md:absolute md:bottom-0 md:left-0 md:mt-0 md:translate-x-0"
         style={{
           maskImage:

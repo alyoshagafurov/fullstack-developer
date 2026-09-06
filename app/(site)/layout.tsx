@@ -1,6 +1,7 @@
 import { Header } from '@/components/chrome/Header';
 import { Footer } from '@/components/chrome/Footer';
 import { Grain } from '@/components/ui/Grain';
+import { MotionRoot } from '@/components/motion/MotionRoot';
 
 /*
  * The public site's shell.
@@ -23,6 +24,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main id="main">{children}</main>
       <Footer />
       <Grain />
+      <MotionRoot />
     </>
   );
 }

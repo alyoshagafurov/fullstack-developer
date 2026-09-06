@@ -245,6 +245,17 @@
   }
 }
 
+/*
+ * Hidden only once `html.motion` is set (an inline script, before first
+ * paint) and only until the GSAP entrance brings them in. Without JavaScript
+ * the class never appears and nothing here applies.
+ */
+html.motion [data-hero],
+html.motion [data-hero-cta] > *,
+html.motion [data-intro] {
+  opacity: 0;
+}
+
 /* One question replaces another: it arrives, it does not slide in from off-screen. */
 @keyframes review-step-in {
   from {
