@@ -57,13 +57,16 @@ function Avatar({ name, gender }: { name: string; gender: Gender | null }) {
 export function ReviewCard({ voice }: { voice: TestimonialRow }) {
   const who = [voice.role, voice.company].filter(Boolean).join(', ');
   return (
-    <article className="relative flex h-full flex-col overflow-hidden bg-paper p-8 md:p-10">
-      <span aria-hidden className="absolute -top-28 -left-28 size-80 rounded-full bg-shelf" />
+    <article className="group relative flex h-full flex-col overflow-hidden bg-paper p-8 transition-[transform,box-shadow] duration-500 ease-[var(--ease-studio)] hover:-translate-y-1.5 hover:shadow-[0_24px_48px_-28px_rgba(11,11,11,0.28)] md:p-10">
+      <span
+        aria-hidden
+        className="absolute -top-28 -left-28 size-80 rounded-full bg-shelf transition-transform duration-700 ease-[var(--ease-studio)] group-hover:scale-110"
+      />
 
       <div className="relative flex flex-1 flex-col">
         <span
           aria-hidden
-          className="inline-flex size-12 items-center justify-center rounded-full bg-ink pt-3 font-serif text-[2.75rem] leading-none text-paper"
+          className="inline-flex size-12 items-center justify-center rounded-full bg-ink pt-3 font-serif text-[2.75rem] leading-none text-paper transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-rotate-6"
         >
           ”
         </span>

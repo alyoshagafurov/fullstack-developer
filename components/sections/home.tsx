@@ -127,14 +127,14 @@ export function AboutSpread() {
 
         <div
           data-reveal="image"
-          className="relative aspect-3/2 w-full overflow-hidden bg-ground md:order-2 md:aspect-4/5"
+          className="group relative aspect-3/2 w-full overflow-hidden bg-ground md:order-2 md:aspect-4/5"
         >
           <Image
             src="/photo/about.webp"
             alt={`${site.name} за работой`}
             fill
             sizes="(min-width: 768px) 46vw, 92vw"
-            className="object-cover object-[55%_35%]"
+            className="object-cover object-[55%_35%] transition-transform duration-700 ease-[var(--ease-studio)] group-hover:scale-[1.04]"
           />
         </div>
       </div>
@@ -153,7 +153,7 @@ export function ProcessTrack() {
   const total = process.reduce((sum, stage) => sum + stage.weight, 0);
 
   return (
-    <Band tone="shelf" id="process" innerClassName="py-28 md:py-40">
+    <Band tone="paper" id="process" innerClassName="py-28 md:py-40">
       <h2 data-reveal className="display-2 mb-16 max-w-2xl uppercase">
         Как идёт работа
       </h2>
@@ -173,8 +173,10 @@ export function ProcessTrack() {
 
       <ol data-reveal="group" className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
         {process.map((stage) => (
-          <li key={stage.num}>
-            <p className="display-3 text-ink-3 tabular">{stage.num}</p>
+          <li key={stage.num} className="group">
+            <p className="display-3 text-ink-3 tabular transition-colors duration-500 group-hover:text-ink">
+              {stage.num}
+            </p>
             <h3 className="mt-4 text-lg leading-snug tracking-[-0.02em]">{stage.title}</h3>
             <p className="mt-1 text-sm text-ink-3">{stage.duration}</p>
             <p className="mt-4 text-sm leading-relaxed text-ink-2">{stage.body}</p>
@@ -295,7 +297,7 @@ export function StartBand() {
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
       {/* The stone, the size of a mark, above the label. */}
       <div data-reveal className="mx-auto mb-8 size-20 md:size-24">
-        <Sculpture className="size-full" />
+        <Sculpture shape="knot" className="size-full" />
       </div>
 
       <p data-reveal className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">

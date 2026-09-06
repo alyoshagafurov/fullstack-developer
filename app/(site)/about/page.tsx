@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="grid gap-14 md:grid-cols-2 md:gap-20">
           <div
             data-reveal="image"
-            className="relative aspect-3/2 w-full overflow-hidden bg-ground md:aspect-4/5"
+            className="group relative aspect-3/2 w-full overflow-hidden bg-ground md:aspect-4/5"
           >
             <Image
               src="/photo/about.webp"
@@ -30,7 +30,7 @@ export default function AboutPage() {
               fill
               priority
               sizes="(min-width: 768px) 46vw, 92vw"
-              className="object-cover object-[55%_35%]"
+              className="object-cover object-[55%_35%] transition-transform duration-700 ease-[var(--ease-studio)] group-hover:scale-[1.04]"
             />
           </div>
 

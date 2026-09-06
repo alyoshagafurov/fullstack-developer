@@ -114,14 +114,14 @@ export default async function CasePage({ params }: Params) {
           <p className="label mb-10">Экраны</p>
           <div className="space-y-8 md:space-y-16">
             {row.screenshots.map((shot, index) => (
-              <figure key={shot} className="relative w-full overflow-hidden bg-paper">
+              <figure key={shot} className="group relative w-full overflow-hidden bg-paper">
                 <Image
                   src={shot}
                   alt={`${row.title}: экран ${index + 1}`}
                   width={2400}
                   height={1500}
                   sizes="(min-width: 1440px) 1376px, 92vw"
-                  className="h-auto w-full"
+                  className="h-auto w-full transition-transform duration-700 ease-[var(--ease-studio)] group-hover:scale-[1.02]"
                 />
               </figure>
             ))}
