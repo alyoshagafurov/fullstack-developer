@@ -91,13 +91,29 @@ export type DbDiagnostics = {
  */
 export async function dbDiagnostics(): Promise<DbDiagnostics> {
   const url = process.env.DATABASE_URL;
+  if (!url) return { configured: false, host: null, error: null };
+
   let host: string | null = null;
   try {
-    host = url ? new URL(url).host : null;
+    host = new URL(url).host;
   } catch {
-    host = 'некорректная строка';
+    /*
+     * Not a URL at all. Name the usual way that happens: Neon's dashboard
+     * offers the string inside quotes and inside a `psql` command, and both
+     * get pasted into Vercel whole. The value itself is never shown.
+     */
+    const trimmed = url.trim();
+    const why = /^['"]|['"]$/.test(trimmed)
+      ? 'строка взята в кавычки — на Vercel её нужно вставить без них'
+      : /^psql\b/i.test(trimmed)
+        ? 'вставлена команда psql целиком — нужна только строка postgresql://…'
+        : /\s/.test(url)
+          ? 'внутри есть пробел или перенос строки'
+          : /^postgres(ql)?:\/\//i.test(trimmed)
+            ? 'строка начинается верно, но дальше повреждена'
+            : 'значение не начинается с postgresql://';
+    return { configured: true, host: `некорректная строка: ${why}`, error: 'Invalid URL' };
   }
-  if (!url) return { configured: false, host: null, error: null };
   try {
     await prisma.$queryRawUnsafe('select 1');
     return { configured: true, host, error: null };
