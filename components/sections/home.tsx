@@ -296,7 +296,7 @@ export function StartBand() {
   return (
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
       {/* The stone, the size of a mark, above the label. */}
-      <div data-reveal className="mx-auto mb-8 size-20 md:size-24">
+      <div data-reveal className="mx-auto mb-8 size-28 md:size-32">
         <Sculpture shape="knot" className="size-full" />
       </div>
 

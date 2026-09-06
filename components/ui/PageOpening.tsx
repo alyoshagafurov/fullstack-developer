@@ -29,7 +29,7 @@ export function PageOpening({
       className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
     >
       {/* The stone, the size of a mark, where a masthead would carry one. */}
-      <div data-intro className="mb-8 size-20 md:size-24">
+      <div data-intro className="mb-8 size-28 md:size-32">
         <Sculpture className="size-full" />
       </div>
 
