@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { saveTestimonial, type ActionResult } from '@/app/admin/actions';
+import { deleteTestimonial, saveTestimonial, type ActionResult } from '@/app/admin/actions';
 import { genderLabel, genders, type Gender } from '@/lib/content/review';
 
 /*
@@ -41,6 +41,7 @@ export function TestimonialEditor({
 }) {
   const [error, setError] = useState('');
   const [pending, start] = useTransition();
+  const [confirming, setConfirming] = useState(false);
   const [rating, setRating] = useState(values.rating);
   const [gender, setGender] = useState<Gender>(values.gender);
 
@@ -168,13 +169,50 @@ export function TestimonialEditor({
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-xs font-medium tracking-[0.04em] text-paper disabled:opacity-40"
-      >
-        {pending ? 'Сохраняю…' : 'Сохранить'}
-      </button>
+      <div className="flex flex-wrap items-center gap-6">
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-xs font-medium tracking-[0.04em] text-paper disabled:opacity-40"
+        >
+          {pending ? 'Сохраняю…' : 'Сохранить'}
+        </button>
+
+        {values.id &&
+          (confirming ? (
+            <span className="flex flex-wrap items-center gap-4 text-sm">
+              Удалить отзыв насовсем?
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() =>
+                  start(async () => {
+                    const result = await deleteTestimonial(values.id);
+                    if (result?.status === 'error') setError(result.message);
+                  })
+                }
+                className="font-medium underline underline-offset-4 disabled:opacity-40"
+              >
+                Да, удалить
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                className="text-ink-3 underline-offset-4 hover:underline"
+              >
+                Отмена
+              </button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              className="text-sm text-ink-3 underline-offset-4 transition-colors hover:text-ink hover:underline"
+            >
+              Удалить отзыв
+            </button>
+          ))}
+      </div>
     </form>
   );
 }

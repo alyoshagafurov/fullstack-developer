@@ -90,10 +90,10 @@ export function Opening() {
           </CTA>
           {/* Quieter than the brief: ink on the wall, paper on the desk. */}
           <Link
-            href="/#reviews"
+            href="/work"
             className="inline-flex min-h-14 items-center gap-3 rounded-full border border-ink px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:border-paper/70 md:text-paper md:hover:bg-paper md:hover:text-ink"
           >
-            Оставить отзыв
+            Посмотреть кейсы
             <span aria-hidden>→</span>
           </Link>
         </div>

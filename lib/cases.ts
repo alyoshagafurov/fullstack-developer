@@ -25,6 +25,7 @@ export type CaseRow = {
   liveUrl: string | null;
   objectImage: string;
   ghostWord: string | null;
+  logoUrl: string | null;
   screenshots: string[];
   featured: boolean;
   order: number;
@@ -43,6 +44,7 @@ const caseSelect = {
   liveUrl: true,
   objectImage: true,
   ghostWord: true,
+  logoUrl: true,
   screenshots: true,
   featured: true,
   order: true,

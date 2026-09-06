@@ -205,79 +205,68 @@ export function CasesBand({ items, total }: { items: CaseRow[]; total: number })
       </div>
 
       <ol className="divide-y divide-line border-t border-line">
-        {items.map((row, index) => (
-          <li key={row.id}>
-            <Link
-              href={`/work/${row.slug}`}
-              className={`group grid items-center gap-8 py-12 md:py-16 ${
-                index % 2 === 1 ? 'md:grid-cols-[1fr_16rem]' : 'md:grid-cols-[16rem_1fr]'
-              }`}
-            >
-              <div
-                className={`relative aspect-square w-36 md:w-full ${
-                  index % 2 === 1 ? 'md:order-2' : ''
+        {items.map((row, index) => {
+          // The register's row, in miniature: mark, words, object when there is
+          // a client mark; the alternating pair when there is not.
+          const logo = row.logoUrl;
+          const flip = !logo && index % 2 === 1;
+          return (
+            <li key={row.id}>
+              <Link
+                href={`/work/${row.slug}`}
+                className={`group grid items-center gap-8 py-12 md:py-16 ${
+                  logo
+                    ? 'md:grid-cols-[13rem_1fr_13rem] md:gap-12'
+                    : flip
+                      ? 'md:grid-cols-[1fr_16rem]'
+                      : 'md:grid-cols-[16rem_1fr]'
                 }`}
               >
-                <StudioObject
-                  src={row.objectImage}
-                  alt=""
-                  sizes="(min-width: 768px) 16rem, 9rem"
-                  className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
-                />
-              </div>
-
-              <div className={`min-w-0 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                <p className="label mb-4">{[row.client, row.year].filter(Boolean).join(' · ')}</p>
-                <h3 className="text-[clamp(1.75rem,4vw,3rem)] leading-tight tracking-[-0.03em]">
-                  {row.title}
-                </h3>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
-                  {row.task}
-                </p>
-                {row.technologies.length > 0 && (
-                  <p className="mt-5 text-xs tracking-[0.06em] text-ink-3">
-                    {row.technologies.join(' · ')}
-                  </p>
+                {logo && (
+                  <div className="relative h-14 w-40 md:h-24 md:w-full">
+                    <Image
+                      src={logo}
+                      alt=""
+                      fill
+                      sizes="(min-width: 768px) 13rem, 10rem"
+                      className="object-contain object-left transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-1 md:object-center"
+                    />
+                  </div>
                 )}
-              </div>
-            </Link>
-          </li>
-        ))}
+
+                <div className={`min-w-0 ${logo ? '' : flip ? 'md:order-1' : 'md:order-2'}`}>
+                  <p className="label mb-4">{[row.client, row.year].filter(Boolean).join(' · ')}</p>
+                  <h3 className="text-[clamp(1.75rem,4vw,3rem)] leading-tight tracking-[-0.03em]">
+                    {row.title}
+                  </h3>
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
+                    {row.task}
+                  </p>
+                  {row.technologies.length > 0 && (
+                    <p className="mt-5 text-xs tracking-[0.06em] text-ink-3">
+                      {row.technologies.join(' · ')}
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  className={`relative aspect-square w-36 md:w-full ${
+                    logo ? '' : `max-md:order-first ${flip ? 'md:order-2' : 'md:order-1'}`
+                  }`}
+                >
+                  <StudioObject
+                    src={row.objectImage}
+                    alt=""
+                    sizes="(min-width: 768px) 16rem, 9rem"
+                    className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                  />
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ol>
     </Band>
-  );
-}
-
-/**
- * A drawn monogram stands in when a client has not supplied a photo.
- * A generated face beside a real endorsement would invent a person.
- */
-function Avatar({ name, src }: { name: string; src: string | null }) {
-  if (src) {
-    return (
-      <Image
-        src={src}
-        alt=""
-        width={40}
-        height={40}
-        className="size-10 shrink-0 rounded-full object-cover"
-      />
-    );
-  }
-
-  const initials = name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-
-  return (
-    <span
-      aria-hidden
-      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-shelf text-xs tracking-[0.06em] text-ink-2"
-    >
-      {initials}
-    </span>
   );
 }
 

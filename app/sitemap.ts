@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site.url}/about`, lastModified: now, priority: 0.7 },
     { url: `${site.url}/contacts`, lastModified: now, priority: 0.6 },
     { url: `${site.url}/start`, lastModified: now, priority: 0.8 },
+    { url: `${site.url}/reviews/new`, lastModified: now, priority: 0.5 },
     // /reviews answers 404 until the first testimonial is published.
     ...(voices.length > 0 ? [{ url: `${site.url}/reviews`, lastModified: now, priority: 0.5 }] : []),
     ...services.map((service) => ({

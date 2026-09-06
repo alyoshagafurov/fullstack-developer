@@ -29,6 +29,7 @@ export default async function CasePage({ params }: { params: Promise<{ id: strin
     liveUrl: row?.liveUrl ?? '',
     objectImage: row?.objectImage ?? '/objects/laptop.webp',
     ghostWord: row?.ghostWord ?? '',
+    logoUrl: row?.logoUrl ?? '',
     screenshots: row?.screenshots.join('\n') ?? '',
     featured: row?.featured ?? false,
     order: row?.order ?? 0,

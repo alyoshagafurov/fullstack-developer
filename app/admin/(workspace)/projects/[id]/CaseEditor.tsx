@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { saveCase, type ActionResult } from '@/app/admin/actions';
-import { ScreenshotUploader } from './ScreenshotUploader';
+import { deleteCase, saveCase, type ActionResult } from '@/app/admin/actions';
+import { LogoUploader, ScreenshotUploader } from './ScreenshotUploader';
 
 /*
  * The case editor.
@@ -37,6 +37,7 @@ export type CaseValues = {
   liveUrl: string;
   objectImage: string;
   ghostWord: string;
+  logoUrl: string;
   screenshots: string;
   featured: boolean;
   order: number;
@@ -49,6 +50,8 @@ const field =
 export function CaseEditor({ values }: { values: CaseValues }) {
   const [error, setError] = useState('');
   const [pending, start] = useTransition();
+  // Deleting is one click away but never one click: the second click confirms.
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <form
@@ -107,9 +110,23 @@ export function CaseEditor({ values }: { values: CaseValues }) {
             ))}
           </select>
         </Field>
-        <Field label="Слово-призрак" hint="необязательно">
-          <input name="ghostWord" defaultValue={values.ghostWord} className={field} />
+        <Field label="Слово-призрак" hint="одно слово, встанет огромным фоном за объектом">
+          <input
+            name="ghostWord"
+            defaultValue={values.ghostWord}
+            maxLength={24}
+            className={field}
+          />
         </Field>
+        <div>
+          <span className="label mb-3 flex items-baseline gap-3">
+            Логотип клиента
+            <span className="text-ink-3 normal-case tracking-normal">
+              встанет слева в списке работ
+            </span>
+          </span>
+          <LogoUploader initial={values.logoUrl} name="logoUrl" />
+        </div>
         <div>
           <span className="label mb-3 flex items-baseline gap-3">
             Скриншоты
@@ -149,13 +166,50 @@ export function CaseEditor({ values }: { values: CaseValues }) {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-xs font-medium tracking-[0.04em] text-paper disabled:opacity-40"
-      >
-        {pending ? 'Сохраняю…' : 'Сохранить'}
-      </button>
+      <div className="flex flex-wrap items-center gap-6">
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-xs font-medium tracking-[0.04em] text-paper disabled:opacity-40"
+        >
+          {pending ? 'Сохраняю…' : 'Сохранить'}
+        </button>
+
+        {values.id &&
+          (confirming ? (
+            <span className="flex flex-wrap items-center gap-4 text-sm">
+              Удалить кейс насовсем?
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() =>
+                  start(async () => {
+                    const result = await deleteCase(values.id);
+                    if (result?.status === 'error') setError(result.message);
+                  })
+                }
+                className="font-medium underline underline-offset-4 disabled:opacity-40"
+              >
+                Да, удалить
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                className="text-ink-3 underline-offset-4 hover:underline"
+              >
+                Отмена
+              </button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              className="text-sm text-ink-3 underline-offset-4 transition-colors hover:text-ink hover:underline"
+            >
+              Удалить кейс
+            </button>
+          ))}
+      </div>
     </form>
   );
 }

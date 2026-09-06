@@ -244,3 +244,15 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* One question replaces another: it arrives, it does not slide in from off-screen. */
+@keyframes review-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.review-step {
+  animation: review-step-in 360ms var(--ease-studio) both;
+}

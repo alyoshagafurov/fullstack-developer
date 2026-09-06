@@ -362,6 +362,7 @@ export async function saveCase(id: string, form: FormData): Promise<ActionResult
     liveUrl: String(form.get('liveUrl') ?? '').trim() || null,
     objectImage: String(form.get('objectImage') ?? '/objects/laptop.webp'),
     ghostWord: String(form.get('ghostWord') ?? '').trim() || null,
+    logoUrl: String(form.get('logoUrl') ?? '').trim() || null,
     screenshots: list(form.get('screenshots'), /\n/),
     featured: form.get('featured') === 'on',
     order: Number(form.get('order') ?? 0) || 0,
@@ -450,4 +451,44 @@ export async function toggleTestimonialPublished(id: string): Promise<ActionResu
   revalidatePath('/reviews');
   revalidatePath('/admin/testimonials');
   return { status: 'ok' };
+}
+
+/**
+ * Delete a case, permanently.
+ *
+ * A testimonial attached to it survives: the relation is declared
+ * `onDelete: SetNull`, so the review stays and simply stops pointing at a case.
+ * Uploaded files stay in Blob storage too — deleting a row must not be able to
+ * take out an image another row may be using.
+ */
+export async function deleteCase(id: string): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  const row = await prisma.case.findUnique({ where: { id }, select: { slug: true } });
+  if (!row) return { status: 'error', message: 'Кейс не найден' };
+
+  await prisma.case.delete({ where: { id } });
+
+  revalidatePath('/');
+  revalidatePath('/work');
+  revalidatePath(`/work/${row.slug}`);
+  revalidatePath('/admin/projects');
+  redirect('/admin/projects');
+}
+
+/** Delete a testimonial, permanently. Nothing else references it. */
+export async function deleteTestimonial(id: string): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  const row = await prisma.testimonial.findUnique({ where: { id }, select: { id: true } });
+  if (!row) return { status: 'error', message: 'Отзыв не найден' };
+
+  await prisma.testimonial.delete({ where: { id } });
+
+  revalidatePath('/');
+  revalidatePath('/reviews');
+  revalidatePath('/admin/testimonials');
+  redirect('/admin/testimonials');
 }

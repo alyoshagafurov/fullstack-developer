@@ -41,9 +41,12 @@ export default async function ReviewsPage() {
         <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
           {site.contactInvite}
         </p>
-        <CTA href="/start" className="mt-10">
-          {site.heroCta}
-        </CTA>
+        <div className="mt-10 flex flex-wrap items-center gap-4">
+          <CTA href="/start">{site.heroCta}</CTA>
+          <PillLink href="/reviews/new" variant="outline">
+            Оставить отзыв
+          </PillLink>
+        </div>
       </Band>
     </>
   );

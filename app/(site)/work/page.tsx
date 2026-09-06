@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
@@ -53,28 +54,39 @@ export default async function WorkPage() {
       ) : (
         <Band tone="paper" innerClassName="py-12 md:py-20">
           <ol className="divide-y divide-line">
-            {cases.map((row, index) => (
-              <li key={row.id}>
-                <Link
-                  href={`/work/${row.slug}`}
-                  className={`group grid items-center gap-8 py-12 md:py-16 ${
-                    index % 2 === 1 ? 'md:grid-cols-[1fr_16rem]' : 'md:grid-cols-[16rem_1fr]'
-                  }`}
-                >
-                  <div
-                    className={`relative aspect-square w-36 md:w-full ${
-                      index % 2 === 1 ? 'md:order-2' : ''
+            {cases.map((row, index) => {
+              /*
+               * A case that carries the client's mark runs mark, words, object.
+               * That three-part row is its own rhythm, so it does not alternate;
+               * without a mark the object leads and the sides swap, as before.
+               */
+              const logo = row.logoUrl;
+              const flip = !logo && index % 2 === 1;
+              return (
+                <li key={row.id}>
+                  <Link
+                    href={`/work/${row.slug}`}
+                    className={`group grid items-center gap-8 py-12 md:py-16 ${
+                      logo
+                        ? 'md:grid-cols-[13rem_1fr_13rem] md:gap-12'
+                        : flip
+                          ? 'md:grid-cols-[1fr_16rem]'
+                          : 'md:grid-cols-[16rem_1fr]'
                     }`}
                   >
-                    <StudioObject
-                      src={row.objectImage}
-                      alt=""
-                      sizes="(min-width: 768px) 16rem, 9rem"
-                      className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
-                    />
-                  </div>
+                    {logo && (
+                      <div className="relative h-14 w-40 md:h-24 md:w-full">
+                        <Image
+                          src={logo}
+                          alt=""
+                          fill
+                          sizes="(min-width: 768px) 13rem, 10rem"
+                          className="object-contain object-left transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-1 md:object-center"
+                        />
+                      </div>
+                    )}
 
-                  <div className={`min-w-0 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                    <div className={`min-w-0 ${logo ? '' : flip ? 'md:order-1' : 'md:order-2'}`}>
                     <p className="label mb-4">
                       {[row.client, row.year].filter(Boolean).join(' · ')}
                     </p>
@@ -89,10 +101,24 @@ export default async function WorkPage() {
                         {row.technologies.join(' · ')}
                       </p>
                     )}
-                  </div>
-                </Link>
-              </li>
-            ))}
+                    </div>
+
+                    <div
+                      className={`relative aspect-square w-36 md:w-full ${
+                        logo ? '' : `max-md:order-first ${flip ? 'md:order-2' : 'md:order-1'}`
+                      }`}
+                    >
+                      <StudioObject
+                        src={row.objectImage}
+                        alt=""
+                        sizes="(min-width: 768px) 16rem, 9rem"
+                        className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                      />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
           </ol>
         </Band>
       )}

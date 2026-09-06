@@ -33,9 +33,32 @@ export type VitrineItem = {
   object: string;
   href: string;
   ctaLabel: string;
+  /**
+   * The word that stands behind this item, enormous and faint, in place of the
+   * wordmark. The owner types it per case in the admin, and most cases will not
+   * carry one — those keep the mark.
+   */
+  ghost?: string | null;
 };
 
 const SWIPE_THRESHOLD = 56;
+
+/** Optional and typed by hand, so it is normalised once and read twice. */
+const ghostOf = (item: VitrineItem) => (item.ghost ?? '').trim();
+
+/*
+ * How wide a word will be, without measuring it.
+ *
+ * Set uppercase and tightly tracked, a glyph of this face averages a little
+ * under two thirds of the type size in width. So the size that makes a word of
+ * n letters span the stage is that share of the stage width divided by n. The
+ * estimate runs deliberately wide: a word that stops short of the edge reads as
+ * intended, one that runs past it reads as broken. The other two terms cap it,
+ * so a three-letter word on a wide, short window cannot tower over the object
+ * it belongs to.
+ */
+const ghostSize = (word: string) =>
+  `min(${(92 / (0.62 * Math.max(word.length, 3))).toFixed(2)}vw, 34svh, 22rem)`;
 
 export function Vitrine({ items }: { items: VitrineItem[] }) {
   const [index, setIndex] = useState(0);
@@ -121,8 +144,47 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
       aria-roledescription={interactive ? 'карусель' : undefined}
       aria-label="Витрина работ"
     >
-      {/* The wordmark, enormous and faint, is the backdrop of the whole stage. */}
-      <GhostMark className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 md:px-10" />
+      {/*
+       * The backdrop of the stage.
+       *
+       * His wordmark by default — a case that carries a ghost word shows that
+       * word in its place, and the two cross-fade in step with the object in
+       * front of them. Every word is in the markup from the start and switched
+       * by opacity, exactly as the objects are: one that mounted on the switch
+       * would arrive after the object it belongs to.
+       */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 select-none md:px-10"
+      >
+        <GhostMark
+          className={`transition-opacity duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none ${
+            ghostOf(current) ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
+
+        {items.map((item, i) => {
+          const word = ghostOf(item);
+          if (!word) return null;
+          const active = i === index;
+          return (
+            <span
+              key={item.id}
+              /* The backdrop trails the object it stands behind: a quarter of
+                 the drag, so the two read as two planes rather than one sheet. */
+              className="text-ghost absolute inset-x-0 top-1/2 block px-4 text-center leading-[0.8] font-extrabold tracking-[-0.04em] whitespace-nowrap uppercase transition-[opacity,transform] duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none md:px-10"
+              style={{
+                fontSize: ghostSize(word),
+                opacity: active ? 1 : 0,
+                transform: `translate3d(${active ? drag * 0.12 : 0}px, -50%, 0)`,
+                transitionDuration: dragging ? '0ms' : undefined,
+              }}
+            >
+              {word}
+            </span>
+          );
+        })}
+      </div>
 
       <div
         ref={stage}

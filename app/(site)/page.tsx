@@ -18,13 +18,13 @@ import { featuredServices } from '@/lib/content/services';
  * The rhythm is deliberate and uneven: every band changes both the ground
  * colour and the type scale, so scrolling feels like turning pages rather than
  * sliding down a template. The middle of the page is the owner's chosen order —
- * the vitrine, then him, then other people about him on black, then the work
- * itself back on white.
+ * the vitrine, then him, then the work, and directly after the work the people
+ * it was done for.
  *
  * Revalidated rather than fully static: the owner publishes cases and
  * testimonials from the admin, and a publish has to reach the site without a
- * redeploy. Reviews close the page, just before the footer, with the form
- * the owner sends clients to.
+ * redeploy. The reviews band carries no form of its own: it points at the page
+ * that asks for one, a question at a time.
  */
 export const revalidate = 300;
 
@@ -52,6 +52,7 @@ export default async function HomePage() {
           title: row.title,
           caption: [row.client, row.year].filter(Boolean).join(', ') || row.task,
           object: row.objectImage,
+          ghost: row.ghostWord,
           href: `/work/${row.slug}`,
           ctaLabel: 'Смотреть кейс',
         }))
@@ -73,9 +74,9 @@ export default async function HomePage() {
       <Vitrine items={items} />
       <AboutSpread />
       <CasesBand items={cases.slice(0, 3)} total={cases.length} />
+      <Reviews items={testimonials.slice(0, 3)} total={testimonials.length} />
       <ProcessTrack />
       <StartBand />
-      <Reviews items={testimonials.slice(0, 3)} total={testimonials.length} />
     </>
   );
 }

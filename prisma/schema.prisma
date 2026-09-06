@@ -232,6 +232,10 @@ model Case {
   objectImage String   @default("/objects/laptop.webp")
   /// Word set huge and faint behind the object.
   ghostWord   String?
+  /// The client's own mark, uploaded from the admin. It leads the row in the
+  /// register, where the studio object used to stand; empty leaves the object
+  /// where it is.
+  logoUrl     String?
   /// Real screenshots of the work. The only colour on the whole site.
   screenshots String[]
 
