@@ -6,7 +6,8 @@ import { PageOpening } from '@/components/ui/PageOpening';
 import { CTA } from '@/components/ui/CTA';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
-import { getPublishedCases } from '@/lib/cases';
+import { Reviews } from '@/components/reviews/Reviews';
+import { getPublishedCases, getTestimonials } from '@/lib/cases';
 import { site } from '@/lib/content/site';
 
 export const revalidate = 300;
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
  * offers the services instead: an empty state is honest, invented work is not.
  */
 export default async function WorkPage() {
-  const cases = await getPublishedCases();
+  const [cases, voices] = await Promise.all([getPublishedCases(), getTestimonials()]);
 
   return (
     <>
@@ -123,7 +124,10 @@ export default async function WorkPage() {
         </Band>
       )}
 
-      <Band tone="ground" innerClassName="py-24 md:py-32">
+      {/* The people the work was done for, directly under the work itself. */}
+      <Reviews items={voices} total={voices.length} />
+
+      <Band tone="paper" innerClassName="py-24 md:py-32">
         <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
           {site.contactInvite}
         </p>

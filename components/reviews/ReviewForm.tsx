@@ -41,10 +41,6 @@ const box =
 const primary =
   'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
 
-/* The shortcut is real, so it is worth a word rather than a discovery. */
-const kbd =
-  'rounded-md border border-line-2 bg-paper px-2 py-1 font-medium text-ink-2 shadow-[0_1px_0_var(--color-line-2)]';
-
 export function ReviewForm() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
@@ -65,8 +61,6 @@ export function ReviewForm() {
 
   const current = steps[step];
   const last = step === steps.length - 1;
-  // Only the written answers have a keyboard shortcut worth advertising.
-  const typed = current.key === 'name' || current.key === 'company' || current.key === 'text';
 
   /*
    * Focus follows the question, so the visitor can type the moment the next one
@@ -328,13 +322,6 @@ export function ReviewForm() {
           >
             Назад
           </button>
-        )}
-
-        {typed && (
-          <p className="hidden items-center gap-2 text-xs text-ink-3 md:flex">
-            <kbd className={kbd}>{current.key === 'text' ? '⌘ + ↵' : '↵'}</kbd>
-            дальше
-          </p>
         )}
 
         {last && <p className="text-xs text-ink-3">Отзыв появится после проверки.</p>}

@@ -16,17 +16,18 @@ export const metadata: Metadata = {
  * The greeting carries no button: the visitor already pressed the one that
  * brought them here, and a second pointing at the same place is noise.
  *
- * The column beside the form answers what people actually want to know before
- * filling one in — how long it takes, what happens next, what to do when they
- * do not know an answer — rather than listing what the owner would like to
- * receive.
+ * Nothing stands beside the form any more. A column of explanation next to a
+ * question is a second thing to read while answering the first, and the form
+ * now asks one question to a screen precisely so there is only ever one. What
+ * that column said still needs saying, so it says it underneath, where a
+ * visitor who wants it can go and look and nobody else has to.
  */
 export default function StartPage() {
   const steps = [
     {
       step: '1',
       title: 'Вы заполняете форму',
-      body: 'Четыре шага, меньше двух минут. Технические слова не нужны.',
+      body: 'Один вопрос за раз, меньше двух минут. Технические слова не нужны.',
     },
     {
       step: '2',
@@ -50,16 +51,18 @@ export default function StartPage() {
       <PageOpening
         eyebrow="Заявка"
         title={site.contactInvite}
-        lede={`Четыре коротких шага. Отвечаю ${site.responseTime.toLowerCase()}.`}
+        lede={`Отвечаю ${site.responseTime.toLowerCase()}.`}
         cta={false}
       />
 
-      <Band tone="paper" innerClassName="py-20 md:py-28">
-        <div className="grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
-          <BriefForm />
+      <Band tone="ground" innerClassName="py-14 md:py-20">
+        <BriefForm />
+      </Band>
 
-          <aside className="lg:pt-4">
-            <p className="label mb-6">Как это работает</p>
+      <Band tone="paper" innerClassName="py-20 md:py-28">
+        <div className="grid gap-14 md:grid-cols-[1fr_1fr] md:gap-20">
+          <div>
+            <p className="label mb-8">Как это работает</p>
 
             <ol className="space-y-6">
               {steps.map((item) => (
@@ -74,13 +77,13 @@ export default function StartPage() {
                 </li>
               ))}
             </ol>
+          </div>
 
-            <div className="mt-12 border-t border-line pt-8">
-              <p className="text-sm leading-relaxed text-ink-2">
-                Не знаете, что писать в каком-то поле? Пропустите его или напишите как есть.
-                Разберёмся вместе — так бывает почти всегда.
-              </p>
-            </div>
+          <div>
+            <p className="text-sm leading-relaxed text-ink-2">
+              Не знаете, что писать в каком-то поле? Пропустите его или напишите как есть.
+              Разберёмся вместе — так бывает почти всегда.
+            </p>
 
             <div className="mt-10 border-t border-line pt-8">
               <p className="label mb-4">Написать напрямую</p>
@@ -105,7 +108,7 @@ export default function StartPage() {
                 </li>
               </ul>
             </div>
-          </aside>
+          </div>
         </div>
       </Band>
     </>

@@ -5,50 +5,135 @@ import { useRouter } from 'next/navigation';
 import { budgets, consentLabel, projectTypes, timelines } from '@/lib/content/brief';
 
 /*
- * The brief.
+ * The brief — one question to a screen.
  *
- * Written for someone who is not a developer. Every field says what to put in
- * it and gives a real example, every step says why it is being asked, and the
- * optional ones say out loud that they can be skipped. The earlier version had
- * labels like "Главная цель" with nothing under them, which is fine if you have
- * filled in a brief before and a dead end if you have not.
+ * It used to be four steps of three or four fields. Four fields at once still
+ * reads as a form, and a form is the thing people close. Asked one at a time,
+ * the same thirteen answers take the same two minutes and never look like work.
  *
- * Four short steps rather than one long page: twelve fields at once is where
- * people close the tab. The draft is kept in sessionStorage so a reload does
- * not cost the visitor their typing; it never leaves the browser.
+ * The wording is untouched: every question and every hint below is the owner's
+ * own, in his order, moved from the old layout as it stood. The optional ones
+ * say so and can be skipped in a click.
  *
- * The checks here are a courtesy. The server re-validates the whole body with
- * the same schema, so nothing depends on this file being honest.
+ * The draft is kept in sessionStorage so a reload does not cost the visitor
+ * their typing; it never leaves the browser. The checks here are a courtesy —
+ * the server re-validates the whole body with the same schema.
  */
 
 type Values = Record<string, string | boolean>;
+type Kind = 'text' | 'email' | 'area' | 'chips' | 'list';
 
-const STEPS = [
+type Question = {
+  key: string;
+  question: string;
+  hint?: string;
+  kind: Kind;
+  placeholder?: string;
+  rows?: number;
+  optional?: boolean;
+  /** Minimum length for a written answer, when a word or two is not enough. */
+  min?: number;
+  options?: readonly { value: string; note?: string }[];
+};
+
+const QUESTIONS: Question[] = [
   {
-    id: 'about',
-    title: 'О вас',
-    why: 'Чтобы я знал, как к вам обращаться и куда прислать ответ.',
-    required: ['name', 'email', 'contact'],
+    key: 'name',
+    question: 'Как вас зовут',
+    hint: 'Просто имя, этого достаточно.',
+    kind: 'text',
+    placeholder: 'Алишер',
   },
   {
-    id: 'project',
-    title: 'Задача',
-    why: 'Самая важная часть. Технические слова не нужны — расскажите обычными.',
-    required: ['projectType', 'goal', 'description'],
+    key: 'company',
+    question: 'Компания или проект',
+    hint: 'Если названия ещё нет — пропустите.',
+    kind: 'text',
+    optional: true,
   },
   {
-    id: 'shape',
-    title: 'Детали',
-    why: 'Всё здесь можно пропустить. Заполните только то, на что ответ уже есть.',
-    required: [] as string[],
+    key: 'email',
+    question: 'Почта',
+    hint: 'Сюда пришлю ответ и предложение.',
+    kind: 'email',
+    placeholder: 'name@mail.com',
   },
   {
-    id: 'frame',
-    title: 'Сроки и бюджет',
-    why: 'Чтобы я сразу честно сказал, реально это или нет.',
-    required: ['budget', 'timeline', 'consent'],
+    key: 'contact',
+    question: 'Telegram или WhatsApp',
+    hint: 'Так отвечаю быстрее всего.',
+    kind: 'text',
+    placeholder: '@username или +992 900 00 00 00',
   },
-] as const;
+  {
+    key: 'projectType',
+    question: 'Что нужно сделать',
+    hint: 'Выберите, что ближе. Не уверены — берите похожее, на созвоне разберёмся.',
+    kind: 'chips',
+    options: projectTypes.map((value) => ({ value })),
+  },
+  {
+    key: 'goal',
+    question: 'Что должно измениться после запуска',
+    hint: 'Например: «хочу принимать заказы через сайт, а не в переписке» или «клиенты меня не находят в интернете».',
+    kind: 'area',
+    rows: 3,
+  },
+  {
+    key: 'description',
+    question: 'Расскажите о проекте',
+    hint: 'Своими словами: чем занимаетесь, кто ваши клиенты, что уже есть. Двух-трёх предложений хватит.',
+    kind: 'area',
+    rows: 4,
+    min: 10,
+  },
+  {
+    key: 'audience',
+    question: 'Кто будет этим пользоваться',
+    hint: 'Кто ваши клиенты: чем занимаются, из какого города, сколько им лет.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+  },
+  {
+    key: 'features',
+    question: 'Что должно уметь',
+    hint: 'Например: корзина и оплата картой, личный кабинет, запись на приём, отправка заявки в Telegram.',
+    kind: 'area',
+    rows: 4,
+    optional: true,
+  },
+  {
+    key: 'links',
+    question: 'Что вам нравится',
+    hint: 'Ссылки на сайты, которые по душе. Можно просто названия.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+  },
+  {
+    key: 'budget',
+    question: 'Примерный бюджет',
+    hint: 'Это ориентир, а не обязательство. Не знаете — выберите последний пункт.',
+    kind: 'list',
+    options: budgets,
+  },
+  {
+    key: 'timeline',
+    question: 'Когда хотелось бы запуститься',
+    hint: 'Тоже ориентир.',
+    kind: 'list',
+    options: timelines,
+  },
+  {
+    key: 'extra',
+    question: 'Что-нибудь ещё',
+    hint: 'Всё, что не влезло в поля выше.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+  },
+];
 
 const DRAFT_KEY = 'aly-brief-draft';
 
@@ -70,19 +155,32 @@ const EMPTY: Values = {
   website: '',
 };
 
-const inputClass =
-  'w-full border-b border-line-2 bg-transparent pb-3 text-base outline-none transition-colors ' +
-  'placeholder:text-ink-3 focus:border-ink';
+/*
+ * The answer box is a white surface on the band's pale grey rather than a
+ * rectangle drawn in outline: it reads as somewhere to write before it is read
+ * as anything else, which is the one thing it has to do.
+ */
+const box =
+  'w-full rounded-2xl border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
+
+const primary =
+  'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
 
 export function BriefForm() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Values>(EMPTY);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [error, setError] = useState('');
   const [formError, setFormError] = useState('');
   const [sending, setSending] = useState(false);
+
   const startedAt = useRef<number>(Date.now());
-  const heading = useRef<HTMLHeadingElement>(null);
+  const website = useRef<HTMLInputElement>(null);
+  const answer = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  const current = QUESTIONS[step];
+  const last = step === QUESTIONS.length - 1;
+  const typed = current.kind !== 'chips' && current.kind !== 'list';
 
   useEffect(() => {
     try {
@@ -101,65 +199,69 @@ export function BriefForm() {
     }
   }, [values]);
 
+  /*
+   * `preventScroll` matters: without it the browser scrolls the field into
+   * view, which on load throws the page past the opening and mid-form slides
+   * the progress line up under the header.
+   */
+  useEffect(() => {
+    answer.current?.focus({ preventScroll: true });
+  }, [step]);
+
   const set = (field: string, value: string | boolean) => {
     setValues((v) => ({ ...v, [field]: value }));
-    setErrors((e) => (e[field] ? { ...e, [field]: '' } : e));
+    setError('');
   };
 
-  const current = STEPS[step];
+  /** The question's own rule, in the wording the old form used. */
+  function check(): string {
+    if (current.optional) return '';
+    const value = String(values[current.key] ?? '').trim();
+    if (!value) return 'Без этого не получится';
+    if (current.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Кажется, в адресе опечатка';
+    }
+    if (current.min && value.length < current.min) {
+      return 'Пары слов мало — хотя бы одно предложение';
+    }
+    return '';
+  }
 
-  function validateStep(): boolean {
-    const next: Record<string, string> = {};
-    const required: readonly string[] = current.required;
-
-    for (const field of required) {
-      const value = values[field];
-      if (field === 'consent') {
-        if (value !== true) next[field] = 'Поставьте галочку, иначе я не смогу вам ответить';
-      } else if (!String(value).trim()) {
-        next[field] = 'Без этого не получится';
+  function advance() {
+    const problem = check();
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    if (last) {
+      if (values.consent !== true) {
+        setError('Поставьте галочку, иначе я не смогу вам ответить');
+        return;
       }
+      void send();
+      return;
     }
-
-    if (required.includes('email') && String(values.email).trim()) {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(values.email))) {
-        next.email = 'Кажется, в адресе опечатка';
-      }
-    }
-    if (required.includes('description')) {
-      const text = String(values.description).trim();
-      if (text && text.length < 10) next.description = 'Пары слов мало — хотя бы одно предложение';
-    }
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    setError('');
+    setStep((i) => i + 1);
   }
 
-  function goNext() {
-    if (!validateStep()) return;
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    heading.current?.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function back() {
+    setError('');
+    setStep((i) => Math.max(0, i - 1));
   }
 
-  function goBack() {
-    setStep((s) => Math.max(s - 1, 0));
-    heading.current?.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!validateStep()) return;
-
+  async function send() {
     setSending(true);
     setFormError('');
-
     try {
       const response = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...values, startedAt: startedAt.current }),
+        body: JSON.stringify({
+          ...values,
+          website: website.current?.value ?? '',
+          startedAt: startedAt.current,
+        }),
       });
       const payload = (await response.json()) as {
         ref?: string;
@@ -169,7 +271,13 @@ export function BriefForm() {
       };
 
       if (!response.ok) {
-        if (payload.issues) setErrors(payload.issues);
+        // A server complaint belongs on the question that caused it.
+        const first = payload.issues ? Object.keys(payload.issues)[0] : undefined;
+        const at = first ? QUESTIONS.findIndex((q) => q.key === first) : -1;
+        if (at >= 0 && payload.issues && first) {
+          setStep(at);
+          setError(payload.issues[first]);
+        }
         setFormError(payload.error ?? 'Не получилось отправить. Попробуйте ещё раз.');
         setSending(false);
         return;
@@ -190,371 +298,192 @@ export function BriefForm() {
     }
   }
 
+  const value = String(values[current.key] ?? '');
+
   return (
-    <form onSubmit={submit} noValidate className="max-w-2xl">
-      {/* Where am I, how much is left, and why am I being asked this. */}
-      <div className="mb-12">
-        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
-          <p className="text-sm">
-            <span className="font-semibold">
-              Шаг {step + 1} из {STEPS.length}
-            </span>
-            <span className="ml-3 text-ink-3">{current.title}</span>
-          </p>
-          <p className="text-xs text-ink-3">Меньше двух минут</p>
-        </div>
-
-        <div className="flex gap-1.5">
-          {STEPS.map((s, index) => (
-            <span
-              key={s.id}
-              className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-                index <= step ? 'bg-ink' : 'bg-line'
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="mt-6 text-sm leading-relaxed text-ink-2">{current.why}</p>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        advance();
+      }}
+      noValidate
+      className="flex min-h-[70svh] flex-col justify-center"
+    >
+      <div className="mb-12 flex items-center gap-5">
+        <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3 uppercase">
+          {step + 1} / {QUESTIONS.length}
+        </span>
+        <span aria-hidden className="h-px flex-1 bg-line-2">
+          <span
+            className="block h-px bg-ink transition-[width] duration-500 ease-[var(--ease-studio)] motion-reduce:transition-none"
+            style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }}
+          />
+        </span>
       </div>
 
-      <h2 ref={heading} tabIndex={-1} className="sr-only">
-        {current.title}
-      </h2>
+      <div key={step} className="review-step">
+        <label htmlFor={`brief-${current.key}`} className="block">
+          <span className="block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
+            {current.question}
+          </span>
+          {current.hint && (
+            <span className="mt-3 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
+              {current.hint}
+            </span>
+          )}
+        </label>
 
-      {step === 0 && (
-        <div className="space-y-10">
-          <Field label="Как вас зовут" hint="Просто имя, этого достаточно." error={errors.name}>
+        <div className="mt-7 max-w-2xl">
+          {(current.kind === 'text' || current.kind === 'email') && (
             <input
-              className={inputClass}
-              value={String(values.name)}
-              onChange={(e) => set('name', e.target.value)}
-              autoComplete="name"
-              placeholder="Алишер"
+              id={`brief-${current.key}`}
+              ref={answer as React.RefObject<HTMLInputElement>}
+              type={current.kind === 'email' ? 'email' : 'text'}
+              inputMode={current.kind === 'email' ? 'email' : undefined}
+              autoComplete={
+                current.key === 'name' ? 'name' : current.key === 'email' ? 'email' : 'off'
+              }
+              value={value}
+              onChange={(event) => set(current.key, event.target.value)}
+              placeholder={current.placeholder}
+              className={box}
             />
-          </Field>
+          )}
 
-          <Field
-            label="Компания или проект"
-            optional
-            hint="Если названия ещё нет — пропустите."
-            error={errors.company}
-          >
-            <input
-              className={inputClass}
-              value={String(values.company)}
-              onChange={(e) => set('company', e.target.value)}
-              autoComplete="organization"
-            />
-          </Field>
-
-          <Field label="Почта" hint="Сюда пришлю ответ и предложение." error={errors.email}>
-            <input
-              type="email"
-              inputMode="email"
-              className={inputClass}
-              value={String(values.email)}
-              onChange={(e) => set('email', e.target.value)}
-              autoComplete="email"
-              placeholder="name@mail.com"
-            />
-          </Field>
-
-          <Field
-            label="Telegram или WhatsApp"
-            hint="Так отвечаю быстрее всего."
-            error={errors.contact}
-          >
-            <input
-              className={inputClass}
-              value={String(values.contact)}
-              onChange={(e) => set('contact', e.target.value)}
-              placeholder="@username или +992 900 00 00 00"
-            />
-          </Field>
-        </div>
-      )}
-
-      {step === 1 && (
-        <div className="space-y-10">
-          <fieldset>
-            <Legend
-              label="Что нужно сделать"
-              hint="Выберите, что ближе. Не уверены — берите похожее, на созвоне разберёмся."
-            />
-            <div className="flex flex-wrap gap-2">
-              {projectTypes.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => set('projectType', type)}
-                  aria-pressed={values.projectType === type}
-                  className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm transition-colors ${
-                    values.projectType === type
-                      ? 'border-ink bg-ink text-paper'
-                      : 'border-line-2 text-ink-2 hover:border-ink hover:text-ink'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-            {errors.projectType && <p className="mt-3 text-sm text-ink">{errors.projectType}</p>}
-          </fieldset>
-
-          <Field
-            label="Что должно измениться после запуска"
-            hint="Например: «хочу принимать заказы через сайт, а не в переписке» или «клиенты меня не находят в интернете»."
-            error={errors.goal}
-          >
+          {current.kind === 'area' && (
             <textarea
-              rows={3}
-              className={inputClass}
-              value={String(values.goal)}
-              onChange={(e) => set('goal', e.target.value)}
+              id={`brief-${current.key}`}
+              ref={answer as React.RefObject<HTMLTextAreaElement>}
+              rows={current.rows ?? 3}
+              value={value}
+              onChange={(event) => set(current.key, event.target.value)}
+              /* Enter breaks a line here, so the keyboard shortcut moves on. */
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+                  event.preventDefault();
+                  advance();
+                }
+              }}
+              className={`${box} min-h-[9rem] resize-y`}
             />
-          </Field>
+          )}
 
-          <Field
-            label="Расскажите о проекте"
-            hint="Своими словами: чем занимаетесь, кто ваши клиенты, что уже есть. Двух-трёх предложений хватит."
-            error={errors.description}
-          >
-            <textarea
-              rows={5}
-              className={inputClass}
-              value={String(values.description)}
-              onChange={(e) => set('description', e.target.value)}
-            />
-          </Field>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-10">
-          <Field
-            label="Кто будет этим пользоваться"
-            optional
-            hint="Кто ваши клиенты: чем занимаются, из какого города, сколько им лет."
-            error={errors.audience}
-          >
-            <textarea
-              rows={3}
-              className={inputClass}
-              value={String(values.audience)}
-              onChange={(e) => set('audience', e.target.value)}
-            />
-          </Field>
-
-          <Field
-            label="Что должно уметь"
-            optional
-            hint="Например: корзина и оплата картой, личный кабинет, запись на приём, отправка заявки в Telegram."
-            error={errors.features}
-          >
-            <textarea
-              rows={4}
-              className={inputClass}
-              value={String(values.features)}
-              onChange={(e) => set('features', e.target.value)}
-            />
-          </Field>
-
-          <Field
-            label="Что вам нравится"
-            optional
-            hint="Ссылки на сайты, которые по душе. Можно просто названия."
-            error={errors.links}
-          >
-            <textarea
-              rows={3}
-              className={inputClass}
-              value={String(values.links)}
-              onChange={(e) => set('links', e.target.value)}
-            />
-          </Field>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="space-y-10">
-          <fieldset>
-            <Legend
-              label="Примерный бюджет"
-              hint="Это ориентир, а не обязательство. Не знаете — выберите последний пункт."
-            />
-            <div className="space-y-2">
-              {budgets.map((band) => (
-                <button
-                  key={band.value}
-                  type="button"
-                  onClick={() => set('budget', band.value)}
-                  aria-pressed={values.budget === band.value}
-                  className={`flex min-h-14 w-full items-center justify-between gap-4 border px-4 text-left transition-colors ${
-                    values.budget === band.value
-                      ? 'border-ink bg-ink text-paper'
-                      : 'border-line hover:border-ink'
-                  }`}
-                >
-                  <span className="text-sm">{band.value}</span>
-                  <span
-                    className={`text-xs ${values.budget === band.value ? 'text-paper/60' : 'text-ink-3'}`}
+          {current.kind === 'chips' && (
+            <fieldset>
+              <legend className="sr-only">{current.question}</legend>
+              <div className="flex flex-wrap gap-2.5">
+                {current.options?.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={value === option.value}
+                    onClick={() => set(current.key, option.value)}
+                    className={`inline-flex min-h-12 items-center rounded-full border px-5 text-[0.9375rem] transition-colors ${
+                      value === option.value
+                        ? 'border-ink bg-ink text-paper'
+                        : 'border-line-2 bg-paper text-ink-2 hover:border-ink hover:text-ink'
+                    }`}
                   >
-                    {band.note}
-                  </span>
-                </button>
-              ))}
-            </div>
-            {errors.budget && <p className="mt-3 text-sm text-ink">{errors.budget}</p>}
-          </fieldset>
+                    {option.value}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
 
-          <fieldset>
-            <Legend label="Когда хотелось бы запуститься" hint="Тоже ориентир." />
-            <div className="space-y-2">
-              {timelines.map((band) => (
-                <button
-                  key={band.value}
-                  type="button"
-                  onClick={() => set('timeline', band.value)}
-                  aria-pressed={values.timeline === band.value}
-                  className={`flex min-h-14 w-full items-center justify-between gap-4 border px-4 text-left transition-colors ${
-                    values.timeline === band.value
-                      ? 'border-ink bg-ink text-paper'
-                      : 'border-line hover:border-ink'
-                  }`}
-                >
-                  <span className="text-sm">{band.value}</span>
-                  <span
-                    className={`text-xs ${values.timeline === band.value ? 'text-paper/60' : 'text-ink-3'}`}
+          {current.kind === 'list' && (
+            <fieldset>
+              <legend className="sr-only">{current.question}</legend>
+              <div className="space-y-2">
+                {current.options?.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={value === option.value}
+                    onClick={() => set(current.key, option.value)}
+                    className={`flex min-h-13 w-full flex-wrap items-center justify-between gap-x-5 gap-y-0.5 rounded-xl border px-5 py-2.5 text-left transition-colors md:px-6 ${
+                      value === option.value
+                        ? 'border-ink bg-ink text-paper'
+                        : 'border-line-2 bg-paper hover:border-ink'
+                    }`}
                   >
-                    {band.note}
-                  </span>
-                </button>
-              ))}
-            </div>
-            {errors.timeline && <p className="mt-3 text-sm text-ink">{errors.timeline}</p>}
-          </fieldset>
-
-          <Field
-            label="Что-нибудь ещё"
-            optional
-            hint="Всё, что не влезло в поля выше."
-            error={errors.extra}
-          >
-            <textarea
-              rows={3}
-              className={inputClass}
-              value={String(values.extra)}
-              onChange={(e) => set('extra', e.target.value)}
-            />
-          </Field>
-
-          <div className="border-t border-line pt-8">
-            <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
-              <input
-                type="checkbox"
-                checked={values.consent === true}
-                onChange={(e) => set('consent', e.target.checked)}
-                className="mt-0.5 size-5 shrink-0"
-              />
-              <span className="text-ink-2">{consentLabel}</span>
-            </label>
-            {errors.consent && <p className="mt-3 text-sm text-ink">{errors.consent}</p>}
-          </div>
+                    <span className="text-base font-medium">{option.value}</span>
+                    {option.note && (
+                      <span
+                        className={`text-sm ${value === option.value ? 'text-paper/60' : 'text-ink-3'}`}
+                      >
+                        {option.note}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
         </div>
-      )}
+
+        {last && (
+          <label className="mt-10 flex max-w-2xl cursor-pointer items-start gap-3 text-sm leading-relaxed">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 shrink-0"
+              checked={values.consent === true}
+              onChange={(event) => set('consent', event.target.checked)}
+            />
+            <span className="text-ink-2">{consentLabel}</span>
+          </label>
+        )}
+
+        {error && (
+          <p role="alert" className="mt-6 border-l-2 border-ink pl-4 text-base">
+            {error}
+          </p>
+        )}
+      </div>
 
       {/* Hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label>
           Не заполняйте это поле
-          <input
-            tabIndex={-1}
-            autoComplete="off"
-            value={String(values.website)}
-            onChange={(e) => set('website', e.target.value)}
-          />
+          <input ref={website} name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
       {formError && (
-        <p role="alert" className="mt-10 border-l-2 border-ink pl-4 text-sm leading-relaxed">
+        <p role="alert" className="mt-8 border-l-2 border-ink pl-4 text-sm">
           {formError}
         </p>
       )}
 
-      <div className="mt-14 flex flex-wrap items-center gap-4">
+      <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+        <button type="submit" disabled={sending} className={primary}>
+          {last ? (sending ? 'Отправляю…' : 'Отправить заявку') : 'Дальше'}
+          <span aria-hidden>→</span>
+        </button>
+
+        {current.optional && !last && (
+          <button
+            type="button"
+            onClick={() => {
+              setError('');
+              setStep((i) => i + 1);
+            }}
+            className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
+          >
+            Пропустить
+          </button>
+        )}
+
         {step > 0 && (
           <button
             type="button"
-            onClick={goBack}
-            className="inline-flex min-h-14 items-center rounded-full border border-line-2 px-7 text-sm font-medium transition-colors hover:border-ink"
+            onClick={back}
+            className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
           >
             Назад
           </button>
         )}
-
-        {step < STEPS.length - 1 ? (
-          <button
-            type="button"
-            onClick={goNext}
-            className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-sm font-semibold text-paper transition-colors hover:bg-ink-2"
-          >
-            Дальше
-            <span aria-hidden className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </button>
-        ) : (
-          <button
-            type="submit"
-            disabled={sending}
-            className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-sm font-semibold text-paper transition-colors hover:bg-ink-2 disabled:opacity-40"
-          >
-            {sending ? 'Отправляю…' : 'Отправить заявку'}
-            {!sending && (
-              <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            )}
-          </button>
-        )}
       </div>
     </form>
-  );
-}
-
-function Legend({ label, hint }: { label: string; hint?: string }) {
-  return (
-    <legend className="mb-5">
-      <span className="block text-base font-semibold">{label}</span>
-      {hint && <span className="mt-2 block text-sm leading-relaxed text-ink-3">{hint}</span>}
-    </legend>
-  );
-}
-
-function Field({
-  label,
-  hint,
-  optional,
-  error,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  optional?: boolean;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 flex flex-wrap items-baseline gap-x-3">
-        <span className="text-base font-semibold">{label}</span>
-        {optional && <span className="text-xs text-ink-3">можно пропустить</span>}
-      </span>
-      {hint && <span className="mb-5 block text-sm leading-relaxed text-ink-3">{hint}</span>}
-      {children}
-      {error && <span className="mt-3 block text-sm text-ink">{error}</span>}
-    </label>
   );
 }

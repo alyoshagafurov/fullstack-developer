@@ -85,7 +85,17 @@ export function Opening() {
             Ink on both — the owner's call — and the desk is grey, not black,
             so it still stands off it. */}
         <div className="mt-8 flex flex-col items-center gap-4 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:flex-row md:justify-center md:gap-5 md:translate-y-1/2">
-          <CTA href="/start" size="lg">
+          {/*
+            On a phone the button sits on the light wall, where ink is the only
+            legible fill. On a wide screen it stands on the grey desk, and there
+            paper carries far better than the black the owner chose for the
+            phone — so the fill flips with the ground under it.
+          */}
+          <CTA
+            href="/start"
+            size="lg"
+            className="md:bg-paper md:text-void md:hover:bg-paper/85"
+          >
             {site.heroCta}
           </CTA>
           {/* Quieter than the brief: ink on the wall, paper on the desk. */}
