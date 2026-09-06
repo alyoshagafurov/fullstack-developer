@@ -18,9 +18,10 @@ export const metadata: Metadata = {
 export default async function ThanksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string }>;
+  searchParams: Promise<{ ref?: string; code?: string }>;
 }) {
-  const { ref } = await searchParams;
+  const { ref, code } = await searchParams;
+  const codeValid = code && /^[a-f0-9]{32}$/.test(code) ? code : null;
 
   return (
     <Band tone="ground" innerClassName="flex min-h-[100svh] flex-col justify-center py-32">
@@ -38,6 +39,25 @@ export default async function ThanksPage({
               <p className="mt-3 text-sm text-ink-2">
                 Сохраните его — по нему я быстро найду вашу заявку.
               </p>
+              {codeValid && (
+                <div className="mt-8">
+                  <p className="label mb-3">Код для проверки статуса в Telegram</p>
+                  <p className="tabular font-mono text-sm break-all">{codeValid}</p>
+                  <p className="mt-3 text-sm text-ink-2">
+                    Напишите боту{' '}
+                    <a
+                      href={`https://t.me/${site.contact.bot}?start=status`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-4"
+                    >
+                      @{site.contact.bot}
+                    </a>{' '}
+                    номер заявки и этот код — он ответит, на каком этапе проект. Код показывается
+                    один раз.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

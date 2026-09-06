@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import {
   endSession,
   hashPassword,
@@ -12,7 +13,10 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { type LeadStatusName, leadStatuses } from '@/lib/content/finance';
+import { site } from '@/lib/content/site';
+import { adminIds, getApi, sendWithRetry } from '@/lib/telegram/api';
+import { transitionLead } from '@/lib/telegram/leads';
+import { notifyClientStatus } from '@/lib/telegram/notify';
 
 /*
  * Every write the admin can make.
@@ -112,30 +116,84 @@ export async function setLeadStatus(leadId: string, to: string): Promise<ActionR
   const gate = await requireAdmin();
   if (gate.status === 'refused') return refuse;
 
-  if (!(leadStatuses as readonly string[]).includes(to)) {
-    return { status: 'error', message: 'Неизвестный статус' };
+  // The same move the bot's buttons make, from the same function.
+  const result = await transitionLead(leadId, to);
+  if (result.status === 'invalid') return { status: 'error', message: 'Неизвестный статус' };
+  if (result.status === 'missing') return { status: 'error', message: 'Заявка не найдена' };
+
+  if (result.status === 'ok') {
+    // 14.7 — the client hears that their project moved, once the response is out.
+    after(() => notifyClientStatus(leadId, result.to));
   }
-
-  const lead = await prisma.lead.findUnique({ where: { id: leadId }, select: { status: true } });
-  if (!lead) return { status: 'error', message: 'Заявка не найдена' };
-  if (lead.status === to) return { status: 'ok' };
-
-  await prisma.$transaction([
-    prisma.lead.update({
-      where: { id: leadId },
-      data: {
-        status: to as LeadStatusName,
-        // Leaving NEW is the moment the owner answered. Recorded once.
-        ...(lead.status === 'NEW' ? { firstRepliedAt: new Date() } : {}),
-      },
-    }),
-    prisma.statusEvent.create({ data: { leadId, from: lead.status, to: to as LeadStatusName } }),
-  ]);
 
   revalidatePath('/admin');
   revalidatePath('/admin/applications');
   revalidatePath(`/admin/applications/${leadId}`);
   return { status: 'ok' };
+}
+
+/* -------------------------------------------------------------- telegram -- */
+
+/**
+ * The bot's connection, from the settings screen.
+ *
+ * Three calls to Telegram and nothing else: point the bot at this site, take
+ * it off, or send the owner a line to prove the chain works. The token and the
+ * secret stay in the environment; these read them and never return them.
+ */
+export async function telegramSetWebhook(): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
+  if (!secret) return { status: 'error', message: 'TELEGRAM_WEBHOOK_SECRET не задан' };
+
+  try {
+    await getApi().setWebhook(`${site.url}/api/telegram/webhook`, {
+      secret_token: secret,
+      allowed_updates: ['message', 'callback_query'],
+      drop_pending_updates: true,
+    });
+  } catch (error) {
+    return { status: 'error', message: telegramError(error) };
+  }
+  revalidatePath('/admin/settings');
+  return { status: 'ok' };
+}
+
+export async function telegramDeleteWebhook(): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  try {
+    await getApi().deleteWebhook({ drop_pending_updates: true });
+  } catch (error) {
+    return { status: 'error', message: telegramError(error) };
+  }
+  revalidatePath('/admin/settings');
+  return { status: 'ok' };
+}
+
+export async function telegramSendTest(): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  const admins = [...adminIds()];
+  if (admins.length === 0) return { status: 'error', message: 'TELEGRAM_ADMIN_IDS не задан' };
+
+  const results = await Promise.all(
+    admins.map((id) => sendWithRetry(id, `${site.brand} · ${site.domain}`)),
+  );
+  return results.some(Boolean)
+    ? { status: 'ok' }
+    : { status: 'error', message: 'Telegram не принял сообщение. Напишите боту /start и повторите.' };
+}
+
+function telegramError(error: unknown): string {
+  const message = String((error as Error)?.message ?? '');
+  // Telegram's own description is short and safe to show; anything else is not.
+  const described = message.match(/:\s*(.{5,120})$/);
+  return described ? `Telegram: ${described[1]}` : 'Telegram не ответил';
 }
 
 export async function addNote(leadId: string, body: string): Promise<ActionResult> {

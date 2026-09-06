@@ -43,13 +43,20 @@ function getClient(): PrismaClient {
  * section renders empty and the site still ships.
  */
 export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
-  get(_target, property, receiver) {
-    const value = Reflect.get(getClient(), property, receiver) as unknown;
-    return typeof value === 'function' ? value.bind(getClient()) : value;
+  get(_target, property) {
+    /*
+     * The real client, never the proxy, is what `getClient` stores on the
+     * global and what is read here. An earlier version also put this proxy on
+     * the global "to survive reloads" — after which `getClient` returned the
+     * proxy, whose trap called `getClient`, which returned the proxy, until the
+     * stack ran out. Every query in development died with a RangeError while
+     * production, which never reads the global, was fine.
+     */
+    const target = getClient();
+    const value = Reflect.get(target, property) as unknown;
+    return typeof value === 'function' ? value.bind(target) : value;
   },
 });
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 /**
  * Run a database read the page can live without.

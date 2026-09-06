@@ -63,6 +63,8 @@ export const site = {
     phone: '+992 918 79 32 31',
     phoneHref: '+992918793231',
     github: 'https://github.com/alyoshagafurov',
+    /** 14.2 — the bot, as Telegram registered it */
+    bot: 'alygafurov_bot',
   },
 
   /** 10.4 */

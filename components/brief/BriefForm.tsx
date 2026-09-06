@@ -163,6 +163,7 @@ export function BriefForm() {
       });
       const payload = (await response.json()) as {
         ref?: string;
+        code?: string;
         error?: string;
         issues?: Record<string, string>;
       };
@@ -179,7 +180,10 @@ export function BriefForm() {
       } catch {
         /* ignore */
       }
-      router.push(`/start/thanks?ref=${encodeURIComponent(payload.ref ?? '')}`);
+      // The code is shown once, on the next page; the draft is gone with it.
+      router.push(
+        `/start/thanks?ref=${encodeURIComponent(payload.ref ?? '')}&code=${encodeURIComponent(payload.code ?? '')}`,
+      );
     } catch {
       setFormError('Интернет пропал. Проверьте связь и нажмите ещё раз.');
       setSending(false);

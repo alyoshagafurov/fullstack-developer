@@ -1,15 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { briefSchema } from '@/lib/content/brief';
-import { createLeadRef, looksAutomated, withinEmailQuota, withinRateLimit } from '@/lib/lead';
-import { prisma } from '@/lib/prisma';
+import { looksAutomated, withinEmailQuota, withinRateLimit } from '@/lib/lead';
+import { createLead } from '@/lib/telegram/leads';
+import { notifyNewLead } from '@/lib/telegram/notify';
 
 /*
- * The one write path on the public site.
+ * The site's door into the leads table. The bot has the other one, and both
+ * lead to `createLead`, so there is a single definition of what gets written.
  *
  * Everything the browser sends is re-validated here with the same schema the
  * form uses, so a field can never be checked in the client and skipped on the
  * server. Nothing the visitor typed is ever logged: a brief carries their name,
  * their email and their business, and logs are the wrong place for all three.
+ *
+ * The owner is told in Telegram after the response is sent — the visitor
+ * should not wait on a third party to learn that their brief is in.
  */
 
 export const runtime = 'nodejs';
@@ -63,40 +68,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // The reference is derived from a count, so two submissions in the same
-    // instant can pick the same one. The unique index rejects the loser and the
-    // retry takes the next number.
-    let lastError: unknown;
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const ref = await createLeadRef();
-      try {
-        await prisma.lead.create({
-          data: {
-            ref,
-            name: data.name,
-            email: data.email.toLowerCase(),
-            company: data.company || null,
-            contact: data.contact,
-            projectType: data.projectType,
-            budget: data.budget,
-            timeline: data.timeline,
-            goal: data.goal,
-            description: data.description,
-            audience: data.audience || null,
-            features: data.features || null,
-            links: data.links || null,
-            extra: data.extra || null,
-            source: 'site',
-          },
-        });
-        return NextResponse.json({ ref }, { status: 201 });
-      } catch (error) {
-        lastError = error;
-        const code = (error as { code?: string })?.code;
-        if (code !== 'P2002') throw error;
-      }
-    }
-    throw lastError;
+    const lead = await createLead(data, 'site');
+
+    after(() => notifyNewLead(lead.id));
+
+    // The code is what lets the client ask the bot about this brief later. It
+    // is shown once, on the confirmation page, and never sent anywhere else.
+    return NextResponse.json({ ref: lead.ref, code: lead.trackingToken }, { status: 201 });
   } catch (error) {
     // Class only. The body of this request must never reach a log line.
     console.error(`[lead] create failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
