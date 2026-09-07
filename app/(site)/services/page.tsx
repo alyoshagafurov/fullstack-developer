@@ -36,7 +36,12 @@ export default function ServicesPage() {
        * the statement is already on the first screen, in the marquee and in the
        * footer, and a fourth repetition read as a template filling a slot.
        */}
-      <PageOpening eyebrow="Услуги" title="Что я делаю" lede={site.difference} />
+      <PageOpening
+        eyebrow="Услуги"
+        title="Что я делаю"
+        lede={site.difference}
+        video={{ src: '/gallery/desk.mp4', poster: '/gallery/desk-poster.webp' }}
+      />
 
       {/*
        * On paper rather than on black: the greeting above is already black, and

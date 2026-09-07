@@ -142,59 +142,90 @@ export function AboutSpread() {
 }
 
 /**
- * The process as one track.
+ * How the work goes, read one stage at a time over him actually working.
  *
- * Each stage takes the share of the line its real duration deserves, so four
- * weeks of development read as four weeks and the one-day launch reads as a
- * day. Equal cards would flatten the honest shape of the work.
+ * The band pins and holds the screen; behind the words his own footage runs,
+ * dimmed almost to a texture, and the six stages pass through the frame one
+ * after another as the reader scrolls. A process described in six equal cards
+ * is a diagram; described one stage at a time over the room it happens in, it
+ * is the thing itself.
+ *
+ * The terms fall out of the pinned band into their own strip underneath: they
+ * are the small print of the arrangement, not part of its story.
  */
 export function ProcessTrack() {
   const total = process.reduce((sum, stage) => sum + stage.weight, 0);
 
   return (
-    <Band tone="paper" id="process" innerClassName="py-28 md:py-40">
-      <h2 data-reveal className="display-2 mb-16 max-w-2xl uppercase">
-        Как идёт работа
-      </h2>
-
-      {/* Stage widths are their real share of the timeline. It draws itself
-          left to right as it comes into view: a timeline that is drawn reads
-          as time passing, a line that is simply there reads as a border. */}
-      <div data-draw className="mb-14 hidden h-px w-full bg-line-2 md:flex" aria-hidden>
-        {process.map((stage) => (
-          <div
-            key={stage.num}
-            style={{ flexGrow: stage.weight }}
-            className="h-px border-l border-ink first:border-l-0"
+    <>
+      <section data-reel data-tone="dark" id="process" className="relative w-full bg-void text-paper">
+        <div
+          data-reel-stage
+          className="relative flex min-h-[100svh] w-full items-center overflow-hidden"
+        >
+          {/* His own room, behind the words. Decorative: the stages say it all. */}
+          <video
+            data-video
+            src="/gallery/room.mp4"
+            poster="/gallery/room-poster.webp"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden
+            className="absolute inset-0 size-full object-cover opacity-30"
           />
-        ))}
-      </div>
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-b from-void/85 via-void/70 to-void/95"
+          />
 
-      <ol data-reveal="group" className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-        {process.map((stage) => (
-          <li key={stage.num} className="group">
-            <p className="display-3 text-ink-3 tabular transition-colors duration-500 group-hover:text-ink">
-              {stage.num}
-            </p>
-            <h3 className="mt-4 text-lg leading-snug tracking-[-0.02em]">{stage.title}</h3>
-            <p className="mt-1 text-sm text-ink-3">{stage.duration}</p>
-            <p className="mt-4 text-sm leading-relaxed text-ink-2">{stage.body}</p>
-            <p className="sr-only">
-              Доля этапа в общем сроке: {Math.round((stage.weight / total) * 100)} процентов.
-            </p>
-          </li>
-        ))}
-      </ol>
+          <div className="shell relative w-full py-16 md:py-20">
+            <h2 className="display-3 uppercase">Как идёт работа</h2>
 
-      <dl data-reveal="group" className="mt-20 grid gap-10 border-t border-line-2 pt-10 md:grid-cols-3">
-        {terms.map((term) => (
-          <div key={term.label}>
-            <dt className="label mb-3">{term.label}</dt>
-            <dd className="text-sm leading-relaxed text-ink-2">{term.value}</dd>
+            {/* A fixed frame the stages pass through, so the heading above it
+                and the ground behind it never move. */}
+            <div className="relative mt-10 h-[48svh] md:mt-14">
+              <ol>
+                {process.map((stage) => (
+                  <li
+                    key={stage.num}
+                    data-reel-slide
+                    className="flex size-full flex-col justify-center"
+                  >
+                    <p className="tabular text-[clamp(3rem,9vw,7rem)] leading-[0.85] font-extrabold tracking-[-0.05em] text-paper/20">
+                      {stage.num}
+                    </p>
+                    <h3 className="mt-5 text-[clamp(1.5rem,3.6vw,3rem)] leading-[1.05] font-semibold tracking-[-0.03em]">
+                      {stage.title}
+                    </h3>
+                    <p className="mt-3 text-sm tracking-[0.06em] text-paper/50">{stage.duration}</p>
+                    <p className="mt-6 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.125rem)] leading-relaxed text-paper/75">
+                      {stage.body}
+                    </p>
+                    <p className="sr-only">
+                      Доля этапа в общем сроке: {Math.round((stage.weight / total) * 100)} процентов.
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
-        ))}
-      </dl>
-    </Band>
+        </div>
+      </section>
+
+      <Band tone="shelf" innerClassName="py-20 md:py-28">
+        <dl data-reveal="group" className="grid gap-10 md:grid-cols-3">
+          {terms.map((term) => (
+            <div key={term.label}>
+              <dt className="label mb-3">{term.label}</dt>
+              <dd className="text-sm leading-relaxed text-ink-2">{term.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Band>
+    </>
   );
 }
 

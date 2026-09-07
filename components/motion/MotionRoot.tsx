@@ -384,7 +384,9 @@ function videos() {
 function stillVideos() {
   document.querySelectorAll<HTMLVideoElement>('video[data-video]').forEach((frame) => {
     frame.autoplay = false;
-    frame.controls = true;
+    // A frame standing behind type is decoration; handing it a play button
+    // would put browser chrome in the middle of a page nobody asked to watch.
+    frame.controls = frame.getAttribute('aria-hidden') !== 'true';
     frame.pause();
   });
 }

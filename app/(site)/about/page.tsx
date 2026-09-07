@@ -80,11 +80,6 @@ export default function AboutPage() {
               ))}
             </ul>
           </section>
-
-          <section>
-            <h2 className="label mb-6">Вне работы</h2>
-            <p className="text-sm leading-relaxed text-ink-2">{about.offDuty}</p>
-          </section>
         </div>
       </Band>
 
@@ -118,9 +113,6 @@ export default function AboutPage() {
       </Band>
 
       <Band tone="paper" innerClassName="py-20 md:py-28">
-        <h2 data-reveal className="label mb-10">
-          В работе, в зале, в жизни
-        </h2>
         <Gallery />
       </Band>
 

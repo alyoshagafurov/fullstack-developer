@@ -29,6 +29,7 @@ export function PageOpening({
   ctaLabel = site.heroCta,
   stage = true,
   facts,
+  video,
 }: {
   eyebrow: string;
   title: string;
@@ -40,13 +41,33 @@ export function PageOpening({
   /** The two form pages set this false: nothing belongs between them and their form. */
   stage?: boolean;
   facts?: { left?: Fact[]; right?: Fact[] };
+  /** Footage behind the title, on the pages that are about the work itself. */
+  video?: { src: string; poster: string };
 }) {
   return (
     <>
     <section
       data-tone="dark"
-      className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
+      className="relative isolate flex min-h-[78svh] w-full flex-col items-center justify-center overflow-hidden bg-void px-5 py-32 text-center text-paper"
     >
+      {video && (
+        <>
+          <video
+            data-video
+            src={video.src}
+            poster={video.poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden
+            className="absolute inset-0 -z-10 size-full object-cover opacity-25"
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-void/55" />
+        </>
+      )}
+
 
       <p data-intro className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
         {eyebrow}
