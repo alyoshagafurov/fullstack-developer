@@ -25,7 +25,7 @@ export const about = {
 
   /** 6.7 — outside work */
   offDuty:
-    'Читаю книги Харуки Мураками, занимаюсь MMA, гуляю по ночному Душанбе под Billie Eilish или Cigarettes After Sex.',
+    'Читаю книги Харуки Мураками, занимаюсь MMA, гуляю по ночному Душанбе под Cigarettes After Sex.',
 
   /** 6.8 */
   languages: [

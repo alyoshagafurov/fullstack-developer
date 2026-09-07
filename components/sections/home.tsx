@@ -153,6 +153,21 @@ export function AboutSpread() {
  * The terms fall out of the pinned band into their own strip underneath: they
  * are the small print of the arrangement, not part of its story.
  */
+
+/*
+ * Where each stage stands in the frame. A column of six blocks all pinned to
+ * the same left edge reads as a list scrolling past; moved around the frame,
+ * each arrival is somewhere new and the reader keeps looking.
+ */
+const PLACES = [
+  'items-start text-left',
+  'items-end text-right',
+  'items-center text-center',
+  'items-start text-left md:pl-[14%]',
+  'items-end text-right md:pr-[12%]',
+  'items-center text-center',
+];
+
 export function ProcessTrack() {
   const total = process.reduce((sum, stage) => sum + stage.weight, 0);
 
@@ -174,39 +189,44 @@ export function ProcessTrack() {
             playsInline
             preload="metadata"
             aria-hidden
-            className="absolute inset-0 size-full object-cover opacity-30"
+            className="absolute inset-0 size-full object-cover opacity-70"
           />
+          {/* Enough to hold white type, not so much that the room disappears. */}
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-b from-void/85 via-void/70 to-void/95"
+            className="absolute inset-0 bg-gradient-to-b from-void/70 via-void/35 to-void/80"
           />
 
           <div className="shell relative w-full py-16 md:py-20">
-            <h2 className="display-3 uppercase">Как идёт работа</h2>
+            <h2 className="display-3 uppercase [text-shadow:0_2px_28px_rgb(5_5_5_/_0.6)]">
+              Как идёт работа
+            </h2>
 
             {/* A fixed frame the stages pass through, so the heading above it
                 and the ground behind it never move. */}
             <div className="relative mt-10 h-[48svh] md:mt-14">
               <ol>
-                {process.map((stage) => (
+                {process.map((stage, index) => (
                   <li
                     key={stage.num}
                     data-reel-slide
-                    className="flex size-full flex-col justify-center"
+                    className={`flex size-full flex-col justify-center ${PLACES[index % PLACES.length]}`}
                   >
-                    <p className="tabular text-[clamp(3rem,9vw,7rem)] leading-[0.85] font-extrabold tracking-[-0.05em] text-paper/20">
-                      {stage.num}
-                    </p>
-                    <h3 className="mt-5 text-[clamp(1.5rem,3.6vw,3rem)] leading-[1.05] font-semibold tracking-[-0.03em]">
-                      {stage.title}
-                    </h3>
-                    <p className="mt-3 text-sm tracking-[0.06em] text-paper/50">{stage.duration}</p>
-                    <p className="mt-6 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.125rem)] leading-relaxed text-paper/75">
-                      {stage.body}
-                    </p>
-                    <p className="sr-only">
-                      Доля этапа в общем сроке: {Math.round((stage.weight / total) * 100)} процентов.
-                    </p>
+                    <div className="max-w-2xl">
+                      <p className="tabular text-[clamp(3rem,9vw,7rem)] leading-[0.85] font-extrabold tracking-[-0.05em] text-paper/35">
+                        {stage.num}
+                      </p>
+                      <h3 className="mt-5 text-[clamp(1.5rem,3.6vw,3rem)] leading-[1.05] font-semibold tracking-[-0.03em] [text-shadow:0_1px_24px_rgb(5_5_5_/_0.55)]">
+                        {stage.title}
+                      </h3>
+                      <p className="mt-3 text-sm tracking-[0.06em] text-paper/70">{stage.duration}</p>
+                      <p className="mt-6 text-[clamp(0.9375rem,1.5vw,1.125rem)] leading-relaxed text-paper/85 [text-shadow:0_1px_18px_rgb(5_5_5_/_0.6)]">
+                        {stage.body}
+                      </p>
+                      <p className="sr-only">
+                        Доля этапа в общем сроке: {Math.round((stage.weight / total) * 100)} процентов.
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ol>
