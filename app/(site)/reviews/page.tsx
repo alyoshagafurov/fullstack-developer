@@ -28,7 +28,12 @@ export default async function ReviewsPage() {
 
   return (
     <>
-      <PageOpening eyebrow="Отзывы" title="Что говорят клиенты" />
+      <PageOpening
+        eyebrow="Отзывы"
+        title="Что говорят клиенты"
+        ctaHref="/reviews/new"
+        ctaLabel="Оставить отзыв"
+      />
 
       {voices.length > 0 && (
         <Band tone="ground" innerClassName="py-16 md:py-24">

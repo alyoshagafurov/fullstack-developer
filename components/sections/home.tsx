@@ -232,12 +232,12 @@ export function CasesBand({ items, total }: { items: CaseRow[]; total: number })
             <li key={row.id}>
               <Link
                 href={`/work/${row.slug}`}
-                className={`group grid items-center gap-8 py-12 md:py-16 ${
+                className={`group grid items-center gap-8 py-16 md:py-24 ${
                   logo
-                    ? 'md:grid-cols-[13rem_1fr_13rem] md:gap-12'
+                    ? 'md:grid-cols-[11rem_1fr_22rem] md:gap-12'
                     : flip
-                      ? 'md:grid-cols-[1fr_16rem]'
-                      : 'md:grid-cols-[16rem_1fr]'
+                      ? 'md:grid-cols-[1fr_22rem]'
+                      : 'md:grid-cols-[22rem_1fr]'
                 }`}
               >
                 {logo && (
@@ -267,16 +267,21 @@ export function CasesBand({ items, total }: { items: CaseRow[]; total: number })
                   )}
                 </div>
 
+                {/* `data-object`: the motion layer drifts it against the scroll
+                    and turns it toward the pointer while the row is under the
+                    hand. `lift` carries the photograph's sweep the last few
+                    percent to white, so nothing squares off on this band. */}
                 <div
-                  className={`relative aspect-square w-36 md:w-full ${
+                  data-object
+                  className={`relative aspect-square w-44 md:w-full ${
                     logo ? '' : `max-md:order-first ${flip ? 'md:order-2' : 'md:order-1'}`
                   }`}
                 >
                   <StudioObject
                     src={row.objectImage}
                     alt=""
-                    sizes="(min-width: 768px) 16rem, 9rem"
-                    className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
+                    sizes="(min-width: 768px) 22rem, 11rem"
+                    lift
                   />
                 </div>
               </Link>

@@ -12,6 +12,12 @@ import Image from 'next/image';
  * The consequence to respect: the band behind an object must never be darker
  * than the photograph's backdrop, or the blend clips the object's highlights.
  * Objects therefore live on `ground` and `paper`, never on `ink`.
+ *
+ * `lift` is for a band that is pure white. The sweep in these photographs
+ * bottoms out around 247 rather than 255, so on white the blend leaves it
+ * standing as a faint square. A few percent of brightness carries the sweep
+ * the rest of the way to white, where it vanishes; the object and its shadow
+ * lighten by the same few percent, which is not visible.
  */
 export function StudioObject({
   src,
@@ -20,6 +26,7 @@ export function StudioObject({
   sizes = '(min-width: 1024px) 40vw, 80vw',
   className = '',
   style,
+  lift = false,
 }: {
   src: string;
   alt: string;
@@ -27,6 +34,7 @@ export function StudioObject({
   sizes?: string;
   className?: string;
   style?: React.CSSProperties;
+  lift?: boolean;
 }) {
   return (
     <Image
@@ -37,7 +45,7 @@ export function StudioObject({
       priority={priority}
       sizes={sizes}
       className={`studio-object h-auto w-full select-none ${className}`}
-      style={style}
+      style={lift ? { filter: 'brightness(1.045)', ...style } : style}
       draggable={false}
     />
   );

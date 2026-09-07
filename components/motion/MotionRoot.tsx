@@ -23,7 +23,8 @@ gsap.registerPlugin(ScrollTrigger);
  *   data-reveal="image"               a photograph settles from a touch larger
  *   data-count                        a number counts up to itself
  *   data-draw                         a line draws itself left to right
- *   data-film                         a long list read as film, scrubbed to scroll
+ *   data-reel                         a list read one screen at a time, pinned
+ *   data-object                       a studio object that answers scroll and pointer
  *   data-magnetic                     a button leans toward the pointer
  *
  * Everything is small and short: a rise of a few pixels over most of a second,
@@ -177,37 +178,132 @@ function counts() {
 }
 
 /*
- * A long list read as film.
+ * A list read one screen at a time.
  *
- * Each row rises out of nothing as it enters at the bottom of the screen,
- * holds while it crosses the middle, and dissolves upward as it leaves. The
- * ground it sits on never moves, so the band reads as one continuous shot
- * with the rows passing through it.
+ * The band is pinned: it stops and holds the screen while the list runs
+ * through it. Each item is centred, alone, and as the reader scrolls it
+ * leaves upward while the next rises from below. Fourteen services in a
+ * column are a price list nobody finishes; one at a time, each gets looked at.
  *
- * Scrubbed to the scroll rather than played once on a trigger: the reader
- * runs the projector, and scrolling back up rewinds it exactly.
- *
- * What moves is the row's contents, never the row itself. The hairlines
- * between them are the fixed frame the contents pass through; animating the
- * `li` would drag its border along and the ladder would come apart.
+ * The slides are stacked here rather than in the markup, so with JavaScript
+ * off the same page is fourteen full screens in a row: long, but whole.
  */
-function films() {
-  document.querySelectorAll<HTMLElement>('[data-film]').forEach((list) => {
-    Array.from(list.children).forEach((row) => {
-      const moving = (row.firstElementChild as HTMLElement | null) ?? (row as HTMLElement);
-      gsap
-        .timeline({
-          scrollTrigger: { trigger: row, start: 'top bottom', end: 'bottom top', scrub: 0.45 },
-        })
-        .fromTo(
-          moving,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, ease: 'none', duration: 0.3 },
-        )
-        .to(moving, { duration: 0.4 })
-        .to(moving, { opacity: 0, y: -30, ease: 'none', duration: 0.3 });
+function reels() {
+  document.querySelectorAll<HTMLElement>('[data-reel]').forEach((section) => {
+    const stage = section.querySelector<HTMLElement>('[data-reel-stage]');
+    const slides = Array.from(section.querySelectorAll<HTMLElement>('[data-reel-slide]'));
+    if (!stage || slides.length < 2) return;
+
+    /*
+     * The list has to be pulled up to fill the stage before the slides are
+     * stacked inside it. Absolute children leave their parent with no height
+     * of its own, and `inset: 0` against a parent of no height gives every
+     * slide no height either — the content then spills out of the screen.
+     */
+    gsap.set(slides[0].parentElement, { position: 'absolute', inset: 0 });
+    gsap.set(slides, { position: 'absolute', inset: 0 });
+
+    /* How far the reader scrolls to move one slide on. */
+    const step = () => window.innerHeight * 0.75;
+
+    /* 1 across the middle of a slide's turn, 0 once it is gone. */
+    const presence = (d: number) => {
+      const a = Math.abs(d);
+      if (a <= 0.3) return 1;
+      if (a >= 0.65) return 0;
+      const t = (a - 0.3) / 0.35;
+      return 1 - t * t * (3 - 2 * t);
+    };
+
+    const show = (progress: number) => {
+      // Half a slide of lead-in and lead-out, so the first and the last are
+      // whole at the two ends rather than caught mid-fade.
+      const pos = progress * (slides.length - 1) + 0.5;
+      slides.forEach((slide, i) => {
+        const d = pos - (i + 0.5);
+        const opacity = presence(d);
+        gsap.set(slide, {
+          opacity,
+          y: -d * 90,
+          visibility: opacity > 0.002 ? 'visible' : 'hidden',
+        });
+      });
+    };
+
+    show(0);
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: () => `+=${step() * (slides.length - 1)}`,
+      pin: stage,
+      scrub: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => show(self.progress),
+      onRefresh: (self) => show(self.progress),
     });
   });
+}
+
+/*
+ * A studio object that answers the reader.
+ *
+ * It drifts against the scroll, so it sits at a different depth from the words
+ * beside it, and it turns toward the pointer while the row is under the hand.
+ * Both live on the image itself, never on a parent: a transform on a parent is
+ * a stacking context, and that is what breaks the object's `darken` blend.
+ */
+function objects() {
+  const undo: (() => void)[] = [];
+
+  document.querySelectorAll<HTMLElement>('[data-object]').forEach((box) => {
+    const art = (box.firstElementChild as HTMLElement | null) ?? box;
+
+    gsap.fromTo(
+      art,
+      { y: 34 },
+      {
+        y: -34,
+        ease: 'none',
+        scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+      },
+    );
+
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+
+    const row = box.closest('a') ?? box;
+    const move = (event: PointerEvent) => {
+      const r = box.getBoundingClientRect();
+      const nx = (event.clientX - (r.left + r.width / 2)) / (r.width || 1);
+      const ny = (event.clientY - (r.top + r.height / 2)) / (r.height || 1);
+      gsap.to(art, {
+        rotateY: Math.max(-1, Math.min(1, nx)) * 12,
+        rotateX: Math.max(-1, Math.min(1, ny)) * -12,
+        scale: 1.06,
+        transformPerspective: 900,
+        duration: 0.5,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+    };
+    const leave = () =>
+      gsap.to(art, {
+        rotateX: 0,
+        rotateY: 0,
+        scale: 1,
+        duration: 0.9,
+        ease: 'elastic.out(1, 0.6)',
+        overwrite: 'auto',
+      });
+
+    row.addEventListener('pointermove', move);
+    row.addEventListener('pointerleave', leave);
+    undo.push(() => {
+      row.removeEventListener('pointermove', move);
+      row.removeEventListener('pointerleave', leave);
+    });
+  });
+
+  return () => undo.forEach((fn) => fn());
 }
 
 function draws() {
@@ -266,20 +362,26 @@ export function MotionRoot() {
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       document.documentElement.classList.add('motion');
+      // Assigned inside the context, torn down outside it: the object's
+      // pointer listeners are plain DOM handlers, which `ctx.revert()` knows
+      // nothing about.
+      let unobject = () => {};
       const ctx = gsap.context(() => {
         entrance();
         reveals();
         counts();
         draws();
-        films();
+        reels();
+        unobject = objects();
       });
-      const release = magnetic();
+      const unmagnet = magnetic();
       // Images and fonts settle after mount and shift every trigger's position.
       const refresh = () => ScrollTrigger.refresh();
       window.addEventListener('load', refresh);
       return () => {
         window.removeEventListener('load', refresh);
-        release();
+        unmagnet();
+        unobject();
         ctx.revert();
       };
     });

@@ -25,6 +25,8 @@ export function PageOpening({
   title,
   lede,
   cta = true,
+  ctaHref = '/start',
+  ctaLabel = site.heroCta,
   stage = true,
   facts,
 }: {
@@ -32,6 +34,9 @@ export function PageOpening({
   title: string;
   lede?: string;
   cta?: boolean;
+  /** The reviews page asks for a review here, not for a brief. */
+  ctaHref?: string;
+  ctaLabel?: string;
   /** The two form pages set this false: nothing belongs between them and their form. */
   stage?: boolean;
   facts?: { left?: Fact[]; right?: Fact[] };
@@ -59,8 +64,8 @@ export function PageOpening({
 
       {cta && (
         <div data-intro className="mt-14">
-          <CTA href="/start" tone="dark" size="lg">
-            {site.heroCta}
+          <CTA href={ctaHref} tone="dark" size="lg">
+            {ctaLabel}
           </CTA>
         </div>
       )}

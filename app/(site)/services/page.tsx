@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
 import { PageOpening } from '@/components/ui/PageOpening';
+import { ServiceReel } from '@/components/services/ServiceReel';
 import { CTA } from '@/components/ui/CTA';
-import { StudioObject } from '@/components/ui/StudioObject';
 import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
 
@@ -44,57 +43,13 @@ export default function ServicesPage() {
        * two dark bands in a row would read as one long section with a heading
        * floating in the middle of it.
        */}
-      <Band tone="paper" id="services" innerClassName="py-20 md:py-28">
-        <h2 data-reveal className="label mb-12">
+      <Band tone="paper" innerClassName="pt-20 pb-10 md:pt-28 md:pb-12">
+        <h2 data-reveal className="label">
           {services.length} услуг
         </h2>
-
-        <ol data-film>
-          {services.map((service) => (
-            <li key={service.slug} className="border-t border-line last:border-b">
-              <Link
-                href={`/services/${service.slug}`}
-                className="group grid grid-cols-[3rem_1fr] items-center gap-4 py-6 md:grid-cols-[4rem_1fr_auto] md:gap-8 md:py-8"
-              >
-                <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3">
-                  {service.num}
-                </span>
-
-                <span className="min-w-0">
-                  <span className="display-3 block transition-transform duration-400 ease-[var(--ease-studio)] group-hover:translate-x-3">
-                    {service.title}
-                  </span>
-                  <span className="mt-2 block max-w-xl text-sm leading-relaxed text-ink-2 md:hidden">
-                    {service.tagline}
-                  </span>
-                  {(service.duration || service.budget) && (
-                    <span className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[0.75rem] text-ink-3">
-                      {service.duration && <span>{service.duration}</span>}
-                      {service.budget && <span>{service.budget}</span>}
-                    </span>
-                  )}
-                </span>
-
-                <span className="hidden max-w-md items-center gap-8 md:flex">
-                  <span className="text-sm leading-relaxed text-ink-2 opacity-0 transition-opacity duration-400 group-hover:opacity-100">
-                    {service.tagline}
-                  </span>
-                  {/* Always on screen, not only on hover: the device is what
-                      tells a scanner what kind of thing this service produces. */}
-                  <span className="relative block aspect-square w-36 shrink-0 lg:w-44">
-                    <StudioObject
-                      src={service.object}
-                      alt=""
-                      sizes="176px"
-                      className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
-                    />
-                  </span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ol>
       </Band>
+
+      <ServiceReel items={services} />
 
       <Band tone="ground" innerClassName="py-24 md:py-32">
         <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
