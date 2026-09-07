@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
 import { Band } from '@/components/ui/Band';
+import { Invite } from '@/components/sections/Invite';
 import { PageOpening } from '@/components/ui/PageOpening';
-import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
 import { getTestimonials } from '@/lib/cases';
-import { site } from '@/lib/content/site';
 
 export const revalidate = 300;
 
@@ -45,17 +43,7 @@ export default async function ReviewsPage() {
         </Band>
       )}
 
-      <Band tone="ground" innerClassName="py-24 md:py-32">
-        <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
-          {site.contactInvite}
-        </p>
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <CTA href="/start">{site.heroCta}</CTA>
-          <PillLink href="/reviews/new" variant="outline">
-            Оставить отзыв
-          </PillLink>
-        </div>
-      </Band>
+      <Invite />
     </>
   );
 }

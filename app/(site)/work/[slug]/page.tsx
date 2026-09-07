@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
-import { CTA } from '@/components/ui/CTA';
+import { Invite } from '@/components/sections/Invite';
 import { PillLink } from '@/components/ui/Pill';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getCase, getPublishedCases } from '@/lib/cases';
@@ -129,19 +129,7 @@ export default async function CasePage({ params }: Params) {
         </Band>
       )}
 
-      <Band tone="ground" innerClassName="py-24 md:py-32">
-        <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
-          {site.contactInvite}
-        </p>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <CTA href="/start">
-            {site.heroCta}
-          </CTA>
-          <PillLink href="/work" variant="outline">
-            Все проекты
-          </PillLink>
-        </div>
-      </Band>
+      <Invite />
     </>
   );
 }

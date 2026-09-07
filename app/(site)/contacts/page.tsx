@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Band } from '@/components/ui/Band';
-import { CTA } from '@/components/ui/CTA';
+import { Invite } from '@/components/sections/Invite';
 import { PageOpening } from '@/components/ui/PageOpening';
 import { site } from '@/lib/content/site';
 
@@ -97,15 +97,7 @@ export default function ContactsPage() {
         </ul>
       </Band>
 
-      <Band tone="void" innerClassName="py-24 text-center md:py-32">
-        <p className="display-2 mx-auto max-w-4xl text-paper uppercase">{site.contactInvite}</p>
-        <CTA href="/start" tone="dark" size="lg" className="mt-12">
-          {site.heroCta}
-        </CTA>
-        <p className="mt-6 text-xs text-paper/60">
-          Четыре коротких шага. Ни к чему не обязывает.
-        </p>
-      </Band>
+      <Invite />
     </>
   );
 }

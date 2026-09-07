@@ -303,7 +303,7 @@ export function StartBand() {
         Заявка
       </p>
 
-      <p data-reveal className="display-1 mx-auto mt-12 max-w-6xl text-paper uppercase">
+      <p data-reveal className="display-1 mx-auto mt-12 max-w-6xl leading-[0.94] text-paper uppercase">
         {site.contactInvite}
       </p>
 

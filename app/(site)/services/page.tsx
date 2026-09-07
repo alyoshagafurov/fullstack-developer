@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Band } from '@/components/ui/Band';
+import { Invite } from '@/components/sections/Invite';
 import { PageOpening } from '@/components/ui/PageOpening';
 import { ServiceReel } from '@/components/services/ServiceReel';
-import { CTA } from '@/components/ui/CTA';
 import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
 
@@ -51,14 +51,7 @@ export default function ServicesPage() {
 
       <ServiceReel items={services} />
 
-      <Band tone="ground" innerClassName="py-24 md:py-32">
-        <p className="max-w-3xl text-[clamp(1.5rem,3.6vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
-          {site.contactInvite}
-        </p>
-        <CTA href="/start" className="mt-10">
-          {site.heroCta}
-        </CTA>
-      </Band>
+      <Invite />
     </>
   );
 }

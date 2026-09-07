@@ -2,11 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Band } from '@/components/ui/Band';
-import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
+import { Invite } from '@/components/sections/Invite';
 import { StudioObject } from '@/components/ui/StudioObject';
 import { getService, services } from '@/lib/content/services';
-import { site } from '@/lib/content/site';
 
 /*
  * One service, one object, three answers: what it is, what the client gets, who
@@ -105,37 +103,7 @@ export default async function ServicePage({ params }: Params) {
         )}
       </Band>
 
-      <Band tone="ground" innerClassName="py-20 md:py-28">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
-          <div>
-            <p className="max-w-2xl text-[clamp(1.5rem,3.4vw,2.5rem)] leading-[1.2] tracking-[-0.03em]">
-              {site.contactInvite}
-            </p>
-            <CTA href="/start" className="mt-8">
-              {site.heroCta}
-            </CTA>
-          </div>
-          <p className="text-sm text-ink-2 md:text-right">
-            Отвечаю {site.responseTime.toLowerCase()}.
-          </p>
-        </div>
-
-        <div className="mt-20 border-t border-line pt-8">
-          <p className="label mb-6">Другие услуги</p>
-          <ul className="flex flex-wrap gap-3">
-            {others.map((other) => (
-              <li key={other.slug}>
-                <Link
-                  href={`/services/${other.slug}`}
-                  className="inline-flex min-h-11 items-center rounded-full border border-line px-4 text-sm text-ink-2 transition-colors hover:border-ink hover:text-ink"
-                >
-                  {other.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Band>
+      <Invite />
     </>
   );
 }

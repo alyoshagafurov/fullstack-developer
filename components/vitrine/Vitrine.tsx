@@ -68,6 +68,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
   // first time. Before that it is the only thing telling them the stage moves.
   const [used, setUsed] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
+  const band = useRef<HTMLElement>(null);
   const pointerStart = useRef<{ x: number; id: number } | null>(null);
 
   const count = items.length;
@@ -121,6 +122,78 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
     if (index > count - 1) setIndex(0);
   }, [count, index]);
 
+  /*
+   * The object answers the reader: it turns toward the pointer while the band
+   * is under the hand, and drifts against the scroll so it sits at a different
+   * depth from the words beside it.
+   *
+   * Written as custom properties on the band rather than as React state. The
+   * drag already owns the object's `transform`, and a second writer would
+   * fight it on every frame; instead the transform quotes these properties and
+   * the two contributions add up. It also keeps a pointer move from
+   * re-rendering the whole vitrine sixty times a second.
+   */
+  useEffect(() => {
+    const el = band.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const clamp = (n: number) => Math.max(-1, Math.min(1, n));
+    const target = { tx: 0, ty: 0, zoom: 1, drift: 0 };
+    const eased = { tx: 0, ty: 0, zoom: 1, drift: 0 };
+    let frame = 0;
+
+    const draw = () => {
+      frame = 0;
+      let moving = false;
+      (Object.keys(target) as (keyof typeof target)[]).forEach((k) => {
+        const step = (target[k] - eased[k]) * 0.09;
+        if (Math.abs(step) > 0.0004) moving = true;
+        eased[k] += step;
+      });
+      el.style.setProperty('--tilt-x', `${eased.tx.toFixed(3)}deg`);
+      el.style.setProperty('--tilt-y', `${eased.ty.toFixed(3)}deg`);
+      el.style.setProperty('--zoom', eased.zoom.toFixed(4));
+      el.style.setProperty('--drift', `${eased.drift.toFixed(2)}px`);
+      if (moving) frame = requestAnimationFrame(draw);
+    };
+    const wake = () => {
+      if (!frame) frame = requestAnimationFrame(draw);
+    };
+
+    const onPointer = (event: PointerEvent) => {
+      if (!fine) return;
+      const r = el.getBoundingClientRect();
+      const inside = event.clientY > r.top && event.clientY < r.bottom;
+      const nx = clamp((event.clientX - (r.left + r.width / 2)) / (r.width / 2 || 1));
+      const ny = clamp((event.clientY - (r.top + r.height / 2)) / (r.height / 2 || 1));
+      target.ty = inside ? nx * 10 : 0;
+      target.tx = inside ? ny * -8 : 0;
+      target.zoom = inside ? 1.035 : 1;
+      wake();
+    };
+    const onScroll = () => {
+      const r = el.getBoundingClientRect();
+      const middle = r.top + r.height / 2 - window.innerHeight / 2;
+      target.drift = clamp(middle / window.innerHeight) * -46;
+      wake();
+    };
+
+    onScroll();
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', onPointer);
+      window.removeEventListener('scroll', onScroll);
+      el.style.removeProperty('--tilt-x');
+      el.style.removeProperty('--tilt-y');
+      el.style.removeProperty('--zoom');
+      el.style.removeProperty('--drift');
+    };
+  }, []);
+
   // A single item is a still life, not a carousel: no counter, no arrows.
   const interactive = count > 1;
   const current = items[index];
@@ -139,8 +212,9 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
      * fold than one that eats its own text.
      */
     <section
+      ref={band}
       data-tone="light"
-      className="stage relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ground pt-24 pb-6 md:pt-28"
+      className="stage relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-paper pt-24 pb-6 md:pt-28"
       aria-roledescription={interactive ? 'карусель' : undefined}
       aria-label="Витрина работ"
     >
@@ -209,7 +283,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
         }`}
         style={{ touchAction: 'pan-y' }}
       >
-        <div className="relative aspect-square h-[min(52svh,480px)] max-w-[92vw] md:h-[min(60svh,600px)]">
+        <div className="relative aspect-square h-[min(58svh,560px)] max-w-[94vw] md:h-[min(70svh,720px)]">
           {items.map((item, i) => {
             const active = i === index;
             return (
@@ -225,7 +299,8 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
                   src={item.object}
                   alt={active ? item.title : ''}
                   priority={i === 0}
-                  sizes="(min-width: 1024px) 38vw, 76vw"
+                  lift
+                  sizes="(min-width: 1024px) 46vw, 88vw"
                   className="transition-[opacity,transform] duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none"
                   style={{
                     opacity: active ? 1 : 0,
@@ -235,8 +310,11 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
                        in the image's own transform, never on a parent — a
                        parent with perspective is a stacking context, and that
                        is what breaks the `darken` blend against the ghost. */
+                    /* The drag's own contribution plus the band's pointer and
+                       scroll properties, added here rather than written by a
+                       second animator over the top of this one. */
                     transform: active
-                      ? `perspective(1400px) translate3d(${drag * 0.45}px, 0, 0) rotateY(${drag * -0.03}deg)`
+                      ? `perspective(1400px) translate3d(${drag * 0.45}px, var(--drift, 0px), 0) rotateY(calc(${drag * -0.03}deg + var(--tilt-y, 0deg))) rotateX(var(--tilt-x, 0deg)) scale(var(--zoom, 1))`
                       : 'perspective(1400px) translate3d(0, 22px, 0)',
                     transitionDuration: dragging ? '0ms' : undefined,
                   }}
