@@ -53,6 +53,7 @@ export default function StartPage() {
         title={site.contactInvite}
         lede={`Отвечаю ${site.responseTime.toLowerCase()}.`}
         cta={false}
+        stage={false}
       />
 
       <Band tone="ground" innerClassName="py-14 md:py-20">

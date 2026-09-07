@@ -49,7 +49,7 @@ export default function ServicesPage() {
           {services.length} услуг
         </h2>
 
-        <ol data-reveal="group">
+        <ol data-film>
           {services.map((service) => (
             <li key={service.slug} className="border-t border-line last:border-b">
               <Link

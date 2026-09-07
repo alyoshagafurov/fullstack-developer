@@ -23,6 +23,7 @@ gsap.registerPlugin(ScrollTrigger);
  *   data-reveal="image"               a photograph settles from a touch larger
  *   data-count                        a number counts up to itself
  *   data-draw                         a line draws itself left to right
+ *   data-film                         a long list read as film, scrubbed to scroll
  *   data-magnetic                     a button leans toward the pointer
  *
  * Everything is small and short: a rise of a few pixels over most of a second,
@@ -175,6 +176,40 @@ function counts() {
   });
 }
 
+/*
+ * A long list read as film.
+ *
+ * Each row rises out of nothing as it enters at the bottom of the screen,
+ * holds while it crosses the middle, and dissolves upward as it leaves. The
+ * ground it sits on never moves, so the band reads as one continuous shot
+ * with the rows passing through it.
+ *
+ * Scrubbed to the scroll rather than played once on a trigger: the reader
+ * runs the projector, and scrolling back up rewinds it exactly.
+ *
+ * What moves is the row's contents, never the row itself. The hairlines
+ * between them are the fixed frame the contents pass through; animating the
+ * `li` would drag its border along and the ladder would come apart.
+ */
+function films() {
+  document.querySelectorAll<HTMLElement>('[data-film]').forEach((list) => {
+    Array.from(list.children).forEach((row) => {
+      const moving = (row.firstElementChild as HTMLElement | null) ?? (row as HTMLElement);
+      gsap
+        .timeline({
+          scrollTrigger: { trigger: row, start: 'top bottom', end: 'bottom top', scrub: 0.45 },
+        })
+        .fromTo(
+          moving,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, ease: 'none', duration: 0.3 },
+        )
+        .to(moving, { duration: 0.4 })
+        .to(moving, { opacity: 0, y: -30, ease: 'none', duration: 0.3 });
+    });
+  });
+}
+
 function draws() {
   document.querySelectorAll<HTMLElement>('[data-draw]').forEach((el) => {
     gsap.fromTo(
@@ -236,6 +271,7 @@ export function MotionRoot() {
         reveals();
         counts();
         draws();
+        films();
       });
       const release = magnetic();
       // Images and fonts settle after mount and shift every trigger's position.

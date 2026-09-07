@@ -105,11 +105,12 @@ const QUESTIONS: Question[] = [
   },
   {
     key: 'links',
-    question: 'Что вам нравится',
-    hint: 'Ссылки на сайты, которые по душе. Можно просто названия.',
+    question: 'Какие сайты вам нравятся',
+    hint: 'Вставьте ссылки на два-три сайта, которые вам по душе и на которые вы хотите, чтобы был похож ваш. Так я сразу пойму, какой вид вам нужен.',
     kind: 'area',
     rows: 3,
     optional: true,
+    placeholder: 'https://example.com',
   },
   {
     key: 'budget',
@@ -161,7 +162,7 @@ const EMPTY: Values = {
  * as anything else, which is the one thing it has to do.
  */
 const box =
-  'w-full rounded-2xl border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
+  'w-full rounded-2xl text-left border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
 
 const primary =
   'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
@@ -307,9 +308,9 @@ export function BriefForm() {
         advance();
       }}
       noValidate
-      className="flex min-h-[70svh] flex-col justify-center"
+      className="flex min-h-[70svh] flex-col items-center justify-center text-center"
     >
-      <div className="mb-12 flex items-center gap-5">
+      <div className="mb-12 flex w-full max-w-2xl items-center gap-5">
         <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3 uppercase">
           {step + 1} / {QUESTIONS.length}
         </span>
@@ -321,19 +322,19 @@ export function BriefForm() {
         </span>
       </div>
 
-      <div key={step} className="review-step">
+      <div key={step} className="review-step w-full">
         <label htmlFor={`brief-${current.key}`} className="block">
-          <span className="block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
+          <span className="mx-auto block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
             {current.question}
           </span>
           {current.hint && (
-            <span className="mt-3 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
+            <span className="mx-auto mt-3 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
               {current.hint}
             </span>
           )}
         </label>
 
-        <div className="mt-7 max-w-2xl">
+        <div className="mx-auto mt-7 w-full max-w-2xl">
           {(current.kind === 'text' || current.kind === 'email') && (
             <input
               id={`brief-${current.key}`}
@@ -357,6 +358,7 @@ export function BriefForm() {
               rows={current.rows ?? 3}
               value={value}
               onChange={(event) => set(current.key, event.target.value)}
+              placeholder={current.placeholder}
               /* Enter breaks a line here, so the keyboard shortcut moves on. */
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
@@ -371,7 +373,7 @@ export function BriefForm() {
           {current.kind === 'chips' && (
             <fieldset>
               <legend className="sr-only">{current.question}</legend>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap justify-center gap-2.5">
                 {current.options?.map((option) => (
                   <button
                     key={option.value}
@@ -423,7 +425,7 @@ export function BriefForm() {
         </div>
 
         {last && (
-          <label className="mt-10 flex max-w-2xl cursor-pointer items-start gap-3 text-sm leading-relaxed">
+          <label className="mx-auto mt-10 flex max-w-2xl cursor-pointer items-start gap-3 text-left text-sm leading-relaxed">
             <input
               type="checkbox"
               className="mt-0.5 size-4 shrink-0"
@@ -435,7 +437,7 @@ export function BriefForm() {
         )}
 
         {error && (
-          <p role="alert" className="mt-6 border-l-2 border-ink pl-4 text-base">
+          <p role="alert" className="mt-6 text-base">
             {error}
           </p>
         )}
@@ -450,12 +452,12 @@ export function BriefForm() {
       </div>
 
       {formError && (
-        <p role="alert" className="mt-8 border-l-2 border-ink pl-4 text-sm">
+        <p role="alert" className="mt-8 text-sm">
           {formError}
         </p>
       )}
 
-      <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={sending} className={primary}>
           {last ? (sending ? 'Отправляю…' : 'Отправить заявку') : 'Дальше'}
           <span aria-hidden>→</span>

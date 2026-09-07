@@ -36,7 +36,7 @@ const steps: { key: Key; question: string; hint?: string }[] = [
  * the one thing this element has to do.
  */
 const box =
-  'w-full rounded-2xl border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
+  'w-full rounded-2xl text-left border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
 
 const primary =
   'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
@@ -145,10 +145,10 @@ export function ReviewForm() {
 
   if (done) {
     return (
-      <div className="flex min-h-[70svh] flex-col justify-center">
+      <div className="flex min-h-[70svh] flex-col items-center justify-center text-center">
         <p
           role="status"
-          className="max-w-3xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance"
+          className="mx-auto max-w-3xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance"
         >
           Спасибо! Отзыв появится на сайте после проверки.
         </p>
@@ -163,10 +163,10 @@ export function ReviewForm() {
         advance();
       }}
       noValidate
-      className="flex min-h-[70svh] flex-col justify-center"
+      className="flex min-h-[70svh] flex-col items-center justify-center text-center"
     >
       {/* Where the visitor is, and how much is left. Hairline, like everything. */}
-      <div className="mb-12 flex items-center gap-5">
+      <div className="mb-12 flex w-full max-w-2xl items-center gap-5">
         <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3 uppercase">
           {step + 1} / {steps.length}
         </span>
@@ -178,19 +178,19 @@ export function ReviewForm() {
         </span>
       </div>
 
-      <div key={step} className="review-step">
+      <div key={step} className="review-step w-full">
         <label htmlFor={`review-${current.key}`} className="block">
-          <span className="block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
+          <span className="mx-auto block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
             {current.question}
           </span>
           {current.hint && (
-            <span className="mt-4 block text-[1.0625rem] leading-relaxed text-ink-2">
+            <span className="mx-auto mt-4 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
               {current.hint}
             </span>
           )}
         </label>
 
-        <div className="mt-8 max-w-2xl">
+        <div className="mx-auto mt-8 w-full max-w-2xl">
           {current.key === 'name' && (
             <input
               id="review-name"
@@ -237,7 +237,7 @@ export function ReviewForm() {
           {current.key === 'rating' && (
             <fieldset>
               <legend className="sr-only">Оценка от 1 до 5</legend>
-              <div className="flex gap-3" onMouseLeave={() => setHover(0)}>
+              <div className="flex justify-center gap-3" onMouseLeave={() => setHover(0)}>
                 {[1, 2, 3, 4, 5].map((value) => (
                   <button
                     key={value}
@@ -263,7 +263,7 @@ export function ReviewForm() {
           {current.key === 'gender' && (
             <fieldset>
               <legend className="sr-only">Фото рядом с отзывом</legend>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap justify-center gap-3">
                 {genders.map((value) => (
                   <button
                     key={value}
@@ -288,7 +288,7 @@ export function ReviewForm() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-6 border-l-2 border-ink pl-4 text-base">
+          <p role="alert" className="mt-6 text-base">
             {error}
           </p>
         )}
@@ -303,12 +303,12 @@ export function ReviewForm() {
       </div>
 
       {formError && (
-        <p role="alert" className="mt-8 border-l-2 border-ink pl-4 text-sm">
+        <p role="alert" className="mt-8 text-sm">
           {formError}
         </p>
       )}
 
-      <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={sending} className={primary}>
           {last ? (sending ? 'Отправляю…' : 'Отправить отзыв') : 'Дальше'}
           <span aria-hidden>→</span>

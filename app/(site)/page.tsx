@@ -9,6 +9,9 @@ import {
   StartBand,
 } from '@/components/sections/home';
 import { Reviews } from '@/components/reviews/Reviews';
+import { Stage } from '@/components/three/Stage';
+import { about } from '@/lib/content/about';
+import { terms } from '@/lib/content/process';
 import { getPublishedCases, getTestimonials } from '@/lib/cases';
 import { featuredServices } from '@/lib/content/services';
 
@@ -77,6 +80,11 @@ export default async function HomePage() {
       <Reviews items={testimonials.slice(0, 3)} total={testimonials.length} />
       <ProcessTrack />
       <StartBand />
+
+      {/* The closing band's own screen of black, with the knot assembling on it.
+          Its facts are the terms and the plates — the numbers already stand
+          higher up the page, in the manifesto. */}
+      <Stage shape="knot" left={terms} right={about.facts.slice(0, 3)} />
     </>
   );
 }

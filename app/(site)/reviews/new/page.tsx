@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function NewReviewPage() {
   return (
     <>
-      <PageOpening eyebrow="Отзывы" title="Оставить отзыв" cta={false} />
+      <PageOpening eyebrow="Отзывы" title="Оставить отзыв" cta={false} stage={false} />
 
       <Band tone="ground" innerClassName="py-14 md:py-20">
         <ReviewForm />

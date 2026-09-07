@@ -1,6 +1,14 @@
 import { CTA } from '@/components/ui/CTA';
-import { Sculpture } from '@/components/three/Sculpture';
+import { Stage, type Fact } from '@/components/three/Stage';
+import { about } from '@/lib/content/about';
 import { site } from '@/lib/content/site';
+
+/* What stands beside the form when a page does not name its own facts. */
+const defaultLeft: Fact[] = site.stats.map((stat) => ({
+  label: stat.label,
+  value: stat.value,
+}));
+const defaultRight: Fact[] = about.facts.slice(0, 3);
 
 /*
  * How every page other than the home page begins.
@@ -17,22 +25,23 @@ export function PageOpening({
   title,
   lede,
   cta = true,
+  stage = true,
+  facts,
 }: {
   eyebrow: string;
   title: string;
   lede?: string;
   cta?: boolean;
+  /** The two form pages set this false: nothing belongs between them and their form. */
+  stage?: boolean;
+  facts?: { left?: Fact[]; right?: Fact[] };
 }) {
   return (
+    <>
     <section
       data-tone="dark"
-      className="relative flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
+      className="flex min-h-[78svh] w-full flex-col items-center justify-center bg-void px-5 py-32 text-center text-paper"
     >
-      {/* The mark, in the corner, out of the column: the type has the screen
-          to itself, and the form is there for whoever looks for it. */}
-      <div data-intro className="absolute right-5 bottom-8 size-16 md:right-10 md:bottom-10 md:size-20">
-        <Sculpture className="size-full" />
-      </div>
 
       <p data-intro className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
         {eyebrow}
@@ -55,6 +64,10 @@ export function PageOpening({
           </CTA>
         </div>
       )}
-    </section>
+      </section>
+
+      {/* One screen of black under the opening, where the form assembles. */}
+      {stage && <Stage left={facts?.left ?? defaultLeft} right={facts?.right ?? defaultRight} />}
+    </>
   );
 }

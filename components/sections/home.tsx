@@ -6,7 +6,6 @@ import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
 import { StudioObject } from '@/components/ui/StudioObject';
-import { Sculpture } from '@/components/three/Sculpture';
 import type { CaseRow } from '@/lib/cases';
 
 /*
@@ -295,11 +294,6 @@ export function StartBand() {
 
   return (
     <Band tone="void" id="start" innerClassName="py-28 text-center md:py-44">
-      {/* The mark, in the corner, out of the column, so the words keep the band. */}
-      <div data-reveal className="absolute right-5 bottom-8 size-16 md:right-10 md:bottom-10 md:size-20">
-        <Sculpture shape="knot" className="size-full" />
-      </div>
-
       <p data-reveal className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
         Заявка
       </p>

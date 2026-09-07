@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from 'react';
 const NAV = [
   { href: '/work', label: 'Проекты' },
   { href: '/services', label: 'Услуги' },
+  { href: '/reviews', label: 'Отзывы' },
   { href: '/about', label: 'Обо мне' },
   { href: '/contacts', label: 'Контакты' },
 ];

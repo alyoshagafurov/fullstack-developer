@@ -13,6 +13,7 @@ const columns = [
     links: [
       { href: '/work', label: 'Проекты' },
       { href: '/services', label: 'Услуги' },
+      { href: '/reviews', label: 'Отзывы' },
       { href: '/#process', label: 'Процесс' },
     ],
   },
