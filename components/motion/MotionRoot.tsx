@@ -26,6 +26,7 @@ gsap.registerPlugin(ScrollTrigger);
  *   data-reel                         a list read one screen at a time, pinned
  *   data-object                       a studio object that answers scroll and pointer
  *   data-magnetic                     a button leans toward the pointer
+ *   data-video                        a looping frame that runs only while on screen
  *
  * Everything is small and short: a rise of a few pixels over most of a second,
  * never a slide from off-screen. Movement here explains that something has
@@ -351,6 +352,43 @@ function magnetic() {
   return () => undo.forEach((fn) => fn());
 }
 
+/*
+ * A looping frame plays only while it is on the screen.
+ *
+ * The markup carries `autoplay`, so the gallery moves with no JavaScript at
+ * all; this only stops the ones nobody is looking at, which is what keeps a
+ * page of video off the battery.
+ */
+function videos() {
+  const frames = Array.from(document.querySelectorAll<HTMLVideoElement>('video[data-video]'));
+  if (frames.length === 0) return () => {};
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const frame = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) void frame.play().catch(() => {});
+        else frame.pause();
+      });
+    },
+    { threshold: 0.25 },
+  );
+  frames.forEach((frame) => io.observe(frame));
+  return () => io.disconnect();
+}
+
+/*
+ * With motion turned down the frames hold still on their poster — and gain
+ * the browser's own controls, so a visitor who wants to watch one still can.
+ */
+function stillVideos() {
+  document.querySelectorAll<HTMLVideoElement>('video[data-video]').forEach((frame) => {
+    frame.autoplay = false;
+    frame.controls = true;
+    frame.pause();
+  });
+}
+
 export function MotionRoot() {
   const pathname = usePathname();
 
@@ -375,6 +413,7 @@ export function MotionRoot() {
         unobject = objects();
       });
       const unmagnet = magnetic();
+      const unvideo = videos();
       // Images and fonts settle after mount and shift every trigger's position.
       const refresh = () => ScrollTrigger.refresh();
       window.addEventListener('load', refresh);
@@ -382,6 +421,7 @@ export function MotionRoot() {
         window.removeEventListener('load', refresh);
         unmagnet();
         unobject();
+        unvideo();
         ctx.revert();
       };
     });
@@ -389,6 +429,7 @@ export function MotionRoot() {
     mm.add('(prefers-reduced-motion: reduce)', () => {
       // Nothing moves, and nothing must stay hidden waiting for it to.
       document.documentElement.classList.remove('motion');
+      stillVideos();
     });
 
     return () => mm.revert();

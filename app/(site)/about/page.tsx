@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Band } from '@/components/ui/Band';
+import { Gallery } from '@/components/about/Gallery';
 import { Invite } from '@/components/sections/Invite';
 import { PageOpening } from '@/components/ui/PageOpening';
 import { about } from '@/lib/content/about';
@@ -114,6 +115,13 @@ export default function AboutPage() {
             </p>
           </section>
         </div>
+      </Band>
+
+      <Band tone="paper" innerClassName="py-20 md:py-28">
+        <h2 data-reveal className="label mb-10">
+          В работе, в зале, в жизни
+        </h2>
+        <Gallery />
       </Band>
 
       <Invite />

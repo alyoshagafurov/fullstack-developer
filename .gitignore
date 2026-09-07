@@ -15,3 +15,9 @@ tsconfig.tsbuildinfo
 public/**/*.png
 # The share card is generated from the wordmark and is the one PNG that ships.
 !public/og.png
+
+# Camera originals dropped into the project root. The gallery ships the
+# compressed copies under public/gallery; these stay with the owner.
+/IMG_*.HEIC
+/IMG_*.JPG
+/IMG_*.MOV
