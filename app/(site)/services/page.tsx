@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: `Что я делаю: ${services
     .slice(0, 5)
     .map((s) => s.title.toLowerCase())
-    .join(', ')} и другое.`,
+    .join(', ')} и другое. Разработка на заказ в Душанбе, Таджикистан.`,
   alternates: { canonical: '/services' },
 };
 

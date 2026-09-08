@@ -40,6 +40,12 @@ export function Footer() {
             {/* The wordmark is cut black, so it is inverted to sit on the void. */}
             <Logo className="h-8 w-auto invert md:h-10" />
             <p className="mt-5 text-sm leading-relaxed text-paper/50">{site.shortStatement}</p>
+            {/* The colophon. Who runs the site, spelled the way people look
+                him up: the Latin form is a different string to a search
+                engine, and without it a Latin query never lands here. */}
+            <p className="mt-4 text-xs leading-relaxed text-paper/55">
+              {site.name} · Alisher Gafurov · {site.role}, Душанбе, Таджикистан
+            </p>
           </div>
 
           {columns.map((column) => (

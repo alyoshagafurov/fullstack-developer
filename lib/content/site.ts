@@ -78,10 +78,42 @@ export const site = {
   footerLegal: '© 2026 aly. Все права защищены.',
 
   /** 12.3 */
+  /*
+   * The forms of his name that people search for.
+   *
+   * Cyrillic and Latin are two different strings to a search engine: someone
+   * typing "Alisher Gafurov" or "aly gafurov" never reaches a page that only
+   * ever says «Алишер Гафуров». Every one of these is a name he actually
+   * uses — the Latin transliterations, the brand, and the short form his own
+   * address and account are built from.
+   */
+  alsoKnownAs: [
+    'Alisher Gafurov',
+    'Aly Gafurov',
+    'Aly',
+    'Алёша Гафуров',
+    'Алёша',
+    'Алишер',
+  ],
+
   seo: {
-    title: 'aly — Веб-разработчик и создатель цифровых продуктов',
+    title: 'Алишер Гафуров — full-stack разработчик в Душанбе',
     description:
-      'Сайты, приложения и цифровые продукты под реальные задачи — от идеи до готового проекта.',
+      'Алишер Гафуров (aly) — full-stack разработчик из Душанбе, Таджикистан. Сайты, интернет-магазины, веб-приложения и Telegram-боты под реальные задачи: от идеи и дизайна до сервера и запуска. Alisher Gafurov, full-stack web developer in Dushanbe, Tajikistan.',
+    keywords: [
+      'Алишер Гафуров',
+      'Alisher Gafurov',
+      'aly gafurov',
+      'Алёша Гафуров',
+      'разработчик Душанбе',
+      'веб-разработчик Таджикистан',
+      'создание сайтов Душанбе',
+      'заказать сайт Таджикистан',
+      'tajikistan developer',
+      'web developer Dushanbe',
+      'full-stack разработчик',
+      'Telegram-бот на заказ',
+    ],
   },
 } as const;
 

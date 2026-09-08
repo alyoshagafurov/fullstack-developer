@@ -6,7 +6,7 @@ import { site } from '@/lib/content/site';
 
 export const metadata: Metadata = {
   title: 'Контакты',
-  description: `Написать напрямую: ${site.contact.email}, Telegram @${site.contact.telegram}.`,
+  description: `Связаться с Алишером Гафуровым, разработчиком из Душанбе: ${site.contact.email}, Telegram @${site.contact.telegram}.`,
   alternates: { canonical: '/contacts' },
 };
 

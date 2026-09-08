@@ -244,6 +244,7 @@ export function Vitrine({ items }: { items: VitrineItem[] }) {
           return (
             <span
               key={item.id}
+              aria-hidden
               /* The backdrop trails the object it stands behind: a quarter of
                  the drag, so the two read as two planes rather than one sheet. */
               className="text-ghost absolute inset-x-0 top-1/2 block px-4 text-center leading-[0.8] font-extrabold tracking-[-0.04em] whitespace-nowrap uppercase transition-[opacity,transform] duration-[380ms] ease-[var(--ease-studio)] motion-reduce:transition-none md:px-10"

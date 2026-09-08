@@ -21,9 +21,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
     default: site.seo.title,
-    template: `%s — ${site.brand}`,
+    // His name on every tab, not just the home page: the inner pages are the
+    // ones that rank for «обо мне» and «услуги», and a title that says only
+    // "aly" tells a search engine nothing about whose site it is.
+    template: `%s — ${site.name} (${site.brand})`,
   },
   description: site.seo.description,
+  keywords: [...site.seo.keywords],
   applicationName: site.brand,
   authors: [{ name: site.name }],
   alternates: { canonical: '/' },
@@ -61,12 +65,31 @@ const structuredData = {
       '@type': 'Person',
       '@id': `${site.url}/#person`,
       name: site.name,
-      alternateName: site.brand,
+      // Every spelling he is looked up by, so the two scripts resolve to one
+      // person rather than to two strangers.
+      alternateName: [...site.alsoKnownAs],
       jobTitle: site.role,
+      description: site.seo.description,
       url: site.url,
       email: site.contact.email,
       telephone: site.contact.phoneHref,
+      knowsLanguage: ['ru', 'en', 'tg'],
+      knowsAbout: [
+        'Веб-разработка',
+        'Next.js',
+        'React',
+        'TypeScript',
+        'Node.js',
+        'Python',
+        'Telegram-боты',
+        'Интернет-магазины',
+      ],
       address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
+      workLocation: {
+        '@type': 'Place',
+        name: 'Душанбе, Таджикистан',
+        address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
+      },
       sameAs: [
         `https://t.me/${site.contact.telegram}`,
         `https://instagram.com/${site.contact.instagram}`,

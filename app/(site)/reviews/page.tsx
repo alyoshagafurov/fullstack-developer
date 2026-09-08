@@ -9,7 +9,8 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: 'Отзывы',
-  description: 'Что говорят клиенты о работе.',
+  description:
+    'Что клиенты говорят о работе с Алишером Гафуровым — разработчиком из Душанбе, Таджикистан.',
   alternates: { canonical: '/reviews' },
 };
 

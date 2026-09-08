@@ -9,13 +9,37 @@ import { site } from '@/lib/content/site';
 
 export const metadata: Metadata = {
   title: 'Обо мне',
-  description: site.difference,
+  description:
+    'Алишер Гафуров (Alisher Gafurov, aly) — full-stack разработчик из Душанбе, Таджикистан. Как пришёл в разработку, чему учился, с кем работаю и за что не берусь.',
   alternates: { canonical: '/about' },
+};
+
+/*
+ * What a search engine is told this page is.
+ *
+ * The Person itself is declared once, in the root layout; this only says that
+ * this particular page is that person's profile and points at the same node.
+ * Two descriptions of one person, each claiming to be the original, is how a
+ * knowledge panel ends up with neither.
+ */
+const profile = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': `${site.url}/about#profile`,
+  url: `${site.url}/about`,
+  name: `${site.name} — ${site.role}`,
+  inLanguage: 'ru',
+  mainEntity: { '@id': `${site.url}/#person` },
 };
 
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profile) }}
+      />
+
       <PageOpening eyebrow="Обо мне" title={site.name} lede={site.role} />
 
       <Band tone="paper" innerClassName="py-20 md:py-28">
