@@ -14,7 +14,7 @@ import {
 } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { site } from '@/lib/content/site';
-import { adminIds, getApi, sendWithRetry } from '@/lib/telegram/api';
+import { adminIds, getApi, sendWithRetry, syncCommands } from '@/lib/telegram/api';
 import { transitionLead } from '@/lib/telegram/leads';
 import { notifyClientStatus } from '@/lib/telegram/notify';
 
@@ -154,6 +154,9 @@ export async function telegramSetWebhook(): Promise<ActionResult> {
       allowed_updates: ['message', 'callback_query'],
       drop_pending_updates: true,
     });
+    // The same button teaches Telegram the command list: a bot whose commands
+    // are not registered reads as a bot with no commands at all.
+    await syncCommands();
   } catch (error) {
     return { status: 'error', message: telegramError(error) };
   }

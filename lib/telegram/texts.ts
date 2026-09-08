@@ -51,6 +51,32 @@ export const notificationButtons = {
 } as const;
 
 /** 14.4 — the owner's keyboard, his labels. */
+/*
+ * The list Telegram shows behind the "/" button.
+ *
+ * Without this the commands still work when typed, but nothing in the app
+ * tells anyone they exist — which is exactly how a working bot reads as a
+ * broken one. The owner's list is registered against his own chat, so a
+ * visitor never sees it.
+ */
+export const clientCommands = [
+  { command: 'start', description: 'Начать' },
+  { command: 'status', description: 'Узнать, на каком этапе мой проект' },
+  { command: 'stop', description: 'Отключить уведомления' },
+] as const;
+
+export const ownerCommands = [
+  { command: 'start', description: 'Меню' },
+  { command: 'new', description: 'Новые заявки' },
+  { command: 'waiting', description: 'Ждут ответа' },
+  { command: 'work', description: 'В работе' },
+  { command: 'leads', description: 'Все заявки' },
+  { command: 'lead', description: 'Карточка по номеру: /lead ALY-2026-001' },
+  { command: 'money', description: 'Финансы' },
+  { command: 'stats', description: 'Статистика' },
+  { command: 'id', description: 'Мой Telegram id' },
+] as const;
+
 export const ownerMenu = {
   leads: '📋 Мои заявки',
   fresh: '🔔 Новые заявки',

@@ -1,4 +1,5 @@
 import 'server-only';
+import { clientCommands, ownerCommands } from '@/lib/telegram/texts';
 import { Api } from 'grammy';
 
 /*
@@ -21,6 +22,31 @@ export function getApi(): Api {
     client = new Api(token);
   }
   return client;
+}
+
+/*
+ * Teach Telegram the commands the bot answers.
+ *
+ * Two lists: everyone in a private chat gets the visitor's three, and each
+ * owner id gets the full one registered against that chat alone. The menu
+ * button is pointed at the list as well, so the "/" is there to press rather
+ * than something you have to know about.
+ *
+ * Called when the webhook is connected, so one button in the admin sets up
+ * both halves and there is nothing else to remember.
+ */
+export async function syncCommands(): Promise<number> {
+  const api = getApi();
+  await api.setMyCommands([...clientCommands], { scope: { type: 'all_private_chats' } });
+
+  let scopes = 1;
+  for (const id of adminIds()) {
+    await api.setMyCommands([...ownerCommands], { scope: { type: 'chat', chat_id: id } });
+    scopes += 1;
+  }
+
+  await api.setChatMenuButton({ menu_button: { type: 'commands' } });
+  return scopes;
 }
 
 /** The owner's numeric ids. Empty means the owner's side of the bot is closed. */
