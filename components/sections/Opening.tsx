@@ -43,7 +43,7 @@ export function Opening() {
       data-tone="light"
       data-hero-root
       /* `--ph` is the photograph's height; everything else is derived from it. */
-      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden [--ph:min(50svh,150vw)] md:block md:h-[100svh] md:[--ph:min(90svh,56vw)]"
+      className="relative h-[100svh] w-full overflow-hidden [--ph:min(50svh,150vw)] md:[--ph:min(90svh,56vw)]"
       style={{
         background: 'linear-gradient(96deg, #f4f2f0 0%, #ecebe9 55%, #e5e3e2 100%)',
       }}
@@ -55,8 +55,13 @@ export function Opening() {
         style={{ background: 'linear-gradient(180deg, #7b7776 0%, #767271 60%, #6e6a69 100%)' }}
       />
 
-      {/* The words. Above the photograph in paint order on a desk screen. */}
-      <div className="relative px-5 pt-24 pb-4 md:absolute md:inset-0 md:z-10 md:pt-32 md:pb-0 md:px-10">
+      {/* The words, laid over the photograph rather than stacked above it.
+          They used to sit in the flow with the picture pushed under them, and
+          on a phone the two together came to more than one screen: the section
+          grew, and he ended up below the fold on the one screen that has to
+          show him. Now the section is exactly one screen and the type sits on
+          the wall, which is the part of the photograph above his head. */}
+      <div className="absolute inset-0 z-10 px-5 pt-20 md:pt-32 md:px-10">
         <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
           <div className="min-w-0 text-center md:w-1/2 md:text-right">
             <p
@@ -68,7 +73,10 @@ export function Opening() {
               {site.role}
             </p>
 
-            <h1 className="mt-3 text-[min(11.5vw,2.75rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4 md:text-[clamp(2.25rem,4.4vw,5.25rem)]">
+            {/* Three caps in the size: the screen's width, the screen's
+                height, and a ceiling. A short phone is the one that used to
+                push him off the bottom, so height gets a vote. */}
+            <h1 className="mt-3 text-[min(10vw,4.8svh,2.75rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4 md:text-[clamp(2.25rem,4.4vw,5.25rem)]">
               {lines.map((line, index) => (
                 <span
                   key={line}
@@ -83,7 +91,7 @@ export function Opening() {
 
           <p
             data-hero="lede"
-            className="mx-auto mt-6 max-w-sm text-center text-base leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left md:text-[0.9375rem]"
+            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left"
           >
             {site.difference}
           </p>
@@ -94,7 +102,11 @@ export function Opening() {
             so it still stands off it. */}
         <div
           data-hero-cta
-          className="mt-8 flex flex-col items-center gap-4 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:flex-row md:justify-center md:gap-5 md:translate-y-1/2"
+          /* Side by side on a phone, not stacked. Two buttons in a column
+             cost a hundred pixels of the one screen that has to show him, and
+             the second one landed in his hair; in a row they cost half that
+             and the pair reads as one decision with two answers. */
+          className="mt-6 flex items-center justify-center gap-2.5 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:gap-5 md:translate-y-1/2"
         >
           {/*
             On a phone the button sits on the light wall, where ink is the only
@@ -105,14 +117,14 @@ export function Opening() {
           <CTA
             href="/start"
             size="lg"
-            className="md:bg-paper md:text-void md:hover:bg-paper/85"
+            className="max-md:min-h-12 max-md:flex-1 max-md:gap-0 max-md:px-4 max-md:text-[0.8125rem] max-md:[&>span]:hidden md:bg-paper md:text-void md:hover:bg-paper/85"
           >
             {site.heroCta}
           </CTA>
           {/* Quieter than the brief: ink on the wall, paper on the desk. */}
           <Link
             href="/work"
-            className="inline-flex min-h-14 items-center gap-3 rounded-full border border-ink px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:border-paper/70 md:text-paper md:hover:bg-paper md:hover:text-ink"
+            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-ink px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper max-md:flex-1 max-md:gap-0 max-md:bg-paper/85 max-md:px-4 max-md:text-[0.8125rem] max-md:[&>span]:hidden md:min-h-14 md:border-paper/70 md:text-paper md:hover:bg-paper md:hover:text-ink"
           >
             Посмотреть кейсы
             <span aria-hidden>→</span>
@@ -126,11 +138,9 @@ export function Opening() {
        * screen and shifted so that he, not the frame's centre, is centred, and
        * pushed to the bottom of the column.
        */}
-      {/* `self-start`: a column flex item is stretched to the column's width
-          otherwise, which overrides the aspect ratio and crops the frame. */}
       <div
         data-hero="photo"
-        className="relative left-1/2 mt-auto aspect-[1672/941] h-[var(--ph)] shrink-0 self-start -translate-x-[62%] md:absolute md:bottom-0 md:left-0 md:mt-0 md:translate-x-0"
+        className="absolute bottom-0 left-1/2 aspect-[1672/941] h-[var(--ph)] -translate-x-[62%] md:left-0 md:translate-x-0"
         style={{
           maskImage:
             'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
