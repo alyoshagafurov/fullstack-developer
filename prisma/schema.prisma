@@ -288,6 +288,30 @@ model Testimonial {
 }
 
 /// The single owner account for the admin. Passwords are bcrypt hashes.
+/// What a service costs, as the owner sets it from the admin.
+///
+/// One row per service slug, and only the fields he wants to override: the
+/// prices in lib/content/services.ts are his own answers and stay the
+/// fallback, so a service with no row here still shows its original figure.
+model ServicePrice {
+  /// The service's slug in lib/content/services.ts.
+  slug String @id
+
+  /// «От 2 000 сомони» — written out, not a number: he quotes ranges and
+  /// "from" prices, and a number column could not hold either.
+  price    String?
+  duration String?
+  /// One line under the price, when a figure needs a condition.
+  note     String?
+
+  /// Kept off the price list without losing what was typed.
+  hidden Boolean @default(false)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("aly_service_price")
+}
+
 model AdminUser {
   id           String   @id @default(cuid())
   email        String   @unique

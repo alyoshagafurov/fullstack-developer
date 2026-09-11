@@ -13,6 +13,7 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
 import { adminIds, getApi, sendWithRetry, syncCommands } from '@/lib/telegram/api';
 import { transitionLead } from '@/lib/telegram/leads';
@@ -494,4 +495,64 @@ export async function deleteTestimonial(id: string): Promise<ActionResult> {
   revalidatePath('/reviews');
   revalidatePath('/admin/testimonials');
   redirect('/admin/testimonials');
+}
+
+/* ------------------------------------------------------------------ prices -- */
+
+/**
+ * Save the whole price list in one go.
+ *
+ * A field left empty is not an empty price, it is "no override": the row is
+ * deleted and the site falls back to the figure in the content file. That is
+ * what makes clearing a field an undo rather than a way to publish a blank.
+ * A row is only kept when it carries something — a price, a term, a note, or
+ * the decision to hide the service.
+ */
+export async function savePrices(form: FormData): Promise<ActionResult> {
+  const gate = await requireAdmin();
+  if (gate.status === 'refused') return refuse;
+
+  const read = (prefix: string, slug: string) =>
+    String(form.get(`${prefix}:${slug}`) ?? '')
+      .trim()
+      .slice(0, 200);
+
+  const keep: { slug: string; price: string | null; duration: string | null; note: string | null; hidden: boolean }[] = [];
+  const drop: string[] = [];
+
+  for (const service of services) {
+    const price = read('price', service.slug);
+    const duration = read('duration', service.slug);
+    const note = read('note', service.slug);
+    const hidden = form.get(`hidden:${service.slug}`) === 'on';
+
+    if (price || duration || note || hidden) {
+      keep.push({
+        slug: service.slug,
+        price: price || null,
+        duration: duration || null,
+        note: note || null,
+        hidden,
+      });
+    } else {
+      drop.push(service.slug);
+    }
+  }
+
+  await prisma.$transaction([
+    prisma.servicePrice.deleteMany({ where: { slug: { in: drop } } }),
+    ...keep.map((row) =>
+      prisma.servicePrice.upsert({
+        where: { slug: row.slug },
+        create: row,
+        update: row,
+      }),
+    ),
+  ]);
+
+  revalidatePath('/prices');
+  revalidatePath('/services');
+  for (const service of services) revalidatePath(`/services/${service.slug}`);
+  revalidatePath('/admin/prices');
+  return { status: 'ok' };
 }
