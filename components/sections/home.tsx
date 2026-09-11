@@ -1,12 +1,9 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { Band } from '@/components/ui/Band';
 import { CTA } from '@/components/ui/CTA';
 import { site } from '@/lib/content/site';
 import { about } from '@/lib/content/about';
 import { process, terms } from '@/lib/content/process';
-import { StudioObject } from '@/components/ui/StudioObject';
-import type { CaseRow } from '@/lib/cases';
 
 /*
  * The bands of the landing page.
@@ -246,101 +243,6 @@ export function ProcessTrack() {
         </dl>
       </Band>
     </>
-  );
-}
-
-/**
- * Published cases, on white, straight after the testimonials.
- *
- * Renders nothing until the owner publishes one from the admin — the same rule
- * the testimonials follow. Rows alternate the side the object sits on, so the
- * band reads as a walk past a display rather than a grid of equal tiles.
- */
-export function CasesBand({ items, total }: { items: CaseRow[]; total: number }) {
-  if (items.length === 0) return null;
-
-  return (
-    <Band tone="paper" id="work" innerClassName="py-28 md:py-40">
-      <div data-reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display-2 uppercase">Кейсы</h2>
-        {total > items.length && (
-          <Link
-            href="/work"
-            className="text-[0.6875rem] tracking-[0.18em] uppercase transition-opacity hover:opacity-60"
-          >
-            Все {total}
-          </Link>
-        )}
-      </div>
-
-      <ol data-reveal="group" className="divide-y divide-line border-t border-line">
-        {items.map((row, index) => {
-          // The register's row, in miniature: mark, words, object when there is
-          // a client mark; the alternating pair when there is not.
-          const logo = row.logoUrl;
-          const flip = !logo && index % 2 === 1;
-          return (
-            <li key={row.id}>
-              <Link
-                href={`/work/${row.slug}`}
-                className={`group grid items-center gap-8 py-16 md:py-24 ${
-                  logo
-                    ? 'md:grid-cols-[11rem_1fr_22rem] md:gap-12'
-                    : flip
-                      ? 'md:grid-cols-[1fr_22rem]'
-                      : 'md:grid-cols-[22rem_1fr]'
-                }`}
-              >
-                {logo && (
-                  <div className="relative h-14 w-40 md:h-24 md:w-full">
-                    <Image
-                      src={logo}
-                      alt=""
-                      fill
-                      sizes="(min-width: 768px) 13rem, 10rem"
-                      className="object-contain object-left transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-1 md:object-center"
-                    />
-                  </div>
-                )}
-
-                <div className={`min-w-0 ${logo ? '' : flip ? 'md:order-1' : 'md:order-2'}`}>
-                  <p className="label mb-4">{[row.client, row.year].filter(Boolean).join(' · ')}</p>
-                  <h3 className="text-[clamp(1.75rem,4vw,3rem)] leading-tight tracking-[-0.03em]">
-                    {row.title}
-                  </h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base">
-                    {row.task}
-                  </p>
-                  {row.technologies.length > 0 && (
-                    <p className="mt-5 text-xs tracking-[0.06em] text-ink-3">
-                      {row.technologies.join(' · ')}
-                    </p>
-                  )}
-                </div>
-
-                {/* `data-object`: the motion layer drifts it against the scroll
-                    and turns it toward the pointer while the row is under the
-                    hand. `lift` carries the photograph's sweep the last few
-                    percent to white, so nothing squares off on this band. */}
-                <div
-                  data-object
-                  className={`relative aspect-square w-44 md:w-full ${
-                    logo ? '' : `max-md:order-first ${flip ? 'md:order-2' : 'md:order-1'}`
-                  }`}
-                >
-                  <StudioObject
-                    src={row.objectImage}
-                    alt=""
-                    sizes="(min-width: 768px) 22rem, 11rem"
-                    lift
-                  />
-                </div>
-              </Link>
-            </li>
-          );
-        })}
-      </ol>
-    </Band>
   );
 }
 

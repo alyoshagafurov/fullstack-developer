@@ -2,7 +2,6 @@ import { Opening } from '@/components/sections/Opening';
 import { Vitrine, type VitrineItem } from '@/components/vitrine/Vitrine';
 import {
   AboutSpread,
-  CasesBand,
   Manifesto,
   Marquee,
   ProcessTrack,
@@ -21,8 +20,8 @@ import { featuredServices } from '@/lib/content/services';
  * The rhythm is deliberate and uneven: every band changes both the ground
  * colour and the type scale, so scrolling feels like turning pages rather than
  * sliding down a template. The middle of the page is the owner's chosen order —
- * the vitrine, then him, then the work, and directly after the work the people
- * it was done for.
+ * the vitrine, then him, then the people he did it for. The register of work
+ * lives at /work; repeating it here made the page say the same thing twice.
  *
  * Revalidated rather than fully static: the owner publishes cases and
  * testimonials from the admin, and a publish has to reach the site without a
@@ -34,8 +33,9 @@ export const revalidate = 300;
 export default async function HomePage() {
   const [cases, testimonials] = await Promise.all([getPublishedCases(), getTestimonials()]);
 
-  // Featured first, then the rest — the vitrine and the cases band both read
-  // from one query so a publish cannot show up in one and not the other.
+  // Featured first, then the rest. The register at /work lists them all; here
+  // the vitrine is the only place the work appears, so it takes the featured
+  // ones and falls back to the newest when none is marked.
   const featured = cases.filter((row) => row.featured);
   const stageCases = (featured.length > 0 ? featured : cases).slice(0, 6);
 
@@ -76,7 +76,6 @@ export default async function HomePage() {
       <Manifesto />
       <Vitrine items={items} />
       <AboutSpread />
-      <CasesBand items={cases.slice(0, 3)} total={cases.length} />
       <Reviews items={testimonials.slice(0, 3)} total={testimonials.length} />
       <ProcessTrack />
       <StartBand />
