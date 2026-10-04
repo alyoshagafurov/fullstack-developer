@@ -10,17 +10,37 @@ import type { LeadStatusName } from '@/lib/content/finance';
  * can be found and replaced in one place.
  */
 
-/** 14.5 — what a visitor reads first. */
+/**
+ * What a visitor reads first — the owner's own words.
+ *
+ * The bot no longer offers to take the brief itself: all three buttons are
+ * links out, to the portfolio, to the owner's own Telegram and to the form on
+ * the site. The in-bot brief dialogue still exists in bot.ts and still works,
+ * but nothing on this screen opens it any more.
+ */
+export const visitorGreeting =
+  'Привет! Я бот aly. Проекты сам не делаю — мне пока доверили только кнопки 😄 ' +
+  'Зато могу показать портфолио, отправить к Алишеру в Telegram или помочь оставить заявку.\n\n' +
+  'Выбирай, куда нажать:';
+
+/**
+ * 14.5 — kept for the owner.
+ *
+ * This is what the owner sees when his message matches no command, so it must
+ * not become the visitor's text. The two are separate on purpose.
+ */
 export const greeting =
   'Привет 👋 Я аly.\nЕсли ты здесь — скорее всего, тебе нужно что-то создать. Покажи мне идею, а дальше разберёмся вместе.';
 
-/** 14.5 — his five buttons, in his order. */
 export const clientButtons = {
   idea: '💡 Рассказать идею',
   services: '🚀 Посмотреть, что я делаю',
   work: '🧩 Заглянуть в мои проекты',
   about: '👤 Познакомиться со мной',
-  site: '🌐 Открыть портфолио',
+  /** The three on the greeting, in the order the owner listed them. */
+  site: '🌐 Посмотреть портфолио',
+  dm: '💬 Написать в Telegram',
+  brief: '📝 Оставить заявку',
 } as const;
 
 /** 14.7 — sent the moment a brief is stored. */

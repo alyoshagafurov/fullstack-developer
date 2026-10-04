@@ -31,6 +31,7 @@ import {
   greeting,
   notificationButtons,
   ownerMenu,
+  visitorGreeting,
 } from '@/lib/telegram/texts';
 
 /*
@@ -127,19 +128,25 @@ function ownerKeyboard(): Keyboard {
     .persistent();
 }
 
+/*
+ * The visitor's menu: three links out, nothing else.
+ *
+ * The owner's decision — the bot routes people rather than pretending to be the
+ * funnel. Every button is a `url`, so Telegram opens them without a round trip
+ * to the webhook and they keep working even while the bot is down.
+ *
+ * The brief is deliberately the form on the site, not the in-bot dialogue. That
+ * dialogue is still wired up and still answers, but nothing here opens it; the
+ * one remaining way in is a direct `/status`-style entry, so treat it as
+ * dormant rather than live.
+ */
 function clientKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .text(clientButtons.idea, 'c:idea')
-    .row()
-    .text(clientButtons.services, 'c:services')
-    .row()
-    .text(clientButtons.work, 'c:work')
-    .row()
-    .text(clientButtons.about, 'c:about')
-    .row()
     .url(clientButtons.site, site.url)
     .row()
-    .text('Статус проекта', 'c:status');
+    .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
+    .row()
+    .url(clientButtons.brief, `${site.url}/start`);
 }
 
 type LeadRow = NonNullable<Awaited<ReturnType<typeof loadLead>>>;
@@ -372,7 +379,7 @@ async function ownerCallback(ctx: Context, chatId: string, data: string): Promis
 /* ----------------------------------------------------------- visitor -- */
 
 async function visitorStart(ctx: Context): Promise<void> {
-  await ctx.reply(greeting, { reply_markup: clientKeyboard() });
+  await ctx.reply(visitorGreeting, { reply_markup: clientKeyboard() });
 }
 
 function stepKeyboard(step: BriefStep, index: number, username?: string): InlineKeyboard {
