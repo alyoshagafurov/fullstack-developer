@@ -24,10 +24,27 @@ export const visitorGreeting =
   'Выбирай, куда нажать:';
 
 /**
- * 14.5 — kept for the owner.
+ * What the owner sees on /start and whenever his message matches nothing.
  *
- * This is what the owner sees when his message matches no command, so it must
- * not become the visitor's text. The two are separate on purpose.
+ * It used to be the visitor's text: the owner was told "покажи мне идею, а
+ * дальше разберёмся вместе", which is addressed to a client and useless to him.
+ * This names what the keyboard underneath actually does, grouped the way its
+ * rows are, because that keyboard is persistent and carries no explanation of
+ * its own beyond nine button labels.
+ */
+export const ownerGreeting =
+  '<b>Панель владельца.</b> Кнопки внизу работают без команд.\n\n' +
+  '<b>Заявки</b>\n' +
+  '🔔 новые · 📋 все — покажут списком\n' +
+  '👤 карточка · 🔄 статус · 📝 заметка — спросят номер заявки\n\n' +
+  '<b>Деньги и цифры</b> — за текущий месяц\n' +
+  '📊 статистика · 💰 финансы · 📈 доход\n\n' +
+  '<b>⚙️ Настройки</b> — связь с ботом: вебхук, очередь, ошибки\n\n' +
+  'Ответить клиенту — ответьте реплаем на его сообщение.';
+
+/**
+ * 14.5 — the original greeting, kept because it is the owner's own wording and
+ * may be wanted again. Nothing sends it today.
  */
 export const greeting =
   'Привет 👋 Я аly.\nЕсли ты здесь — скорее всего, тебе нужно что-то создать. Покажи мне идею, а дальше разберёмся вместе.';

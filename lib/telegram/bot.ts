@@ -28,8 +28,8 @@ import {
   clientStatusLine,
   confirmation,
   glue,
-  greeting,
   notificationButtons,
+  ownerGreeting,
   ownerMenu,
   visitorGreeting,
 } from '@/lib/telegram/texts';
@@ -219,7 +219,7 @@ function sums(rows: { currency: string; total: number }[]): string {
 /* ------------------------------------------------------------ owner -- */
 
 async function ownerStart(ctx: Context): Promise<void> {
-  await ctx.reply(greeting, { reply_markup: ownerKeyboard() });
+  await ctx.reply(ownerGreeting, { ...html, reply_markup: ownerKeyboard() });
 }
 
 async function ownerText(ctx: Context, chatId: string, text: string): Promise<boolean> {
@@ -754,7 +754,7 @@ function register(bot: Bot): void {
 
     if (isAdmin(ctx.from?.id)) {
       if (await ownerText(ctx, chatId, text)) return;
-      await ctx.reply(greeting, { reply_markup: ownerKeyboard() });
+      await ctx.reply(ownerGreeting, { ...html, reply_markup: ownerKeyboard() });
       return;
     }
 
