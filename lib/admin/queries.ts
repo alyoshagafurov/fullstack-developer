@@ -310,3 +310,60 @@ export async function listTestimonials() {
     include: { case: { select: { id: true, title: true } } },
   });
 }
+
+/**
+ * What the owner sees when he opens his own bot.
+ *
+ * His /start used to answer «Управление — здесь.» and two buttons: a message
+ * with nothing in it. The moment he opens the chat is the moment he is asking
+ * "is there anything I need to do?", so this answers that question, in order of
+ * how much it costs him to leave it — a client waiting, money overdue, a review
+ * that is not yet on his site — and then how the week is going.
+ *
+ * Reviews are counted from both doors, the site's form and the Mini App's: a
+ * review arriving through Telegram waits for his approval just the same.
+ */
+export type Briefing = {
+  waiting: number;
+  oldestWaiting: Date | null;
+  active: number;
+  week: number;
+  reviews: number;
+  overdue: { currency: string; total: number; count: number }[];
+};
+
+export async function getBriefing(): Promise<Briefing> {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const [waiting, oldest, active, week, reviews, overdue] = await Promise.all([
+    prisma.lead.count({ where: { status: 'NEW' } }),
+    prisma.lead.findFirst({
+      where: { status: 'NEW' },
+      orderBy: { createdAt: 'asc' },
+      select: { createdAt: true },
+    }),
+    prisma.lead.count({ where: { status: { in: ['DISCOVERY', 'PROPOSAL', 'IN_PROGRESS'] } } }),
+    prisma.lead.count({ where: { createdAt: { gte: weekAgo } } }),
+    prisma.testimonial.count({ where: { published: false, source: { in: ['site', 'telegram'] } } }),
+    prisma.payment.groupBy({
+      by: ['currency'],
+      where: { paidAt: null, dueAt: { lt: now } },
+      _sum: { amount: true },
+      _count: { _all: true },
+    }),
+  ]);
+
+  return {
+    waiting,
+    oldestWaiting: oldest?.createdAt ?? null,
+    active,
+    week,
+    reviews,
+    overdue: overdue.map((row) => ({
+      currency: row.currency,
+      total: dec(row._sum.amount),
+      count: row._count._all,
+    })),
+  };
+}

@@ -44,39 +44,45 @@ export async function syncCommands(): Promise<number> {
   let scopes = 1;
   for (const id of adminIds()) {
     await api.setMyCommands([...ownerCommands], { scope: { type: 'chat', chat_id: id } });
-    /*
-     * The owner's blue button opens the hub, with the panel on it.
-     *
-     * A chat has one menu button and no more — `menu_button` is one value, not
-     * a list — so the panel and the client app cannot each have their own. The
-     * hub is how both fit behind the one button there is, and `?admin=1` is
-     * what tells it to draw the panel tile. The flag decides nothing about
-     * access: the panel is guarded by the launch signature, on the server, per
-     * request.
-     */
-    await api.setChatMenuButton({
-      chat_id: id,
-      menu_button: {
-        type: 'web_app',
-        text: 'Открыть',
-        web_app: { url: `${site.url}/mini?admin=1` },
-      },
-    });
+    await setMenuButton(id, true);
     scopes += 1;
   }
 
-  /*
-   * Everyone else gets the same button onto the same hub, without the panel.
-   *
-   * It used to be the "/" list, which answers "what can this bot do?" with a
-   * menu of commands — a question a visitor should not have to ask, and an
-   * answer in the wrong vocabulary. Now Open leads to the two things they came
-   * for: a brief, or a review.
-   */
-  await api.setChatMenuButton({
-    menu_button: { type: 'web_app', text: 'Открыть', web_app: { url: `${site.url}/mini` } },
-  });
+  // The default, for every chat that has not been given its own.
+  await api.setChatMenuButton({ menu_button: menuButton(false) });
   return scopes;
+}
+
+/*
+ * The blue button at the bottom of the chat.
+ *
+ * Telegram gives a chat exactly one, so who is looking decides what it opens.
+ * The owner lands in the panel: that is what he opens it for every time, and a
+ * welcome screen between him and his leads is a tap he pays forty times a week.
+ * Everyone else lands on the welcome — the two or three things a visitor came
+ * for, set the way the site is set.
+ *
+ * This used to be installed only from the web admin, by the same button that
+ * connects the webhook, so it depended on a step that is easy never to take —
+ * and it was not taken: the owner pressed /start and saw the old command list.
+ * It is now installed on /start itself, for that chat, which is the one moment
+ * every person passes through and the moment the button starts to matter.
+ */
+function menuButton(owner: boolean) {
+  return {
+    type: 'web_app' as const,
+    text: owner ? 'Админка' : 'Открыть',
+    web_app: { url: owner ? `${site.url}/mini/admin` : `${site.url}/mini` },
+  };
+}
+
+export async function setMenuButton(chatId: number, owner: boolean): Promise<void> {
+  try {
+    await getApi().setChatMenuButton({ chat_id: chatId, menu_button: menuButton(owner) });
+  } catch (error) {
+    // A menu button is a convenience; /start must answer whether it lands or not.
+    console.warn(`[bot] setMenuButton failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
+  }
 }
 
 /**

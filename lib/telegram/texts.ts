@@ -11,23 +11,40 @@ import type { LeadStatusName } from '@/lib/content/finance';
  */
 
 /**
- * What a visitor reads first — the owner's own words.
+ * What a visitor reads first.
  *
- * The bot does not take the brief itself. Two buttons are links out, to the
- * portfolio and to the owner's own Telegram; the other two open the Mini App,
- * which is the site's own brief and review forms running inside Telegram. The
- * in-bot brief dialogue still exists in bot.ts and still answers, but nothing
- * on this screen opens it any more.
+ * It opens on the owner's own joke and keeps it, emoji included — that line is
+ * the voice of the whole bot, and his design notes rule out emoji as
+ * navigation, not in a sentence. What changed is everything after it. The old
+ * text listed what the bot could do and asked the visitor to pick; a stranger
+ * deciding whether to trust a developer needs, in order, who he is, what he
+ * makes, that he has done it before, and roughly what it costs. All four are
+ * his own words or his own figures: the description and the difference from
+ * site.ts, the project count from its stats, the prices from the price list.
  *
- * The sentence is his, with one item added for the review the fourth button
- * now takes — a greeting that lists three things over four buttons reads as a
- * bug.
+ * The prices are passed in rather than written here, because he edits them in
+ * the admin; a greeting quoting last month's landing price would be the bot
+ * contradicting the site. When a price is missing — hidden, or the database
+ * unreachable — its clause is simply left out.
  */
-export const visitorGreeting =
-  'Привет! Я бот aly. Проекты сам не делаю — мне пока доверили только кнопки 😄 ' +
-  'Зато могу показать портфолио, отправить к Алишеру в Telegram, ' +
-  'помочь оставить заявку и принять отзыв о работе.\n\n' +
-  'Выбирай, куда нажать:';
+export function visitorGreeting(prices: { landing: string | null; sites: string | null }): string {
+  const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+  const quoted = [
+    prices.landing ? `Лендинг — ${lower(prices.landing)}` : null,
+    prices.sites ? `сайт под ключ — ${lower(prices.sites)}` : null,
+  ].filter(Boolean);
+
+  return [
+    'Привет! Я бот aly. Проекты сам не делаю — мне пока доверили только кнопки 😄',
+    '',
+    'Делает их Алишер Гафуров, full-stack разработчик из Душанбе: сайты, интернет-магазины, веб-приложения и Telegram-боты — вот такие, как я. От идеи и дизайна до сервера и запуска, без посредников.',
+    '',
+    `50+ проектов на фрилансе.${quoted.length ? ` ${quoted.join(', ')}.` : ''}`,
+    'Отвечает в течение дня, Пн–Сб.',
+    '',
+    'Выбирай, куда нажать — или просто спроси, сколько стоит то, что нужно.',
+  ].join('\n');
+}
 
 /**
  * What the owner sees on /start.
@@ -54,14 +71,19 @@ export const greeting =
 export const clientButtons = {
   idea: '💡 Рассказать идею',
   services: '🚀 Посмотреть, что я делаю',
-  work: '🧩 Заглянуть в мои проекты',
-  about: '👤 Познакомиться со мной',
-  /** The four on the greeting, in the order the owner listed them. */
-  site: '🌐 Посмотреть портфолио',
-  dm: '💬 Написать в Telegram',
-  /** These two open the Mini App rather than a browser tab. */
-  brief: '📝 Оставить заявку',
-  review: '⭐ Оставить отзыв',
+  about: 'Об Алишере',
+  site: 'Сайт',
+  /*
+   * The greeting's buttons. No emoji: they are navigation, and a row of
+   * pictograms reads as a menu rather than as the five things a visitor
+   * actually came for.
+   */
+  brief: 'Оставить заявку',
+  work: 'Работы',
+  dm: 'Написать Алишеру',
+  status: 'Статус проекта',
+  review: 'Оставить отзыв',
+  prices: 'Все цены',
 } as const;
 
 /** 14.7 — sent the moment a brief is stored. */
@@ -110,13 +132,6 @@ export const ownerCommands = [
   { command: 'panel', description: 'Открыть админку' },
   { command: 'id', description: 'Мой Telegram id' },
 ] as const;
-
-/** 14.4 — all that is left of the owner's keyboard: one way in. */
-export const ownerButtons = {
-  panel: '⚙️ Админка',
-  /** The client-facing Mini App, so he can see what they see. */
-  app: '📱 Приложение клиента',
-} as const;
 
 /** 14.6 — a status, as the client is allowed to see it. */
 export const clientStatusLine: Record<LeadStatusName, string> = {
@@ -234,7 +249,8 @@ export const glue = {
   statusHow: 'Чтобы узнать статус проекта, пришлите номер заявки и код одной строкой.',
   statusAsk: 'Номер заявки и код:',
   updated: 'Обновлено',
-  openPanel: 'Управление — здесь.',
+  /** After «спасибо». A connective phrase, so it lives here to be replaced. */
+  welcome: 'Пожалуйста! Если появится вопрос — пишите.',
   forwarded: 'Передал.',
   stopped: 'Уведомления выключены.',
   resumed: 'Уведомления включены.',

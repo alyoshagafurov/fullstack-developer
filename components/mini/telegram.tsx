@@ -57,6 +57,10 @@ export type TelegramWebApp = {
   ready(): void;
   expand(): void;
   close(): void;
+  /** A link out, in the browser, without closing the Mini App. 6.0+. */
+  openLink(url: string): void;
+  /** A t.me link, opened by Telegram itself. From 7.0 it no longer closes the app. */
+  openTelegramLink(url: string): void;
   setHeaderColor(color: string): void;
   setBackgroundColor(color: string): void;
   setBottomBarColor(color: string): void;

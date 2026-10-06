@@ -230,6 +230,18 @@ export function AdminApp() {
         </>
       )}
 
+      {/*
+        The client's side of the bot, from his. His blue button opens this
+        panel, so this link is how he checks what a visitor sees without
+        borrowing somebody else's account.
+      */}
+      <a
+        href="/mini"
+        className="mt-10 block text-center text-sm text-paper/45 underline-offset-4 hover:text-paper hover:underline"
+      >
+        Как видят клиенты →
+      </a>
+
       {api.expiresAt !== null && <Expiry at={api.expiresAt} />}
     </Shell>
   );

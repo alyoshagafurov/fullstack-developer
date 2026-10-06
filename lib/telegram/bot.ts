@@ -5,7 +5,11 @@ import { briefSchema } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
 import { featuredServices } from '@/lib/content/services';
 import { getPublishedCases } from '@/lib/cases';
-import { type LeadStatusName } from '@/lib/content/finance';
+import { money, type LeadStatusName } from '@/lib/content/finance';
+import { getBriefing } from '@/lib/admin/queries';
+import { getPriceList } from '@/lib/prices';
+import { answerFor } from '@/lib/telegram/answers';
+import { classify } from '@/lib/telegram/intents';
 import {
   adminIds,
   botToken,
@@ -14,6 +18,7 @@ import {
   relayTag,
   relayTarget,
   sendWithRetry,
+  setMenuButton,
 } from '@/lib/telegram/api';
 import { createLead, tokenMatches } from '@/lib/telegram/leads';
 import { briefReceipt, notifyNewLead } from '@/lib/telegram/notify';
@@ -23,7 +28,6 @@ import {
   clientButtons,
   clientStatusLine,
   glue,
-  ownerButtons,
   ownerGreeting,
   visitorGreeting,
 } from '@/lib/telegram/texts';
@@ -105,37 +109,6 @@ const when = (date: Date) =>
   });
 
 /*
- * The owner's one button: the panel.
- *
- * There used to be nine, pinned under the chat. They could print a list and ask
- * for a reference number, and that was the ceiling — a keyboard is a remote
- * control with nine fixed buttons, which is right for a machine with nine
- * functions and wrong for a business. Everything they did now lives in the Mini
- * App at /mini/admin, where a lead can be read, moved and annotated on one
- * screen, and a review can be put on the site with a tap.
- *
- * `web_app` rather than `url` matters here. A url button opens Telegram's own
- * browser, which carries no admin session, so it would land on the login form
- * every single time. A web_app button opens a window over the chat and hands
- * the page the signature proving who pressed it.
- */
-function ownerPanelKeyboard(): InlineKeyboard {
-  return new InlineKeyboard()
-    .webApp(ownerButtons.panel, `${site.url}/mini/admin`)
-    .row()
-    /*
-     * The client app, from the owner's side.
-     *
-     * Not a duplicate of the panel button: this opens what a client sees when
-     * they press «Оставить заявку», which is the only way to check it without
-     * borrowing somebody else's Telegram account. The blue button in the chat
-     * leads to a screen carrying both, because a chat has room for one blue
-     * button and no more.
-     */
-    .webApp(ownerButtons.app, `${site.url}/mini`);
-}
-
-/*
  * The visitor's menu: four buttons, nothing else.
  *
  * The owner's decision — the bot routes people rather than pretending to be the
@@ -159,12 +132,12 @@ function ownerPanelKeyboard(): InlineKeyboard {
  */
 function clientKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .url(clientButtons.site, site.url)
-    .row()
-    .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
-    .row()
     .webApp(clientButtons.brief, `${site.url}/mini/start`)
     .row()
+    .url(clientButtons.work, `${site.url}/work`)
+    .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
+    .row()
+    .text(clientButtons.status, 'c:status')
     .webApp(clientButtons.review, `${site.url}/mini/review`);
 }
 
@@ -181,8 +154,56 @@ function clientKeyboard(): InlineKeyboard {
  * because a removal and an inline keyboard cannot share one `reply_markup`.
  */
 async function ownerStart(ctx: Context): Promise<void> {
-  await ctx.reply(ownerGreeting, { ...html, reply_markup: { remove_keyboard: true } });
-  await ctx.reply(glue.openPanel, { reply_markup: ownerPanelKeyboard() });
+  let text = ownerGreeting;
+  try {
+    text = briefingText(await getBriefing());
+  } catch {
+    // No database: the greeting alone. /start answers whatever happens.
+  }
+  /*
+   * One message and no buttons under it. The blue button at the bottom of the
+   * chat opens the panel now, and two inline buttons repeating it were exactly
+   * what the owner sent a screenshot of and asked to be rid of.
+   * `remove_keyboard` stays: it is what clears the nine old buttons from a
+   * phone that still has them.
+   */
+  await ctx.reply(text, { ...html, reply_markup: { remove_keyboard: true } });
+}
+
+/**
+ * The briefing, in order of what it costs him to leave it.
+ *
+ * Only the parts that are not zero. A line reading "Просрочено: 0" is a line he
+ * has to read to learn there is nothing to read.
+ *
+ * The oldest waiting lead is flagged once it is past a day, because "отвечаю в
+ * течение дня" is what the site and this bot promise every client. The bot
+ * holding him to his own promise is worth more than any number on this screen.
+ */
+function briefingText(b: Awaited<ReturnType<typeof getBriefing>>): string {
+  const urgent: string[] = [];
+
+  if (b.waiting > 0) {
+    let line = `<b>Ждут ответа: ${b.waiting}</b>`;
+    if (b.oldestWaiting) {
+      const hours = Math.floor((Date.now() - b.oldestWaiting.getTime()) / 3_600_000);
+      const age = hours < 24 ? `${Math.max(1, hours)} ч` : `${Math.floor(hours / 24)} дн`;
+      line += `, самая старая — ${age}${hours >= 24 ? ' — уже больше суток' : ''}`;
+    }
+    urgent.push(line);
+  }
+  const overdue = b.overdue.reduce((n, row) => n + row.count, 0);
+  if (overdue > 0) {
+    urgent.push(`Просрочено оплат: ${overdue} на ${b.overdue.map((r) => money(r.total, r.currency)).join(' · ')}`);
+  }
+  if (b.reviews > 0) urgent.push(`Отзывов на проверке: ${b.reviews}`);
+
+  const steady = [b.active > 0 ? `В работе: ${b.active}` : null, b.week > 0 ? `За 7 дней заявок: ${b.week}` : null].filter(Boolean);
+
+  const head = urgent.length > 0 ? urgent.join('\n') : 'Тихо: новых заявок нет, отзывы разобраны, долгов нет.';
+  return [head, steady.length ? steady.join(' · ') : null, '', 'Всё остальное — в синей кнопке «Админка» внизу.', 'Ответить клиенту — реплаем на его сообщение.']
+    .filter((line) => line !== null)
+    .join('\n');
 }
 
 /**
@@ -218,7 +239,22 @@ async function ownerText(ctx: Context, text: string): Promise<boolean> {
 }
 
 async function visitorStart(ctx: Context): Promise<void> {
-  await ctx.reply(visitorGreeting, { reply_markup: clientKeyboard() });
+  /*
+   * Prices from the list he edits in the admin, never from this file. If the
+   * database is unreachable the greeting still goes out, just without figures:
+   * /start must always answer.
+   */
+  let prices = { landing: null as string | null, sites: null as string | null };
+  try {
+    const list = await getPriceList();
+    prices = {
+      landing: list.find((s) => s.slug === 'landing')?.price ?? null,
+      sites: list.find((s) => s.slug === 'sites')?.price ?? null,
+    };
+  } catch {
+    /* greeting without prices */
+  }
+  await ctx.reply(visitorGreeting(prices), { reply_markup: clientKeyboard() });
 }
 
 function stepKeyboard(step: BriefStep, index: number, username?: string): InlineKeyboard {
@@ -361,14 +397,62 @@ async function visitorText(ctx: Context, chatId: string, text: string): Promise<
     return;
   }
 
-  // Anything else is a question for the owner. It is relayed, not stored.
+  /*
+   * Work out what was asked. Most messages are one of a dozen questions whose
+   * answers the owner has already written down — see intents.ts for how, and
+   * for the traps a word search falls into in Russian.
+   */
+  const intent = classify(text);
+
+  if (intent.kind === 'status-code') {
+    await statusCheck(ctx, chatId, text);
+    return;
+  }
+  if (intent.kind === 'status') {
+    await writeState(chatId, { mode: 'status' });
+    await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
+    return;
+  }
+  if (intent.kind === 'greeting') {
+    await visitorStart(ctx);
+    return;
+  }
+
+  let answer: Awaited<ReturnType<typeof answerFor>> = null;
+  try {
+    answer = await answerFor(intent);
+  } catch {
+    // A failed lookup must not swallow the question: it goes to the owner.
+    answer = null;
+  }
+
+  if (answer) {
+    await ctx.reply(answer.text, { ...html, reply_markup: answer.keyboard });
+    if (answer.relay) await relayToOwner(ctx, chatId, text, true);
+    return;
+  }
+
+  // Nothing written down covers it. It is relayed, not stored.
+  await relayToOwner(ctx, chatId, text, false);
+  await ctx.reply(`${glue.forwarded} Отвечаю ${site.responseTime.toLowerCase()}.`);
+}
+
+/**
+ * A visitor's message, on to the owner.
+ *
+ * `answered` says the bot has already replied — with a price, a timeline, a
+ * yes — so the header tells him so. He is not being asked to answer from
+ * scratch; he is being told someone is close to buying, and a reply to this
+ * message goes straight back to them if he wants to add the human part.
+ */
+async function relayToOwner(ctx: Context, chatId: string, text: string, answered: boolean): Promise<void> {
   const admins = adminIds();
   if (admins.size === 0) return;
   const from = ctx.from;
   const who = `${escapeHtml(from?.first_name ?? '')}${from?.username ? ` (@${escapeHtml(from.username)})` : ''}`;
-  const relay = `<b>${escapeHtml(glue.from)}</b> ${who} · ${relayTag(chatId)}\n\n${escapeHtml(text)}`;
+  const head = answered ? '🔥 Спросили — бот уже ответил' : escapeHtml(glue.from);
+  const relay = `<b>${head}</b> ${who} · ${relayTag(chatId)}\n\n${escapeHtml(text)}`;
   await Promise.all([...admins].map((id) => sendWithRetry(id, relay)));
-  await ctx.reply(`${glue.forwarded} Отвечаю ${site.responseTime.toLowerCase()}.`);
 }
 
 async function visitorCallback(ctx: Context, chatId: string, data: string): Promise<boolean> {
@@ -502,9 +586,16 @@ function register(bot: Bot): void {
   bot.command('start', async (ctx) => {
     if (!ctx.chat) return;
     const chatId = String(ctx.chat.id);
+    const owner = isAdmin(ctx.from?.id);
     await setNotify(chatId, true);
     await writeState(chatId, null);
-    if (isAdmin(ctx.from?.id)) {
+    /*
+     * The blue button, installed for this chat on the way in. Not awaited
+     * ahead of the reply: the person pressed /start to be answered, and a slow
+     * Telegram call should not stand between them and the first message.
+     */
+    void setMenuButton(ctx.chat.id, owner);
+    if (owner) {
       await ownerStart(ctx);
       return;
     }
@@ -577,8 +668,9 @@ function register(bot: Bot): void {
     if (isAdmin(ctx.from?.id)) {
       // A reply to a forwarded question goes back to whoever asked it.
       if (await ownerText(ctx, text)) return;
-      // Anything else he types: the panel, rather than a menu of commands.
-      await ctx.reply(glue.openPanel, { reply_markup: ownerPanelKeyboard() });
+      // Anything else he types: where things stand. The panel is the blue
+      // button under the chat, so there is nothing to repeat here.
+      await ownerStart(ctx);
       return;
     }
 
