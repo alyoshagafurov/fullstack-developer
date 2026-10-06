@@ -113,7 +113,9 @@ export const ownerCommands = [
 
 /** 14.4 — all that is left of the owner's keyboard: one way in. */
 export const ownerButtons = {
-  panel: '⚙️ Открыть админку',
+  panel: '⚙️ Админка',
+  /** The client-facing Mini App, so he can see what they see. */
+  app: '📱 Приложение клиента',
 } as const;
 
 /** 14.6 — a status, as the client is allowed to see it. */

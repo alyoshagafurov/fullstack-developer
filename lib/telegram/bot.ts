@@ -120,7 +120,19 @@ const when = (date: Date) =>
  * the page the signature proving who pressed it.
  */
 function ownerPanelKeyboard(): InlineKeyboard {
-  return new InlineKeyboard().webApp(ownerButtons.panel, `${site.url}/mini/admin`);
+  return new InlineKeyboard()
+    .webApp(ownerButtons.panel, `${site.url}/mini/admin`)
+    .row()
+    /*
+     * The client app, from the owner's side.
+     *
+     * Not a duplicate of the panel button: this opens what a client sees when
+     * they press «Оставить заявку», which is the only way to check it without
+     * borrowing somebody else's Telegram account. The blue button in the chat
+     * leads to a screen carrying both, because a chat has room for one blue
+     * button and no more.
+     */
+    .webApp(ownerButtons.app, `${site.url}/mini`);
 }
 
 /*

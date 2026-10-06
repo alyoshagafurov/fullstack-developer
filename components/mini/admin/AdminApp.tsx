@@ -184,9 +184,16 @@ export function AdminApp() {
   if (api.expired) {
     return (
       <Shell>
+        {/*
+          One message for both refusals, because the server sends one.
+          Telling an outsider "your signature is fine, you are just not the
+          owner" would confirm the string is live and whose it is; saying only
+          "reopen it" would be wrong for them and right for him. This is true
+          either way, and says nothing to anyone who was not already the owner.
+        */}
         <Notice
-          title="Окно устарело"
-          body="Подпись действует час с момента открытия. Закройте админку и откройте заново — всё на месте."
+          title="Нет доступа"
+          body="Админка открывается только владельцу бота. Если это вы — окно живёт час с момента открытия: закройте и откройте заново, всё на месте."
           action={app ? { text: 'Закрыть', run: () => app.close() } : undefined}
         />
       </Shell>

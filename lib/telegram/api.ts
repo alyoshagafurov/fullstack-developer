@@ -45,26 +45,37 @@ export async function syncCommands(): Promise<number> {
   for (const id of adminIds()) {
     await api.setMyCommands([...ownerCommands], { scope: { type: 'chat', chat_id: id } });
     /*
-     * The owner's menu button is the panel, not a list of commands.
+     * The owner's blue button opens the hub, with the panel on it.
      *
-     * It sits in the bottom-left of his chat permanently, which is what the
-     * nine pinned buttons were really for: somewhere to press without typing.
-     * One button that opens everything is the version of that idea which
-     * survives the business growing.
+     * A chat has one menu button and no more — `menu_button` is one value, not
+     * a list — so the panel and the client app cannot each have their own. The
+     * hub is how both fit behind the one button there is, and `?admin=1` is
+     * what tells it to draw the panel tile. The flag decides nothing about
+     * access: the panel is guarded by the launch signature, on the server, per
+     * request.
      */
     await api.setChatMenuButton({
       chat_id: id,
       menu_button: {
         type: 'web_app',
-        text: 'Админка',
-        web_app: { url: `${site.url}/mini/admin` },
+        text: 'Открыть',
+        web_app: { url: `${site.url}/mini?admin=1` },
       },
     });
     scopes += 1;
   }
 
-  // Everyone else gets the "/" list; they have no panel to open.
-  await api.setChatMenuButton({ menu_button: { type: 'commands' } });
+  /*
+   * Everyone else gets the same button onto the same hub, without the panel.
+   *
+   * It used to be the "/" list, which answers "what can this bot do?" with a
+   * menu of commands — a question a visitor should not have to ask, and an
+   * answer in the wrong vocabulary. Now Open leads to the two things they came
+   * for: a brief, or a review.
+   */
+  await api.setChatMenuButton({
+    menu_button: { type: 'web_app', text: 'Открыть', web_app: { url: `${site.url}/mini` } },
+  });
   return scopes;
 }
 
