@@ -1,21 +1,8 @@
-import {
-  getFinance,
-  getLead,
-  getOverview,
-  listCases,
-  listLeads,
-  listTestimonials,
-} from '@/lib/admin/queries';
-import {
-  flagReplied,
-  moveLead,
-  togglePublishedCase,
-  togglePublishedTestimonial,
-  writeNote,
-  type OpResult,
-} from '@/lib/admin/ops';
+import { getLead, getOverview, listLeads } from '@/lib/admin/queries';
+import { addIncome, deleteIncome, listIncome, todayInDushanbe } from '@/lib/admin/income';
+import { getRates } from '@/lib/rates';
+import { flagReplied, moveLead, writeNote, type OpResult } from '@/lib/admin/ops';
 import { periods, type PeriodId } from '@/lib/content/finance';
-import { botStatus } from '@/lib/telegram/api';
 import {
   callerKey,
   refuseMini,
@@ -123,43 +110,24 @@ commands.lead = async (_pass, payload) => {
   };
 };
 
-commands.finance = async (_pass, payload) => {
-  const f = await getFinance(period(payload.period));
+/**
+ * Everything the money screen draws from: every entry he has made, and today's
+ * rates to convert them with.
+ *
+ * Sent whole rather than pre-summed, because the screen switches the currency
+ * it totals in on a tap, and a round trip per tap would make the one control he
+ * asked for the slowest thing on the screen. A freelancer's ledger is a few
+ * hundred rows at most; the cap in listIncome is two thousand.
+ *
+ * `rates` is null when the source is down, and the screen then totals each
+ * currency on its own rather than inventing a conversion.
+ */
+commands.money = async (pass) => {
+  const [rows, rates] = await Promise.all([listIncome(pass.grant), getRates()]);
   return {
-    received: f.received,
-    spent: f.spent,
-    unpaid: f.unpaid.map((p) => ({
-      id: p.id,
-      amount: amount(p.amount),
-      currency: p.currency,
-      dueAt: p.dueAt,
-      lead: p.lead ? { id: p.lead.id, ref: p.lead.ref, name: p.lead.name } : null,
-    })),
-  };
-};
-
-commands.bot = async () => botStatus();
-
-/** Everything the owner can put on the site or take off it, in one list. */
-commands.publish = async () => {
-  const [cases, reviews] = await Promise.all([listCases(), listTestimonials()]);
-  return {
-    cases: cases.map((row) => ({
-      id: row.id,
-      title: row.title,
-      year: row.year,
-      published: row.published,
-    })),
-    reviews: reviews.map((row) => ({
-      id: row.id,
-      name: row.name,
-      company: row.company,
-      rating: row.rating,
-      source: row.source,
-      published: row.published,
-      text: row.text.length > 400 ? `${row.text.slice(0, 400)}…` : row.text,
-      createdAt: row.createdAt,
-    })),
+    rows,
+    rates: rates ? { perUsd: rates.perUsd, updatedAt: rates.updatedAt } : null,
+    today: todayInDushanbe(),
   };
 };
 
@@ -174,11 +142,16 @@ commands['lead:note'] = async (pass, payload): Promise<OpResult> =>
 commands['lead:replied'] = async (pass, payload): Promise<OpResult> =>
   flagReplied(pass.grant, str(payload.id, 40));
 
-commands['case:publish'] = async (pass, payload): Promise<OpResult> =>
-  togglePublishedCase(pass.grant, str(payload.id, 40));
+commands['income:add'] = async (pass, payload): Promise<OpResult> =>
+  addIncome(pass.grant, {
+    amount: payload.amount,
+    currency: payload.currency,
+    day: payload.day,
+    note: payload.note,
+  });
 
-commands['review:publish'] = async (pass, payload): Promise<OpResult> =>
-  togglePublishedTestimonial(pass.grant, str(payload.id, 40));
+commands['income:delete'] = async (pass, payload): Promise<OpResult> =>
+  deleteIncome(pass.grant, str(payload.id, 40));
 
 /* ---------------------------------------------------------------- door -- */
 

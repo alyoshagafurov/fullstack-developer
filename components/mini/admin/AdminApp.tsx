@@ -10,6 +10,7 @@ import {
 } from '@/lib/content/finance';
 import { useBackButton, useHaptics, useTelegram } from '@/components/mini/telegram';
 import { errorText, useAdminApi } from '@/components/mini/admin/api';
+import { Money } from '@/components/mini/admin/Money';
 
 /*
  * The owner's panel, inside Telegram.
@@ -32,20 +33,19 @@ import { errorText, useAdminApi } from '@/components/mini/admin/api';
  * from lib/prisma or lib/admin/queries into this directory would undo it.
  */
 
-type Tab = 'today' | 'leads' | 'money' | 'site' | 'bot';
+type Tab = 'today' | 'leads' | 'money';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'today', label: 'Сегодня' },
   { id: 'leads', label: 'Заявки' },
   { id: 'money', label: 'Деньги' },
-  { id: 'site', label: 'Сайт' },
-  { id: 'bot', label: 'Бот' },
 ];
 
 /* ------------------------------------------------------------- styles -- */
 
 const card = 'rounded-2xl border border-white/12 bg-white/[0.03] p-4';
-const label = 'text-[0.6875rem] tracking-[0.18em] text-paper/45 uppercase';
+/* paper/60, not /45: at 11px /45 measured 4.41:1 on this black, under the 4.5:1 small text needs. */
+const label = 'text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase';
 const action =
   'inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm font-medium transition-opacity disabled:opacity-40';
 const solid = `${action} bg-paper text-ink hover:opacity-90`;
@@ -62,9 +62,6 @@ const when = (value: string | Date | null | undefined) =>
       })
     : '—';
 
-const sums = (rows: { currency: string; total: number }[]) =>
-  rows.length === 0 ? '0' : rows.map((r) => money(r.total, r.currency)).join(' · ');
-
 /* --------------------------------------------------------------- types -- */
 
 type Overview = {
@@ -74,10 +71,6 @@ type Overview = {
   completed: number;
   conversion: number;
   funnel: { status: LeadStatusName; count: number }[];
-  received: { currency: string; total: number }[];
-  spent: { currency: string; total: number }[];
-  expected: { currency: string; total: number }[];
-  overdue: { currency: string; total: number }[];
 };
 
 type LeadRow = {
@@ -103,42 +96,6 @@ type LeadFull = LeadRow & {
   extra: string | null;
   timeline: string;
   notes: { id: string; body: string; createdAt: string }[];
-};
-
-type Finance = {
-  received: { currency: string; total: number }[];
-  spent: { currency: string; total: number }[];
-  unpaid: {
-    id: string;
-    amount: number | null;
-    currency: string;
-    dueAt: string | null;
-    lead: { id: string; ref: string; name: string } | null;
-  }[];
-};
-
-type Publishable = {
-  cases: { id: string; title: string; year: string; published: boolean }[];
-  reviews: {
-    id: string;
-    name: string;
-    company: string | null;
-    rating: number | null;
-    source: string;
-    published: boolean;
-    text: string;
-    createdAt: string;
-  }[];
-};
-
-type BotState = {
-  token: boolean;
-  secret: boolean;
-  admins: number;
-  username: string | null;
-  webhookUrl: string | null;
-  pending: number;
-  lastError: string | null;
 };
 
 /* ---------------------------------------------------------------- shell -- */
@@ -224,9 +181,7 @@ export function AdminApp() {
         <>
           {tab === 'today' && <TodayScreen api={api} onOpen={setOpenLead} />}
           {tab === 'leads' && <LeadsScreen api={api} onOpen={setOpenLead} />}
-          {tab === 'money' && <MoneyScreen api={api} />}
-          {tab === 'site' && <SiteScreen api={api} />}
-          {tab === 'bot' && <BotScreen api={api} />}
+          {tab === 'money' && <Money api={api} />}
         </>
       )}
 
@@ -369,15 +324,6 @@ function Problem({ text }: { text: string }) {
   );
 }
 
-function Line({ term, value }: { term: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-paper/60">{term}</dt>
-      <dd className="tabular text-right">{value}</dd>
-    </div>
-  );
-}
-
 function LeadLine({ row, onOpen }: { row: LeadRow; onOpen: (id: string) => void }) {
   return (
     <button
@@ -439,16 +385,6 @@ function TodayScreen({ api, onOpen }: { api: Api; onOpen: (id: string) => void }
               <dd className="tabular">{row.count}</dd>
             </div>
           ))}
-        </dl>
-      </section>
-
-      <section className={card}>
-        <p className={label}>Деньги за месяц</p>
-        <dl className="mt-3 space-y-1.5 text-sm">
-          <Line term="Получено" value={sums(data.received)} />
-          <Line term="Потрачено" value={sums(data.spent)} />
-          <Line term="Ожидается" value={sums(data.expected)} />
-          <Line term="Просрочено" value={sums(data.overdue)} />
         </dl>
       </section>
     </div>
@@ -695,195 +631,6 @@ function Field({ term, value }: { term: string; value: string | null }) {
     <div>
       <dt className="text-xs text-paper/40">{term}</dt>
       <dd className="mt-0.5 whitespace-pre-wrap text-paper/85">{value}</dd>
-    </div>
-  );
-}
-
-/* --------------------------------------------------------------- money -- */
-
-function MoneyScreen({ api }: { api: Api }) {
-  const { data, error, busy } = useRead<Finance>(api, 'finance', { period: 'month' }, []);
-
-  if (busy) return <Loading />;
-  if (error) return <Problem text={error} />;
-  if (!data) return null;
-
-  return (
-    <div className="space-y-6">
-      <section className={card}>
-        <p className={label}>За месяц</p>
-        <dl className="mt-3 space-y-1.5 text-sm">
-          <Line term="Получено" value={sums(data.received)} />
-          <Line term="Потрачено" value={sums(data.spent)} />
-        </dl>
-      </section>
-
-      <section>
-        <p className={label}>Ждут оплаты</p>
-        {data.unpaid.length === 0 ? (
-          <p className="mt-3 text-sm text-paper/45">Ничего не висит.</p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {data.unpaid.map((row) => {
-              const late = row.dueAt !== null && new Date(row.dueAt) < new Date();
-              return (
-                <li
-                  key={row.id}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-white/12 px-4 py-3"
-                >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm">{row.lead?.name ?? '—'}</span>
-                    <span className="tabular block text-xs text-paper/45">
-                      {row.dueAt ? `до ${when(row.dueAt)}` : 'без срока'}
-                      {late ? ' · просрочено' : ''}
-                    </span>
-                  </span>
-                  <span className="tabular shrink-0 text-sm font-medium">
-                    {row.amount === null ? '—' : money(row.amount, row.currency)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
-
-      <p className="text-xs text-paper/40">
-        Записать расход или отметить платёж полученным пока можно только в веб-админке.
-      </p>
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------------- site -- */
-
-function SiteScreen({ api }: { api: Api }) {
-  const { data, error, busy, reload } = useRead<Publishable>(api, 'publish', {}, []);
-  const haptics = useHaptics();
-  const [working, setWorking] = useState('');
-
-  const toggle = async (command: string, id: string) => {
-    setWorking(id);
-    try {
-      await api.call(command, { id });
-      haptics.ok();
-      reload();
-    } catch {
-      haptics.bad();
-    } finally {
-      setWorking('');
-    }
-  };
-
-  if (busy) return <Loading />;
-  if (error) return <Problem text={error} />;
-  if (!data) return null;
-
-  const waiting = data.reviews.filter((row) => !row.published).length;
-
-  return (
-    <div className="space-y-8">
-      <section>
-        <p className={label}>Отзывы · ждут проверки {waiting}</p>
-        <div className="mt-3 space-y-2">
-          {data.reviews.map((row) => (
-            <div key={row.id} className={card}>
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium">
-                    {row.name}
-                    {row.company ? ` · ${row.company}` : ''}
-                  </p>
-                  <p className="text-xs text-paper/45">
-                    {row.rating ? '★'.repeat(row.rating) : ''}
-                    {row.source === 'telegram'
-                      ? ' · из Telegram'
-                      : row.source === 'site'
-                        ? ' · с сайта'
-                        : ''}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  disabled={working === row.id}
-                  onClick={() => void toggle('review:publish', row.id)}
-                  className={row.published ? outline : solid}
-                >
-                  {working === row.id ? '…' : row.published ? 'Скрыть' : 'На сайт'}
-                </button>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-paper/75">{row.text}</p>
-            </div>
-          ))}
-          {data.reviews.length === 0 && <p className="text-sm text-paper/45">Отзывов пока нет.</p>}
-        </div>
-      </section>
-
-      <section>
-        <p className={label}>Проекты</p>
-        <div className="mt-3 space-y-2">
-          {data.cases.map((row) => (
-            <div
-              key={row.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-white/12 px-4 py-3"
-            >
-              <span className="min-w-0">
-                <span className="block truncate text-sm">{row.title}</span>
-                <span className="block text-xs text-paper/45">{row.year}</span>
-              </span>
-              <button
-                type="button"
-                disabled={working === row.id}
-                onClick={() => void toggle('case:publish', row.id)}
-                className={row.published ? outline : solid}
-              >
-                {working === row.id ? '…' : row.published ? 'Скрыть' : 'На сайт'}
-              </button>
-            </div>
-          ))}
-        </div>
-        <p className="mt-4 text-xs text-paper/40">
-          Тексты проектов, цены и загрузка картинок остались в веб-админке: это работа за столом, а
-          не в окне над чатом.
-        </p>
-      </section>
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------------- bot -- */
-
-function BotScreen({ api }: { api: Api }) {
-  const { data, error, busy } = useRead<BotState>(api, 'bot', {}, []);
-
-  if (busy) return <Loading />;
-  if (error) return <Problem text={error} />;
-  if (!data) return null;
-
-  return (
-    <div className="space-y-4">
-      <section className={card}>
-        <dl className="space-y-1.5 text-sm">
-          <Line term="Бот" value={data.username ? `@${data.username}` : '—'} />
-          <Line term="Токен" value={data.token ? 'задан' : 'нет'} />
-          <Line term="Секрет вебхука" value={data.secret ? 'задан' : 'нет'} />
-          <Line term="Владельцев" value={String(data.admins)} />
-          <Line term="В очереди" value={String(data.pending)} />
-        </dl>
-      </section>
-
-      <section className={card}>
-        <p className={label}>Вебхук</p>
-        <p className="mt-2 text-sm break-all text-paper/75">{data.webhookUrl || '— не подключён'}</p>
-        {data.lastError && (
-          <p className="mt-3 text-sm text-paper/70">Последняя ошибка: {data.lastError}</p>
-        )}
-      </section>
-
-      <p className="text-xs text-paper/40">
-        Подключение и снятие вебхука — в веб-админке: это дверь, которая открывается паролем, и
-        увести вебхук бота должно быть сложнее, чем нажать кнопку в телефоне.
-      </p>
     </div>
   );
 }

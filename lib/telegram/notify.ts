@@ -228,9 +228,12 @@ export async function notifyNewReview(id: string): Promise<void> {
       '',
       escapeHtml(excerpt),
     ].join('\n');
-    // The same move as the lead's button: a window over the chat, not a
-    // browser tab that will ask him to log in.
-    const keyboard = new InlineKeyboard().webApp('Открыть админку', `${site.url}/mini/admin`);
+    /*
+     * To the web admin, where reviews are approved. The Mini App panel had a
+     * section for this and the owner asked for it to go; a button that opened
+     * a panel with nowhere to approve the review would be worse than none.
+     */
+    const keyboard = new InlineKeyboard().url('Открыть отзыв', `${site.url}/admin/testimonials/${id}`);
     await Promise.all([...admins].map((chat) => sendWithRetry(chat, text, { reply_markup: keyboard })));
   } catch (error) {
     console.error(`[bot] notifyNewReview failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);

@@ -72,10 +72,18 @@ const nextConfig = {
      * `frame-ancestors` lost its `'self'`: nothing on aly.lat has any business
      * framing the owner's admin, and the one page that may is Telegram's.
      */
+    /*
+     * Development only: Next's dev server needs `eval` to rebuild call stacks
+     * and a websocket for hot reload. Without them every /mini page sits on
+     * "Загружаю…" locally and the group cannot be worked on at all. Production
+     * builds need neither, so the policy that ships is unchanged.
+     */
+    const dev = process.env.NODE_ENV !== 'production';
+
     const miniCsp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://telegram.org",
-      "connect-src 'self' https://*.telegram.org",
+      `script-src 'self' 'unsafe-inline' https://telegram.org${dev ? " 'unsafe-eval'" : ''}`,
+      `connect-src 'self' https://*.telegram.org${dev ? ' ws: wss:' : ''}`,
       "img-src 'self' data: https://*.public.blob.vercel-storage.com",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",

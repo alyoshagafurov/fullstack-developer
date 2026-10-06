@@ -107,6 +107,31 @@ enum PaymentKind {
   @@map("aly_payment_kind")
 }
 
+/// Money the owner records by hand: how much came in, in what, on which day,
+/// and where from. Not tied to a lead — `Payment` is, and most of what a
+/// freelancer earns never had a lead row in this database at all.
+///
+/// The amount stays in the currency it arrived in. Conversion happens only on
+/// screen, at today's rate, so a rate that moves never rewrites history.
+///
+/// This table is created by the application itself (lib/admin/income.ts,
+/// `CREATE TABLE IF NOT EXISTS`) rather than by `prisma db push`, which must
+/// never be run against this shared database — see the note at the top of
+/// this file. If this model changes, change that statement with it.
+model Income {
+  id         String   @id @default(cuid())
+  amount     Decimal  @db.Decimal(12, 2)
+  /// "TJS" | "USD" | "RUB" — the three in lib/content/finance.ts.
+  currency   String
+  receivedAt DateTime
+  /// Where it came from, in his words.
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([receivedAt])
+  @@map("aly_income")
+}
+
 /// A cost. Categories are the eleven the owner listed in answer 13.4 and live
 /// in lib/content/finance.ts, not in a table: they are his list, not data.
 model Expense {
