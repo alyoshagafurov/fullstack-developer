@@ -38,7 +38,7 @@ export const services: Service[] = [
     deliverable:
       'Готовый сайт с дизайном, адаптивом, анимациями, необходимым функционалом, формами, интеграциями и публикацией.',
     duration: '1–2 недели',
-    budget: 'От 2 000 сомони',
+    budget: 'От 3 000 сомони',
     object: '/objects/laptop.webp',
     featured: true,
   },
@@ -52,7 +52,7 @@ export const services: Service[] = [
     deliverable:
       'Уникальный дизайн, адаптивная версия, анимации, формы заявок, подключение аналитики и готовый опубликованный лендинг.',
     duration: '4–6 дней',
-    budget: 'От 700 сомони',
+    budget: 'От 1 500 сомони',
     object: '/objects/phone.webp',
   },
   {
@@ -116,7 +116,7 @@ export const services: Service[] = [
     deliverable:
       'Автоматические заявки, уведомления, обработка данных, интеграции между сервисами, боты и другие решения под конкретный процесс.',
     duration: 'От нескольких дней до недели',
-    budget: 'От 700 сомони',
+    budget: 'От 1 500 сомони',
     object: '/objects/cluster.webp',
   },
   {
@@ -128,7 +128,7 @@ export const services: Service[] = [
     deliverable:
       'Новый дизайн, улучшенную структуру, адаптив, современный UI и при необходимости новую версию самого сайта.',
     duration: '1–2 недели',
-    budget: 'От 2 000 сомони',
+    budget: 'От 3 000 сомони',
     object: '/objects/laptop.webp',
   },
   {
@@ -191,7 +191,7 @@ export const services: Service[] = [
     deliverable:
       'Бот с командами, меню, заявками, базой данных, уведомлениями, интеграциями и нужной логикой.',
     duration: 'От 3 дней до 2 недель',
-    budget: 'От 700 сомони',
+    budget: 'От 1 500 сомони',
     object: '/objects/phone.webp',
   },
   {
