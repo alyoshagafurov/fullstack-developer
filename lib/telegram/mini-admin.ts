@@ -1,6 +1,6 @@
 import 'server-only';
 import { adminGrant, type AdminGrant } from '@/lib/auth';
-import { adminIds, isAdmin, sendWithRetry } from '@/lib/telegram/api';
+import { adminIds, isAdmin } from '@/lib/telegram/api';
 import { verifyInitData, type MiniAppUser } from '@/lib/telegram/miniapp';
 
 /*
@@ -101,38 +101,17 @@ function sayOnce(subject: string, line: string): void {
 }
 
 /*
- * Launches already greeted.
+ * There used to be a notice here: the first command of every new window sent
+ * the owner «🔓 Админка открыта · 14:05» in Telegram. It was meant as the one
+ * defence against a signature somebody else was holding — a thief cannot stop
+ * the owner's phone from buzzing about a window he did not open.
  *
- * A Mini App window carries one `auth_date` for its whole life, so a new one
- * means a new window. The first command of each sends the owner a message in
- * Telegram saying the panel was opened.
- *
- * This is the only defence that works against a signature somebody else is
- * holding. A rate limit is not: the leads here number in the dozens, so a thief
- * has what he came for inside one request, long before any ceiling. What he
- * cannot do is stop the owner's own phone from buzzing about a window the owner
- * did not open.
- *
- * Kept in memory, so a cold start can greet the same window twice. A duplicate
- * notice is a nuisance; a missing one is the thing this exists to prevent.
+ * The owner turned it off. He opens the panel many times a day, so the notice
+ * arrived many times a day, and a message that comes with every ordinary
+ * action stops being read long before the one time it would matter. If it is
+ * ever wanted back, the cheaper version is to notify only when a launch comes
+ * from a Telegram client the panel has not seen before — not on every window.
  */
-const greeted = new Set<string>();
-
-function greet(user: MiniAppUser, authDate: Date): void {
-  const key = `${user.id}:${authDate.getTime()}`;
-  if (greeted.has(key)) return;
-  greeted.add(key);
-  if (greeted.size > 200) for (const old of [...greeted].slice(0, 100)) greeted.delete(old);
-
-  const at = authDate.toLocaleString('ru-RU', {
-    timeZone: 'Asia/Dushanbe',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
-  // Fire and forget: the panel must not wait on Telegram to open.
-  void sendWithRetry(user.id, `🔓 Админка открыта · ${at}`);
-}
 
 /**
  * Who is calling, proved.
@@ -177,8 +156,6 @@ export function requireMiniAdmin(
     );
     return refusal();
   }
-
-  greet(check.user, check.authDate);
 
   return {
     ok: true,
