@@ -55,58 +55,15 @@ export const viewport: Viewport = {
 };
 
 /*
- * What a search engine is told about the person behind the site. Every value
- * is one he gave; nothing here is inferred.
+ * The structured data that used to sit here now lives in app/(site)/layout.tsx.
+ *
+ * It describes the owner to a search engine — his email, his telephone, the
+ * city he works from — and a search engine only ever reads the public site.
+ * Left in this layout it was rendered into two documents that have no use for
+ * it: the admin, and the Telegram Mini App, where a graph of the owner's
+ * personal contact details would be sitting in the markup of a window his
+ * clients open.
  */
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      '@id': `${site.url}/#person`,
-      name: site.name,
-      // Every spelling he is looked up by, so the two scripts resolve to one
-      // person rather than to two strangers.
-      alternateName: [...site.alsoKnownAs],
-      jobTitle: site.role,
-      description: site.seo.description,
-      url: site.url,
-      email: site.contact.email,
-      telephone: site.contact.phoneHref,
-      knowsLanguage: ['ru', 'en', 'tg'],
-      knowsAbout: [
-        'Веб-разработка',
-        'Next.js',
-        'React',
-        'TypeScript',
-        'Node.js',
-        'Python',
-        'Telegram-боты',
-        'Интернет-магазины',
-      ],
-      address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
-      workLocation: {
-        '@type': 'Place',
-        name: 'Душанбе, Таджикистан',
-        address: { '@type': 'PostalAddress', addressLocality: 'Душанбе', addressCountry: 'TJ' },
-      },
-      sameAs: [
-        `https://t.me/${site.contact.telegram}`,
-        `https://instagram.com/${site.contact.instagram}`,
-        site.contact.github,
-      ],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': `${site.url}/#website`,
-      url: site.url,
-      name: site.brand,
-      description: site.seo.description,
-      inLanguage: 'ru',
-      publisher: { '@id': `${site.url}/#person` },
-    },
-  ],
-};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -126,13 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>
-        {children}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

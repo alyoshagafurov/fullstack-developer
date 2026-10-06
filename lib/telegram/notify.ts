@@ -4,7 +4,13 @@ import { prisma } from '@/lib/prisma';
 import { site } from '@/lib/content/site';
 import type { LeadStatusName } from '@/lib/content/finance';
 import { adminIds, botToken, escapeHtml, sendWithRetry } from '@/lib/telegram/api';
-import { clientStatusLine, notification, notificationButtons } from '@/lib/telegram/texts';
+import {
+  clientStatusLine,
+  confirmation,
+  glue,
+  notification,
+  notificationButtons,
+} from '@/lib/telegram/texts';
 
 /*
  * Messages the application sends on its own: the owner hears about a new lead,
@@ -24,6 +30,59 @@ const when = (date: Date) =>
   });
 
 const sourceLabel: Record<string, string> = { site: 'сайт', telegram: 'Telegram' };
+
+/**
+ * What a client is told the moment their brief is stored: the number, the code
+ * that goes with it, and what the two are for.
+ *
+ * One wording, two senders. The in-bot dialogue replies with it in the chat the
+ * questions were answered in; the Mini App has no chat to reply into, so the
+ * server sends it to the chat Telegram named in the signature. A client who
+ * closes that window should still have the number afterwards.
+ */
+export function briefReceipt(ref: string, code: string): string {
+  return [
+    escapeHtml(confirmation),
+    '',
+    `${glue.ref}: <code>${escapeHtml(ref)}</code>`,
+    `${glue.code}: <code>${escapeHtml(code)}</code>`,
+    '',
+    escapeHtml(glue.statusHow),
+  ].join('\n');
+}
+
+/**
+ * Hand the receipt to a chat Telegram has vouched for, and turn that chat's
+ * notifications on so later status changes find it too.
+ *
+ * Called after the response has gone out: a client should not wait on Telegram
+ * to learn that their brief is in.
+ */
+export async function notifyClientBrief(chatId: string, ref: string, code: string): Promise<void> {
+  if (!botToken()) return;
+  try {
+    await enableNotifications(chatId);
+    await sendWithRetry(chatId, briefReceipt(ref, code));
+  } catch (error) {
+    console.error(
+      `[bot] notifyClientBrief failed: ${(error as Error)?.constructor?.name ?? 'Error'}`,
+    );
+  }
+}
+
+/**
+ * Let a chat hear about its own project.
+ *
+ * `/stop` is the client's own decision and is recorded in this same column, so
+ * this is only ever called where they have just asked to be contacted.
+ */
+export async function enableNotifications(chatId: string): Promise<void> {
+  await prisma.botChat.upsert({
+    where: { chatId },
+    create: { chatId, notify: true },
+    update: { notify: true },
+  });
+}
 
 /** A t.me link for a contact that is a handle or a phone; nothing otherwise. */
 export function contactUrl(contact: string | null | undefined): string | undefined {

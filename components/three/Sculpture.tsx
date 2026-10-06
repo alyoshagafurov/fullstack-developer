@@ -59,10 +59,54 @@ const DOT: Record<Shape, number> = {
   points: 0.028,
 };
 
-export function Sculpture({ className = '', shape }: { className?: string; shape?: Shape }) {
+/**
+ * The one mutable channel between React and the running frame loop.
+ *
+ * `progress` is written by an effect and read inside `draw`, so a new value
+ * reaches the scene without the effect that built that scene ever re-running.
+ * A changing prop in the mounting effect's dependencies would dispose the
+ * renderer and start over — a black gap and another lazy load on every step of
+ * a form. `redraw` is published only where there is no frame loop to pick the
+ * value up by itself; see the reduced-motion branch at the end of `mount`.
+ */
+type Channel = { progress: number | null; redraw: (() => void) | null };
+
+export function Sculpture({
+  className = '',
+  shape,
+  progress,
+  eager = false,
+}: {
+  className?: string;
+  shape?: Shape;
+  /**
+   * How gathered the cloud should be, 0 to 1, when something other than the
+   * scroll decides. The Mini App passes the reader's way through a form, so
+   * answering the questions is what assembles the object.
+   *
+   * Left out — as every page of the site leaves it out — the cloud follows the
+   * band's position on screen exactly as before. Out-of-range values and NaN
+   * are clamped here rather than trusted: `step / (total - 1)` is NaN when a
+   * form has one question, and a NaN would reach every coordinate in the
+   * buffer and put the cloud out for the lifetime of the instance.
+   */
+  progress?: number;
+  /**
+   * Build at once instead of waiting for the page to go idle.
+   *
+   * On the site this object sits below the opening, so it yields to the type
+   * and the photographs and costs nothing by arriving late. In the Mini App it
+   * *is* the first screen, and the idle wait — up to two seconds on a slow
+   * phone, then a chunk over the network — would be two seconds of nothing
+   * where the whole screen should be.
+   */
+  eager?: boolean;
+}) {
   const host = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const form = shape ?? shapeFor(pathname);
+
+  const ctl = useRef<Channel>({ progress: null, redraw: null });
 
   useEffect(() => {
     const el = host.current;
@@ -72,24 +116,52 @@ export function Sculpture({ className = '', shape }: { className?: string; shape
     let teardown = () => {};
 
     const begin = async () => {
-      const THREE = await import('three');
-      if (cancelled) return;
-      teardown = mount(THREE, el, form);
+      try {
+        const THREE = await import('three');
+        if (cancelled) return;
+        teardown = mount(THREE, el, form, ctl);
+      } catch {
+        /*
+         * No WebGL context, a chunk that never arrived, a webview in battery
+         * saver. The band keeps its black and the page keeps working, where an
+         * unhandled rejection used to be the whole of the error handling.
+         */
+      }
     };
 
     // Not before the page is settled: the type and the photographs come first.
-    const idle =
-      typeof window.requestIdleCallback === 'function'
-        ? window.requestIdleCallback(() => void begin(), { timeout: 2000 })
-        : window.setTimeout(() => void begin(), 400);
+    let idle: number | null = null;
+    if (eager) void begin();
+    else
+      idle =
+        typeof window.requestIdleCallback === 'function'
+          ? window.requestIdleCallback(() => void begin(), { timeout: 2000 })
+          : window.setTimeout(() => void begin(), 400);
 
     return () => {
       cancelled = true;
       teardown();
-      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idle);
-      else window.clearTimeout(idle);
+      if (idle !== null) {
+        if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idle);
+        else window.clearTimeout(idle);
+      }
     };
-  }, [form]);
+  }, [form, eager]);
+
+  /*
+   * Progress goes into a field and no further.
+   *
+   * While the band is on screen the frame loop is already running and reads it
+   * on the next frame by itself — `draw` re-arms unconditionally, so there is
+   * nothing here to wake. `redraw` exists for the one case that has no loop.
+   */
+  useEffect(() => {
+    ctl.current.progress =
+      progress === undefined || !Number.isFinite(progress)
+        ? null
+        : Math.min(1, Math.max(0, progress));
+    ctl.current.redraw?.();
+  }, [progress]);
 
   return <div ref={host} aria-hidden className={`pointer-events-none ${className}`} />;
 }
@@ -241,7 +313,12 @@ function pose(shape: Shape, group: ThreeNS.Group, t: number, x: number, y: numbe
 const REACH = 0.9;
 const PUSH = 0.55;
 
-function mount(THREE: Three, el: HTMLElement, shape: Shape) {
+function mount(
+  THREE: Three,
+  el: HTMLElement,
+  shape: Shape,
+  ctl: { current: Channel },
+) {
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = !window.matchMedia('(pointer: fine)').matches;
 
@@ -310,7 +387,28 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
     group.scale.setScalar(Math.min(1.2, (width / height) * 1.35));
   };
   resize();
-  const ro = new ResizeObserver(resize);
+
+  /**
+   * One assembled frame, for the branch that has no frame loop.
+   *
+   * `resize` rebuilds the drawing buffer, which clears it, and does not draw.
+   * Under a running loop the next frame hides that; with reduced motion there
+   * is no next frame, so every resize used to leave the canvas blank for good.
+   * On the site that passed unnoticed — the band sits below the opening and is
+   * rarely resized. In a Mini App the on-screen keyboard resizes the viewport
+   * at every question, so the cloud would vanish on the first tap into a field
+   * and never come back.
+   */
+  const redraw = () => {
+    pose(shape, group, 0, 0, 0, 0);
+    place(ctl.current.progress ?? 1, 0);
+    renderer.render(scene, camera);
+  };
+
+  const ro = new ResizeObserver(() => {
+    resize();
+    if (still) redraw();
+  });
   ro.observe(el);
 
   let frame = 0;
@@ -318,8 +416,22 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
   let hidden = document.hidden;
   const born = performance.now();
 
-  /** 1 when the band is in the middle of the screen, 0 when it is at the edge. */
-  function assembly() {
+  /*
+   * Where the eased `progress` lives between frames. `null`, not a negative
+   * sentinel: 0 is a legitimate value, and a sentinel that 0 can impersonate
+   * would snap the cloud every frame instead of easing it.
+   */
+  let easedProgress: number | null = null;
+
+  /**
+   * 1 when the band is in the middle of the screen, 0 when it is at the edge.
+   *
+   * Named for what it reads rather than for what it produces, because the
+   * cloud now has a second possible source of the same number — the `progress`
+   * prop — and two different quantities sharing one name in one scope is how
+   * the next edit here reaches for the wrong one.
+   */
+  function scrollAssembly() {
     const box = el.getBoundingClientRect();
     const middle = box.top + box.height / 2;
     const off = Math.abs(middle - window.innerHeight / 2) / (window.innerHeight * 0.85);
@@ -379,8 +491,23 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
     eased.spin += (target.spin - eased.spin) * 0.06;
     grip += (gripTarget - grip) * 0.09;
 
+    /*
+     * Either the band's place on screen decides how gathered the cloud is, or
+     * a caller does. When a caller does, the easing lives here rather than in
+     * React, so a step forward pours the dust into the form over a second
+     * instead of snapping it.
+     */
+    const want = ctl.current.progress;
+    let gathered: number;
+    if (want === null) {
+      gathered = scrollAssembly();
+    } else {
+      easedProgress = easedProgress === null ? want : easedProgress + (want - easedProgress) * 0.07;
+      gathered = easedProgress;
+    }
+
     pose(shape, group, t, eased.x, eased.y, eased.spin);
-    place(assembly(), coarse ? 0 : grip);
+    place(gathered, coarse ? 0 : grip);
     renderer.render(scene, camera);
     frame = requestAnimationFrame(draw);
   };
@@ -398,10 +525,16 @@ function mount(THREE: Three, el: HTMLElement, shape: Shape) {
   }
 
   if (still) {
-    pose(shape, group, 0, 0, 0, 0);
-    place(1, 0);
-    renderer.render(scene, camera);
-    return dispose;
+    /*
+     * One frame, and whatever redraws it: a resize, or a caller moving the
+     * progress on. There is no loop here to notice either by itself.
+     */
+    ctl.current.redraw = redraw;
+    redraw();
+    return () => {
+      ctl.current.redraw = null;
+      dispose();
+    };
   }
 
   const io = new IntersectionObserver(

@@ -256,6 +256,32 @@ html.motion [data-intro] {
   opacity: 0;
 }
 
+/*
+ * The Mini App's own ground.
+ *
+ * Two inherited rules need answering when the page is a window inside Telegram
+ * rather than a page in a browser, and both are scoped by the marker MiniStage
+ * sets rather than by an address, so the site is untouched.
+ *
+ * The body is light grey, which is right everywhere else and wrong behind a
+ * black Mini App: the rubber-band at the end of a scroll would show a strip of
+ * pale grey against Telegram's own dark chrome.
+ *
+ * And `scroll-behavior: smooth` fights the platform. Telegram reads a vertical
+ * drag as "close this window", and smooth scrolling keeps the page gliding
+ * after the finger has stopped — so whether a swipe scrolls or closes becomes a
+ * coin toss. `overscroll-behavior-y: contain` stops a scroll that reaches the
+ * end from turning into that gesture by accident.
+ */
+body:has([data-mini]) {
+  background: var(--color-void);
+}
+
+html:has([data-mini]) {
+  scroll-behavior: auto;
+  overscroll-behavior-y: contain;
+}
+
 /* One question replaces another: it arrives, it does not slide in from off-screen. */
 @keyframes review-step-in {
   from {

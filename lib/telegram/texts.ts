@@ -13,14 +13,20 @@ import type { LeadStatusName } from '@/lib/content/finance';
 /**
  * What a visitor reads first — the owner's own words.
  *
- * The bot no longer offers to take the brief itself: all three buttons are
- * links out, to the portfolio, to the owner's own Telegram and to the form on
- * the site. The in-bot brief dialogue still exists in bot.ts and still works,
- * but nothing on this screen opens it any more.
+ * The bot does not take the brief itself. Two buttons are links out, to the
+ * portfolio and to the owner's own Telegram; the other two open the Mini App,
+ * which is the site's own brief and review forms running inside Telegram. The
+ * in-bot brief dialogue still exists in bot.ts and still answers, but nothing
+ * on this screen opens it any more.
+ *
+ * The sentence is his, with one item added for the review the fourth button
+ * now takes — a greeting that lists three things over four buttons reads as a
+ * bug.
  */
 export const visitorGreeting =
   'Привет! Я бот aly. Проекты сам не делаю — мне пока доверили только кнопки 😄 ' +
-  'Зато могу показать портфолио, отправить к Алишеру в Telegram или помочь оставить заявку.\n\n' +
+  'Зато могу показать портфолио, отправить к Алишеру в Telegram, ' +
+  'помочь оставить заявку и принять отзыв о работе.\n\n' +
   'Выбирай, куда нажать:';
 
 /**
@@ -54,10 +60,12 @@ export const clientButtons = {
   services: '🚀 Посмотреть, что я делаю',
   work: '🧩 Заглянуть в мои проекты',
   about: '👤 Познакомиться со мной',
-  /** The three on the greeting, in the order the owner listed them. */
+  /** The four on the greeting, in the order the owner listed them. */
   site: '🌐 Посмотреть портфолио',
   dm: '💬 Написать в Telegram',
+  /** These two open the Mini App rather than a browser tab. */
   brief: '📝 Оставить заявку',
+  review: '⭐ Оставить отзыв',
 } as const;
 
 /** 14.7 — sent the moment a brief is stored. */

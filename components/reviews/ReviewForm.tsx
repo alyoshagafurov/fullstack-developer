@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { genderLabel, genders, type Gender } from '@/lib/content/review';
+import {
+  genderLabel,
+  genders,
+  reviewQuestions,
+  type Gender,
+  type ReviewQuestionKey as Key,
+} from '@/lib/content/review';
 
 /*
  * The form a client fills in to leave a review — one question at a time.
@@ -15,19 +21,15 @@ import { genderLabel, genders, type Gender } from '@/lib/content/review';
  * drawn as a box, because a hairline under a blank line is a convention people
  * who fill in forms all day recognise and nobody else does.
  *
+ * The five questions live in lib/content/review.ts: the Telegram Mini App asks
+ * the same five, and the owner's invitation — what you needed, what was built —
+ * has to read identically wherever a client meets it.
+ *
  * Validation is the schema's own wording, checked here per step so a mistake
  * is caught on the screen that caused it. The server checks all of it again.
  */
 
-type Key = 'name' | 'company' | 'text' | 'rating' | 'gender';
-
-const steps: { key: Key; question: string; hint?: string }[] = [
-  { key: 'name', question: 'Как вас зовут?' },
-  { key: 'company', question: 'Из какой вы компании?', hint: 'Можно пропустить' },
-  { key: 'text', question: 'Расскажите, как прошла работа', hint: 'Хотя бы пару предложений' },
-  { key: 'rating', question: 'Сколько звёзд поставите?' },
-  { key: 'gender', question: 'Какое фото поставить рядом?', hint: 'Одно из двух постоянных' },
-];
+const steps = reviewQuestions;
 
 /*
  * The answer box is a white surface on the band's pale grey, not a rectangle
@@ -198,7 +200,7 @@ export function ReviewForm() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
-              placeholder="Имя"
+              placeholder={current.placeholder}
               className={box}
             />
           )}
@@ -210,7 +212,7 @@ export function ReviewForm() {
               value={company}
               onChange={(event) => setCompany(event.target.value)}
               autoComplete="organization"
-              placeholder="Название компании"
+              placeholder={current.placeholder}
               className={box}
             />
           )}
@@ -222,7 +224,7 @@ export function ReviewForm() {
               value={text}
               onChange={(event) => setText(event.target.value)}
               rows={4}
-              placeholder="Что было сделано и как вам работалось"
+              placeholder={current.placeholder}
               /* Enter breaks a line here, so the keyboard shortcut moves on. */
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {

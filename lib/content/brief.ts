@@ -95,6 +95,131 @@ export const briefSchema = z.object({
 
 export type BriefInput = z.infer<typeof briefSchema>;
 
+/*
+ * The brief as a reader meets it: one question to a screen, in the owner's own
+ * wording and his order.
+ *
+ * This list used to live inside components/brief/BriefForm.tsx. It moved here
+ * when the same brief got a second surface — the Telegram Mini App — because
+ * two copies of thirteen questions are two copies that drift, and the wording
+ * is the owner's. The page form and the Mini App form now render the same list
+ * and differ only in their chrome.
+ */
+export type BriefQuestionKind = 'text' | 'email' | 'area' | 'chips' | 'list';
+
+export type BriefQuestion = {
+  key: string;
+  question: string;
+  hint?: string;
+  kind: BriefQuestionKind;
+  placeholder?: string;
+  rows?: number;
+  optional?: boolean;
+  /** Minimum length for a written answer, when a word or two is not enough. */
+  min?: number;
+  options?: readonly { value: string; note?: string }[];
+};
+
+export const briefQuestions: BriefQuestion[] = [
+  {
+    key: 'name',
+    question: 'Как вас зовут',
+    hint: 'Просто имя, этого достаточно.',
+    kind: 'text',
+    placeholder: 'Алишер',
+  },
+  {
+    key: 'company',
+    question: 'Компания или проект',
+    hint: 'Если названия ещё нет — пропустите.',
+    kind: 'text',
+    optional: true,
+  },
+  {
+    key: 'email',
+    question: 'Почта',
+    hint: 'Сюда пришлю ответ и предложение.',
+    kind: 'email',
+    placeholder: 'name@mail.com',
+  },
+  {
+    key: 'contact',
+    question: 'Telegram или WhatsApp',
+    hint: 'Так отвечаю быстрее всего.',
+    kind: 'text',
+    placeholder: '@username или +992 900 00 00 00',
+  },
+  {
+    key: 'projectType',
+    question: 'Что нужно сделать',
+    hint: 'Выберите, что ближе. Не уверены — берите похожее, на созвоне разберёмся.',
+    kind: 'chips',
+    options: projectTypes.map((value) => ({ value })),
+  },
+  {
+    key: 'goal',
+    question: 'Что должно измениться после запуска',
+    hint: 'Например: «хочу принимать заказы через сайт, а не в переписке» или «клиенты меня не находят в интернете».',
+    kind: 'area',
+    rows: 3,
+  },
+  {
+    key: 'description',
+    question: 'Расскажите о проекте',
+    hint: 'Своими словами: чем занимаетесь, кто ваши клиенты, что уже есть. Двух-трёх предложений хватит.',
+    kind: 'area',
+    rows: 4,
+    min: 10,
+  },
+  {
+    key: 'audience',
+    question: 'Кто будет этим пользоваться',
+    hint: 'Кто ваши клиенты: чем занимаются, из какого города, сколько им лет.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+  },
+  {
+    key: 'features',
+    question: 'Что должно уметь',
+    hint: 'Например: корзина и оплата картой, личный кабинет, запись на приём, отправка заявки в Telegram.',
+    kind: 'area',
+    rows: 4,
+    optional: true,
+  },
+  {
+    key: 'links',
+    question: 'Какие сайты вам нравятся',
+    hint: 'Вставьте ссылки на два-три сайта, которые вам по душе и на которые вы хотите, чтобы был похож ваш. Так я сразу пойму, какой вид вам нужен.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+    placeholder: 'https://example.com',
+  },
+  {
+    key: 'budget',
+    question: 'Примерный бюджет',
+    hint: 'Это ориентир, а не обязательство. Не знаете — выберите последний пункт.',
+    kind: 'list',
+    options: budgets,
+  },
+  {
+    key: 'timeline',
+    question: 'Когда хотелось бы запуститься',
+    hint: 'Тоже ориентир.',
+    kind: 'list',
+    options: timelines,
+  },
+  {
+    key: 'extra',
+    question: 'Что-нибудь ещё',
+    hint: 'Всё, что не влезло в поля выше.',
+    kind: 'area',
+    rows: 3,
+    optional: true,
+  },
+];
+
 /** The steps of the form, so the fields and the progress bar always agree. */
 export const briefSteps = [
   { id: 'about', title: 'О вас', fields: ['name', 'company', 'email', 'contact'] },

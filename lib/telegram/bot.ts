@@ -16,6 +16,7 @@ import { adminIds, botToken, escapeHtml, getApi, isAdmin, sendWithRetry } from '
 import { createLead, markReplied, tokenMatches, transitionLead } from '@/lib/telegram/leads';
 import {
   adminLeadUrl,
+  briefReceipt,
   contactUrl,
   leadCard,
   notifyClientStatus,
@@ -26,7 +27,6 @@ import {
   briefSteps,
   clientButtons,
   clientStatusLine,
-  confirmation,
   glue,
   notificationButtons,
   ownerGreeting,
@@ -129,16 +129,26 @@ function ownerKeyboard(): Keyboard {
 }
 
 /*
- * The visitor's menu: three links out, nothing else.
+ * The visitor's menu: four buttons, nothing else.
  *
  * The owner's decision — the bot routes people rather than pretending to be the
- * funnel. Every button is a `url`, so Telegram opens them without a round trip
- * to the webhook and they keep working even while the bot is down.
+ * funnel. Not one of these costs the webhook a round trip, so all four keep
+ * working even while the bot itself is down.
  *
- * The brief is deliberately the form on the site, not the in-bot dialogue. That
- * dialogue is still wired up and still answers, but nothing here opens it; the
- * one remaining way in is a direct `/status`-style entry, so treat it as
- * dormant rather than live.
+ * The first two are plain links out, to the portfolio and to his own Telegram.
+ * The last two are `web_app`: Telegram opens them as a Mini App, in a window
+ * over the chat rather than in a browser, and hands the page a signed
+ * `initData` naming the person who pressed. That signature is why the Mini App
+ * is worth more here than the link it replaces — a brief that arrives through
+ * it is already attached to a Telegram chat, so status changes reach the client
+ * without anyone typing a number, and a review arrives from someone Telegram
+ * has vouched for rather than from an anonymous form.
+ *
+ * `web_app` buttons work only in private chats, which is the only place this
+ * bot talks to anyone.
+ *
+ * The in-bot brief dialogue is still wired up in this file and still answers,
+ * but nothing here opens it; treat it as dormant rather than live.
  */
 function clientKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
@@ -146,7 +156,9 @@ function clientKeyboard(): InlineKeyboard {
     .row()
     .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
     .row()
-    .url(clientButtons.brief, `${site.url}/start`);
+    .webApp(clientButtons.brief, `${site.url}/mini/start`)
+    .row()
+    .webApp(clientButtons.review, `${site.url}/mini/review`);
 }
 
 type LeadRow = NonNullable<Awaited<ReturnType<typeof loadLead>>>;
@@ -463,10 +475,8 @@ async function briefSubmit(
   await writeState(chatId, null);
   await setNotify(chatId, true);
 
-  await ctx.reply(
-    `${escapeHtml(confirmation)}\n\n${glue.ref}: <code>${escapeHtml(lead.ref)}</code>\n${glue.code}: <code>${lead.trackingToken}</code>\n\n${escapeHtml(glue.statusHow)}`,
-    html,
-  );
+  // The same receipt the Mini App's briefs get, from the one place it is worded.
+  await ctx.reply(briefReceipt(lead.ref, lead.trackingToken), html);
   await notifyNewLead(lead.id);
 }
 
