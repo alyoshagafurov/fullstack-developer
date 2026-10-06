@@ -143,11 +143,28 @@ export function leadCard(lead: LeadForCard, title: string = notification.title):
     .join('\n');
 }
 
+/** The panel, opened straight at one lead. */
+export function miniLeadUrl(leadId: string): string {
+  return `${site.url}/mini/admin?lead=${encodeURIComponent(leadId)}`;
+}
+
+/*
+ * The two buttons under a new lead.
+ *
+ * «Открыть заявку» used to be a plain link to /admin/applications/<id>, which
+ * Telegram opens in its own browser — a browser carrying no admin session, so
+ * every single press landed on the login form. It is a `web_app` now: the panel
+ * opens over the chat, already at this lead, and proves who the owner is with
+ * the signature Telegram attaches to the launch.
+ *
+ * The third button is gone. «Изменить статус» printed a card into the chat with
+ * the statuses beneath it; that card is the panel's lead screen now, and it
+ * does more there than it ever could here.
+ */
 export function notificationKeyboard(lead: { id: string; contact: string | null }): InlineKeyboard {
-  const keyboard = new InlineKeyboard().url(notificationButtons.open, adminLeadUrl(lead.id));
+  const keyboard = new InlineKeyboard().webApp(notificationButtons.open, miniLeadUrl(lead.id));
   const url = contactUrl(lead.contact);
   if (url) keyboard.url(notificationButtons.contact, url);
-  keyboard.row().text(notificationButtons.status, `lead:${lead.id}`);
   return keyboard;
 }
 
@@ -211,7 +228,9 @@ export async function notifyNewReview(id: string): Promise<void> {
       '',
       escapeHtml(excerpt),
     ].join('\n');
-    const keyboard = new InlineKeyboard().url('Открыть отзыв', `${site.url}/admin/testimonials/${id}`);
+    // The same move as the lead's button: a window over the chat, not a
+    // browser tab that will ask him to log in.
+    const keyboard = new InlineKeyboard().webApp('Открыть админку', `${site.url}/mini/admin`);
     await Promise.all([...admins].map((chat) => sendWithRetry(chat, text, { reply_markup: keyboard })));
   } catch (error) {
     console.error(`[bot] notifyNewReview failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);

@@ -90,6 +90,20 @@ export function verifyInitData(initData: string, maxAgeSeconds = MAX_AGE_SECONDS
   if (!token) return { ok: false, reason: 'unconfigured' };
   if (!initData) return { ok: false, reason: 'empty' };
 
+  /*
+   * Exactly one `hash`, counted before anything is parsed.
+   *
+   * `URLSearchParams.get` returns the first of a repeated key and `delete`
+   * removes them all, so `…&hash=<real>&hash=zz` verifies as happily as the
+   * original. One signature would then have infinitely many spellings, and
+   * anything that later wants to recognise a string it has seen before — an
+   * idempotency key, a replay log — would be counting strings while an
+   * attacker counted signatures.
+   */
+  if (initData.split('&').filter((part) => part.startsWith('hash=')).length !== 1) {
+    return { ok: false, reason: 'malformed' };
+  }
+
   const params = new URLSearchParams(initData);
 
   const hash = params.get('hash');
@@ -112,7 +126,18 @@ export function verifyInitData(initData: string, maxAgeSeconds = MAX_AGE_SECONDS
 
   const authDate = Number(params.get('auth_date'));
   if (!Number.isFinite(authDate) || authDate <= 0) return { ok: false, reason: 'stale' };
-  if (maxAgeSeconds > 0 && Math.floor(Date.now() / 1000) - authDate > maxAgeSeconds) {
+
+  const now = Math.floor(Date.now() / 1000);
+  /*
+   * Bounded on both sides. An age check only looks backwards, so a signature
+   * stamped in the future passes it for as long as the future lasts — and the
+   * stamp is inside the signed data, which Telegram alone can produce, but a
+   * clock that has drifted is not an attack and a clock that has drifted by a
+   * year should not mint an admin key that outlives the year. A minute of slack
+   * covers real skew.
+   */
+  if (authDate - now > 60) return { ok: false, reason: 'stale' };
+  if (maxAgeSeconds > 0 && now - authDate > maxAgeSeconds) {
     return { ok: false, reason: 'stale' };
   }
 
@@ -144,8 +169,13 @@ function readUser(value: unknown): MiniAppUser | null {
   if (typeof value !== 'object' || value === null) return null;
   const row = value as Record<string, unknown>;
 
+  /*
+   * Safe, not merely whole. Above 2^53 two different Telegram ids round to the
+   * same double, and an id is about to be compared against the owner's own —
+   * a comparison that must never be true by accident.
+   */
   const id = typeof row.id === 'number' ? row.id : Number(row.id);
-  if (!Number.isInteger(id) || id <= 0) return null;
+  if (!Number.isSafeInteger(id) || id <= 0) return null;
 
   const text = (field: unknown, limit: number) =>
     typeof field === 'string' ? field.trim().slice(0, limit) : '';

@@ -1,4 +1,6 @@
 import 'server-only';
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import { site } from '@/lib/content/site';
 import { clientCommands, ownerCommands } from '@/lib/telegram/texts';
 import { Api } from 'grammy';
 
@@ -42,25 +44,112 @@ export async function syncCommands(): Promise<number> {
   let scopes = 1;
   for (const id of adminIds()) {
     await api.setMyCommands([...ownerCommands], { scope: { type: 'chat', chat_id: id } });
+    /*
+     * The owner's menu button is the panel, not a list of commands.
+     *
+     * It sits in the bottom-left of his chat permanently, which is what the
+     * nine pinned buttons were really for: somewhere to press without typing.
+     * One button that opens everything is the version of that idea which
+     * survives the business growing.
+     */
+    await api.setChatMenuButton({
+      chat_id: id,
+      menu_button: {
+        type: 'web_app',
+        text: 'Админка',
+        web_app: { url: `${site.url}/mini/admin` },
+      },
+    });
     scopes += 1;
   }
 
+  // Everyone else gets the "/" list; they have no panel to open.
   await api.setChatMenuButton({ menu_button: { type: 'commands' } });
   return scopes;
 }
 
-/** The owner's numeric ids. Empty means the owner's side of the bot is closed. */
+/**
+ * The owner's numeric ids. Empty means the owner's side of the bot is closed.
+ *
+ * Parsed strictly, which it was not before. `parseInt` reads as far as it can
+ * and keeps whatever it got, so `1e9` became the id 1 and `007` became 7: a
+ * typo in an environment variable turned quietly into a different, real
+ * Telegram account, and the settings screen — counting the set — agreed that
+ * one admin was configured. This list is now the only thing standing between
+ * "someone in Telegram" and the owner's clients, so anything that is not a
+ * plain decimal id is dropped and said out loud rather than trimmed into a
+ * stranger.
+ *
+ * Sixteen digits is above every id Telegram issues and below 2^53, where two
+ * different ids would begin comparing equal.
+ */
+const ID = /^[1-9][0-9]{0,15}$/;
+
 export function adminIds(): Set<number> {
-  return new Set(
-    (process.env.TELEGRAM_ADMIN_IDS ?? '')
-      .split(',')
-      .map((part) => Number.parseInt(part.trim(), 10))
-      .filter((id) => Number.isFinite(id) && id > 0),
-  );
+  const ids = new Set<number>();
+
+  for (const raw of (process.env.TELEGRAM_ADMIN_IDS ?? '').split(',')) {
+    const part = raw.trim();
+    if (!part) continue;
+    if (!ID.test(part)) {
+      // Loud at boot, so a typo is found in a deploy log rather than by
+      // wondering why the panel refuses the person who owns it.
+      console.warn('[bot] TELEGRAM_ADMIN_IDS: значение отброшено, это не Telegram id');
+      continue;
+    }
+    ids.add(Number(part));
+  }
+
+  return ids;
 }
 
 export function isAdmin(userId: number | undefined): boolean {
   return userId !== undefined && adminIds().has(userId);
+}
+
+/*
+ * Routing a reply back to the person who asked.
+ *
+ * When a visitor writes to the bot, the question is relayed to the owner with a
+ * marker naming the chat it came from, and his reply is sent back to whatever
+ * that marker says. The marker used to be a plain `#chat<id>`, read out of the
+ * message being replied to with a single regex — and that message is mostly
+ * text other people wrote.
+ *
+ * Two ways in followed. A visitor could set the name on their Telegram account
+ * to `#chat-100…`, which lands in the relay line ahead of the real marker, and
+ * the first match won. And a lead notification carries a four-thousand
+ * character description straight off the public form while containing no
+ * legitimate marker at all — so whatever an attacker typed there was the only
+ * match, and the owner replying to a new lead sent his answer to a stranger.
+ *
+ * So the marker now carries a short code over the chat id, keyed on the bot
+ * token. Forging one means knowing the token. Every candidate in the text is
+ * checked rather than just the first, so a planted marker no longer shadows the
+ * real one: it fails and the search moves on.
+ */
+const RELAY = /#c(-?\d+)\.([0-9a-f]{10})/g;
+
+function relayMac(chatId: string): string {
+  const token = botToken();
+  if (!token) return '';
+  return createHmac('sha256', 'BotRelay').update(`${token}\n${chatId}`).digest('hex').slice(0, 10);
+}
+
+/** The marker the bot writes into a relayed question. Empty when unconfigured. */
+export function relayTag(chatId: string): string {
+  const mac = relayMac(chatId);
+  return mac ? `#c${chatId}.${mac}` : '';
+}
+
+/** The chat a reply belongs to, or null when nothing in the text proves one. */
+export function relayTarget(text: string): string | null {
+  for (const [, chatId, mac] of text.matchAll(RELAY)) {
+    const expected = relayMac(chatId);
+    if (!expected || mac.length !== expected.length) continue;
+    if (timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return chatId;
+  }
+  return null;
 }
 
 export function escapeHtml(value: string | null | undefined): string {

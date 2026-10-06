@@ -1,36 +1,30 @@
 import 'server-only';
-import { Bot, InlineKeyboard, Keyboard, type Context } from 'grammy';
+import { Bot, InlineKeyboard, type Context } from 'grammy';
 import { prisma } from '@/lib/prisma';
 import { briefSchema } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
 import { featuredServices } from '@/lib/content/services';
 import { getPublishedCases } from '@/lib/cases';
-import { getOverview } from '@/lib/admin/queries';
+import { type LeadStatusName } from '@/lib/content/finance';
 import {
-  activePipeline,
-  money,
-  statusLabel,
-  type LeadStatusName,
-} from '@/lib/content/finance';
-import { adminIds, botToken, escapeHtml, getApi, isAdmin, sendWithRetry } from '@/lib/telegram/api';
-import { createLead, markReplied, tokenMatches, transitionLead } from '@/lib/telegram/leads';
-import {
-  adminLeadUrl,
-  briefReceipt,
-  contactUrl,
-  leadCard,
-  notifyClientStatus,
-  notifyNewLead,
-} from '@/lib/telegram/notify';
+  adminIds,
+  botToken,
+  escapeHtml,
+  isAdmin,
+  relayTag,
+  relayTarget,
+  sendWithRetry,
+} from '@/lib/telegram/api';
+import { createLead, tokenMatches } from '@/lib/telegram/leads';
+import { briefReceipt, notifyNewLead } from '@/lib/telegram/notify';
 import {
   type BriefStep,
   briefSteps,
   clientButtons,
   clientStatusLine,
   glue,
-  notificationButtons,
+  ownerButtons,
   ownerGreeting,
-  ownerMenu,
   visitorGreeting,
 } from '@/lib/telegram/texts';
 
@@ -110,22 +104,23 @@ const when = (date: Date) =>
     minute: '2-digit',
   });
 
-function ownerKeyboard(): Keyboard {
-  return new Keyboard()
-    .text(ownerMenu.fresh)
-    .text(ownerMenu.leads)
-    .row()
-    .text(ownerMenu.card)
-    .text(ownerMenu.status)
-    .text(ownerMenu.note)
-    .row()
-    .text(ownerMenu.stats)
-    .text(ownerMenu.money)
-    .text(ownerMenu.income)
-    .row()
-    .text(ownerMenu.settings)
-    .resized()
-    .persistent();
+/*
+ * The owner's one button: the panel.
+ *
+ * There used to be nine, pinned under the chat. They could print a list and ask
+ * for a reference number, and that was the ceiling — a keyboard is a remote
+ * control with nine fixed buttons, which is right for a machine with nine
+ * functions and wrong for a business. Everything they did now lives in the Mini
+ * App at /mini/admin, where a lead can be read, moved and annotated on one
+ * screen, and a review can be put on the site with a tap.
+ *
+ * `web_app` rather than `url` matters here. A url button opens Telegram's own
+ * browser, which carries no admin session, so it would land on the login form
+ * every single time. A web_app button opens a window over the chat and hands
+ * the page the signature proving who pressed it.
+ */
+function ownerPanelKeyboard(): InlineKeyboard {
+  return new InlineKeyboard().webApp(ownerButtons.panel, `${site.url}/mini/admin`);
 }
 
 /*
@@ -161,234 +156,54 @@ function clientKeyboard(): InlineKeyboard {
     .webApp(clientButtons.review, `${site.url}/mini/review`);
 }
 
-type LeadRow = NonNullable<Awaited<ReturnType<typeof loadLead>>>;
-
-async function loadLead(where: { id: string } | { ref: string }) {
-  return prisma.lead.findUnique({ where });
-}
-
-/** The card the owner works from: every field, then the moves he can make. */
-function cardKeyboard(lead: LeadRow): InlineKeyboard {
-  const keyboard = new InlineKeyboard();
-  const status = lead.status as LeadStatusName;
-  const closed: LeadStatusName[] = ['COMPLETED', 'DECLINED', 'CANCELLED'];
-  const targets: LeadStatusName[] = [];
-
-  const next = activePipeline[activePipeline.indexOf(status) + 1];
-  if (next) targets.push(next);
-  if (status !== 'ON_HOLD' && !closed.includes(status)) targets.push('ON_HOLD');
-  if (!closed.includes(status)) targets.push('DECLINED');
-  if (status === 'ON_HOLD') targets.unshift('IN_PROGRESS');
-
-  for (const target of targets.slice(0, 3)) {
-    keyboard.text(statusLabel[target], `st:${lead.id}:${target}`);
-  }
-  keyboard.row().text(glue.note, `note:${lead.id}`);
-  if (!lead.firstRepliedAt) keyboard.text(glue.replied_btn, `rep:${lead.id}`);
-  keyboard.row().url(glue.openAdmin, adminLeadUrl(lead.id));
-  const url = contactUrl(lead.contact);
-  if (url) keyboard.url(notificationButtons.contact, url);
-  return keyboard;
-}
-
-function cardText(lead: LeadRow): string {
-  return leadCard(lead, `${glue.status}: ${statusLabel[lead.status as LeadStatusName]}`);
-}
-
-async function sendCard(ctx: Context, lead: LeadRow): Promise<void> {
-  await ctx.reply(cardText(lead), { ...html, reply_markup: cardKeyboard(lead) });
-}
-
-type LeadWhere = NonNullable<Parameters<typeof prisma.lead.findMany>[0]>['where'];
-
-async function listLeads(ctx: Context, where: LeadWhere): Promise<void> {
-  const rows = await prisma.lead.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    take: 10,
-    select: { id: true, ref: true, name: true, projectType: true, status: true },
-  });
-  if (rows.length === 0) {
-    await ctx.reply(glue.nothing);
-    return;
-  }
-  const text = rows
-    .map(
-      (row) =>
-        `<code>${escapeHtml(row.ref)}</code> · ${escapeHtml(row.name)} · ${escapeHtml(row.projectType)} · ${statusLabel[row.status as LeadStatusName]}`,
-    )
-    .join('\n');
-  const keyboard = new InlineKeyboard();
-  for (const row of rows.slice(0, 4)) keyboard.text(row.ref, `lead:${row.id}`).row();
-  await ctx.reply(`${text}\n\n${glue.more}`, { ...html, reply_markup: keyboard });
-}
-
-function sums(rows: { currency: string; total: number }[]): string {
-  if (rows.length === 0) return '0';
-  return rows.map((row) => money(row.total, row.currency)).join(' · ');
-}
-
 /* ------------------------------------------------------------ owner -- */
 
+/**
+ * What the owner gets for /start.
+ *
+ * Two messages, and the first one has a job beyond its words. Telegram keeps a
+ * persistent reply keyboard on the client, so deleting the nine buttons from
+ * this file does not take them off his phone — he would still be looking at
+ * them, still pressing them, and getting nothing back. `remove_keyboard` is
+ * what actually clears them, and it cannot travel with the panel button,
+ * because a removal and an inline keyboard cannot share one `reply_markup`.
+ */
 async function ownerStart(ctx: Context): Promise<void> {
-  await ctx.reply(ownerGreeting, { ...html, reply_markup: ownerKeyboard() });
+  await ctx.reply(ownerGreeting, { ...html, reply_markup: { remove_keyboard: true } });
+  await ctx.reply(glue.openPanel, { reply_markup: ownerPanelKeyboard() });
 }
 
-async function ownerText(ctx: Context, chatId: string, text: string): Promise<boolean> {
-  // A reply to a forwarded question goes back to the visitor who asked it.
-  const replied = ctx.message?.reply_to_message?.text ?? '';
-  const target = replied.match(/#chat(-?\d+)/);
-  if (target) {
-    const ok = await sendWithRetry(target[1], escapeHtml(text));
-    await ctx.reply(ok ? glue.forwarded : glue.failed);
-    return true;
-  }
+/**
+ * The owner's reply to a forwarded question, sent back to whoever asked it.
+ *
+ * This is the one thing the panel does worse than the chat, so it stayed: an
+ * answer arrives where the question did, in the same conversation, with nothing
+ * to open. Moving it into the Mini App would also mean storing the exchange,
+ * and `visitorText` deliberately does not — a question relayed is not a
+ * transcript kept.
+ *
+ * Which chat it goes to is the part that had to change. It used to be read
+ * straight out of the message being replied to, with a plain `#chat<id>`, and
+ * that message is full of text other people wrote. Two ways in followed from
+ * it. A visitor could put `#chat…` in the name on their own Telegram account,
+ * which lands ahead of the real marker in the relay line, and the first match
+ * won. And a lead card carries a four-thousand-character description straight
+ * off the public form, with no legitimate marker anywhere in it — so anything
+ * an attacker wrote there was the only match, and the owner's reply to a new
+ * lead went wherever they chose.
+ *
+ * Now the marker carries a short code over the chat id, keyed on the bot token.
+ * Every candidate in the text is checked and the forgeries simply fail, so a
+ * planted one no longer shadows the real one — it is skipped.
+ */
+async function ownerText(ctx: Context, text: string): Promise<boolean> {
+  const target = relayTarget(ctx.message?.reply_to_message?.text ?? '');
+  if (!target) return false;
 
-  const state = await readState(chatId);
-
-  if (state?.mode === 'note') {
-    const body = text.trim();
-    if (body && body.length <= 5000) {
-      await prisma.note.create({ data: { leadId: state.leadId, body } });
-      await writeState(chatId, null);
-      await ctx.reply(glue.noteSaved);
-    } else {
-      await ctx.reply(glue.failed);
-    }
-    return true;
-  }
-
-  if (state?.mode === 'note-ref' || state?.mode === 'lead' || state?.mode === 'status-ref') {
-    if (!REF.test(text.trim())) {
-      await ctx.reply(glue.askRef);
-      return true;
-    }
-    const lead = await loadLead({ ref: text.trim().toUpperCase() });
-    if (!lead) {
-      await ctx.reply(glue.notFound);
-      return true;
-    }
-    if (state.mode === 'note-ref') {
-      await writeState(chatId, { mode: 'note', leadId: lead.id });
-      await ctx.reply(glue.askNote);
-    } else {
-      await writeState(chatId, null);
-      await sendCard(ctx, lead);
-    }
-    return true;
-  }
-
-  switch (text) {
-    case ownerMenu.fresh:
-      await listLeads(ctx, { status: 'NEW' });
-      return true;
-    case ownerMenu.leads:
-      await listLeads(ctx, {});
-      return true;
-    case ownerMenu.card:
-    case ownerMenu.status:
-      await writeState(chatId, { mode: 'lead' });
-      await ctx.reply(glue.askRef);
-      return true;
-    case ownerMenu.note:
-      await writeState(chatId, { mode: 'note-ref' });
-      await ctx.reply(glue.askRef);
-      return true;
-    case ownerMenu.stats: {
-      const o = await getOverview('month');
-      const funnel = o.funnel
-        .map((row) => `${statusLabel[row.status]}: ${row.count}`)
-        .join('\n');
-      await ctx.reply(
-        `<b>${escapeHtml(ownerMenu.stats)}</b>\n${escapeHtml(ownerMenu.fresh)}: ${o.fresh}\nЖдут ответа: ${o.waiting}\nВ работе: ${o.active}\nЗавершены: ${o.completed}\nКонверсия: ${o.conversion}%\n\n${funnel}`,
-        html,
-      );
-      return true;
-    }
-    case ownerMenu.money: {
-      const o = await getOverview('month');
-      await ctx.reply(
-        `<b>${escapeHtml(ownerMenu.money)}</b>\nДоходы: ${sums(o.received)}\nРасходы: ${sums(o.spent)}\nОжидаемые платежи: ${sums(o.expected)}\nПросрочено: ${sums(o.overdue)}`,
-        html,
-      );
-      return true;
-    }
-    case ownerMenu.income: {
-      const o = await getOverview('month');
-      await ctx.reply(`<b>${escapeHtml(ownerMenu.income)}</b>\n${sums(o.received)}`, html);
-      return true;
-    }
-    case ownerMenu.settings: {
-      const info = await getApi().getWebhookInfo();
-      await ctx.reply(
-        `<b>${escapeHtml(ownerMenu.settings)}</b>\nСайт: ${escapeHtml(site.url)}\nАдминов: ${adminIds().size}\nВебхук: ${escapeHtml(info.url || '—')}\nОжидают: ${info.pending_update_count}`,
-        html,
-      );
-      return true;
-    }
-    default:
-      break;
-  }
-
-  if (REF.test(text.trim())) {
-    const lead = await loadLead({ ref: text.trim().toUpperCase() });
-    if (lead) await sendCard(ctx, lead);
-    else await ctx.reply(glue.notFound);
-    return true;
-  }
-
-  return false;
+  const ok = await sendWithRetry(target, escapeHtml(text));
+  await ctx.reply(ok ? glue.forwarded : glue.failed);
+  return true;
 }
-
-async function ownerCallback(ctx: Context, chatId: string, data: string): Promise<boolean> {
-  const [kind, leadId, arg] = data.split(':');
-  if (!leadId || !['lead', 'st', 'note', 'rep'].includes(kind)) return false;
-
-  // The id came from a button; it is looked up, never trusted.
-  const lead = await loadLead({ id: leadId });
-  if (!lead) {
-    await ctx.answerCallbackQuery({ text: glue.notFound });
-    return true;
-  }
-
-  switch (kind) {
-    case 'lead':
-      await sendCard(ctx, lead);
-      await ctx.answerCallbackQuery();
-      return true;
-    case 'st': {
-      const result = await transitionLead(lead.id, arg ?? '');
-      if (result.status === 'ok') {
-        const fresh = await loadLead({ id: lead.id });
-        if (fresh) {
-          try {
-            await ctx.editMessageText(cardText(fresh), { ...html, reply_markup: cardKeyboard(fresh) });
-          } catch {
-            await sendCard(ctx, fresh);
-          }
-        }
-        await ctx.answerCallbackQuery({ text: statusLabel[result.to] });
-        void notifyClientStatus(lead.id, result.to);
-      } else {
-        await ctx.answerCallbackQuery({ text: result.status === 'same' ? statusLabel[lead.status as LeadStatusName] : glue.failed });
-      }
-      return true;
-    }
-    case 'note':
-      await writeState(chatId, { mode: 'note', leadId: lead.id });
-      await ctx.answerCallbackQuery();
-      await ctx.reply(glue.askNote);
-      return true;
-    case 'rep':
-      await markReplied(lead.id);
-      await ctx.answerCallbackQuery({ text: glue.replied });
-      return true;
-    default:
-      return false;
-  }
-}
-
-/* ----------------------------------------------------------- visitor -- */
 
 async function visitorStart(ctx: Context): Promise<void> {
   await ctx.reply(visitorGreeting, { reply_markup: clientKeyboard() });
@@ -539,7 +354,7 @@ async function visitorText(ctx: Context, chatId: string, text: string): Promise<
   if (admins.size === 0) return;
   const from = ctx.from;
   const who = `${escapeHtml(from?.first_name ?? '')}${from?.username ? ` (@${escapeHtml(from.username)})` : ''}`;
-  const relay = `<b>${escapeHtml(glue.from)}</b> ${who} · #chat${chatId}\n\n${escapeHtml(text)}`;
+  const relay = `<b>${escapeHtml(glue.from)}</b> ${who} · ${relayTag(chatId)}\n\n${escapeHtml(text)}`;
   await Promise.all([...admins].map((id) => sendWithRetry(id, relay)));
   await ctx.reply(`${glue.forwarded} Отвечаю ${site.responseTime.toLowerCase()}.`);
 }
@@ -723,37 +538,22 @@ function register(bot: Bot): void {
       await run(ctx);
     };
 
-  bot.command('new', ownerOnly((ctx) => listLeads(ctx, { status: 'NEW' })));
-  bot.command('leads', ownerOnly((ctx) => listLeads(ctx, {})));
-  bot.command('waiting', ownerOnly((ctx) => listLeads(ctx, { status: 'NEW', firstRepliedAt: null })));
-  bot.command('work', ownerOnly((ctx) => listLeads(ctx, { status: 'IN_PROGRESS' })));
-  bot.command('money', ownerOnly((ctx) => ownerText(ctx, String(ctx.chat!.id), ownerMenu.money).then(() => undefined)));
-  bot.command('stats', ownerOnly((ctx) => ownerText(ctx, String(ctx.chat!.id), ownerMenu.stats).then(() => undefined)));
-  bot.command(
-    'lead',
-    ownerOnly(async (ctx) => {
-      const ref = String(ctx.match ?? '').trim().toUpperCase();
-      if (!REF.test(ref)) {
-        await ctx.reply(glue.askRef);
-        return;
-      }
-      const lead = await loadLead({ ref });
-      if (lead) await sendCard(ctx, lead);
-      else await ctx.reply(glue.notFound);
-    }),
-  );
+  /*
+   * The owner's own commands used to be seven, each a thinner version of a
+   * screen in the admin: a list of ten leads, a card by reference, a month of
+   * figures printed as a paragraph. They are gone, and `ownerOnly` stays —
+   * `/panel` is the single one left, and the wrapper is what keeps a visitor
+   * who guesses the word from getting an answer.
+   */
+  bot.command('panel', ownerOnly(ownerStart));
 
   bot.on('callback_query:data', async (ctx) => {
     if (!ctx.chat) return;
-    const chatId = String(ctx.chat.id);
-    const data = ctx.callbackQuery.data;
 
-    if (await visitorCallback(ctx, chatId, data)) return;
+    if (await visitorCallback(ctx, String(ctx.chat.id), ctx.callbackQuery.data)) return;
 
-    if (isAdmin(ctx.from?.id)) {
-      if (await ownerCallback(ctx, chatId, data)) return;
-    }
-    // A visitor pressing an owner's button, or a stale button: nothing happens.
+    // A visitor pressing an owner's button, or a button left over from before
+    // the panel existed: nothing happens, and nothing is said about why.
     await ctx.answerCallbackQuery();
   });
 
@@ -763,8 +563,10 @@ function register(bot: Bot): void {
     const text = ctx.message.text;
 
     if (isAdmin(ctx.from?.id)) {
-      if (await ownerText(ctx, chatId, text)) return;
-      await ctx.reply(ownerGreeting, { ...html, reply_markup: ownerKeyboard() });
+      // A reply to a forwarded question goes back to whoever asked it.
+      if (await ownerText(ctx, text)) return;
+      // Anything else he types: the panel, rather than a menu of commands.
+      await ctx.reply(glue.openPanel, { reply_markup: ownerPanelKeyboard() });
       return;
     }
 

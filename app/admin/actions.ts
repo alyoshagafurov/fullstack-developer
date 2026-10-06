@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { after } from 'next/server';
 import {
   endSession,
   hashPassword,
@@ -13,11 +12,15 @@ import {
   verifyPassword,
 } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import {
+  moveLead,
+  togglePublishedCase,
+  togglePublishedTestimonial,
+  writeNote,
+} from '@/lib/admin/ops';
 import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
 import { adminIds, getApi, sendWithRetry, syncCommands } from '@/lib/telegram/api';
-import { transitionLead } from '@/lib/telegram/leads';
-import { notifyClientStatus } from '@/lib/telegram/notify';
 
 /*
  * Every write the admin can make.
@@ -116,21 +119,9 @@ export async function changePassword(_prev: unknown, form: FormData): Promise<Ac
 export async function setLeadStatus(leadId: string, to: string): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (gate.status === 'refused') return refuse;
-
-  // The same move the bot's buttons make, from the same function.
-  const result = await transitionLead(leadId, to);
-  if (result.status === 'invalid') return { status: 'error', message: 'Неизвестный статус' };
-  if (result.status === 'missing') return { status: 'error', message: 'Заявка не найдена' };
-
-  if (result.status === 'ok') {
-    // 14.7 — the client hears that their project moved, once the response is out.
-    after(() => notifyClientStatus(leadId, result.to));
-  }
-
-  revalidatePath('/admin');
-  revalidatePath('/admin/applications');
-  revalidatePath(`/admin/applications/${leadId}`);
-  return { status: 'ok' };
+  // The move, the client's message and the revalidations all live in
+  // lib/admin/ops.ts, because the panel inside Telegram makes the same one.
+  return moveLead(gate.grant, leadId, to);
 }
 
 /* -------------------------------------------------------------- telegram -- */
@@ -203,14 +194,7 @@ function telegramError(error: unknown): string {
 export async function addNote(leadId: string, body: string): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (gate.status === 'refused') return refuse;
-
-  const text = body.trim();
-  if (!text) return { status: 'error', message: 'Заметка пустая' };
-  if (text.length > 5000) return { status: 'error', message: 'Слишком длинная заметка' };
-
-  await prisma.note.create({ data: { leadId, body: text } });
-  revalidatePath(`/admin/applications/${leadId}`);
-  return { status: 'ok' };
+  return writeNote(gate.grant, leadId, body);
 }
 
 export async function setDeal(
@@ -309,21 +293,7 @@ export async function addExpense(form: FormData): Promise<ActionResult> {
 export async function toggleCasePublished(id: string): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (gate.status === 'refused') return refuse;
-
-  const row = await prisma.case.findUnique({
-    where: { id },
-    select: { published: true, slug: true },
-  });
-  if (!row) return { status: 'error', message: 'Кейс не найден' };
-
-  await prisma.case.update({ where: { id }, data: { published: !row.published } });
-
-  // A publish has to reach the live site without a redeploy.
-  revalidatePath('/');
-  revalidatePath('/work');
-  revalidatePath(`/work/${row.slug}`);
-  revalidatePath('/admin/projects');
-  return { status: 'ok' };
+  return togglePublishedCase(gate.grant, id);
 }
 
 /**
@@ -446,15 +416,7 @@ export async function saveTestimonial(id: string, form: FormData): Promise<Actio
 export async function toggleTestimonialPublished(id: string): Promise<ActionResult> {
   const gate = await requireAdmin();
   if (gate.status === 'refused') return refuse;
-
-  const row = await prisma.testimonial.findUnique({ where: { id }, select: { published: true } });
-  if (!row) return { status: 'error', message: 'Отзыв не найден' };
-
-  await prisma.testimonial.update({ where: { id }, data: { published: !row.published } });
-  revalidatePath('/');
-  revalidatePath('/reviews');
-  revalidatePath('/admin/testimonials');
-  return { status: 'ok' };
+  return togglePublishedTestimonial(gate.grant, id);
 }
 
 /**

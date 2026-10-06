@@ -107,11 +107,42 @@ export async function currentAdmin(): Promise<AdminUser | null> {
  * redirect rather than render an error, and a thrown value is easy to catch by
  * accident somewhere up the tree.
  */
-export type Guard = { status: 'ok'; user: AdminUser } | { status: 'refused' };
+export type Guard = { status: 'ok'; user: AdminUser; grant: AdminGrant } | { status: 'refused' };
 
 export async function requireAdmin(): Promise<Guard> {
   const user = await currentAdmin();
-  return user ? { status: 'ok', user } : { status: 'refused' };
+  return user ? { status: 'ok', user, grant: adminGrant() } : { status: 'refused' };
+}
+
+/*
+ * Proof that a door was passed.
+ *
+ * There are two doors into the owner's data now, and they take different keys:
+ * /admin in a browser takes the password `requireAdmin` above checks, and
+ * /mini/admin inside Telegram takes a signature Telegram issued. Neither
+ * accepts the other's key. What they share is everything behind them, so the
+ * operations themselves moved into lib/admin/ops.ts — and an operation sitting
+ * in a library, reachable from any import, is exactly what the note at the top
+ * of this file warns about.
+ *
+ * So every operation in there takes one of these as its first argument and does
+ * nothing with it. The value carries no information and is never read; its only
+ * job is to be unobtainable without calling a guard, which turns "did you check
+ * who this is?" from something a reviewer has to remember into something the
+ * compiler answers.
+ *
+ * TypeScript cannot make this airtight — `adminGrant` has to be exported for
+ * the Telegram guard in another module to mint one, and anything exported can
+ * be called. It makes the correct path the easy one and the wrong path
+ * something you have to type out on purpose. That is the whole claim.
+ */
+declare const proof: unique symbol;
+
+export type AdminGrant = { readonly [proof]: 'admin' };
+
+/** Only the two guards call this: `requireAdmin` here, `requireMiniAdmin` in lib/telegram/mini-admin.ts. */
+export function adminGrant(): AdminGrant {
+  return {} as AdminGrant;
 }
 
 /**

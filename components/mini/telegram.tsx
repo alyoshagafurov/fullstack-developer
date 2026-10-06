@@ -156,6 +156,25 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           app.ready();
           app.expand();
 
+          /*
+           * Take the signature out of the address.
+           *
+           * Telegram delivers `initData` in the URL fragment, and the SDK has
+           * read it into memory by the time `ready()` returns — after which the
+           * fragment is only a liability. It stays in the webview's history, it
+           * rides along if the owner uses "open in browser" and pastes the
+           * address somewhere, and on the admin screen it is an hour-long key
+           * to every client's details. The object keeps working; only the copy
+           * lying in the open goes away.
+           */
+          if (window.location.hash.includes('tgWebApp')) {
+            window.history.replaceState(
+              null,
+              '',
+              window.location.pathname + window.location.search,
+            );
+          }
+
           if (app.isVersionAtLeast('6.1')) {
             app.setBackgroundColor(VOID);
             // An arbitrary hex only lands from 6.9; before that the two

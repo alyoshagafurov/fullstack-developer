@@ -30,22 +30,18 @@ export const visitorGreeting =
   'Выбирай, куда нажать:';
 
 /**
- * What the owner sees on /start and whenever his message matches nothing.
+ * What the owner sees on /start.
  *
- * It used to be the visitor's text: the owner was told "покажи мне идею, а
- * дальше разберёмся вместе", which is addressed to a client and useless to him.
- * This names what the keyboard underneath actually does, grouped the way its
- * rows are, because that keyboard is persistent and carries no explanation of
- * its own beyond nine button labels.
+ * It used to be nine lines describing nine buttons, because there were nine
+ * buttons to describe. Now there is one place everything happens, so the
+ * message says what still happens *here* — leads and reviews arrive as
+ * notifications, and a reply to a forwarded question reaches the person who
+ * asked — and then gets out of the way.
  */
 export const ownerGreeting =
-  '<b>Панель владельца.</b> Кнопки внизу работают без команд.\n\n' +
-  '<b>Заявки</b>\n' +
-  '🔔 новые · 📋 все — покажут списком\n' +
-  '👤 карточка · 🔄 статус · 📝 заметка — спросят номер заявки\n\n' +
-  '<b>Деньги и цифры</b> — за текущий месяц\n' +
-  '📊 статистика · 💰 финансы · 📈 доход\n\n' +
-  '<b>⚙️ Настройки</b> — связь с ботом: вебхук, очередь, ошибки\n\n' +
+  '<b>Панель владельца.</b>\n\n' +
+  'Заявки и отзывы приходят сюда уведомлениями.\n' +
+  'Всё остальное — заявки, деньги, сайт, бот — в админке.\n\n' +
   'Ответить клиенту — ответьте реплаем на его сообщение.';
 
 /**
@@ -92,7 +88,6 @@ export const notification = {
 export const notificationButtons = {
   open: 'Открыть заявку',
   contact: 'Связаться',
-  status: 'Изменить статус',
 } as const;
 
 /** 14.4 — the owner's keyboard, his labels. */
@@ -111,27 +106,14 @@ export const clientCommands = [
 ] as const;
 
 export const ownerCommands = [
-  { command: 'start', description: 'Меню' },
-  { command: 'new', description: 'Новые заявки' },
-  { command: 'waiting', description: 'Ждут ответа' },
-  { command: 'work', description: 'В работе' },
-  { command: 'leads', description: 'Все заявки' },
-  { command: 'lead', description: 'Карточка по номеру: /lead ALY-2026-001' },
-  { command: 'money', description: 'Финансы' },
-  { command: 'stats', description: 'Статистика' },
+  { command: 'start', description: 'Панель' },
+  { command: 'panel', description: 'Открыть админку' },
   { command: 'id', description: 'Мой Telegram id' },
 ] as const;
 
-export const ownerMenu = {
-  leads: '📋 Мои заявки',
-  fresh: '🔔 Новые заявки',
-  status: '🔄 Изменить статус',
-  note: '📝 Добавить заметку',
-  card: '👤 Карточка клиента',
-  stats: '📊 Статистика',
-  money: '💰 Финансы',
-  income: '📈 Доход за месяц',
-  settings: '⚙️ Настройки',
+/** 14.4 — all that is left of the owner's keyboard: one way in. */
+export const ownerButtons = {
+  panel: '⚙️ Открыть админку',
 } as const;
 
 /** 14.6 — a status, as the client is allowed to see it. */
@@ -250,23 +232,15 @@ export const glue = {
   statusHow: 'Чтобы узнать статус проекта, пришлите номер заявки и код одной строкой.',
   statusAsk: 'Номер заявки и код:',
   updated: 'Обновлено',
+  openPanel: 'Управление — здесь.',
   forwarded: 'Передал.',
   stopped: 'Уведомления выключены.',
   resumed: 'Уведомления включены.',
   tooMany: 'Слишком много заявок за сегодня.',
   failed: 'Не получилось. Попробуйте ещё раз.',
   noAccess: 'Эта команда недоступна.',
-  askRef: 'Номер заявки?',
-  askNote: 'Текст заметки:',
-  noteSaved: 'Заметка сохранена.',
   notFound: 'Заявка не найдена.',
-  nothing: 'Пусто.',
-  replied: 'Отмечено: ответил.',
   yourId: 'Ваш Telegram ID:',
   from: 'Сообщение от',
   status: 'Статус',
-  note: 'Заметка',
-  replied_btn: 'Ответил',
-  openAdmin: 'Открыть в админке',
-  more: 'Все заявки — в админке.',
 } as const;

@@ -50,12 +50,44 @@ const nextConfig = {
      * `frame-ancestors` that says the same thing more precisely. See the note
      * on the block that uses it.
      */
+    /*
+     * The Mini App's policy.
+     *
+     * It began as one directive — `frame-ancestors`, standing in for the
+     * X-Frame-Options this group cannot send. Then the admin moved in and the
+     * arithmetic changed: Telegram hands a launch its signature in the URL
+     * fragment, so `location.hash` on /mini/admin holds, for an hour, a key to
+     * every client's name and email, to the status messages the bot sends them,
+     * and to what appears on the public site. Any script running on this origin
+     * can read it. With no `connect-src`, any script could also post it
+     * anywhere — one compromised transitive dependency was the cheapest way in.
+     *
+     * So the page is pinned to what it actually uses: its own origin, the
+     * Telegram SDK, and nothing else outbound. `'unsafe-inline'` for scripts is
+     * the one concession — Next bootstraps through an inline script and so does
+     * the motion flag in the root layout. A nonce would be better and wants
+     * middleware; this already closes the way out, which was the part that
+     * mattered.
+     *
+     * `frame-ancestors` lost its `'self'`: nothing on aly.lat has any business
+     * framing the owner's admin, and the one page that may is Telegram's.
+     */
+    const miniCsp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://telegram.org",
+      "connect-src 'self' https://*.telegram.org",
+      "img-src 'self' data: https://*.public.blob.vercel-storage.com",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
+      "object-src 'none'",
+      "base-uri 'none'",
+      "form-action 'none'",
+      'frame-ancestors https://web.telegram.org https://*.telegram.org',
+    ].join('; ');
+
     const mini = [
       ...common,
-      {
-        key: 'Content-Security-Policy',
-        value: "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org;",
-      },
+      { key: 'Content-Security-Policy', value: `${miniCsp};` },
       { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
     ];
 
