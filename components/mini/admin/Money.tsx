@@ -13,20 +13,35 @@ import { errorText, type useAdminApi } from '@/components/mini/admin/api';
  * as one total in whichever of the three he picks, converted at today's rate;
  * and for it to be pleasant to look at, with charts that are not the usual ones.
  *
- * The currency switch at the top is the only filter on the screen, and it
- * scopes everything under it — every figure, every chart, every row. There is
- * no date filter: each block says its own window instead ("12 месяцев", "13
- * недель"), which is what keeps two numbers on one screen from disagreeing.
+ * Two filters sit at the top and scope the hero figure, the currency split and
+ * the list of entries below them: a period — this week, this month, this year,
+ * a custom range, or everything — and the currency to read the total in. The
+ * default period is "Всё время", because the number he opens this screen to
+ * check first is usually "how much have I made, overall", not a figure that
+ * quietly resets every time he looks.
  *
- * The charts are monochrome, like the site. One is the honest form for months —
- * a stem and a dot, read precisely by where the dot sits. The other is the
- * unusual one: the last thirteen weeks as a field of dots, one per day, lit by
- * how much came in. It is the same point cloud every page of the site ends on,
- * drawn from his own money.
+ * "Неделя" / "Месяц" / "Год" are the CURRENT week, month and year — the fast
+ * path for "how am I doing right now". Any other single period, or a span
+ * across several months ("от сентября до октября"), goes through "Диапазон",
+ * two date pickers of the same kind the add-income form already uses.
  *
- * Everything a chart shows can also be read without it: the list at the bottom
- * is the table view, and every mark answers a tap or keyboard focus with its
- * value in the readout line above the chart.
+ * The two trend charts below are deliberately NOT scoped by the period filter.
+ * They answer a different question — "what does my income look like lately" —
+ * from the hero figure's "how much in the period I picked", and scoping a
+ * twelve-month trend to one selected week would leave eleven empty bars with
+ * nothing to show. Their titles say "последние", "the last", so the two
+ * never read as disagreeing about the same number.
+ *
+ * The charts are monochrome, like the site. The months chart is the honest
+ * form — a stem and a dot, read precisely by where the dot sits. The days
+ * chart is the unusual one: the last thirteen weeks as a field of dots, one
+ * per day, lit by how much came in that day. It is the same point cloud every
+ * page of the site ends on, drawn from his own money.
+ *
+ * Everything a chart shows can also be read without it: the list at the
+ * bottom is the table view, filtered to the same period as the hero figure,
+ * and every mark answers a tap or keyboard focus with its value in the
+ * readout line above its own chart.
  */
 
 type Api = ReturnType<typeof useAdminApi>;
@@ -64,11 +79,28 @@ const MONTHS_IN = [
   'январе', 'феврале', 'марте', 'апреле', 'мае', 'июне',
   'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре',
 ];
+/** Genitive — "1 сентября", not the nominative MONTHS_FULL uses for a bare month name. */
+const MONTHS_GEN = [
+  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
+];
 
 /** «2026-10-06» → «6 окт». Days are UTC calendar days throughout; see income.ts. */
 function dayLabel(day: string): string {
   const [, m, d] = day.split('-').map(Number);
   return `${d} ${MONTHS[m - 1]}`;
+}
+
+/** «2026-10-06» → «6 окт 2026», for a line that may cross years. */
+function shortDate(day: string): string {
+  const [y, m, d] = day.split('-').map(Number);
+  return `${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+/** «2026-10-06» → «6 октября» or «6 октября 2026» — the grammatical form a sentence needs. */
+function fullDayLabel(day: string, withYear: boolean): string {
+  const [y, m, d] = day.split('-').map(Number);
+  return `${d} ${MONTHS_GEN[m - 1]}${withYear ? ` ${y}` : ''}`;
 }
 
 function addDays(day: string, n: number): string {
@@ -92,6 +124,145 @@ function niceCeil(v: number): number {
 
 /** «$», «сомони», «₽» — the unit alone, as money() would write it. */
 const unit = (c: Currency) => money(0, c).replace(/^0\s*/, '');
+
+/** «1 запись» / «2 записи» / «5 записей» — standard Russian pluralisation. */
+function pluralRecords(n: number): string {
+  const mod100 = n % 100;
+  const mod10 = n % 10;
+  const word =
+    mod100 >= 11 && mod100 <= 14 ? 'записей' : mod10 === 1 ? 'запись' : mod10 >= 2 && mod10 <= 4 ? 'записи' : 'записей';
+  return `${n} ${word}`;
+}
+
+function earliestDay(rows: Row[]): string | null {
+  if (rows.length === 0) return null;
+  return rows.reduce((min, r) => (r.day < min ? r.day : min), rows[0].day);
+}
+
+/* ------------------------------------------------------------ period -- */
+
+/*
+ * Deliberately its own type, not imported from lib/content/finance.ts. That
+ * file's `PeriodId` shares three of these names — 'week' | 'month' | 'year' |
+ * 'all' — but means something different by them: a rolling window (the last 7
+ * / 30 / 365 days, counted from `days: N`). What the owner asked for here is
+ * calendar-aligned — THIS week, Monday to Sunday; THIS month; THIS year —
+ * plus a fifth choice neither list has, an arbitrary range. Reusing that type
+ * would either misreport the window or need its own exception carved into a
+ * module that has nothing to do with this screen. The Russian labels match on
+ * purpose, for one voice across the admin; the meaning behind them does not.
+ */
+type PeriodId = 'all' | 'week' | 'month' | 'year' | 'range';
+
+const PERIOD_PRESETS: { id: PeriodId; label: string }[] = [
+  { id: 'all', label: 'Всё время' },
+  { id: 'week', label: 'Неделя' },
+  { id: 'month', label: 'Месяц' },
+  { id: 'year', label: 'Год' },
+  { id: 'range', label: 'Диапазон' },
+];
+
+type PeriodInfo = {
+  id: PeriodId;
+  /** Inclusive day bounds. Null on either side means "no limit that side". */
+  from: string | null;
+  to: string | null;
+  heroLabel: string;
+  splitTitle: string;
+  /** Null when there is no natural "the one before this" — "Всё время", a custom range. */
+  compareLabel: string | null;
+  compareFrom: string | null;
+  compareTo: string | null;
+};
+
+/** «с 1 сентября по 6 октября 2026», or «по 6 октября 2026» with an open start. */
+function rangeLabel(from: string | null, to: string): string {
+  if (!from) return `по ${fullDayLabel(to, true)}`;
+  const sameYear = from.slice(0, 4) === to.slice(0, 4);
+  return `с ${fullDayLabel(from, !sameYear)} по ${fullDayLabel(to, true)}`;
+}
+
+function computePeriod(id: PeriodId, today: string, rangeFrom: string, rangeTo: string): PeriodInfo {
+  if (id === 'week') {
+    const start = addDays(today, -weekday(today));
+    const end = addDays(start, 6);
+    return {
+      id,
+      from: start,
+      to: end,
+      heroLabel: 'Заработано на этой неделе',
+      splitTitle: 'В чём платили на этой неделе',
+      compareLabel: 'на прошлой неделе',
+      compareFrom: addDays(start, -7),
+      compareTo: addDays(end, -7),
+    };
+  }
+
+  if (id === 'month') {
+    const [y, m] = today.split('-').map(Number);
+    const start = `${today.slice(0, 7)}-01`;
+    const nextStart = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
+    const idx = m - 1;
+    const prevIdx = (idx + 11) % 12;
+    const prevYear = idx === 0 ? y - 1 : y;
+    const prevStart = `${prevYear}-${String(prevIdx + 1).padStart(2, '0')}-01`;
+    const prevNextStart =
+      prevIdx === 11 ? `${prevYear + 1}-01-01` : `${prevYear}-${String(prevIdx + 2).padStart(2, '0')}-01`;
+    return {
+      id,
+      from: start,
+      to: addDays(nextStart, -1),
+      heroLabel: `Заработано в ${MONTHS_IN[idx]}`,
+      splitTitle: `В чём платили в ${MONTHS_IN[idx]}`,
+      compareLabel: `в ${MONTHS_IN[prevIdx]}`,
+      compareFrom: prevStart,
+      compareTo: addDays(prevNextStart, -1),
+    };
+  }
+
+  if (id === 'year') {
+    const y = today.slice(0, 4);
+    const py = String(Number(y) - 1);
+    return {
+      id,
+      from: `${y}-01-01`,
+      to: `${y}-12-31`,
+      heroLabel: `Заработано за ${y} год`,
+      splitTitle: `В чём платили за ${y} год`,
+      compareLabel: `за ${py} год`,
+      compareFrom: `${py}-01-01`,
+      compareTo: `${py}-12-31`,
+    };
+  }
+
+  if (id === 'range') {
+    const a = rangeFrom || null;
+    const b = rangeTo || today;
+    const [from, to] = a && a > b ? [b, a] : [a, b];
+    const label = rangeLabel(from, to);
+    return {
+      id,
+      from,
+      to,
+      heroLabel: `Заработано ${label}`,
+      splitTitle: `В чём платили ${label}`,
+      compareLabel: null,
+      compareFrom: null,
+      compareTo: null,
+    };
+  }
+
+  return {
+    id: 'all',
+    from: null,
+    to: null,
+    heroLabel: 'Всего заработано',
+    splitTitle: 'В чём платили, за всё время',
+    compareLabel: null,
+    compareFrom: null,
+    compareTo: null,
+  };
+}
 
 /* -------------------------------------------------------------- screen -- */
 
@@ -183,39 +354,56 @@ function Ledger({
   api: Api;
   onChange: () => void;
 }) {
+  const haptics = useHaptics();
   const { rows, rates, today } = data;
 
+  /* The period filter. Resets to "Всё время" on every visit, on purpose — see
+     the file header for why it is never remembered across sessions. */
+  const [periodId, setPeriodId] = useState<PeriodId>('all');
+  const [rangeFrom, setRangeFrom] = useState('');
+  const [rangeTo, setRangeTo] = useState('');
+
+  const choosePeriod = (id: PeriodId) => {
+    haptics.tap();
+    setPeriodId(id);
+    if (id === 'range' && !rangeFrom && !rangeTo) {
+      // First time he opens the range picker: a sensible span to start from,
+      // rather than two empty boxes he has to fill before seeing anything.
+      setRangeFrom(earliestDay(rows) ?? addDays(today, -30));
+      setRangeTo(today);
+    }
+  };
+
+  const period = useMemo(
+    () => computePeriod(periodId, today, rangeFrom, rangeTo),
+    [periodId, today, rangeFrom, rangeTo],
+  );
+
   /** An amount in the currency being read. */
-  const to = useCallback(
+  const convert = useCallback(
     (amount: number, from: Currency) =>
       rates && view ? (amount / rates.perUsd[from]) * rates.perUsd[view] : amount,
     [rates, view],
   );
 
-  const month = today.slice(0, 7);
-  const lastMonthKey = (() => {
-    const d = new Date(`${month}-01T00:00:00.000Z`);
-    d.setUTCMonth(d.getUTCMonth() - 1);
-    return d.toISOString().slice(0, 7);
-  })();
-  const year = today.slice(0, 4);
-  const monthIndex = Number(month.slice(5)) - 1;
-
-  /* Totals, converted into one currency and also kept apart per currency. */
-  const sum = (match: (r: Row) => boolean) => {
+  /* A total (and per-currency breakdown, and a count) for a day range. */
+  const sum = (from: string | null, to: string | null) => {
     const per: Record<Currency, number> = { TJS: 0, USD: 0, RUB: 0 };
     let total = 0;
+    let count = 0;
     for (const r of rows) {
-      if (!match(r)) continue;
+      if (from && r.day < from) continue;
+      if (to && r.day > to) continue;
       per[r.currency] += r.amount;
-      total += to(r.amount, r.currency);
+      total += convert(r.amount, r.currency);
+      count += 1;
     }
-    return { total, per };
+    return { total, per, count };
   };
 
-  const thisMonth = sum((r) => r.day.startsWith(month));
-  const lastMonth = sum((r) => r.day.startsWith(lastMonthKey));
-  const thisYear = sum((r) => r.day.startsWith(year));
+  const heroSum = sum(period.from, period.to);
+  const compareSum = period.compareFrom ? sum(period.compareFrom, period.compareTo) : null;
+  const earliest = period.id === 'all' ? earliestDay(rows) : null;
 
   /** Without a rate, one total would be a guess, so each currency stands alone. */
   const show = (s: { total: number; per: Record<Currency, number> }) =>
@@ -226,46 +414,135 @@ function Ledger({
           .map((c) => money(s.per[c], c))
           .join(' + ') || '0';
 
+  /* Everything below the hero reads only the rows the period filter allows —
+     the figure, the currency split and the list all agree, because they all
+     come from the same bounds. */
+  const filteredRows = useMemo(
+    () => rows.filter((r) => (!period.from || r.day >= period.from) && (!period.to || r.day <= period.to)),
+    [rows, period.from, period.to],
+  );
+
   return (
     <div className="space-y-8">
-      {/* The one filter. It scopes everything below it. */}
-      <div role="radiogroup" aria-label="Валюта итогов" className="flex gap-1.5">
-        {ORDER.map((c) => (
-          <button
-            key={c}
-            type="button"
-            role="radio"
-            aria-checked={view === c}
-            disabled={!rates}
-            onClick={() => onPick(c)}
-            className={`min-h-10 flex-1 rounded-full text-sm transition-colors disabled:opacity-40 ${
-              view === c ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
-            }`}
-          >
-            {NAMES[c]}
-          </button>
-        ))}
+      <div className="space-y-3">
+        {/* Period: the primary filter — which window of time. Date range first,
+            per the usual rule: it is the filter every reader reaches for. */}
+        <div>
+          {/* `relative` is scoped to the chip row alone, not to this whole
+              block — the fade below is positioned against ITS height, and
+              sizing it to the block would stretch the fade down over the
+              date pickers too once "Диапазон" opens them underneath. */}
+          <div className="relative">
+            <div
+              role="radiogroup"
+              aria-label="Период"
+              /*
+               * The screen's own side padding already keeps content off the
+               * bezel (MiniStage / Shell wrap this in px-4/px-5). Pulling
+               * that back out with -mx and re-adding it on the scroller is
+               * what cut "Диапазон" off under the viewport edge on a 375px
+               * phone: the chip row needs the SAME edge the rest of the
+               * screen has, not an extra one of its own, and a plain
+               * overflow-x-auto respects it.
+               */
+              className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {PERIOD_PRESETS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={periodId === p.id}
+                  onClick={() => choosePeriod(p.id)}
+                  className={`min-h-9 shrink-0 rounded-full px-3.5 text-sm transition-colors ${
+                    periodId === p.id ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            {/* The only hint that "Диапазон" sits past the fold on a narrow
+                phone: a fade standing in for a scrollbar, exactly where the
+                screenshot that caught this showed a chip sliced clean by the
+                edge with nothing saying there was more to find. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-void to-transparent"
+            />
+          </div>
+
+          {periodId === 'range' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="date"
+                value={rangeFrom}
+                max={rangeTo || today}
+                onChange={(event) => setRangeFrom(event.target.value)}
+                aria-label="С какого дня"
+                className="min-h-9 min-w-0 flex-1 rounded-full border border-white/15 bg-transparent px-3 text-sm text-paper [color-scheme:dark]"
+              />
+              <span aria-hidden className="text-paper/40">
+                —
+              </span>
+              <input
+                type="date"
+                value={rangeTo}
+                min={rangeFrom || undefined}
+                max={today}
+                onChange={(event) => setRangeTo(event.target.value)}
+                aria-label="По какой день"
+                className="min-h-9 min-w-0 flex-1 rounded-full border border-white/15 bg-transparent px-3 text-sm text-paper [color-scheme:dark]"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Currency: which unit to read every figure in. */}
+        <div role="radiogroup" aria-label="Валюта итогов" className="flex gap-1.5">
+          {ORDER.map((c) => (
+            <button
+              key={c}
+              type="button"
+              role="radio"
+              aria-checked={view === c}
+              disabled={!rates}
+              onClick={() => onPick(c)}
+              className={`min-h-10 flex-1 rounded-full text-sm transition-colors disabled:opacity-40 ${
+                view === c ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
+              }`}
+            >
+              {NAMES[c]}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* The hero: one number, this month. Proportional figures at this size. */}
+      {/* The hero: one number, for the period picked above. Proportional
+          figures at this size — tabular-nums is for columns, not a headline. */}
       <section>
-        <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">
-          Заработано в {MONTHS_IN[monthIndex]}
-        </p>
+        <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">{period.heroLabel}</p>
         {view ? (
           <p className="mt-2 text-[clamp(2.75rem,15vw,4rem)] leading-none font-bold tracking-[-0.04em]">
-            {Math.round(thisMonth.total).toLocaleString('ru-RU')}
+            {Math.round(heroSum.total).toLocaleString('ru-RU')}
             <span className="ml-2 text-[0.4em] font-semibold tracking-normal text-paper/60">
               {unit(view)}
             </span>
           </p>
         ) : (
-          <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{show(thisMonth)}</p>
+          <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{show(heroSum)}</p>
         )}
         <p className="mt-3 text-sm text-paper/60">
-          в {MONTHS_IN[(monthIndex + 11) % 12]} — {show(lastMonth)}
-          <span className="text-paper/40"> · </span>
-          за {year} — {show(thisYear)}
+          {period.compareLabel && compareSum ? (
+            <>
+              {period.compareLabel} — {show(compareSum)}
+            </>
+          ) : (
+            <>
+              {pluralRecords(heroSum.count)}
+              {earliest && <span className="text-paper/40"> · записи с {shortDate(earliest)}</span>}
+            </>
+          )}
         </p>
       </section>
 
@@ -297,10 +574,12 @@ function Ledger({
         </p>
       ) : (
         <>
-          {view && <Months rows={rows} today={today} to={to} view={view} />}
-          {view && <Days rows={rows} today={today} to={to} view={view} />}
-          {view && <Split rows={rows} to={to} view={view} />}
-          <Entries rows={rows} api={api} onChange={onChange} />
+          {/* Recent trend, always — independent of the period filter above. */}
+          {view && <Months rows={rows} today={today} convert={convert} view={view} />}
+          {view && <Days rows={rows} today={today} convert={convert} view={view} />}
+          {/* Scoped to the picked period, like the hero figure. */}
+          {view && <Split rows={filteredRows} convert={convert} view={view} title={period.splitTitle} />}
+          <Entries rows={filteredRows} api={api} onChange={onChange} />
         </>
       )}
 
@@ -478,12 +757,12 @@ function AddForm({
 function Months({
   rows,
   today,
-  to,
+  convert,
   view,
 }: {
   rows: Row[];
   today: string;
-  to: (amount: number, from: Currency) => number;
+  convert: (amount: number, from: Currency) => number;
   view: Currency;
 }) {
   const bars = useMemo(() => {
@@ -502,10 +781,10 @@ function Months({
     }
     for (const r of rows) {
       const bar = list.find((b) => r.day.startsWith(b.key));
-      if (bar) bar.total += to(r.amount, r.currency);
+      if (bar) bar.total += convert(r.amount, r.currency);
     }
     return list;
-  }, [rows, today, to]);
+  }, [rows, today, convert]);
 
   const current = bars.length - 1;
   const [focus, setFocus] = useState(current);
@@ -524,7 +803,7 @@ function Months({
 
   return (
     <section>
-      <ChartHead title="12 месяцев" readout={`${f.full} — ${money(f.total, view)}`} />
+      <ChartHead title="Последние 12 месяцев" readout={`${f.full} — ${money(f.total, view)}`} />
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-3 w-full" role="img" aria-label="Доход по месяцам за год">
         {/* One axis, two ticks: zero at the baseline, a round number at the top. */}
         <line x1={0} x2={W} y1={BASE} y2={BASE} stroke="#2a2a29" strokeWidth={1} />
@@ -613,12 +892,12 @@ function Months({
 function Days({
   rows,
   today,
-  to,
+  convert,
   view,
 }: {
   rows: Row[];
   today: string;
-  to: (amount: number, from: Currency) => number;
+  convert: (amount: number, from: Currency) => number;
   view: Currency;
 }) {
   const WEEKS = 13;
@@ -630,7 +909,7 @@ function Days({
     const totals = new Map<string, number>();
     for (const r of rows) {
       if (r.day >= start && r.day <= today) {
-        totals.set(r.day, (totals.get(r.day) ?? 0) + to(r.amount, r.currency));
+        totals.set(r.day, (totals.get(r.day) ?? 0) + convert(r.amount, r.currency));
       }
     }
     const list: { day: string; total: number; future: boolean }[] = [];
@@ -639,7 +918,7 @@ function Days({
       list.push({ day, total: totals.get(day) ?? 0, future: day > today });
     }
     return { cells: list, peak: Math.max(0, ...totals.values()) };
-  }, [rows, today, to]);
+  }, [rows, today, convert]);
 
   const lastPaid = [...cells].reverse().find((c) => c.total > 0);
   const [focus, setFocus] = useState<string | null>(null);
@@ -656,7 +935,7 @@ function Days({
   return (
     <section>
       <ChartHead
-        title="13 недель, по дням"
+        title="Последние 13 недель, по дням"
         readout={shown ? `${dayLabel(shown.day)} — ${money(shown.total, view)}` : 'Денег за это время не было'}
       />
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-3 w-full" role="img" aria-label="Доход по дням за 13 недель">
@@ -709,12 +988,14 @@ function Days({
 
 function Split({
   rows,
-  to,
+  convert,
   view,
+  title,
 }: {
   rows: Row[];
-  to: (amount: number, from: Currency) => number;
+  convert: (amount: number, from: Currency) => number;
   view: Currency;
+  title: string;
 }) {
   const parts = ORDER
     .map((c) => {
@@ -722,7 +1003,7 @@ function Split({
       return {
         c,
         own: own.reduce((n, r) => n + r.amount, 0),
-        conv: own.reduce((n, r) => n + to(r.amount, r.currency), 0),
+        conv: own.reduce((n, r) => n + convert(r.amount, r.currency), 0),
       };
     })
     .filter((p) => p.own > 0)
@@ -733,7 +1014,7 @@ function Split({
 
   return (
     <section>
-      <ChartHead title="В чём платили, за всё время" readout={money(total, view)} />
+      <ChartHead title={title} readout={money(total, view)} />
       <div className="mt-3 space-y-3">
         {parts.map((p) => {
           const share = p.conv / total;
@@ -785,48 +1066,54 @@ function Entries({ rows, api, onChange }: { rows: Row[]; api: Api; onChange: () 
   return (
     <section>
       <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">Записи</p>
-      <ul className="mt-3 divide-y divide-white/10 border-y border-white/10">
-        {rows.slice(0, limit).map((r) => (
-          <li key={r.id} className="py-3">
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="text-[0.9375rem] font-semibold">{money(r.amount, r.currency)}</span>
-              <span className="tabular shrink-0 text-xs text-paper/60">{dayLabel(r.day)}</span>
-            </div>
-            <div className="mt-1 flex items-start justify-between gap-3">
-              <span className="text-sm text-paper/70">{r.note || '—'}</span>
-              {/* Two taps to delete: a slip of the thumb should not cost a record. */}
-              {confirm === r.id ? (
-                <span className="flex shrink-0 gap-2">
+
+      {rows.length === 0 ? (
+        <p className="py-6 text-center text-sm text-paper/55">В этот период записей нет.</p>
+      ) : (
+        <ul className="mt-3 divide-y divide-white/10 border-y border-white/10">
+          {rows.slice(0, limit).map((r) => (
+            <li key={r.id} className="py-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[0.9375rem] font-semibold">{money(r.amount, r.currency)}</span>
+                <span className="tabular shrink-0 text-xs text-paper/60">{dayLabel(r.day)}</span>
+              </div>
+              <div className="mt-1 flex items-start justify-between gap-3">
+                <span className="text-sm text-paper/70">{r.note || '—'}</span>
+                {/* Two taps to delete: a slip of the thumb should not cost a record. */}
+                {confirm === r.id ? (
+                  <span className="flex shrink-0 gap-2">
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void remove(r.id)}
+                      className="min-h-9 rounded-full bg-paper px-3 text-xs font-semibold text-ink disabled:opacity-40"
+                    >
+                      Удалить
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirm(null)}
+                      className="min-h-9 rounded-full border border-white/20 px-3 text-xs text-paper"
+                    >
+                      Нет
+                    </button>
+                  </span>
+                ) : (
                   <button
                     type="button"
-                    disabled={busy}
-                    onClick={() => void remove(r.id)}
-                    className="min-h-9 rounded-full bg-paper px-3 text-xs font-semibold text-ink disabled:opacity-40"
+                    onClick={() => setConfirm(r.id)}
+                    aria-label={`Удалить запись ${money(r.amount, r.currency)} от ${dayLabel(r.day)}`}
+                    className="min-h-9 shrink-0 px-2 text-xs text-paper/60 hover:text-paper"
                   >
                     Удалить
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirm(null)}
-                    className="min-h-9 rounded-full border border-white/20 px-3 text-xs text-paper"
-                  >
-                    Нет
-                  </button>
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setConfirm(r.id)}
-                  aria-label={`Удалить запись ${money(r.amount, r.currency)} от ${dayLabel(r.day)}`}
-                  className="min-h-9 shrink-0 px-2 text-xs text-paper/60 hover:text-paper"
-                >
-                  Удалить
-                </button>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {rows.length > limit && (
         <button
           type="button"
@@ -842,12 +1129,20 @@ function Entries({ rows, api, onChange }: { rows: Row[]; api: Api; onChange: () 
 
 /* --------------------------------------------------------------- parts -- */
 
-/** A chart's name, and the readout line where a tapped mark says its value. */
+/**
+ * A chart's name, and the readout line where a tapped mark says its value.
+ *
+ * Stacked, not side by side. A single-row `justify-between` read fine while
+ * both halves were short, but "Последние 12 месяцев" next to "октябрь 2026 —
+ * 7 268 сомони" is two long strings on one 320–375px line — the readout wraps
+ * and its second line climbs back up over the title. Title above, value
+ * below and right-aligned keeps the value's own length from ever touching it.
+ */
 function ChartHead({ title, readout }: { title: string; readout: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-3">
-      <p className="shrink-0 text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">{title}</p>
-      <p aria-live="polite" className="text-right text-sm font-semibold">
+    <div>
+      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">{title}</p>
+      <p aria-live="polite" className="mt-1 text-right text-sm font-semibold">
         {readout}
       </p>
     </div>
