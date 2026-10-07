@@ -132,6 +132,58 @@ model Income {
   @@map("aly_income")
 }
 
+/// A to-do the owner wrote for himself, with the bot standing in for an alarm
+/// clock. One task is an hour range on one or more days, not a bare due date —
+/// he plans his day by the hour and asked to see it that way.
+///
+/// `startHour`/`endHour` are hours within a single Dushanbe day (0–23 and
+/// 1–24, `endHour` always after `startHour`): a task never crosses midnight.
+/// One that genuinely does — late evening into early morning — is two rows,
+/// the one place this model chose simplicity over completeness.
+///
+/// `dayTo` null means "every day from `dayFrom` on, no end" — his daily
+/// chores. A task with both dates is a span: the same hour window, repeated on
+/// every day from `dayFrom` to `dayTo` inclusive.
+///
+/// `leadMinutes` null means no reminder at all for this task; he is just
+/// writing it down. Otherwise the bot messages him that many minutes before
+/// `startHour`, on every day the task occurs.
+///
+/// Created by the application (lib/admin/tasks.ts, `CREATE TABLE IF NOT
+/// EXISTS`), never by `prisma db push` — see the note at the top of this file.
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  note        String?
+  dayFrom     DateTime
+  dayTo       DateTime?
+  startHour   Int
+  endHour     Int
+  leadMinutes Int?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([dayFrom])
+  @@map("aly_task")
+}
+
+/// One claimed reminder. `/api/cron/reminders` inserts a row here before it
+/// sends, never after; the unique pair below is the lock, so a second tick
+/// racing the first loses the insert instead of sending the message twice —
+/// the same pattern `BotUpdate` uses for a redelivered Telegram update.
+/// `day` is the occurrence's calendar day, not an instant, same choice as
+/// `Income.receivedAt`. Created by the application, same as `Task` above.
+model TaskReminderSent {
+  id     String   @id @default(cuid())
+  taskId String
+  day    DateTime
+  sentAt DateTime @default(now())
+
+  @@unique([taskId, day])
+  @@map("aly_task_reminder_sent")
+}
+
 /// A cost. Categories are the eleven the owner listed in answer 13.4 and live
 /// in lib/content/finance.ts, not in a table: they are his list, not data.
 model Expense {

@@ -198,7 +198,11 @@ function briefingText(b: Awaited<ReturnType<typeof getBriefing>>): string {
   }
   if (b.reviews > 0) urgent.push(`Отзывов на проверке: ${b.reviews}`);
 
-  const steady = [b.active > 0 ? `В работе: ${b.active}` : null, b.week > 0 ? `За 7 дней заявок: ${b.week}` : null].filter(Boolean);
+  const steady = [
+    b.active > 0 ? `В работе: ${b.active}` : null,
+    b.week > 0 ? `За 7 дней заявок: ${b.week}` : null,
+    b.tasksToday > 0 ? `Дел на сегодня: ${b.tasksToday}` : null,
+  ].filter(Boolean);
 
   const head = urgent.length > 0 ? urgent.join('\n') : 'Тихо: новых заявок нет, отзывы разобраны, долгов нет.';
   return [head, steady.length ? steady.join(' · ') : null, '', 'Всё остальное — в синей кнопке «Админка» внизу.', 'Ответить клиенту — реплаем на его сообщение.']

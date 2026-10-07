@@ -11,6 +11,7 @@ import {
 import { useBackButton, useHaptics, useTelegram } from '@/components/mini/telegram';
 import { errorText, useAdminApi } from '@/components/mini/admin/api';
 import { Money } from '@/components/mini/admin/Money';
+import { Calendar } from '@/components/mini/admin/Calendar';
 
 /*
  * The owner's panel, inside Telegram.
@@ -33,12 +34,13 @@ import { Money } from '@/components/mini/admin/Money';
  * from lib/prisma or lib/admin/queries into this directory would undo it.
  */
 
-type Tab = 'today' | 'leads' | 'money';
+type Tab = 'today' | 'leads' | 'money' | 'calendar';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'today', label: 'Сегодня' },
   { id: 'leads', label: 'Заявки' },
   { id: 'money', label: 'Деньги' },
+  { id: 'calendar', label: 'Календарь' },
 ];
 
 /* ------------------------------------------------------------- styles -- */
@@ -182,6 +184,7 @@ export function AdminApp() {
           {tab === 'today' && <TodayScreen api={api} onOpen={setOpenLead} />}
           {tab === 'leads' && <LeadsScreen api={api} onOpen={setOpenLead} />}
           {tab === 'money' && <Money api={api} />}
+          {tab === 'calendar' && <Calendar api={api} />}
         </>
       )}
 

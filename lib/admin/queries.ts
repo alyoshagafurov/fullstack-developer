@@ -7,6 +7,7 @@ import {
   type PeriodId,
   periodStart,
 } from '@/lib/content/finance';
+import { todaysTaskCount } from '@/lib/admin/tasks';
 
 /*
  * Every read the admin does.
@@ -330,13 +331,14 @@ export type Briefing = {
   week: number;
   reviews: number;
   overdue: { currency: string; total: number; count: number }[];
+  tasksToday: number;
 };
 
 export async function getBriefing(): Promise<Briefing> {
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  const [waiting, oldest, active, week, reviews, overdue] = await Promise.all([
+  const [waiting, oldest, active, week, reviews, overdue, tasksToday] = await Promise.all([
     prisma.lead.count({ where: { status: 'NEW' } }),
     prisma.lead.findFirst({
       where: { status: 'NEW' },
@@ -352,6 +354,11 @@ export async function getBriefing(): Promise<Briefing> {
       _sum: { amount: true },
       _count: { _all: true },
     }),
+    // Isolated, unlike the rest of this Promise.all: the task table is the
+    // newest thing here and self-creates on first use (see ensureTable in
+    // lib/admin/tasks.ts), so a failure specific to it must not blank the
+    // waiting leads, overdue payments and reviews that already resolved.
+    todaysTaskCount().catch(() => 0),
   ]);
 
   return {
@@ -365,5 +372,6 @@ export async function getBriefing(): Promise<Briefing> {
       total: dec(row._sum.amount),
       count: row._count._all,
     })),
+    tasksToday,
   };
 }

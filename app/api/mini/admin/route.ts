@@ -1,5 +1,13 @@
 import { getLead, getOverview, listLeads } from '@/lib/admin/queries';
 import { addIncome, deleteIncome, listIncome, todayInDushanbe } from '@/lib/admin/income';
+import {
+  addTask,
+  deleteTask,
+  listTasks,
+  toggleTask,
+  updateTask,
+  type TaskInput,
+} from '@/lib/admin/tasks';
 import { getRates } from '@/lib/rates';
 import { flagReplied, moveLead, writeNote, type OpResult } from '@/lib/admin/ops';
 import { periods, type PeriodId } from '@/lib/content/finance';
@@ -152,6 +160,35 @@ commands['income:add'] = async (pass, payload): Promise<OpResult> =>
 
 commands['income:delete'] = async (pass, payload): Promise<OpResult> =>
   deleteIncome(pass.grant, str(payload.id, 40));
+
+/**
+ * Everything the calendar screen draws from: every task he has written, done
+ * or not. Sent whole, like `money` above — the same reasoning applies at the
+ * same scale, a to-do list being if anything shorter than a ledger.
+ */
+commands.tasks = async (pass) => ({ rows: await listTasks(pass.grant), today: todayInDushanbe() });
+
+const taskInput = (payload: Record<string, unknown>): TaskInput => ({
+  title: payload.title,
+  note: payload.note,
+  dayFrom: payload.dayFrom,
+  dayTo: payload.dayTo,
+  startHour: payload.startHour,
+  endHour: payload.endHour,
+  leadMinutes: payload.leadMinutes,
+});
+
+commands['task:add'] = async (pass, payload): Promise<OpResult> =>
+  addTask(pass.grant, taskInput(payload));
+
+commands['task:update'] = async (pass, payload): Promise<OpResult> =>
+  updateTask(pass.grant, str(payload.id, 40), taskInput(payload));
+
+commands['task:delete'] = async (pass, payload): Promise<OpResult> =>
+  deleteTask(pass.grant, str(payload.id, 40));
+
+commands['task:toggle'] = async (pass, payload): Promise<OpResult> =>
+  toggleTask(pass.grant, str(payload.id, 40), payload.active);
 
 /* ---------------------------------------------------------------- door -- */
 
