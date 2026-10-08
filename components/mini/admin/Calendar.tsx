@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHaptics } from '@/components/mini/telegram';
 import { errorText, type useAdminApi } from '@/components/mini/admin/api';
+import { AlySplash } from '@/components/mini/AlySplash';
 import { reminderLabel, reminderPresets } from '@/lib/content/schedule';
 
 /*
@@ -40,6 +41,7 @@ type OpLike = { status: string; message?: string };
 
 /* ------------------------------------------------------------- styles -- */
 
+const card = 'rounded-2xl border border-white/12 bg-white/[0.03] p-4';
 const label = 'text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase';
 const action =
   'inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm font-medium transition-opacity disabled:opacity-40';
@@ -71,6 +73,14 @@ function addDays(day: string, n: number): string {
   const date = new Date(`${day}T00:00:00.000Z`);
   date.setUTCDate(date.getUTCDate() + n);
   return date.toISOString().slice(0, 10);
+}
+
+/** Whole days between two YYYY-MM-DD strings — for keeping a span's length
+    when a quick-pick chip moves its start day. */
+function dayDiff(from: string, to: string): number {
+  const a = new Date(`${from}T00:00:00.000Z`).getTime();
+  const b = new Date(`${to}T00:00:00.000Z`).getTime();
+  return Math.round((b - a) / 86_400_000);
 }
 
 /** Monday-based weekday, 0–6, same convention as Money.tsx. */
@@ -145,7 +155,7 @@ export function Calendar({ api }: { api: Api }) {
   }, [call, nonce]);
 
   if (error && !data) return <p className="py-8 text-center text-sm text-paper/70">{error}</p>;
-  if (!data) return <p className="py-10 text-center text-sm text-paper/60">Загружаю…</p>;
+  if (!data) return <AlySplash />;
 
   return <Board data={data} api={api} onChange={reload} />;
 }
@@ -164,6 +174,7 @@ function Board({ data, api, onChange }: { data: Data; api: Api; onChange: () => 
     return (
       <TaskForm
         api={api}
+        today={today}
         initial={form}
         onDone={() => {
           setForm(null);
@@ -376,6 +387,16 @@ function DayScreen({
     return placed.map((p) => ({ ...p, laneCount }));
   }, [rows, day]);
 
+  /* Which hours already have something in them, so the grid below only
+     invites a tap where there is genuinely nothing yet. */
+  const occupiedHours = useMemo(() => {
+    const set = new Set<number>();
+    for (const { task } of blocks) {
+      for (let h = task.startHour; h < task.endHour; h += 1) set.add(h);
+    }
+    return set;
+  }, [blocks]);
+
   const [nowMinute, setNowMinute] = useState<number | null>(null);
   useEffect(() => {
     if (!isToday) {
@@ -433,11 +454,53 @@ function DayScreen({
         </button>
       </div>
 
+      {/*
+        The headline: what today actually is, read in one glance — the big
+        letters this owner asked for. The hour grid below answers "when
+        exactly"; this answers "what". A day with nothing yet skips straight
+        to the grid, which is itself the invitation to add something.
+      */}
+      {blocks.length > 0 ? (
+        <div className="space-y-2">
+          {blocks.map(({ task }) => (
+            <button
+              key={task.id}
+              type="button"
+              onClick={() => {
+                haptics.tap();
+                onEdit(task);
+              }}
+              className={`block w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
+                task.active ? 'border-white/12 bg-white/[0.03] hover:border-paper' : 'border-white/8 bg-transparent'
+              }`}
+            >
+              <p
+                className={`text-[1.125rem] leading-tight font-bold tracking-[-0.01em] ${
+                  task.active ? 'text-paper' : 'text-paper/40'
+                }`}
+              >
+                {task.title}
+              </p>
+              <p className="tabular mt-1 text-sm text-paper/55">
+                {String(task.startHour).padStart(2, '0')}:00–{String(task.endHour % 24).padStart(2, '0')}:00
+                {task.dayTo === null && ' · Ежедневно'}
+                {!task.active && ' · На паузе'}
+              </p>
+              {task.note && <p className="mt-1.5 text-sm text-paper/70">{task.note}</p>}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-paper/45">Пока ничего не запланировано — коснитесь часа ниже.</p>
+      )}
+
+      <p className={label}>По часам</p>
+
       <div className="relative" style={{ height: ROW * 24 }}>
         {HOURS.map((h) => (
           <div
             key={h}
-            className="absolute inset-x-0 flex items-start gap-2 border-t border-white/8"
+            className="group absolute inset-x-0 flex items-start gap-2 border-t border-white/8"
             style={{ top: h * ROW, height: ROW }}
           >
             <span className="w-11 shrink-0 pt-0.5 text-right text-[0.6875rem] text-paper/40">
@@ -450,8 +513,17 @@ function DayScreen({
                 haptics.tap();
                 onAdd(h);
               }}
-              className="h-full flex-1"
-            />
+              className="flex h-full flex-1 items-center justify-end pr-2"
+            >
+              {!occupiedHours.has(h) && (
+                <span
+                  aria-hidden
+                  className="text-base leading-none text-paper/15 transition-colors group-active:text-paper/60"
+                >
+                  +
+                </span>
+              )}
+            </button>
           </div>
         ))}
 
@@ -495,11 +567,13 @@ function DayScreen({
 
 function TaskForm({
   api,
+  today,
   initial,
   onDone,
   onCancel,
 }: {
   api: Api;
+  today: string;
   initial: FormState;
   onDone: () => void;
   onCancel: () => void;
@@ -529,6 +603,15 @@ function TaskForm({
   const chooseStart = (next: number) => {
     setStartHour(next);
     if (endHour <= next) setEndHour(Math.min(24, next + 1));
+  };
+
+  /* A single-day task's dayTo silently tracks dayFrom, so picking a quick
+     day moves both at once rather than leaving a stale end date behind. */
+  const chooseDay = (next: string) => {
+    haptics.tap();
+    const spanLength = daily ? 0 : Math.max(0, dayDiff(dayFrom, dayTo));
+    setDayFrom(next);
+    if (!daily) setDayTo(addDays(next, spanLength));
   };
 
   const save = async () => {
@@ -608,6 +691,16 @@ function TaskForm({
     }
   };
 
+  /* A live confirmation of what's about to be saved — he reads this instead
+     of re-checking five separate fields before trusting the Save button. */
+  const summary = (() => {
+    const range = `${String(startHour).padStart(2, '0')}:00–${endHour === 24 ? '24:00' : `${String(endHour).padStart(2, '0')}:00`}`;
+    const crossYear = (d: string) => d.slice(0, 4) !== today.slice(0, 4);
+    if (daily) return `Каждый день, начиная с ${fullDayLabel(dayFrom, crossYear(dayFrom))} · ${range}`;
+    if (dayFrom === dayTo) return `${fullDayLabel(dayFrom, crossYear(dayFrom))} · ${range}`;
+    return `С ${fullDayLabel(dayFrom, crossYear(dayFrom) !== crossYear(dayTo))} по ${fullDayLabel(dayTo, crossYear(dayTo))} · ${range}`;
+  })();
+
   return (
     <div className="space-y-6">
       <button type="button" onClick={onCancel} className="text-sm text-paper/55 hover:text-paper">
@@ -618,7 +711,7 @@ function TaskForm({
         {initial.mode === 'add' ? 'Новая задача' : 'Задача'}
       </h1>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
           <p className={label}>Название</p>
           <input
@@ -640,104 +733,140 @@ function TaskForm({
           />
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-paper/80">
-          <input
-            type="checkbox"
-            checked={daily}
-            onChange={(e) => setDaily(e.target.checked)}
-            className="size-5 rounded border-white/30 bg-transparent accent-paper"
-          />
-          Ежедневно, без даты окончания
-        </label>
+        <div className={`${card} space-y-4`}>
+          <p className={label}>Когда</p>
 
-        <div className="flex items-start gap-2">
-          <div className="flex-1">
-            <p className={label}>{daily ? 'Начиная с' : 'С какого дня'}</p>
+          <label className="flex items-center gap-2 text-sm text-paper/80">
             <input
-              type="date"
-              value={dayFrom}
-              max={daily ? undefined : dayTo}
-              onChange={(e) => setDayFrom(e.target.value)}
-              className={`${field} mt-1.5 [color-scheme:dark]`}
+              type="checkbox"
+              checked={daily}
+              onChange={(e) => setDaily(e.target.checked)}
+              className="size-5 rounded border-white/30 bg-transparent accent-paper"
             />
+            Ежедневно, без даты окончания
+          </label>
+
+          <div>
+            {/* Quick picks for the two days anyone actually reaches for —
+                the date inputs below still open for anything further out. */}
+            <div className="flex gap-1.5">
+              <button
+                type="button"
+                onClick={() => chooseDay(today)}
+                className={`min-h-8 rounded-full border px-3 text-xs transition-colors ${
+                  dayFrom === today ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/60'
+                }`}
+              >
+                Сегодня
+              </button>
+              <button
+                type="button"
+                onClick={() => chooseDay(addDays(today, 1))}
+                className={`min-h-8 rounded-full border px-3 text-xs transition-colors ${
+                  dayFrom === addDays(today, 1) ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/60'
+                }`}
+              >
+                Завтра
+              </button>
+            </div>
+
+            <div className="mt-2 flex items-start gap-2">
+              <div className="flex-1">
+                <p className={label}>{daily ? 'Начиная с' : 'С какого дня'}</p>
+                <input
+                  type="date"
+                  value={dayFrom}
+                  max={daily ? undefined : dayTo}
+                  onChange={(e) => setDayFrom(e.target.value)}
+                  className={`${field} mt-1.5 [color-scheme:dark]`}
+                />
+              </div>
+              {!daily && (
+                <div className="flex-1">
+                  <p className={label}>По какой день</p>
+                  <input
+                    type="date"
+                    value={dayTo}
+                    min={dayFrom}
+                    onChange={(e) => setDayTo(e.target.value)}
+                    className={`${field} mt-1.5 [color-scheme:dark]`}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          {!daily && (
+
+          <div className="flex items-center gap-2">
             <div className="flex-1">
-              <p className={label}>По какой день</p>
-              <input
-                type="date"
-                value={dayTo}
-                min={dayFrom}
-                onChange={(e) => setDayTo(e.target.value)}
-                className={`${field} mt-1.5 [color-scheme:dark]`}
-              />
+              <p className={label}>Час начала</p>
+              <select
+                value={startHour}
+                onChange={(e) => chooseStart(Number(e.target.value))}
+                className={`${field} mt-1.5`}
+              >
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {String(h).padStart(2, '0')}:00
+                  </option>
+                ))}
+              </select>
+            </div>
+            <span aria-hidden className="mt-5 text-paper/30">
+              →
+            </span>
+            <div className="flex-1">
+              <p className={label}>Час окончания</p>
+              <select
+                value={endHour}
+                onChange={(e) => setEndHour(Number(e.target.value))}
+                className={`${field} mt-1.5`}
+              >
+                {HOURS_END.filter((h) => h > startHour).map((h) => (
+                  <option key={h} value={h}>
+                    {h === 24 ? '24:00' : `${String(h).padStart(2, '0')}:00`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <p className="border-t border-white/10 pt-3 text-sm text-paper/60">{summary}</p>
+        </div>
+
+        <div className={`${card} space-y-3`}>
+          <label className="flex items-center gap-2 text-sm text-paper/80">
+            <input
+              type="checkbox"
+              checked={remind}
+              onChange={(e) => setRemind(e.target.checked)}
+              className="size-5 rounded border-white/30 bg-transparent accent-paper"
+            />
+            Напоминание в боте
+          </label>
+
+          {remind && (
+            <div>
+              <p className={label}>Когда прислать</p>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {reminderPresets.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setLeadMinutes(m);
+                    }}
+                    className={`min-h-9 rounded-full border px-3 text-sm transition-colors ${
+                      leadMinutes === m ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/70'
+                    }`}
+                  >
+                    {reminderLabel[m]}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
-
-        <div className="flex items-start gap-2">
-          <div className="flex-1">
-            <p className={label}>Час начала</p>
-            <select
-              value={startHour}
-              onChange={(e) => chooseStart(Number(e.target.value))}
-              className={`${field} mt-1.5`}
-            >
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {String(h).padStart(2, '0')}:00
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex-1">
-            <p className={label}>Час окончания</p>
-            <select
-              value={endHour}
-              onChange={(e) => setEndHour(Number(e.target.value))}
-              className={`${field} mt-1.5`}
-            >
-              {HOURS_END.filter((h) => h > startHour).map((h) => (
-                <option key={h} value={h}>
-                  {h === 24 ? '24:00' : `${String(h).padStart(2, '0')}:00`}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <label className="flex items-center gap-2 text-sm text-paper/80">
-          <input
-            type="checkbox"
-            checked={remind}
-            onChange={(e) => setRemind(e.target.checked)}
-            className="size-5 rounded border-white/30 bg-transparent accent-paper"
-          />
-          Напоминание в боте
-        </label>
-
-        {remind && (
-          <div>
-            <p className={label}>Когда прислать</p>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {reminderPresets.map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    setLeadMinutes(m);
-                  }}
-                  className={`min-h-9 rounded-full border px-3 text-sm transition-colors ${
-                    leadMinutes === m ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/70'
-                  }`}
-                >
-                  {reminderLabel[m]}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       <button type="button" disabled={busy || !title.trim()} onClick={() => void save()} className={`${solid} w-full`}>

@@ -282,6 +282,26 @@ html:has([data-mini]) {
   overscroll-behavior-y: contain;
 }
 
+/*
+ * The Mini App's loading splash: the wordmark, breathing, while a screen has
+ * nothing to show yet. Not a spinner — there is no progress to report, only
+ * "this is aly, wait a moment" — so it reads calm rather than busy. Reduced
+ * motion already turns this static via the rule above; nothing extra needed.
+ */
+@keyframes aly-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.aly-breathe {
+  animation: aly-breathe 1.8s ease-in-out infinite;
+}
+
 /* One question replaces another: it arrives, it does not slide in from off-screen. */
 @keyframes review-step-in {
   from {

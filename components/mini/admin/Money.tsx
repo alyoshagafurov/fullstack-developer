@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { currencies, money, type Currency } from '@/lib/content/finance';
 import { useHaptics } from '@/components/mini/telegram';
 import { errorText, type useAdminApi } from '@/components/mini/admin/api';
+import { AlySplash } from '@/components/mini/AlySplash';
 
 /*
  * The owner's money, kept by hand.
@@ -319,7 +320,7 @@ export function Money({ api }: { api: Api }) {
   }, [call, nonce]);
 
   if (error && !data) return <p className="py-8 text-center text-sm text-paper/70">{error}</p>;
-  if (!data) return <p className="py-10 text-center text-sm text-paper/60">Загружаю…</p>;
+  if (!data) return <AlySplash />;
 
   return (
     <Ledger

@@ -12,6 +12,7 @@ import { useBackButton, useHaptics, useTelegram } from '@/components/mini/telegr
 import { errorText, useAdminApi } from '@/components/mini/admin/api';
 import { Money } from '@/components/mini/admin/Money';
 import { Calendar } from '@/components/mini/admin/Calendar';
+import { AlySplash } from '@/components/mini/AlySplash';
 
 /*
  * The owner's panel, inside Telegram.
@@ -127,7 +128,7 @@ export function AdminApp() {
     setTab(next);
   };
 
-  if (!settled) return <Shell>{null}</Shell>;
+  if (!settled) return <Shell><AlySplash full /></Shell>;
 
   if (!inside) {
     return (
@@ -315,10 +316,6 @@ function useRead<T>(api: Api, command: string, payload: Record<string, unknown>,
   return { data, error, busy, reload };
 }
 
-function Loading() {
-  return <p className="py-10 text-center text-sm text-paper/40">Загружаю…</p>;
-}
-
 function Problem({ text }: { text: string }) {
   return (
     <p role="alert" className="py-8 text-center text-sm text-paper/70">
@@ -351,7 +348,7 @@ function TodayScreen({ api, onOpen }: { api: Api; onOpen: (id: string) => void }
   const { data, error, busy } = useRead<Overview>(api, 'overview', { period: 'month' }, []);
   const fresh = useRead<{ rows: LeadRow[] }>(api, 'leads', { status: 'NEW', page: 1 }, []);
 
-  if (busy) return <Loading />;
+  if (busy) return <AlySplash />;
   if (error) return <Problem text={error} />;
   if (!data) return null;
 
@@ -451,7 +448,7 @@ function LeadsScreen({ api, onOpen }: { api: Api; onOpen: (id: string) => void }
         ))}
       </div>
 
-      {busy && <Loading />}
+      {busy && <AlySplash />}
       {error && <Problem text={error} />}
       {data && data.rows.length === 0 && <Problem text="Пусто." />}
       {data && data.rows.length > 0 && (
@@ -498,7 +495,7 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
     }
   };
 
-  if (busy) return <Loading />;
+  if (busy) return <AlySplash />;
   if (error) return <Problem text={error} />;
   if (!data) return <Problem text="Заявка не найдена." />;
 
