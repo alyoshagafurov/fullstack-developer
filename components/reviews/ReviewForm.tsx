@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import {
-  genderLabel,
   genders,
   reviewQuestions,
   type Gender,
   type ReviewQuestionKey as Key,
 } from '@/lib/content/review';
+import { fill, type Locale } from '@/lib/i18n';
+import type { Dictionary } from '@/lib/i18n/en';
 
 /*
  * The form a client fills in to leave a review — one question at a time.
@@ -25,9 +26,12 @@ import {
  * the same five, and the owner's invitation — what you needed, what was built —
  * has to read identically wherever a client meets it.
  *
- * Validation is the schema's own wording, checked here per step so a mistake
- * is caught on the screen that caused it. The server checks all of it again.
+ * Validation is the schema's own rules, checked here per step so a mistake
+ * is caught on the screen that caused it, and worded in the page's language.
+ * The server checks all of it again.
  */
+
+type ReviewCopy = Dictionary['reviewForm'];
 
 const steps = reviewQuestions;
 
@@ -43,7 +47,7 @@ const box =
 const primary =
   'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
 
-export function ReviewForm() {
+export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
@@ -63,6 +67,7 @@ export function ReviewForm() {
 
   const current = steps[step];
   const last = step === steps.length - 1;
+  const words = copy.questions[current.key] ?? current;
 
   /*
    * Focus follows the question, so the visitor can type the moment the next one
@@ -74,21 +79,22 @@ export function ReviewForm() {
     answer.current?.focus({ preventScroll: true });
   }, [step]);
 
-  /** The step's own rule, in the schema's words. Empty string means it passed. */
+  /** The step's own rule, in the schema's limits. Empty string means it passed. */
   function check(): string {
+    const errors = copy.errors;
     if (current.key === 'name') {
       const value = name.trim();
-      if (value.length < 2) return 'Как вас зовут?';
-      if (value.length > 80) return 'Слишком длинное имя';
+      if (value.length < 2) return errors.nameShort;
+      if (value.length > 80) return errors.nameLong;
     }
-    if (current.key === 'company' && company.trim().length > 120) return 'Слишком длинно';
+    if (current.key === 'company' && company.trim().length > 120) return errors.companyLong;
     if (current.key === 'text') {
       const value = text.trim();
-      if (value.length < 20) return 'Расскажите чуть подробнее — хотя бы пару предложений';
-      if (value.length > 1200) return 'Слишком длинно — до 1200 знаков';
+      if (value.length < 20) return errors.textShort;
+      if (value.length > 1200) return errors.textLong;
     }
-    if (current.key === 'rating' && rating < 1) return 'Поставьте оценку';
-    if (current.key === 'gender' && !gender) return 'Выберите фото';
+    if (current.key === 'rating' && rating < 1) return errors.rating;
+    if (current.key === 'gender' && !gender) return errors.gender;
     return '';
   }
 
@@ -127,19 +133,21 @@ export function ReviewForm() {
       });
       const payload = (await response.json()) as { error?: string; issues?: Record<string, string> };
       if (!response.ok) {
-        // A server complaint belongs on the question that caused it.
+        // A server complaint belongs on the question that caused it. The
+        // server words it in Russian; another language says the generic thing.
+        const russian = lang === 'ru';
         const first = payload.issues ? (Object.keys(payload.issues)[0] as Key | undefined) : undefined;
         const at = first ? steps.findIndex((s) => s.key === first) : -1;
         if (at >= 0 && payload.issues) {
           setStep(at);
-          setError(payload.issues[first as Key]);
+          setError(russian ? payload.issues[first as Key] : copy.errors.check);
         }
-        setFormError(payload.error ?? 'Не получилось отправить. Попробуйте ещё раз.');
+        setFormError((russian && payload.error) || copy.errors.failed);
         return;
       }
       setDone(true);
     } catch {
-      setFormError('Интернет пропал. Проверьте связь и нажмите ещё раз.');
+      setFormError(copy.errors.offline);
     } finally {
       setSending(false);
     }
@@ -152,7 +160,7 @@ export function ReviewForm() {
           role="status"
           className="mx-auto max-w-3xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance"
         >
-          Спасибо! Отзыв появится на сайте после проверки.
+          {copy.done}
         </p>
       </div>
     );
@@ -183,11 +191,11 @@ export function ReviewForm() {
       <div key={step} className="review-step w-full">
         <label htmlFor={`review-${current.key}`} className="block">
           <span className="mx-auto block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
-            {current.question}
+            {words.question}
           </span>
-          {current.hint && (
+          {words.hint && (
             <span className="mx-auto mt-4 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
-              {current.hint}
+              {words.hint}
             </span>
           )}
         </label>
@@ -200,7 +208,7 @@ export function ReviewForm() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
-              placeholder={current.placeholder}
+              placeholder={words.placeholder ?? current.placeholder}
               className={box}
             />
           )}
@@ -212,7 +220,7 @@ export function ReviewForm() {
               value={company}
               onChange={(event) => setCompany(event.target.value)}
               autoComplete="organization"
-              placeholder={current.placeholder}
+              placeholder={words.placeholder ?? current.placeholder}
               className={box}
             />
           )}
@@ -224,7 +232,7 @@ export function ReviewForm() {
               value={text}
               onChange={(event) => setText(event.target.value)}
               rows={4}
-              placeholder={current.placeholder}
+              placeholder={words.placeholder ?? current.placeholder}
               /* Enter breaks a line here, so the keyboard shortcut moves on. */
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
@@ -238,13 +246,13 @@ export function ReviewForm() {
 
           {current.key === 'rating' && (
             <fieldset>
-              <legend className="sr-only">Оценка от 1 до 5</legend>
+              <legend className="sr-only">{copy.ratingLegend}</legend>
               <div className="flex justify-center gap-3" onMouseLeave={() => setHover(0)}>
                 {[1, 2, 3, 4, 5].map((value) => (
                   <button
                     key={value}
                     type="button"
-                    aria-label={`${value} из 5`}
+                    aria-label={fill(copy.ratingOf, { n: value })}
                     aria-pressed={rating === value}
                     onMouseEnter={() => setHover(value)}
                     onClick={() => {
@@ -264,7 +272,7 @@ export function ReviewForm() {
 
           {current.key === 'gender' && (
             <fieldset>
-              <legend className="sr-only">Фото рядом с отзывом</legend>
+              <legend className="sr-only">{copy.photoLegend}</legend>
               <div className="flex flex-wrap justify-center gap-3">
                 {genders.map((value) => (
                   <button
@@ -281,7 +289,7 @@ export function ReviewForm() {
                         : 'border-line-2 text-ink-2 hover:border-ink hover:text-ink'
                     }`}
                   >
-                    {genderLabel[value]}
+                    {copy.genders[value]}
                   </button>
                 ))}
               </div>
@@ -299,7 +307,7 @@ export function ReviewForm() {
       {/* Hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label>
-          Не заполняйте это поле
+          {copy.honeypot}
           <input ref={website} name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
@@ -312,7 +320,7 @@ export function ReviewForm() {
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={sending} className={primary}>
-          {last ? (sending ? 'Отправляю…' : 'Отправить отзыв') : 'Дальше'}
+          {last ? (sending ? copy.sending : copy.send) : copy.next}
           <span aria-hidden>→</span>
         </button>
 
@@ -322,11 +330,11 @@ export function ReviewForm() {
             onClick={back}
             className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
           >
-            Назад
+            {copy.back}
           </button>
         )}
 
-        {last && <p className="text-xs text-ink-3">Отзыв появится после проверки.</p>}
+        {last && <p className="text-xs text-ink-3">{copy.afterCheck}</p>}
       </div>
     </form>
   );

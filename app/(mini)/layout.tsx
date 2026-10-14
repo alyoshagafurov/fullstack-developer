@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from 'next';
+import '@fontsource-variable/onest';
+import '../globals.css';
 import { TelegramProvider } from '@/components/mini/telegram';
+import { site } from '@/lib/content/site';
 
 /*
  * The Telegram Mini App's shell.
@@ -37,11 +40,23 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: { absolute: 'aly' },
   robots: { index: false, follow: false },
   alternates: { canonical: null },
 };
 
+/*
+ * Its own <html> now: the public site moved under a `[lang]` segment and took
+ * the shared app/layout.tsx with it, so the Mini App writes its own document.
+ * Russian, like the bot it opens from.
+ */
 export default function MiniLayout({ children }: { children: React.ReactNode }) {
-  return <TelegramProvider>{children}</TelegramProvider>;
+  return (
+    <html lang="ru">
+      <body>
+        <TelegramProvider>{children}</TelegramProvider>
+      </body>
+    </html>
+  );
 }

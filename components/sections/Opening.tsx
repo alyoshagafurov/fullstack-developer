@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CTA } from '@/components/ui/CTA';
-import { site } from '@/lib/content/site';
+import { localePath } from '@/lib/i18n';
+import { getDictionary } from '@/lib/i18n/server';
 
 /*
  * The opening: the set extended, rather than the photograph stretched.
@@ -30,13 +30,10 @@ import { site } from '@/lib/content/site';
  * desk line at 85.9% of the frame height, plant no higher than 37% of it, his
  * head no higher than 30%.
  */
-export function Opening() {
-  /*
-   * One word per line, the last two kept together — his statement, only
-   * re-broken. "Цифровые / продукты, / с характером".
-   */
-  const words = site.shortStatement.split(' ');
-  const lines = [words[0], words[1], words.slice(2).join(' ')].filter(Boolean);
+export async function Opening() {
+  const { lang, t } = await getDictionary();
+  /* Three lines — who he is in one plain sentence: "I build / websites / for business". */
+  const lines = t.hero.lines;
 
   return (
     <section
@@ -70,7 +67,7 @@ export function Opening() {
             >
               {/* The rule is a desk-screen device: centred type has no edge for it to hang off. */}
               <span aria-hidden className="hidden h-px w-10 bg-ink/50 md:block" />
-              {site.role}
+              {t.hero.eyebrow}
             </p>
 
             {/* Three caps in the size: the screen's width, the screen's
@@ -93,40 +90,27 @@ export function Opening() {
             data-hero="lede"
             className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left"
           >
-            {site.difference}
+            {t.hero.lede}
           </p>
         </div>
 
-        {/* The button: under the words on a phone, on the desk on a desk screen.
-            Ink on both — the owner's call — and the desk is grey, not black,
-            so it still stands off it. */}
+        {/*
+          One button now: the work. The request button used to stand beside
+          it; it floats at the bottom of every page instead (see
+          components/chrome/StickyCta.tsx), so a second copy here would put
+          the same button on the first screen twice. Under the words on a
+          phone, on the desk on a desk screen — quiet on both, so the floating
+          request button stays the loudest thing on the screen.
+        */}
         <div
           data-hero-cta
-          /* Side by side on a phone, not stacked. Two buttons in a column
-             cost a hundred pixels of the one screen that has to show him, and
-             the second one landed in his hair; in a row they cost half that
-             and the pair reads as one decision with two answers. */
-          className="mt-6 flex items-center justify-center gap-2.5 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:gap-5 md:translate-y-1/2"
+          className="mt-6 flex items-center justify-center md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2"
         >
-          {/*
-            On a phone the button sits on the light wall, where ink is the only
-            legible fill. On a wide screen it stands on the grey desk, and there
-            paper carries far better than the black the owner chose for the
-            phone — so the fill flips with the ground under it.
-          */}
-          <CTA
-            href="/start"
-            size="lg"
-            className="max-md:min-h-12 max-md:flex-1 max-md:gap-0 max-md:px-4 max-md:text-[0.8125rem] max-md:[&>span]:hidden md:bg-paper md:text-void md:hover:bg-paper/85"
-          >
-            {site.heroCta}
-          </CTA>
-          {/* Quieter than the brief: ink on the wall, paper on the desk. */}
           <Link
-            href="/work"
-            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-ink px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper max-md:flex-1 max-md:gap-0 max-md:bg-paper/85 max-md:px-4 max-md:text-[0.8125rem] max-md:[&>span]:hidden md:min-h-14 md:border-paper/70 md:text-paper md:hover:bg-paper md:hover:text-ink"
+            href={localePath(lang, '/work')}
+            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-ink bg-paper/85 px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:min-h-14 md:border-paper/70 md:bg-transparent md:text-paper md:hover:bg-paper md:hover:text-ink"
           >
-            Посмотреть кейсы
+            {t.common.seeWork}
             <span aria-hidden>→</span>
           </Link>
         </div>
@@ -154,7 +138,7 @@ export function Opening() {
             CDN cache by URL, and this file has already been replaced twice. */}
         <Image
           src="/photo/hero-wide.webp"
-          alt={`${site.name}, ${site.role}`}
+          alt={t.hero.photoAlt}
           fill
           priority
           sizes="(min-width: 768px) 100vw, 220vw"

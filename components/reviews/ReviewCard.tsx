@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { TestimonialRow } from '@/lib/cases';
 import { avatarFile, type Gender } from '@/lib/content/review';
+import { fill, localePath } from '@/lib/i18n';
+import { getDictionary } from '@/lib/i18n/server';
 
 /*
  * One review, the way the owner pinned it: a pale circle in the corner, a
@@ -13,10 +15,10 @@ import { avatarFile, type Gender } from '@/lib/content/review';
  * those two files exist the card draws a monogram from the initials.
  */
 
-export function Stars({ value }: { value: number }) {
+export function Stars({ value, label = 'Оценка {n} из 5' }: { value: number; label?: string }) {
   const filled = Math.max(0, Math.min(5, Math.round(value)));
   return (
-    <span className="inline-flex gap-0.5" role="img" aria-label={`Оценка ${filled} из 5`}>
+    <span className="inline-flex gap-0.5" role="img" aria-label={fill(label, { n: filled })}>
       {Array.from({ length: 5 }, (_, i) => (
         <span key={i} aria-hidden className={`text-base leading-none ${i < filled ? 'text-ink' : 'text-line-2'}`}>
           ★
@@ -54,7 +56,12 @@ function Avatar({ name, gender }: { name: string; gender: Gender | null }) {
   );
 }
 
-export function ReviewCard({ voice }: { voice: TestimonialRow }) {
+/*
+ * The client's words stay in the language they wrote them in: translating a
+ * review would be putting words in a real person's mouth.
+ */
+export async function ReviewCard({ voice }: { voice: TestimonialRow }) {
+  const { lang, t } = await getDictionary();
   const who = [voice.role, voice.company].filter(Boolean).join(', ');
   return (
     <article className="group relative flex h-full flex-col overflow-hidden bg-paper p-8 transition-[transform,box-shadow] duration-500 ease-[var(--ease-studio)] hover:-translate-y-1.5 hover:shadow-[0_24px_48px_-28px_rgba(11,11,11,0.28)] md:p-10">
@@ -71,7 +78,7 @@ export function ReviewCard({ voice }: { voice: TestimonialRow }) {
           ”
         </span>
 
-        <p className="label mt-7">Что говорят клиенты</p>
+        <p className="label mt-7">{t.reviews.cardLabel}</p>
 
         <blockquote className="mt-4 text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-snug font-semibold tracking-[-0.015em]">
           {voice.text}
@@ -79,7 +86,7 @@ export function ReviewCard({ voice }: { voice: TestimonialRow }) {
 
         {voice.rating ? (
           <div className="mt-5">
-            <Stars value={voice.rating} />
+            <Stars value={voice.rating} label={t.reviews.rated} />
           </div>
         ) : null}
 
@@ -91,10 +98,10 @@ export function ReviewCard({ voice }: { voice: TestimonialRow }) {
           </div>
           {voice.caseSlug && (
             <Link
-              href={`/work/${voice.caseSlug}`}
+              href={localePath(lang, `/work/${voice.caseSlug}`)}
               className="label ml-auto inline-flex min-h-11 items-center transition-colors hover:text-ink"
             >
-              Кейс
+              {t.reviews.projectLink}
             </Link>
           )}
         </div>

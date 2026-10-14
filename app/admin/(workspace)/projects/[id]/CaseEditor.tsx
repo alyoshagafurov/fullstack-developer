@@ -42,6 +42,8 @@ export type CaseValues = {
   featured: boolean;
   order: number;
   published: boolean;
+  /** The English version for the English site; empty fields show the Russian. */
+  en: { title: string; task: string; solution: string; result: string };
 };
 
 const field =
@@ -97,6 +99,34 @@ export function CaseEditor({ values }: { values: CaseValues }) {
         </Field>
         <Field label="Ссылка на живой проект" hint="пусто, если закрытый">
           <input name="liveUrl" defaultValue={values.liveUrl} className={field} />
+        </Field>
+      </section>
+
+      {/* The English site is the main one now; a field left empty shows the Russian above. */}
+      <section className="space-y-6 border-t border-line pt-8">
+        <div>
+          <h2 className="label">English — для английской версии сайта</h2>
+          <p className="mt-2 text-sm text-ink-3">
+            Простыми словами. Что не заполнено, покажется на русском с пометкой.
+          </p>
+        </div>
+        <Field label="Title">
+          <input name="titleEn" lang="en" defaultValue={values.en.title} className={field} />
+        </Field>
+        <Field label="The problem" hint="задача">
+          <textarea name="taskEn" lang="en" defaultValue={values.en.task} rows={4} className={field} />
+        </Field>
+        <Field label="What I did" hint="решение">
+          <textarea
+            name="solutionEn"
+            lang="en"
+            defaultValue={values.en.solution}
+            rows={5}
+            className={field}
+          />
+        </Field>
+        <Field label="The result" hint="результат">
+          <textarea name="resultEn" lang="en" defaultValue={values.en.result} rows={4} className={field} />
         </Field>
       </section>
 

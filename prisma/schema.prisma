@@ -329,6 +329,29 @@ model Case {
   @@map("aly_case")
 }
 
+/// A case in another language. The case row itself stays as the owner wrote
+/// it (Russian); this holds his English version of the four words-fields, one
+/// row per case and language. An empty field falls back to the original on
+/// the page, so a half-translated case still reads whole.
+///
+/// A table of its own rather than four new columns on `Case`: every existing
+/// query on `Case` would start failing the moment it selected a column the
+/// database did not have yet. This table is created by the application
+/// (lib/case-i18n.ts, `CREATE TABLE IF NOT EXISTS`), never by `prisma db push`
+/// — see the note at the top of this file.
+model CaseTranslation {
+  caseId    String
+  locale    String
+  title     String   @default("")
+  task      String   @default("")
+  solution  String   @default("")
+  result    String   @default("")
+  updatedAt DateTime @default(now())
+
+  @@id([caseId, locale])
+  @@map("aly_case_i18n")
+}
+
 /// A client testimonial. Never generated, never invented — owner-entered only.
 model Testimonial {
   id      String  @id @default(cuid())

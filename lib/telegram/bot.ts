@@ -134,7 +134,7 @@ function clientKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
     .webApp(clientButtons.brief, `${site.url}/mini/start`)
     .row()
-    .url(clientButtons.work, `${site.url}/work`)
+    .url(clientButtons.work, `${site.url}/ru/work`)
     .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
     .row()
     .text(clientButtons.status, 'c:status')
@@ -478,15 +478,15 @@ async function visitorCallback(ctx: Context, chatId: string, data: string): Prom
         await ctx.answerCallbackQuery();
         await ctx.reply(text, {
           ...html,
-          reply_markup: new InlineKeyboard().url(clientButtons.services, `${site.url}/services`),
+          reply_markup: new InlineKeyboard().url(clientButtons.services, `${site.url}/ru/services`),
         });
         return true;
       }
       if (a === 'work') {
         const cases = await getPublishedCases();
         const keyboard = new InlineKeyboard();
-        for (const row of cases.slice(0, 4)) keyboard.url(row.title, `${site.url}/work/${row.slug}`).row();
-        keyboard.url(clientButtons.work, `${site.url}/work`);
+        for (const row of cases.slice(0, 4)) keyboard.url(row.title, `${site.url}/ru/work/${row.slug}`).row();
+        keyboard.url(clientButtons.work, `${site.url}/ru/work`);
         const text = cases.length
           ? cases.slice(0, 4).map((row) => `<b>${escapeHtml(row.title)}</b>${row.client ? ` · ${escapeHtml(row.client)}` : ''}`).join('\n')
           : 'Кейсы скоро появятся здесь.';
@@ -498,7 +498,7 @@ async function visitorCallback(ctx: Context, chatId: string, data: string): Prom
         await ctx.answerCallbackQuery();
         await ctx.reply(`${escapeHtml(site.difference)}\n\n${escapeHtml(site.why[1])}`, {
           ...html,
-          reply_markup: new InlineKeyboard().url(clientButtons.about, `${site.url}/about`),
+          reply_markup: new InlineKeyboard().url(clientButtons.about, `${site.url}/ru/about`),
         });
         return true;
       }

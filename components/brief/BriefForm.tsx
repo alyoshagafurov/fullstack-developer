@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { briefQuestions, consentLabel } from '@/lib/content/brief';
+import { briefQuestions } from '@/lib/content/brief';
+import { localePath, type Locale } from '@/lib/i18n';
+import type { Dictionary } from '@/lib/i18n/en';
 
 /*
  * The brief — one question to a screen.
@@ -19,7 +21,13 @@ import { briefQuestions, consentLabel } from '@/lib/content/brief';
  * The draft is kept in sessionStorage so a reload does not cost the visitor
  * their typing; it never leaves the browser. The checks here are a courtesy —
  * the server re-validates the whole body with the same schema.
+ *
+ * What is shown comes from the page's dictionary; what is sent stays the
+ * canonical value from lib/content/brief.ts, so an English visitor's "Online
+ * store" reaches the owner, the bot and the schema as «Интернет-магазин».
  */
+
+type BriefCopy = Dictionary['brief'];
 
 type Values = Record<string, string | boolean>;
 
@@ -56,7 +64,7 @@ const box =
 const primary =
   'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
 
-export function BriefForm() {
+export function BriefForm({ lang, copy }: { lang: Locale; copy: BriefCopy }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Values>(EMPTY);
@@ -70,7 +78,8 @@ export function BriefForm() {
 
   const current = QUESTIONS[step];
   const last = step === QUESTIONS.length - 1;
-  const typed = current.kind !== 'chips' && current.kind !== 'list';
+  const words = copy.questions[current.key] ?? current;
+  const optionCopy = (value: string) => copy.options[value];
 
   useEffect(() => {
     try {
@@ -103,16 +112,16 @@ export function BriefForm() {
     setError('');
   };
 
-  /** The question's own rule, in the wording the old form used. */
+  /** The question's own rule, in the page's language. */
   function check(): string {
     if (current.optional) return '';
     const value = String(values[current.key] ?? '').trim();
-    if (!value) return 'Без этого не получится';
+    if (!value) return copy.errors.required;
     if (current.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return 'Кажется, в адресе опечатка';
+      return copy.errors.email;
     }
     if (current.min && value.length < current.min) {
-      return 'Пары слов мало — хотя бы одно предложение';
+      return copy.errors.min;
     }
     return '';
   }
@@ -125,7 +134,7 @@ export function BriefForm() {
     }
     if (last) {
       if (values.consent !== true) {
-        setError('Поставьте галочку, иначе я не смогу вам ответить');
+        setError(copy.errors.consent);
         return;
       }
       void send();
@@ -161,14 +170,19 @@ export function BriefForm() {
       };
 
       if (!response.ok) {
-        // A server complaint belongs on the question that caused it.
+        /*
+         * A server complaint belongs on the question that caused it. The server
+         * words its complaints in Russian, so another language says the
+         * generic thing on the right question instead.
+         */
+        const russian = lang === 'ru';
         const first = payload.issues ? Object.keys(payload.issues)[0] : undefined;
         const at = first ? QUESTIONS.findIndex((q) => q.key === first) : -1;
         if (at >= 0 && payload.issues && first) {
           setStep(at);
-          setError(payload.issues[first]);
+          setError(russian ? payload.issues[first] : copy.errors.check);
         }
-        setFormError(payload.error ?? 'Не получилось отправить. Попробуйте ещё раз.');
+        setFormError((russian && payload.error) || copy.errors.failed);
         setSending(false);
         return;
       }
@@ -180,10 +194,10 @@ export function BriefForm() {
       }
       // The code is shown once, on the next page; the draft is gone with it.
       router.push(
-        `/start/thanks?ref=${encodeURIComponent(payload.ref ?? '')}&code=${encodeURIComponent(payload.code ?? '')}`,
+        `${localePath(lang, '/start/thanks')}?ref=${encodeURIComponent(payload.ref ?? '')}&code=${encodeURIComponent(payload.code ?? '')}`,
       );
     } catch {
-      setFormError('Интернет пропал. Проверьте связь и нажмите ещё раз.');
+      setFormError(copy.errors.offline);
       setSending(false);
     }
   }
@@ -214,11 +228,11 @@ export function BriefForm() {
       <div key={step} className="review-step w-full">
         <label htmlFor={`brief-${current.key}`} className="block">
           <span className="mx-auto block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
-            {current.question}
+            {words.question}
           </span>
-          {current.hint && (
+          {words.hint && (
             <span className="mx-auto mt-3 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
-              {current.hint}
+              {words.hint}
             </span>
           )}
         </label>
@@ -235,7 +249,7 @@ export function BriefForm() {
               }
               value={value}
               onChange={(event) => set(current.key, event.target.value)}
-              placeholder={current.placeholder}
+              placeholder={words.placeholder ?? current.placeholder}
               className={box}
             />
           )}
@@ -247,7 +261,7 @@ export function BriefForm() {
               rows={current.rows ?? 3}
               value={value}
               onChange={(event) => set(current.key, event.target.value)}
-              placeholder={current.placeholder}
+              placeholder={words.placeholder ?? current.placeholder}
               /* Enter breaks a line here, so the keyboard shortcut moves on. */
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
@@ -261,7 +275,7 @@ export function BriefForm() {
 
           {current.kind === 'chips' && (
             <fieldset>
-              <legend className="sr-only">{current.question}</legend>
+              <legend className="sr-only">{words.question}</legend>
               <div className="flex flex-wrap justify-center gap-2.5">
                 {current.options?.map((option) => (
                   <button
@@ -275,7 +289,7 @@ export function BriefForm() {
                         : 'border-line-2 bg-paper text-ink-2 hover:border-ink hover:text-ink'
                     }`}
                   >
-                    {option.value}
+                    {optionCopy(option.value)?.label ?? option.value}
                   </button>
                 ))}
               </div>
@@ -284,7 +298,7 @@ export function BriefForm() {
 
           {current.kind === 'list' && (
             <fieldset>
-              <legend className="sr-only">{current.question}</legend>
+              <legend className="sr-only">{words.question}</legend>
               <div className="space-y-2">
                 {current.options?.map((option) => (
                   <button
@@ -298,12 +312,14 @@ export function BriefForm() {
                         : 'border-line-2 bg-paper hover:border-ink'
                     }`}
                   >
-                    <span className="text-base font-medium">{option.value}</span>
-                    {option.note && (
+                    <span className="text-base font-medium">
+                      {optionCopy(option.value)?.label ?? option.value}
+                    </span>
+                    {(optionCopy(option.value)?.note ?? option.note) && (
                       <span
                         className={`text-sm ${value === option.value ? 'text-paper/60' : 'text-ink-3'}`}
                       >
-                        {option.note}
+                        {optionCopy(option.value)?.note ?? option.note}
                       </span>
                     )}
                   </button>
@@ -321,7 +337,7 @@ export function BriefForm() {
               checked={values.consent === true}
               onChange={(event) => set('consent', event.target.checked)}
             />
-            <span className="text-ink-2">{consentLabel}</span>
+            <span className="text-ink-2">{copy.consent}</span>
           </label>
         )}
 
@@ -335,7 +351,7 @@ export function BriefForm() {
       {/* Hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label>
-          Не заполняйте это поле
+          {copy.honeypot}
           <input ref={website} name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
@@ -348,7 +364,7 @@ export function BriefForm() {
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={sending} className={primary}>
-          {last ? (sending ? 'Отправляю…' : 'Отправить заявку') : 'Дальше'}
+          {last ? (sending ? copy.sending : copy.send) : copy.next}
           <span aria-hidden>→</span>
         </button>
 
@@ -361,7 +377,7 @@ export function BriefForm() {
             }}
             className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
           >
-            Пропустить
+            {copy.skip}
           </button>
         )}
 
@@ -371,7 +387,7 @@ export function BriefForm() {
             onClick={back}
             className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
           >
-            Назад
+            {copy.back}
           </button>
         )}
       </div>

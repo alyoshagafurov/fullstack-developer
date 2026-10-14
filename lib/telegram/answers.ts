@@ -91,7 +91,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
       const head = asked.length > 0 ? '' : 'Цены на старт:\n';
       return {
         text: `${head}${lines.join('\n')}\n\n${EXACT}`,
-        keyboard: apply().row().url(clientButtons.prices, `${site.url}/prices`),
+        keyboard: apply().row().url(clientButtons.prices, `${site.url}/ru/prices`),
         relay: true,
       };
     }
@@ -147,8 +147,8 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
     case 'portfolio': {
       const cases = (await getPublishedCases()).slice(0, 4);
       const keyboard = new InlineKeyboard();
-      for (const row of cases) keyboard.url(row.title, `${site.url}/work/${row.slug}`).row();
-      keyboard.url(clientButtons.work, `${site.url}/work`);
+      for (const row of cases) keyboard.url(row.title, `${site.url}/ru/work/${row.slug}`).row();
+      keyboard.url(clientButtons.work, `${site.url}/ru/work`);
       const proof = site.stats[0];
       return {
         text: `${cases.length > 0 ? 'Несколько работ — остальные на сайте.' : 'Работы — на сайте.'}\n${html(proof.value)} ${html(proof.label)}.`,
@@ -169,7 +169,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
     case 'about':
       return {
         text: `Алишер Гафуров, ${html(site.role.toLowerCase())} из Душанбе.\n\n${html(site.difference)}\n\n${html(site.stats[0].value)} ${html(site.stats[0].label)}.`,
-        keyboard: new InlineKeyboard().url(clientButtons.about, `${site.url}/about`),
+        keyboard: new InlineKeyboard().url(clientButtons.about, `${site.url}/ru/about`),
         relay: false,
       };
 
@@ -197,7 +197,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
       const all = await getPriceList();
       return {
         text: `${all.map((s) => html(s.title)).join('\n')}\n\nСпросите про любое — цену и срок скажу сразу.`,
-        keyboard: apply().row().url(clientButtons.prices, `${site.url}/prices`),
+        keyboard: apply().row().url(clientButtons.prices, `${site.url}/ru/prices`),
         relay: false,
       };
     }

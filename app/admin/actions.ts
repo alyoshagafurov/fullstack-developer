@@ -20,6 +20,8 @@ import {
 } from '@/lib/admin/ops';
 import { services } from '@/lib/content/services';
 import { site } from '@/lib/content/site';
+import { deleteCaseTranslations, saveCaseTranslation } from '@/lib/case-i18n';
+import { revalidateSite } from '@/lib/i18n/revalidate';
 import { adminIds, getApi, sendWithRetry, syncCommands } from '@/lib/telegram/api';
 
 /*
@@ -343,11 +345,12 @@ export async function saveCase(id: string, form: FormData): Promise<ActionResult
     published: form.get('published') === 'on',
   };
 
+  let caseId = id;
   try {
     if (id) {
       await prisma.case.update({ where: { id }, data });
     } else {
-      await prisma.case.create({ data });
+      caseId = (await prisma.case.create({ data, select: { id: true } })).id;
     }
   } catch (error) {
     if ((error as { code?: string })?.code === 'P2002') {
@@ -356,9 +359,16 @@ export async function saveCase(id: string, form: FormData): Promise<ActionResult
     throw error;
   }
 
-  revalidatePath('/');
-  revalidatePath('/work');
-  revalidatePath(`/work/${slug}`);
+  // The English version for the English site. Left empty, it shows his Russian.
+  const english = (name: string) => String(form.get(`${name}En`) ?? '').slice(0, 5000);
+  await saveCaseTranslation(caseId, 'en', {
+    title: english('title'),
+    task: english('task'),
+    solution: english('solution'),
+    result: english('result'),
+  });
+
+  revalidateSite('/', '/work', `/work/${slug}`);
   revalidatePath('/admin/projects');
   redirect('/admin/projects');
 }
@@ -407,8 +417,7 @@ export async function saveTestimonial(id: string, form: FormData): Promise<Actio
     throw error;
   }
 
-  revalidatePath('/');
-  revalidatePath('/reviews');
+  revalidateSite('/', '/reviews');
   revalidatePath('/admin/testimonials');
   redirect('/admin/testimonials');
 }
@@ -435,10 +444,10 @@ export async function deleteCase(id: string): Promise<ActionResult> {
   if (!row) return { status: 'error', message: 'Кейс не найден' };
 
   await prisma.case.delete({ where: { id } });
+  // Its translation has no foreign key to cascade on, so it goes by hand.
+  await deleteCaseTranslations(id).catch(() => undefined);
 
-  revalidatePath('/');
-  revalidatePath('/work');
-  revalidatePath(`/work/${row.slug}`);
+  revalidateSite('/', '/work', `/work/${row.slug}`);
   revalidatePath('/admin/projects');
   redirect('/admin/projects');
 }
@@ -453,8 +462,7 @@ export async function deleteTestimonial(id: string): Promise<ActionResult> {
 
   await prisma.testimonial.delete({ where: { id } });
 
-  revalidatePath('/');
-  revalidatePath('/reviews');
+  revalidateSite('/', '/reviews');
   revalidatePath('/admin/testimonials');
   redirect('/admin/testimonials');
 }
@@ -512,9 +520,7 @@ export async function savePrices(form: FormData): Promise<ActionResult> {
     ),
   ]);
 
-  revalidatePath('/prices');
-  revalidatePath('/services');
-  for (const service of services) revalidatePath(`/services/${service.slug}`);
+  revalidateSite('/prices', '/services', ...services.map((service) => `/services/${service.slug}`));
   revalidatePath('/admin/prices');
   return { status: 'ok' };
 }

@@ -1,32 +1,23 @@
 import { CTA } from '@/components/ui/CTA';
 import { Stage, type Fact } from '@/components/three/Stage';
-import { about } from '@/lib/content/about';
-import { site } from '@/lib/content/site';
-
-/* What stands beside the form when a page does not name its own facts. */
-const defaultLeft: Fact[] = site.stats.map((stat) => ({
-  label: stat.label,
-  value: stat.value,
-}));
-const defaultRight: Fact[] = about.facts.slice(0, 3);
+import { getDictionary } from '@/lib/i18n/server';
 
 /*
- * How every page other than the home page begins.
+ * How every page other than the home page begins: black, centred, one
+ * enormous line.
  *
- * The owner asked for the inner pages to greet a visitor the way the closing
- * band of the landing page does: black, centred, one enormous line, one button.
- * Repeating that shape is what makes the site feel like one publication rather
- * than a set of screens that happen to share a header.
+ * It used to carry the request button too. The floating request button now
+ * rises at the bottom of every page the moment it loads, so a second one here
+ * would put two identical buttons on the first screen. A page that asks for
+ * something else — the reviews page asks for a review — still passes its own.
  *
  * `data-tone="dark"` is what the header reads to know it must go white here.
  */
-export function PageOpening({
+export async function PageOpening({
   eyebrow,
   title,
   lede,
-  cta = true,
-  ctaHref = '/start',
-  ctaLabel = site.heroCta,
+  cta,
   stage = true,
   facts,
   video,
@@ -34,66 +25,67 @@ export function PageOpening({
   eyebrow: string;
   title: string;
   lede?: string;
-  cta?: boolean;
-  /** The reviews page asks for a review here, not for a brief. */
-  ctaHref?: string;
-  ctaLabel?: string;
-  /** The two form pages set this false: nothing belongs between them and their form. */
+  /** A button for a different action than the request — e.g. "Leave a review". */
+  cta?: { href: string; label: string };
+  /** The form pages set this false: nothing belongs between them and their form. */
   stage?: boolean;
-  facts?: { left?: Fact[]; right?: Fact[] };
+  facts?: { left?: readonly Fact[]; right?: readonly Fact[] };
   /** Footage behind the title, on the pages that are about the work itself. */
   video?: { src: string; poster: string };
 }) {
+  const { t } = await getDictionary();
+  const left = facts?.left ?? t.manifesto.stats;
+  const right = facts?.right ?? t.about.facts.slice(0, 3);
+
   return (
     <>
-    <section
-      data-tone="dark"
-      className="relative isolate flex min-h-[78svh] w-full flex-col items-center justify-center overflow-hidden bg-void px-5 py-32 text-center text-paper"
-    >
-      {video && (
-        <>
-          <video
-            data-video
-            src={video.src}
-            poster={video.poster}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden
-            className="absolute inset-0 -z-10 size-full object-cover opacity-25"
-          />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-void/55" />
-        </>
-      )}
+      <section
+        data-tone="dark"
+        className="relative isolate flex min-h-[78svh] w-full flex-col items-center justify-center overflow-hidden bg-void px-5 py-32 text-center text-paper"
+      >
+        {video && (
+          <>
+            <video
+              data-video
+              src={video.src}
+              poster={video.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden
+              className="absolute inset-0 -z-10 size-full object-cover opacity-25"
+            />
+            <div aria-hidden className="absolute inset-0 -z-10 bg-void/55" />
+          </>
+        )}
 
-
-      <p data-intro className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
-        {eyebrow}
-      </p>
-
-      <h1 data-intro className="display-1 mt-10 max-w-6xl uppercase">
-        {title}
-      </h1>
-
-      {lede && (
-        <p data-intro className="lede mt-10 max-w-xl text-paper/55">
-          {lede}
+        <p data-intro className="text-[0.6875rem] tracking-[0.18em] text-paper/55 uppercase">
+          {eyebrow}
         </p>
-      )}
 
-      {cta && (
-        <div data-intro className="mt-14">
-          <CTA href={ctaHref} tone="dark" size="lg">
-            {ctaLabel}
-          </CTA>
-        </div>
-      )}
+        <h1 data-intro className="display-1 mt-10 max-w-6xl uppercase">
+          {title}
+        </h1>
+
+        {lede && (
+          <p data-intro className="lede mt-10 max-w-xl text-paper/55">
+            {lede}
+          </p>
+        )}
+
+        {cta && (
+          <div data-intro className="mt-14">
+            <CTA href={cta.href} tone="dark" size="lg">
+              {cta.label}
+            </CTA>
+          </div>
+        )}
       </section>
 
       {/* One screen of black under the opening, where the form assembles. */}
-      {stage && <Stage left={facts?.left ?? defaultLeft} right={facts?.right ?? defaultRight} />}
+      {stage && <Stage left={left} right={right} />}
     </>
   );
 }

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { requireAdmin } from '@/lib/auth';
 import { getCaseById } from '@/lib/admin/queries';
+import { getCaseTranslations } from '@/lib/case-i18n';
 import { CaseEditor, type CaseValues } from './CaseEditor';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,7 @@ export default async function CasePage({ params }: { params: Promise<{ id: strin
   const creating = id === 'new';
   const row = creating ? null : await getCaseById(id);
   if (!creating && !row) notFound();
+  const english = creating ? undefined : (await getCaseTranslations('en', [id])).get(id);
 
   const values: CaseValues = {
     id: creating ? '' : id,
@@ -34,6 +36,12 @@ export default async function CasePage({ params }: { params: Promise<{ id: strin
     featured: row?.featured ?? false,
     order: row?.order ?? 0,
     published: row?.published ?? false,
+    en: {
+      title: english?.title ?? '',
+      task: english?.task ?? '',
+      solution: english?.solution ?? '',
+      result: english?.result ?? '',
+    },
   };
 
   return (

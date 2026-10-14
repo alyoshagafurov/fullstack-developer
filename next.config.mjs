@@ -4,6 +4,15 @@ const nextConfig = {
   // Nothing about the stack belongs in a response header.
   poweredByHeader: false,
 
+  experimental: {
+    /*
+     * The site, the admin and the Mini App each have their own root layout,
+     * so there is no one document an unmatched URL could fall back to.
+     * app/global-not-found.tsx is that document.
+     */
+    globalNotFound: true,
+  },
+
   images: {
     formats: ['image/avif', 'image/webp'],
     // Case screenshots are uploaded from the admin into Vercel Blob.

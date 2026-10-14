@@ -37,6 +37,12 @@ export function CTA({
 
   const cls = `group inline-flex items-center justify-center rounded-full font-semibold tracking-[0.02em] transition-colors duration-200 ${fill} ${scale} ${className}`;
 
+  /*
+   * A request button on the page is the floating one's twin: while it is on
+   * screen the floating button sinks away, so the two never stack.
+   */
+  const twin = /(^|\/)start$/.test(href) ? { 'data-cta-twin': '' } : {};
+
   const body = (
     <>
       {children}
@@ -66,7 +72,7 @@ export function CTA({
   }
 
   return (
-    <Link href={href} data-magnetic className={cls}>
+    <Link href={href} data-magnetic className={cls} {...twin}>
       {body}
     </Link>
   );

@@ -1,5 +1,7 @@
 import { prisma, safely } from '@/lib/prisma';
 import type { Gender } from '@/lib/content/review';
+import type { Locale } from '@/lib/i18n';
+import { getCaseTranslations } from '@/lib/case-i18n';
 
 /*
  * Reading published cases and testimonials.
@@ -83,6 +85,39 @@ export async function getCase(slug: string): Promise<CaseRow | null> {
     () => prisma.case.findFirst({ where: { slug, published: true }, select: caseSelect }),
     null,
   );
+}
+
+/**
+ * A case in the page's language. Fields the owner has not translated keep his
+ * original words and say so (`fallback`), so the page can mark them `lang="ru"`
+ * for screen readers instead of reading Russian with English pronunciation.
+ */
+export type LocalCase = CaseRow & {
+  fallback: { title: boolean; task: boolean; solution: boolean; result: boolean };
+};
+
+export async function localizeCases(rows: CaseRow[], lang: Locale): Promise<LocalCase[]> {
+  const none = { title: false, task: false, solution: false, result: false };
+  if (lang === 'ru') return rows.map((row) => ({ ...row, fallback: none }));
+
+  const translations = await getCaseTranslations(lang, rows.map((row) => row.id));
+  return rows.map((row) => {
+    const text = translations.get(row.id);
+    const pick = (key: keyof typeof none) => text?.[key]?.trim() || '';
+    return {
+      ...row,
+      title: pick('title') || row.title,
+      task: pick('task') || row.task,
+      solution: pick('solution') || row.solution,
+      result: pick('result') || row.result,
+      fallback: {
+        title: !pick('title'),
+        task: !pick('task'),
+        solution: !pick('solution'),
+        result: !pick('result'),
+      },
+    };
+  });
 }
 
 export type TestimonialRow = {

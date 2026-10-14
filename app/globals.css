@@ -302,6 +302,50 @@ html:has([data-mini]) {
   animation: aly-breathe 1.8s ease-in-out infinite;
 }
 
+/*
+ * The menu: the black arrives first, then the words rise into it one after
+ * another — the only staggered entrance on the site, because it is the one
+ * place a list appears all at once.
+ */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.menu-panel {
+  animation: menu-in 260ms var(--ease-studio) both;
+}
+
+.menu-item {
+  animation: menu-item-in 560ms var(--ease-studio) both;
+}
+
+/*
+ * The request button: parked below the bottom edge, risen into view when it is
+ * wanted and sunk back when it is not. A long exponential ease-out, so it
+ * arrives fast and settles, rather than sliding at one speed.
+ */
+.sticky-cta {
+  transform: translateY(calc(100% + 2rem + env(safe-area-inset-bottom)));
+  opacity: 0;
+  transition:
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 260ms ease-out;
+}
+
+.sticky-cta--in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 /* One question replaces another: it arrives, it does not slide in from off-screen. */
 @keyframes review-step-in {
   from {

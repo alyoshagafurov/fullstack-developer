@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { StudioObject } from '@/components/ui/StudioObject';
 import type { Service } from '@/lib/content/services';
+import { localePath } from '@/lib/i18n';
+import { getDictionary } from '@/lib/i18n/server';
 
 /*
  * The register of services, read one at a time.
@@ -14,8 +16,12 @@ import type { Service } from '@/lib/content/services';
  * The stacking and the pinning are done by the motion layer against these data
  * attributes, so with JavaScript off the same markup is simply fourteen full
  * screens in a row — long, but whole and readable.
+ *
+ * The items arrive already in the page's language; only the link and the
+ * button's word are decided here.
  */
-export function ServiceReel({ items }: { items: Service[] }) {
+export async function ServiceReel({ items }: { items: Service[] }) {
+  const { lang, t } = await getDictionary();
   return (
     <section data-reel data-tone="light" className="relative w-full bg-paper">
       <div
@@ -30,7 +36,7 @@ export function ServiceReel({ items }: { items: Service[] }) {
               className="flex min-h-[100svh] w-full items-center justify-center px-5 py-10"
             >
               <Link
-                href={`/services/${service.slug}`}
+                href={localePath(lang, `/services/${service.slug}`)}
                 className="group flex w-full max-w-4xl flex-col items-center text-center"
               >
                 {/* Sized by height, not width: what has to fit on this screen
@@ -65,7 +71,7 @@ export function ServiceReel({ items }: { items: Service[] }) {
                 )}
 
                 <span className="mt-7 inline-flex min-h-11 items-center rounded-full border border-ink px-6 text-[0.8125rem] font-medium tracking-[0.04em] transition-colors group-hover:bg-ink group-hover:text-paper">
-                  Подробнее
+                  {t.common.learnMore}
                 </span>
               </Link>
             </li>

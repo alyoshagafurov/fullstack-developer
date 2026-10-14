@@ -3,29 +3,28 @@ import { Band } from '@/components/ui/Band';
 import { CTA } from '@/components/ui/CTA';
 import type { TestimonialRow } from '@/lib/cases';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
+import { fill, localePath } from '@/lib/i18n';
+import { getDictionary } from '@/lib/i18n/server';
 
 /*
  * What clients said, directly after the work they are talking about.
  *
- * The form used to stand here. A form in the middle of a landing page asks a
- * visitor who came to read to start writing, and it pushed the rest of the
- * page down for the many to serve the few. The button now carries the few who
- * do have something to say to a page that asks them one question at a time.
- *
  * The band renders even with nothing published: the owner sends clients to
- * this anchor, so the invitation has to be here on the first day too.
+ * this anchor, so the invitation to leave a review has to be here on the first
+ * day too.
  */
-export function Reviews({ items, total }: { items: TestimonialRow[]; total: number }) {
+export async function Reviews({ items, total }: { items: TestimonialRow[]; total: number }) {
+  const { lang, t } = await getDictionary();
   return (
     <Band tone="ground" id="reviews" innerClassName="py-24 md:py-32">
       <div data-reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display-2 uppercase">Отзывы</h2>
+        <h2 className="display-2 uppercase">{t.reviews.title}</h2>
         {total > items.length && (
           <Link
-            href="/reviews"
-            className="text-[0.6875rem] tracking-[0.18em] uppercase transition-opacity hover:opacity-60"
+            href={localePath(lang, '/reviews')}
+            className="inline-flex min-h-11 items-center text-[0.6875rem] tracking-[0.18em] uppercase transition-opacity hover:opacity-60"
           >
-            Все {total}
+            {fill(t.reviews.all, { n: total })}
           </Link>
         )}
       </div>
@@ -44,8 +43,8 @@ export function Reviews({ items, total }: { items: TestimonialRow[]; total: numb
           items.length > 0 ? 'mt-20 border-t border-line pt-12 md:mt-24' : ''
         }`}
       >
-        <p className="label">Работали со мной?</p>
-        <CTA href="/reviews/new">Оставить отзыв</CTA>
+        <p className="label">{t.reviews.workedWithMe}</p>
+        <CTA href={localePath(lang, '/reviews/new')}>{t.reviews.leave}</CTA>
       </div>
     </Band>
   );

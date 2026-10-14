@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import type * as ThreeNS from 'three';
+import { stripLocale } from '@/lib/i18n';
 
 /*
  * The full-screen form that stands on its own black band after each page's
@@ -44,8 +45,10 @@ const BY_PATH: [string, Shape][] = [
   ['/reviews', 'points'],
 ];
 
+/** The same page has the same shape in either language. */
 function shapeFor(pathname: string): Shape {
-  return BY_PATH.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'stone';
+  const path = stripLocale(pathname);
+  return BY_PATH.find(([prefix]) => path.startsWith(prefix))?.[1] ?? 'stone';
 }
 
 /** How big a dot is: denser clouds get finer dots. */

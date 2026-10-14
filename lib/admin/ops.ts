@@ -2,6 +2,7 @@ import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
+import { revalidateSite } from '@/lib/i18n/revalidate';
 import { markReplied, transitionLead } from '@/lib/telegram/leads';
 import { notifyClientStatus } from '@/lib/telegram/notify';
 
@@ -91,9 +92,7 @@ export async function togglePublishedCase(_: AdminGrant, id: string): Promise<Op
 
   await prisma.case.update({ where: { id }, data: { published: !row.published } });
 
-  revalidatePath('/');
-  revalidatePath('/work');
-  revalidatePath(`/work/${row.slug}`);
+  revalidateSite('/', '/work', `/work/${row.slug}`);
   revalidatePath('/admin/projects');
   return { status: 'ok' };
 }
@@ -105,8 +104,7 @@ export async function togglePublishedTestimonial(_: AdminGrant, id: string): Pro
 
   await prisma.testimonial.update({ where: { id }, data: { published: !row.published } });
 
-  revalidatePath('/');
-  revalidatePath('/reviews');
+  revalidateSite('/', '/reviews');
   revalidatePath('/admin/testimonials');
   return { status: 'ok' };
 }

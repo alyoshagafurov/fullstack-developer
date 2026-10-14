@@ -1,5 +1,7 @@
 import { prisma, safely } from '@/lib/prisma';
 import { services, type Service } from '@/lib/content/services';
+import type { Locale } from '@/lib/i18n';
+import { en } from '@/lib/i18n/en';
 
 /*
  * What each service costs.
@@ -42,22 +44,49 @@ export async function getOverrides(): Promise<Map<string, PriceOverride>> {
   return new Map(rows.map((row) => [row.slug, row]));
 }
 
+/**
+ * What the owner types in the admin is Russian ("От 3 000 сомони", "2–3 недели").
+ * The English site reads the common shapes of it in English; anything else is
+ * shown as typed, which is still a correct figure.
+ */
+export function englishFigure(value: string): string {
+  return value
+    .replace(/^от\s+/i, 'From ')
+    .replace(/^до\s+/i, 'Up to ')
+    .replace(/\s+до\s+/gi, ' to ')
+    .replace(/(\d)\s(?=\d{3}(?!\d))/g, '$1,')
+    .replace(/сомони/gi, 'TJS')
+    .replace(/недел[а-я]*/gi, 'weeks')
+    .replace(/дн(я|ей)|день/gi, 'days')
+    .replace(/месяц[а-я]*/gi, 'months')
+    .replace(/(^|\s)1 (weeks|days|months)/g, (_, space: string, unit: string) => `${space}1 ${unit.slice(0, -1)}`);
+}
+
 /** Every service the owner has not hidden, with the price that applies. */
-export async function getPriceList(): Promise<PricedService[]> {
+export async function getPriceList(lang: Locale = 'ru'): Promise<PricedService[]> {
   const overrides = await getOverrides();
+  const english = lang === 'en' ? en.services.items : null;
 
   return services
     .filter((service) => !overrides.get(service.slug)?.hidden)
     .map((service) => {
       const row = overrides.get(service.slug);
-      const price = row?.price?.trim() || service.budget || null;
-      const term = row?.duration?.trim() || service.duration || null;
+      const copy = english?.[service.slug as keyof typeof en.services.items];
+      const typedPrice = row?.price?.trim();
+      const typedTerm = row?.duration?.trim();
+      const price = english
+        ? (typedPrice ? englishFigure(typedPrice) : copy?.budget) || null
+        : typedPrice || service.budget || null;
+      const term = english
+        ? (typedTerm ? englishFigure(typedTerm) : copy?.duration) || null
+        : typedTerm || service.duration || null;
       return {
         ...service,
+        title: copy?.title ?? service.title,
         price,
         term,
         note: row?.note?.trim() || null,
-        edited: Boolean(row?.price?.trim()),
+        edited: Boolean(typedPrice),
       };
     });
 }
