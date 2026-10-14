@@ -122,7 +122,10 @@ const line = (label: string, value: string | null | undefined) =>
 
 /** 14.3 — the notification body. Also the card the owner opens later. */
 export function leadCard(lead: LeadForCard, title: string = notification.title): string {
-  const contact = [lead.contact, lead.email].filter(Boolean).join(' · ');
+  // An email chosen as the contact is already in `contact` ("Email: …"); don't say it twice.
+  const contact = [lead.contact, lead.contact?.includes(lead.email) ? '' : lead.email]
+    .filter(Boolean)
+    .join(' · ');
   return [
     `<b>${escapeHtml(title)}</b> · <code>${escapeHtml(lead.ref)}</code>`,
     '',

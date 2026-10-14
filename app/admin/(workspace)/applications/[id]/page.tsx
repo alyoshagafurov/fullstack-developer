@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { requireAdmin } from '@/lib/auth';
 import { getLead } from '@/lib/admin/queries';
 import { statusLabel, type LeadStatusName } from '@/lib/content/finance';
+import { contactHref, parseContact } from '@/lib/content/brief';
 import { LeadPanel } from './LeadPanel';
 
 export const dynamic = 'force-dynamic';
@@ -30,16 +31,19 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
     { label: 'Компания или проект', value: lead.company },
     { label: 'Тип проекта', value: lead.projectType },
     { label: 'Главная цель', value: lead.goal },
-    { label: 'О проекте', value: lead.description },
+    { label: 'Что нужно', value: lead.description },
     { label: 'Кто будет пользоваться', value: lead.audience },
     { label: 'Основные функции', value: lead.features },
     { label: 'Примеры, которые нравятся', value: lead.links },
-    { label: 'Дополнительно', value: lead.extra },
+    { label: 'Вопросы и пожелания', value: lead.extra },
     { label: 'Бюджет', value: lead.budget },
     { label: 'Срок', value: lead.timeline },
   ];
 
-  const telegram = lead.contact?.replace(/^@/, '');
+  // "Telegram: @name" on new leads, a bare handle or number on old ones.
+  const contact = parseContact(lead.contact);
+  const contactLink = contact ? contactHref(contact.method, contact.value) : null;
+  const showEmail = lead.email && contact?.method !== 'Email';
 
   return (
     <div className="space-y-10">
@@ -62,22 +66,29 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
       <div className="grid gap-12 border-t border-line pt-10 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
         <div className="space-y-10">
           <section className="flex flex-wrap gap-3">
-            <a
-              href={`mailto:${lead.email}`}
-              className="inline-flex min-h-10 items-center rounded-full border border-line-2 px-4 text-xs transition-colors hover:border-ink"
-            >
-              {lead.email}
-            </a>
-            {telegram && (
+            {showEmail && (
               <a
-                href={telegram.startsWith('+') ? `tel:${telegram}` : `https://t.me/${telegram}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`mailto:${lead.email}`}
                 className="inline-flex min-h-10 items-center rounded-full border border-line-2 px-4 text-xs transition-colors hover:border-ink"
               >
-                {lead.contact}
+                {lead.email}
               </a>
             )}
+            {contact &&
+              (contactLink ? (
+                <a
+                  href={contactLink}
+                  target={contactLink.startsWith('http') ? '_blank' : undefined}
+                  rel={contactLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  className="inline-flex min-h-10 items-center rounded-full border border-line-2 px-4 text-xs transition-colors hover:border-ink"
+                >
+                  {lead.contact}
+                </a>
+              ) : (
+                <span className="inline-flex min-h-10 items-center rounded-full border border-line-2 px-4 text-xs">
+                  {lead.contact}
+                </span>
+              ))}
           </section>
 
           <dl className="space-y-8">

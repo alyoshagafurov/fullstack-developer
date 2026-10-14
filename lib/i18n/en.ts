@@ -10,6 +10,83 @@
  * `{n}`-style placeholders are filled with `fill()` from lib/i18n.
  */
 
+import type { BriefCopy } from '@/lib/content/brief';
+
+/** The request form in English. Values sent stay the Russian ones in lib/content/brief.ts. */
+const briefEn: BriefCopy = {
+  name: { question: 'What’s your name?', hint: 'Just your first name is fine.', placeholder: 'Alex' },
+  contact: {
+    question: 'Where should I reply?',
+    hint: 'Pick what’s easiest for you and leave your contact.',
+  },
+  methods: {
+    Telegram: { label: 'Telegram', placeholder: '@username' },
+    WhatsApp: { label: 'WhatsApp', placeholder: '+1 555 000 0000' },
+    Instagram: { label: 'Instagram', placeholder: '@username' },
+    Email: { label: 'Email', placeholder: 'name@gmail.com' },
+    Телефон: { label: 'Phone', placeholder: '+1 555 000 0000' },
+  },
+  projectType: {
+    question: 'What do you need?',
+    hint: 'Pick the closest one. Not sure? Pick something similar — we’ll sort it out.',
+  },
+  options: {
+    Сайт: { label: 'Website' },
+    'Landing Page': { label: 'Landing page' },
+    'Корпоративный сайт': { label: 'Company website' },
+    'Интернет-магазин': { label: 'Online store' },
+    'Web-приложение': { label: 'Web app' },
+    'CRM-система': { label: 'CRM system' },
+    Автоматизация: { label: 'Automation' },
+    Редизайн: { label: 'Redesign' },
+    'MVP стартапа': { label: 'Startup first version (MVP)' },
+    'Android-приложение': { label: 'Android app' },
+    'iOS-приложение': { label: 'iPhone app' },
+    'Telegram-бот': { label: 'Telegram bot' },
+    'Telegram Mini App': { label: 'Telegram Mini App' },
+    'Поддержка и развитие': { label: 'Support and updates' },
+  },
+  details: { question: 'Tell me what you need', hint: 'In your own words. Short is fine.' },
+  fields: {
+    details: {
+      label: 'What you need',
+      placeholder: 'For example: a website for my coffee shop so people can order online',
+    },
+    questions: { label: 'Your questions', placeholder: 'Anything you’d like to ask' },
+    budget: { label: 'Budget', placeholder: 'For example: $500' },
+  },
+  optional: 'optional',
+  note: 'By sending this, you agree that I can contact you about your project.',
+  errors: {
+    name: 'What’s your name?',
+    method: 'Pick where I should reply',
+    required: 'Leave your contact',
+    email: 'Looks like there’s a typo in the email',
+    phone: 'Check the number — it’s too short',
+    short: 'That’s too short for a username',
+    type: 'Pick what you need',
+    details: 'Write at least a few words about what you need',
+    check: 'Please check this answer',
+    failed: 'Couldn’t send it. Please try again.',
+    offline: 'Looks like you’re offline. Check your connection and try again.',
+  },
+  next: 'Next',
+  back: 'Back',
+  send: 'Send request',
+  sending: 'Sending…',
+  honeypot: 'Don’t fill this in',
+  done: {
+    title: 'Thank you! Your request is in.',
+    message: 'I’m already on your project: I’ll read everything carefully and get back to you within a day.',
+    prices: 'See prices',
+    work: 'See my work',
+    refLabel: 'Request number',
+    codeLabel: 'Code for the bot',
+    track: 'You can check the status with my Telegram bot',
+    trackChat: 'I sent the number and code to your chat.',
+  },
+};
+
 export const en = {
   meta: {
     siteTitle: 'Alisher Gafurov — I build websites, online stores and apps',
@@ -505,7 +582,7 @@ export const en = {
     steps: [
       {
         title: 'You fill in the form',
-        body: 'One question at a time, under two minutes. No tech words needed.',
+        body: 'Four short steps, about a minute. No tech words needed.',
       },
       {
         title: 'I read it and reply',
@@ -521,113 +598,15 @@ export const en = {
       },
     ],
     unsure:
-      'Not sure what to write in a field? Skip it or write it however you can. We’ll figure it out together — that’s normal.',
+      'Not sure what to write? Write it however you can — a couple of words is enough. We’ll figure out the rest together.',
     writeDirectly: 'Write to me directly',
   },
 
-  brief: {
-    questions: {
-      name: { question: 'What’s your name?', hint: 'Just your first name is fine.', placeholder: 'Alex' },
-      company: { question: 'Company or project', hint: 'No name yet? Skip it.' },
-      email: { question: 'Your email', hint: 'I’ll send my reply and offer here.', placeholder: 'name@mail.com' },
-      contact: {
-        question: 'Telegram or WhatsApp',
-        hint: 'That’s where I reply fastest.',
-        placeholder: '@username or +1 555 000 0000',
-      },
-      projectType: {
-        question: 'What do you need?',
-        hint: 'Pick the closest one. Not sure? Pick something similar — we’ll sort it out on the call.',
-      },
-      goal: {
-        question: 'What should change after launch?',
-        hint: 'For example: “I want to take orders on the site, not in DMs” or “clients can’t find me online”.',
-      },
-      description: {
-        question: 'Tell me about your project',
-        hint: 'In your own words: what you do, who your clients are, what you already have. Two or three sentences is enough.',
-      },
-      audience: {
-        question: 'Who will use it?',
-        hint: 'Who your clients are: what they do, where they live, how old they are.',
-      },
-      features: {
-        question: 'What should it be able to do?',
-        hint: 'For example: cart and card payments, user accounts, booking, sending requests to Telegram.',
-      },
-      links: {
-        question: 'Which websites do you like?',
-        hint: 'Paste links to two or three websites you like and want yours to look like. That way I’ll see right away what style you want.',
-        placeholder: 'https://example.com',
-      },
-      budget: {
-        question: 'Rough budget',
-        hint: 'This is a guide, not a promise. Don’t know? Pick the last option.',
-      },
-      timeline: { question: 'When would you like to launch?', hint: 'Also just a guide.' },
-      extra: { question: 'Anything else?', hint: 'Anything that didn’t fit above.' },
-    } as Record<string, { question: string; hint?: string; placeholder?: string }>,
-    /** Display labels for the stored values in lib/content/brief.ts, which stay Russian. */
-    options: {
-      Сайт: { label: 'Website' },
-      'Landing Page': { label: 'Landing page' },
-      'Корпоративный сайт': { label: 'Company website' },
-      'Интернет-магазин': { label: 'Online store' },
-      'Web-приложение': { label: 'Web app' },
-      'CRM-система': { label: 'CRM system' },
-      Автоматизация: { label: 'Automation' },
-      Редизайн: { label: 'Redesign' },
-      'MVP стартапа': { label: 'Startup first version (MVP)' },
-      'Android-приложение': { label: 'Android app' },
-      'iOS-приложение': { label: 'iPhone app' },
-      'Telegram-бот': { label: 'Telegram bot' },
-      'Telegram Mini App': { label: 'Telegram Mini App' },
-      'Поддержка и развитие': { label: 'Support and updates' },
-      'До 1 000 сомони': { label: 'Up to 1,000 TJS', note: 'small tasks, a simple site' },
-      '1 000–2 000 сомони': { label: '1,000–2,000 TJS', note: 'landing page, small site' },
-      '3 000–5 000 сомони': { label: '3,000–5,000 TJS', note: 'company website, online store' },
-      '5 000–7 000 сомони': { label: '5,000–7,000 TJS', note: 'web app, CRM, a complex project' },
-      '10 000–30 000+ сомони': {
-        label: '10,000–30,000+ TJS',
-        note: 'big systems, startups, custom builds',
-      },
-      'Пока не знаю': { label: 'Not sure yet', note: 'we’ll talk about it on the first call' },
-      'До 3–5 дней': { label: 'Up to 3–5 days', note: 'small tasks and simple projects' },
-      '1–2 недели': { label: '1–2 weeks', note: 'landing pages, Telegram bots, small sites' },
-      '1–3 недели': { label: '1–3 weeks', note: 'websites, online stores, small web apps' },
-      '2–5 недель': { label: '2–5 weeks', note: 'complex web apps, CRM and MVPs' },
-      '1–3+ месяца': { label: '1–3+ months', note: 'big and unusual projects' },
-    } as Record<string, { label: string; note?: string }>,
-    consent: 'I agree to the processing of my personal data so you can contact me about the project.',
-    errors: {
-      required: 'This one’s needed',
-      email: 'Looks like there’s a typo in the email',
-      min: 'A couple of words isn’t enough — at least one sentence, please',
-      consent: 'Tick the box — otherwise I can’t reply to you',
-      check: 'Please check this answer',
-      failed: 'Couldn’t send it. Please try again.',
-      offline: 'Looks like you’re offline. Check your connection and try again.',
-    },
-    next: 'Next',
-    back: 'Back',
-    skip: 'Skip',
-    send: 'Send request',
-    sending: 'Sending…',
-    honeypot: 'Don’t fill this in',
-  },
+  brief: briefEn,
 
   thanks: {
     metaTitle: 'Request sent',
-    label: 'Done',
-    message: 'Awesome! Your idea is with me now — we’ll talk soon about what we can do with it.',
-    trackLabel: 'Follow your project in Telegram',
-    trackBody:
-      'Open the bot — it shows what stage your project is at and messages you when it changes.',
-    refLabel: 'Request number',
-    codeLabel: 'Code for the bot',
-    openBot: 'Open the bot in Telegram',
-    codeNote: 'The bot will ask for your request number and code. Save them — the code is shown only once.',
-    writeMe: 'Message me directly',
+    openBot: 'Open the bot',
   },
 
   notFound: {

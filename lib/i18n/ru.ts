@@ -1,4 +1,4 @@
-import { budgets, briefQuestions, consentLabel, projectTypes, timelines } from '@/lib/content/brief';
+import { briefCopyRu } from '@/lib/content/brief';
 import { genderLabel, reviewQuestions } from '@/lib/content/review';
 import type { Dictionary } from './en';
 
@@ -9,15 +9,10 @@ import type { Dictionary } from './en';
  * is, what he makes and what it gives them on the first read. The facts are
  * his; only the wording changed.
  *
- * The brief and the review questions are not copied here: they come from
- * lib/content/brief.ts and lib/content/review.ts, the same lists the Telegram
- * bot and the Mini App ask, so the three never drift apart.
+ * The request form and the review questions are not copied here: they come
+ * from lib/content/brief.ts and lib/content/review.ts, the same words the
+ * Telegram bot and the Mini App use, so the three never drift apart.
  */
-
-const question = (key: string) => {
-  const q = briefQuestions.find((item) => item.key === key);
-  return { question: q?.question ?? key, hint: q?.hint, placeholder: q?.placeholder };
-};
 
 const reviewQuestion = (key: string) => {
   const q = reviewQuestions.find((item) => item.key === key);
@@ -499,7 +494,7 @@ export const ru: Dictionary = {
     steps: [
       {
         title: 'Вы заполняете форму',
-        body: 'Один вопрос за раз, меньше двух минут. Технические слова не нужны.',
+        body: 'Четыре коротких шага, примерно минута. Технические слова не нужны.',
       },
       {
         title: 'Я читаю и отвечаю',
@@ -515,46 +510,15 @@ export const ru: Dictionary = {
       },
     ],
     unsure:
-      'Не знаете, что писать в каком-то поле? Пропустите его или напишите как есть. Разберёмся вместе — так бывает почти всегда.',
+      'Не знаете, что писать? Напишите как есть — пары слов хватит. Остальное разберём вместе.',
     writeDirectly: 'Написать напрямую',
   },
 
-  brief: {
-    questions: Object.fromEntries(briefQuestions.map((q) => [q.key, question(q.key)])),
-    options: Object.fromEntries([
-      ...projectTypes.map((value) => [value, { label: value }]),
-      ...budgets.map((b) => [b.value, { label: b.value, note: b.note }]),
-      ...timelines.map((t) => [t.value, { label: t.value, note: t.note }]),
-    ]),
-    consent: consentLabel,
-    errors: {
-      required: 'Без этого не получится',
-      email: 'Кажется, в адресе опечатка',
-      min: 'Пары слов мало — хотя бы одно предложение',
-      consent: 'Поставьте галочку, иначе я не смогу вам ответить',
-      check: 'Проверьте этот ответ',
-      failed: 'Не получилось отправить. Попробуйте ещё раз.',
-      offline: 'Интернет пропал. Проверьте связь и нажмите ещё раз.',
-    },
-    next: 'Дальше',
-    back: 'Назад',
-    skip: 'Пропустить',
-    send: 'Отправить заявку',
-    sending: 'Отправляю…',
-    honeypot: 'Не заполняйте это поле',
-  },
+  brief: briefCopyRu,
 
   thanks: {
     metaTitle: 'Заявка отправлена',
-    label: 'Готово',
-    message: 'Круто! Ваша идея уже у меня — скоро обсудим, что с ней можно сделать.',
-    trackLabel: 'Следите за работой в Telegram',
-    trackBody: 'Откройте бота — он покажет, на каком этапе ваш проект, и напишет вам сам, когда этап сменится.',
-    refLabel: 'Номер заявки',
-    codeLabel: 'Код для бота',
-    openBot: 'Открыть бота в Telegram',
-    codeNote: 'Бот спросит номер заявки и код. Сохраните их: код показывается один раз.',
-    writeMe: 'Написать мне лично',
+    openBot: 'Открыть бота',
   },
 
   notFound: {

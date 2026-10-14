@@ -13,6 +13,7 @@ import { errorText, useAdminApi } from '@/components/mini/admin/api';
 import { Money } from '@/components/mini/admin/Money';
 import { Calendar } from '@/components/mini/admin/Calendar';
 import { AlySplash } from '@/components/mini/AlySplash';
+import { contactHref, parseContact } from '@/lib/content/brief';
 
 /*
  * The owner's panel, inside Telegram.
@@ -511,6 +512,10 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
     (s) => s !== data.status,
   );
 
+  // "Telegram: @name" on new leads, a bare handle or number on old ones.
+  const contact = parseContact(data.contact);
+  const contactLink = contact ? contactHref(contact.method, contact.value) : null;
+
   return (
     <div className="space-y-6">
       <button type="button" onClick={onBack} className="text-sm text-paper/55 hover:text-paper">
@@ -523,24 +528,26 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
           {data.name}
         </h1>
         <p className="mt-1 text-sm text-paper/55">
-          {data.projectType} · {data.budget} · {when(data.createdAt)}
+          {[data.projectType, data.budget, when(data.createdAt)].filter(Boolean).join(' · ')}
         </p>
       </header>
 
       <section className="flex flex-wrap gap-2">
-        {data.contact?.startsWith('@') && (
+        {contactLink && (
           <a
-            href={`https://t.me/${data.contact.slice(1)}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={contactLink}
+            target={contactLink.startsWith('http') ? '_blank' : undefined}
+            rel={contactLink.startsWith('http') ? 'noopener noreferrer' : undefined}
             className={outline}
           >
             {data.contact}
           </a>
         )}
-        <a href={`mailto:${data.email}`} className={outline}>
-          Почта
-        </a>
+        {data.email && contact?.method !== 'Email' && (
+          <a href={`mailto:${data.email}`} className={outline}>
+            Почта
+          </a>
+        )}
         {!data.firstRepliedAt && (
           <button
             type="button"
@@ -610,11 +617,11 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
         <summary className={`${label} cursor-pointer`}>Что написал клиент</summary>
         <dl className="mt-4 space-y-3 text-sm">
           <Field term="Цель" value={data.goal} />
-          <Field term="О проекте" value={data.description} />
+          <Field term="Что нужно" value={data.description} />
           <Field term="Аудитория" value={data.audience} />
           <Field term="Функции" value={data.features} />
           <Field term="Нравится" value={data.links} />
-          <Field term="Ещё" value={data.extra} />
+          <Field term="Вопросы" value={data.extra} />
           <Field term="Срок" value={data.timeline} />
           <Field term="Компания" value={data.company} />
         </dl>

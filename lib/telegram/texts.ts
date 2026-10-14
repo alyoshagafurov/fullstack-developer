@@ -1,4 +1,4 @@
-import { consentLabel, budgets, projectTypes, timelines } from '@/lib/content/brief';
+import { briefCopyRu, contactMethods, projectTypes } from '@/lib/content/brief';
 import type { LeadStatusName } from '@/lib/content/finance';
 
 /*
@@ -101,7 +101,7 @@ export const notification = {
   budget: '💰 Бюджет',
   timeline: '📅 Желаемый срок',
   contact: '📞 Контакт клиента',
-  extra: '💬 Дополнительные пожелания',
+  extra: '💬 Вопросы и пожелания',
   createdAt: '🕐 Дата и время отправки заявки',
   source: '🌐 Источник заявки',
 } as const;
@@ -147,21 +147,7 @@ export const clientStatusLine: Record<LeadStatusName, string> = {
 };
 
 export type BriefStep = {
-  key:
-    | 'name'
-    | 'company'
-    | 'email'
-    | 'contact'
-    | 'projectType'
-    | 'goal'
-    | 'description'
-    | 'audience'
-    | 'features'
-    | 'links'
-    | 'budget'
-    | 'timeline'
-    | 'extra'
-    | 'consent';
+  key: 'name' | 'contactMethod' | 'contact' | 'projectType' | 'details' | 'questions' | 'budget';
   label: string;
   hint: string;
   optional?: boolean;
@@ -170,67 +156,18 @@ export type BriefStep = {
 };
 
 /**
- * The brief, one question per message, in the order of the site's form and
- * with the same labels and hints (block 11).
+ * The request, one question per message — the same short form as the site and
+ * the Mini App, in the same words (lib/content/brief.ts).
  */
+const c = briefCopyRu;
 export const briefSteps: BriefStep[] = [
-  { key: 'name', label: 'Как вас зовут', hint: 'Просто имя, этого достаточно.' },
-  {
-    key: 'company',
-    label: 'Компания или проект',
-    hint: 'Если названия ещё нет — пропустите.',
-    optional: true,
-  },
-  { key: 'email', label: 'Почта', hint: 'Сюда пришлю ответ и предложение.' },
-  { key: 'contact', label: 'Telegram или WhatsApp', hint: 'Так отвечаю быстрее всего.' },
-  {
-    key: 'projectType',
-    label: 'Что нужно сделать',
-    hint: 'Выберите, что ближе. Не уверены — берите похожее, на созвоне разберёмся.',
-    choices: projectTypes,
-  },
-  {
-    key: 'goal',
-    label: 'Что должно измениться после запуска',
-    hint: 'Например: «хочу принимать заказы через сайт, а не в переписке» или «клиенты меня не находят в интернете».',
-  },
-  {
-    key: 'description',
-    label: 'Расскажите о проекте',
-    hint: 'Своими словами: чем занимаетесь, кто ваши клиенты, что уже есть. Двух-трёх предложений хватит.',
-  },
-  {
-    key: 'audience',
-    label: 'Кто будет этим пользоваться',
-    hint: 'Кто ваши клиенты: чем занимаются, из какого города, сколько им лет.',
-    optional: true,
-  },
-  {
-    key: 'features',
-    label: 'Что должно уметь',
-    hint: 'Например: корзина и оплата картой, личный кабинет, запись на приём, отправка заявки в Telegram.',
-    optional: true,
-  },
-  {
-    key: 'links',
-    label: 'Что вам нравится',
-    hint: 'Ссылки на сайты, которые по душе. Можно просто названия.',
-    optional: true,
-  },
-  {
-    key: 'budget',
-    label: 'Примерный бюджет',
-    hint: 'Это ориентир, а не обязательство. Не знаете — выберите последний пункт.',
-    choices: budgets.map((band) => band.value),
-  },
-  {
-    key: 'timeline',
-    label: 'Когда хотелось бы запуститься',
-    hint: 'Тоже ориентир.',
-    choices: timelines.map((band) => band.value),
-  },
-  { key: 'extra', label: 'Что-нибудь ещё', hint: 'Всё, что не влезло в поля выше.', optional: true },
-  { key: 'consent', label: consentLabel, hint: '', consent: true },
+  { key: 'name', label: c.name.question, hint: c.name.hint },
+  { key: 'contactMethod', label: c.contact.question, hint: c.contact.hint, choices: contactMethods },
+  { key: 'contact', label: 'Ваш контакт', hint: 'Ник, номер или почта — куда вам написать.' },
+  { key: 'projectType', label: c.projectType.question, hint: c.projectType.hint, choices: projectTypes },
+  { key: 'details', label: c.fields.details.label, hint: c.details.hint },
+  { key: 'questions', label: c.fields.questions.label, hint: c.fields.questions.placeholder, optional: true },
+  { key: 'budget', label: c.fields.budget.label, hint: c.fields.budget.placeholder, optional: true },
 ];
 
 /**

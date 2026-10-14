@@ -1,7 +1,7 @@
 import 'server-only';
 import { Bot, InlineKeyboard, type Context } from 'grammy';
 import { prisma } from '@/lib/prisma';
-import { briefSchema } from '@/lib/content/brief';
+import { briefSchema, checkContact, contactMessages } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
 import { featuredServices } from '@/lib/content/services';
 import { getPublishedCases } from '@/lib/cases';
@@ -283,7 +283,12 @@ async function briefPrompt(ctx: Context, state: BriefState): Promise<void> {
   const body = step.hint ? `\n${escapeHtml(step.hint)}` : '';
   await ctx.reply(`${head}${body}`, {
     ...html,
-    reply_markup: stepKeyboard(step, state.step, ctx.from?.username),
+    // Offering their @handle only makes sense when they chose Telegram.
+    reply_markup: stepKeyboard(
+      step,
+      state.step,
+      state.data.contactMethod === 'Telegram' ? ctx.from?.username : undefined,
+    ),
   });
 }
 
@@ -300,6 +305,16 @@ async function briefAdvance(
     const parsed = field.safeParse(value);
     if (!parsed.success) {
       await ctx.reply(parsed.error.issues[0]?.message ?? glue.failed);
+      await briefPrompt(ctx, state);
+      return;
+    }
+  }
+
+  // The contact is checked against the way they chose: an email, a number, a handle.
+  if (step.key === 'contact') {
+    const problem = checkContact(String(state.data.contactMethod ?? ''), value);
+    if (problem) {
+      await ctx.reply(contactMessages[problem]);
       await briefPrompt(ctx, state);
       return;
     }
@@ -331,7 +346,7 @@ async function briefSubmit(
     return;
   }
 
-  const parsed = briefSchema.safeParse({ ...data, consent: true });
+  const parsed = briefSchema.safeParse(data);
   if (!parsed.success) {
     await writeState(chatId, null);
     await ctx.reply(glue.failed);

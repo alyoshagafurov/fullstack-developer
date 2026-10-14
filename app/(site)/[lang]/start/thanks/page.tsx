@@ -16,17 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /*
- * The confirmation, and the one thing the client should do next.
+ * After the request: one large sentence saying he is on it, and two ways to
+ * keep looking while they wait — the prices and the work.
  *
- * The reference number is here because "we got it" without a number is not
- * something anyone can act on later. But the number alone leaves the client
- * waiting in silence, so the page hands them the bot: it answers what stage
- * the project is at and writes to them when the stage changes.
- *
- * The bot is the big button, not the owner's personal Telegram. Sending a
- * client to a person for a status they can have on demand costs the owner an
- * interruption and the client a wait; his own account stays here as the
- * quieter second option, for when there is something to actually say.
+ * The request number and the bot code stay, set small underneath: the code is
+ * shown only once, and it is what lets the client ask the bot how it is going.
  */
 export default async function ThanksPage({
   searchParams,
@@ -34,68 +28,60 @@ export default async function ThanksPage({
   searchParams: Promise<{ ref?: string; code?: string }>;
 }) {
   const { lang, t } = await getDictionary();
+  const done = t.brief.done;
   const { ref, code } = await searchParams;
+  const refValid = ref && /^ALY-[\d-]+$/.test(ref) ? ref : null;
   const codeValid = code && /^[a-f0-9]{32}$/.test(code) ? code : null;
   const bot = `https://t.me/${site.contact.bot}?start=status`;
 
   return (
     <Band tone="ground" innerClassName="flex min-h-[100svh] flex-col justify-center py-28 md:py-32">
-      <div className="grid items-start gap-14 md:grid-cols-[1fr_14rem] md:gap-20">
-        <div>
-          <p className="label mb-6">{t.thanks.label}</p>
-          <h1 className="max-w-2xl text-[clamp(1.875rem,4.6vw,3.25rem)] leading-[1.12] tracking-[-0.035em]">
-            {t.thanks.message}
+      <div className="grid items-center gap-14 md:grid-cols-[1fr_16rem] md:gap-20">
+        <div data-reveal="group">
+          <h1 className="max-w-3xl text-[clamp(2.25rem,6vw,4.75rem)] leading-[1.02] font-bold tracking-[-0.045em] text-balance">
+            {done.title}
           </h1>
+          <p className="mt-8 max-w-xl text-[clamp(1.0625rem,1.6vw,1.375rem)] leading-relaxed text-ink-2">
+            {done.message}
+          </p>
 
-          <p className="mt-8 max-w-md text-base leading-relaxed text-ink-2">{t.common.replyWithin}</p>
+          <div className="mt-12 flex flex-wrap items-center gap-3">
+            <CTA href={localePath(lang, '/prices')} size="lg">
+              {done.prices}
+            </CTA>
+            <PillLink href={localePath(lang, '/work')} variant="outline">
+              {done.work}
+            </PillLink>
+          </div>
 
-          {/*
-            The next step, given its own surface so it does not read as one
-            more paragraph: the bot, the number, and the code, together.
-          */}
-          <div className="mt-12 rounded-2xl bg-paper p-7 shadow-[0_1px_2px_rgba(11,11,11,0.05)] md:p-9">
-            <p className="label mb-4">{t.thanks.trackLabel}</p>
-
-            <p className="max-w-lg text-base leading-relaxed">{t.thanks.trackBody}</p>
-
-            {ref && (
-              <dl className="mt-7 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
+          {refValid && (
+            <div className="mt-16 max-w-xl border-t border-line pt-6">
+              <dl className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <dt className="label mb-2">{t.thanks.refLabel}</dt>
-                  <dd className="tabular text-[1.375rem] tracking-[-0.02em]">{ref}</dd>
+                  <dt className="label mb-2">{done.refLabel}</dt>
+                  <dd className="tabular text-lg tracking-[-0.01em]">{refValid}</dd>
                 </div>
                 {codeValid && (
                   <div className="min-w-0">
-                    <dt className="label mb-2">{t.thanks.codeLabel}</dt>
-                    <dd className="font-mono text-[0.8125rem] break-all text-ink-2">{codeValid}</dd>
+                    <dt className="label mb-2">{done.codeLabel}</dt>
+                    <dd className="font-mono text-xs break-all text-ink-2">{codeValid}</dd>
                   </div>
                 )}
               </dl>
-            )}
-
-            <div className="mt-8">
-              <CTA href={bot} size="lg">
-                {t.thanks.openBot}
-              </CTA>
+              <a
+                href={bot}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
+              >
+                {done.track} <span aria-hidden>→</span>
+              </a>
             </div>
-
-            {codeValid && (
-              <p className="mt-5 text-sm leading-relaxed text-ink-3">{t.thanks.codeNote}</p>
-            )}
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <PillLink href={`https://t.me/${site.contact.telegram}`} variant="outline">
-              {t.thanks.writeMe}
-            </PillLink>
-            <PillLink href={localePath(lang, '/')} variant="outline">
-              {t.common.backHome}
-            </PillLink>
-          </div>
+          )}
         </div>
 
         <div className="relative aspect-square w-40 justify-self-start md:w-full md:justify-self-end">
-          <StudioObject src="/objects/laptop.webp" alt="" sizes="(min-width: 768px) 14rem, 10rem" />
+          <StudioObject src="/objects/laptop.webp" alt="" sizes="(min-width: 768px) 16rem, 10rem" />
         </div>
       </div>
     </Band>

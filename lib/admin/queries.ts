@@ -166,6 +166,7 @@ export async function listLeads(filters: LeadFilters) {
           OR: [
             { name: { contains: q, mode: 'insensitive' as const } },
             { email: { contains: q, mode: 'insensitive' as const } },
+            { contact: { contains: q, mode: 'insensitive' as const } },
             { company: { contains: q, mode: 'insensitive' as const } },
             { ref: { contains: q, mode: 'insensitive' as const } },
           ],
@@ -184,6 +185,7 @@ export async function listLeads(filters: LeadFilters) {
         ref: true,
         name: true,
         email: true,
+        contact: true,
         company: true,
         projectType: true,
         budget: true,

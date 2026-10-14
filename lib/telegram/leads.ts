@@ -2,7 +2,7 @@ import 'server-only';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { createLeadRef } from '@/lib/lead';
-import type { BriefInput } from '@/lib/content/brief';
+import { formatContact, type BriefInput } from '@/lib/content/brief';
 import { leadStatuses, type LeadStatusName } from '@/lib/content/finance';
 
 /*
@@ -56,19 +56,21 @@ export async function createLead(
       const lead = await prisma.lead.create({
         data: {
           ref,
+          /*
+           * The short form's answers on the table's original columns, which
+           * stay as they were (the database is shared and never pushed to).
+           * Columns the form no longer asks about are written empty.
+           */
           name: data.name,
-          email: data.email.toLowerCase(),
-          company: data.company || null,
-          contact: data.contact,
+          email: data.contactMethod === 'Email' ? data.contact.trim().toLowerCase() : '',
+          company: null,
+          contact: formatContact(data.contactMethod, data.contact),
           projectType: data.projectType,
-          budget: data.budget,
-          timeline: data.timeline,
-          goal: data.goal,
-          description: data.description,
-          audience: data.audience || null,
-          features: data.features || null,
-          links: data.links || null,
-          extra: data.extra || null,
+          budget: data.budget || '',
+          timeline: '',
+          goal: '',
+          description: data.details,
+          extra: data.questions || null,
           source,
           trackingToken,
           telegramChatId: telegramChatId ?? null,

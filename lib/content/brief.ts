@@ -1,16 +1,22 @@
 import { z } from 'zod';
 
 /*
- * Block 11 of the owner's answers: the fields he needs before a first call, the
- * project types, budget bands and timelines he offers, and what the client sees
- * after sending. Options are his, in his order and his wording.
+ * The request form, as the owner cut it down: a name, one way to reach the
+ * person, what they need, and a few lines about it — budget only if they want.
+ * Four screens, the same on the site, in the Telegram Mini App and in the bot.
  *
- * The zod schema is the single source of truth for the request body. The client
- * form and the /api/lead handler both import it, so a field can never be
- * checked in the browser and skipped on the server.
+ * The zod schema is the single source of truth for the request body. The forms
+ * and /api/lead both import it, so a field can never be checked in the browser
+ * and skipped on the server.
+ *
+ * The Lead table keeps its old columns (the database is shared and is never
+ * pushed to — see prisma/schema.prisma), so `createLead` maps these answers
+ * onto them: the way to reach them goes to `contact` ("Telegram: @name"), an
+ * email address also to `email`, what they need to `description`, their
+ * questions to `extra`.
  */
 
-/** 11.2 */
+/** 11.2 — the owner's list, his order and his wording. Stored as written. */
 export const projectTypes = [
   'Сайт',
   'Landing Page',
@@ -28,202 +34,199 @@ export const projectTypes = [
   'Поддержка и развитие',
 ] as const;
 
-/** 11.3 — сомони, as he set them */
-export const budgets = [
-  { value: 'До 1 000 сомони', note: 'небольшие задачи, простой сайт' },
-  { value: '1 000–2 000 сомони', note: 'Landing Page, небольшой сайт' },
-  { value: '3 000–5 000 сомони', note: 'корпоративный сайт, интернет-магазин' },
-  { value: '5 000–7 000 сомони', note: 'Web-приложение, CRM, сложный проект' },
-  { value: '10 000–30 000+ сомони', note: 'крупные системы, стартапы, индивидуальная разработка' },
-  { value: 'Пока не знаю', note: 'обсудим на первом разговоре' },
-] as const;
+/** Where the person wants to be answered. Stored as written here. */
+export const contactMethods = ['Telegram', 'WhatsApp', 'Instagram', 'Email', 'Телефон'] as const;
+export type ContactMethod = (typeof contactMethods)[number];
 
-/** 11.4 */
-export const timelines = [
-  { value: 'До 3–5 дней', note: 'небольшие задачи и простые проекты' },
-  { value: '1–2 недели', note: 'Landing Page, Telegram-боты, небольшие сайты' },
-  { value: '1–3 недели', note: 'сайты, интернет-магазины, небольшие web-приложения' },
-  { value: '2–5 недель', note: 'сложные web-приложения, CRM и MVP' },
-  { value: '1–3+ месяца', note: 'крупные и нестандартные проекты' },
-] as const;
+/** What is wrong with a contact, if anything — worded by whoever shows it. */
+export type ContactProblem = 'required' | 'email' | 'phone' | 'short';
 
-/** 11.5 */
-export const thanksMessage = 'Круто! Ваша идея уже у меня — скоро обсудим, что с ней можно сделать.';
+export function checkContact(method: string, raw: string): ContactProblem | null {
+  const value = raw.trim();
+  if (!value) return 'required';
+  if (method === 'Email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : 'email';
+  if (method === 'WhatsApp' || method === 'Телефон') {
+    return value.replace(/\D/g, '').length >= 7 ? null : 'phone';
+  }
+  return value.replace(/^@/, '').length >= 3 ? null : 'short';
+}
 
-/** 11.6 */
-export const consentLabel =
-  'Согласен на обработку моих персональных данных для связи по поводу проекта.';
+/** A link that opens the contact, for the admin and the owner's notification. */
+export function contactHref(method: string, raw: string): string | null {
+  const value = raw.trim();
+  const handle = value.replace(/^@/, '').replace(/^https?:\/\/(www\.)?[^/]+\//, '');
+  const digits = value.replace(/\D/g, '');
+  switch (method) {
+    case 'Telegram':
+      return `https://t.me/${handle}`;
+    case 'Instagram':
+      return `https://instagram.com/${handle}`;
+    case 'WhatsApp':
+      return digits ? `https://wa.me/${digits}` : null;
+    case 'Телефон':
+      return digits ? `tel:+${digits}` : null;
+    case 'Email':
+      return `mailto:${value}`;
+    default:
+      return null;
+  }
+}
 
-const required = (field: string, min = 2, max = 4000) =>
-  z
-    .string()
-    .trim()
-    .min(min, `Заполните поле «${field}»`)
-    .max(max, `Слишком длинно для поля «${field}»`);
+/** How a contact is stored on the lead: "Telegram: @name". */
+export const formatContact = (method: string, value: string) => `${method}: ${value.trim()}`;
 
-const optional = (max = 4000) => z.string().trim().max(max).optional().or(z.literal(''));
+/** The reverse, for leads written either way — old ones hold a bare handle. */
+export function parseContact(stored: string | null): { method: string; value: string } | null {
+  if (!stored) return null;
+  const match = /^([^:]{2,20}):\s*(.+)$/.exec(stored);
+  if (match && (contactMethods as readonly string[]).includes(match[1])) {
+    return { method: match[1], value: match[2] };
+  }
+  const value = stored.trim();
+  return { method: value.startsWith('+') ? 'Телефон' : 'Telegram', value };
+}
 
-/**
- * The brief, in the order the owner listed his fields in 11.1.
- *
- * `website` is a honeypot: people never see it and leave it empty, so anything
- * in it came from a bot. `startedAt` carries the moment the form was opened; a
- * submission faster than a person could type is refused.
- */
-export const briefSchema = z.object({
-  name: required('Имя'),
-  company: optional(200),
-  email: z.string().trim().email('Проверьте адрес почты').max(320),
-  contact: required('Контакт для связи', 2, 200),
+export const contactMessages: Record<ContactProblem, string> = {
+  required: 'Оставьте контакт',
+  email: 'Кажется, в адресе почты опечатка',
+  phone: 'Проверьте номер — в нём мало цифр',
+  short: 'Слишком коротко для имени пользователя',
+};
 
-  projectType: z.enum(projectTypes),
-  budget: z.string().trim().min(1, 'Выберите бюджет').max(120),
-  timeline: z.string().trim().min(1, 'Выберите срок').max(120),
+export const briefSchema = z
+  .object({
+    name: z.string().trim().min(2, 'Как вас зовут?').max(120, 'Слишком длинное имя'),
+    contactMethod: z.enum(contactMethods, { message: 'Выберите, где вам ответить' }),
+    contact: z.string().trim().min(1, contactMessages.required).max(200, 'Слишком длинно'),
+    projectType: z.enum(projectTypes, { message: 'Выберите, что нужно' }),
+    details: z
+      .string()
+      .trim()
+      .min(5, 'Напишите хотя бы пару слов о том, что нужно')
+      .max(4000, 'Слишком длинно — до 4000 знаков'),
+    questions: z.string().trim().max(2000, 'Слишком длинно').optional().or(z.literal('')),
+    budget: z.string().trim().max(200, 'Слишком длинно').optional().or(z.literal('')),
 
-  goal: required('Главная цель', 2, 2000),
-  description: required('Кратко о проекте', 10, 4000),
-  audience: optional(1000),
-  features: optional(2000),
-  links: optional(1000),
-  extra: optional(2000),
-
-  consent: z.literal(true, { message: 'Без согласия я не смогу с вами связаться' }),
-
-  website: z.literal('').optional(),
-  startedAt: z.number().int().positive().optional(),
-});
+    /** A honeypot: people never see it and leave it empty. */
+    website: z.literal('').optional(),
+    /** When the form was opened; faster than a person could type is refused. */
+    startedAt: z.number().int().positive().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const problem = checkContact(data.contactMethod, data.contact);
+    if (problem) ctx.addIssue({ code: 'custom', path: ['contact'], message: contactMessages[problem] });
+  });
 
 export type BriefInput = z.infer<typeof briefSchema>;
 
-/*
- * The brief as a reader meets it: one question to a screen, in the owner's own
- * wording and his order.
- *
- * This list used to live inside components/brief/BriefForm.tsx. It moved here
- * when the same brief got a second surface — the Telegram Mini App — because
- * two copies of thirteen questions are two copies that drift, and the wording
- * is the owner's. The page form and the Mini App form now render the same list
- * and differ only in their chrome.
- */
-export type BriefQuestionKind = 'text' | 'email' | 'area' | 'chips' | 'list';
-
-export type BriefQuestion = {
-  key: string;
-  question: string;
-  hint?: string;
-  kind: BriefQuestionKind;
-  placeholder?: string;
-  rows?: number;
-  optional?: boolean;
-  /** Minimum length for a written answer, when a word or two is not enough. */
-  min?: number;
-  options?: readonly { value: string; note?: string }[];
+/** Which screen each field is asked on, so a server complaint lands on the right one. */
+export const briefStepOf: Record<string, number> = {
+  name: 0,
+  contactMethod: 1,
+  contact: 1,
+  projectType: 2,
+  details: 3,
+  questions: 3,
+  budget: 3,
 };
 
-export const briefQuestions: BriefQuestion[] = [
-  {
-    key: 'name',
-    question: 'Как вас зовут',
-    hint: 'Просто имя, этого достаточно.',
-    kind: 'text',
-    placeholder: 'Алишер',
-  },
-  {
-    key: 'company',
-    question: 'Компания или проект',
-    hint: 'Если названия ещё нет — пропустите.',
-    kind: 'text',
-    optional: true,
-  },
-  {
-    key: 'email',
-    question: 'Почта',
-    hint: 'Сюда пришлю ответ и предложение.',
-    kind: 'email',
-    placeholder: 'name@mail.com',
-  },
-  {
-    key: 'contact',
-    question: 'Telegram или WhatsApp',
-    hint: 'Так отвечаю быстрее всего.',
-    kind: 'text',
-    placeholder: '@username или +992 900 00 00 00',
-  },
-  {
-    key: 'projectType',
-    question: 'Что нужно сделать',
-    hint: 'Выберите, что ближе. Не уверены — берите похожее, на созвоне разберёмся.',
-    kind: 'chips',
-    options: projectTypes.map((value) => ({ value })),
-  },
-  {
-    key: 'goal',
-    question: 'Что должно измениться после запуска',
-    hint: 'Например: «хочу принимать заказы через сайт, а не в переписке» или «клиенты меня не находят в интернете».',
-    kind: 'area',
-    rows: 3,
-  },
-  {
-    key: 'description',
-    question: 'Расскажите о проекте',
-    hint: 'Своими словами: чем занимаетесь, кто ваши клиенты, что уже есть. Двух-трёх предложений хватит.',
-    kind: 'area',
-    rows: 4,
-    min: 10,
-  },
-  {
-    key: 'audience',
-    question: 'Кто будет этим пользоваться',
-    hint: 'Кто ваши клиенты: чем занимаются, из какого города, сколько им лет.',
-    kind: 'area',
-    rows: 3,
-    optional: true,
-  },
-  {
-    key: 'features',
-    question: 'Что должно уметь',
-    hint: 'Например: корзина и оплата картой, личный кабинет, запись на приём, отправка заявки в Telegram.',
-    kind: 'area',
-    rows: 4,
-    optional: true,
-  },
-  {
-    key: 'links',
-    question: 'Какие сайты вам нравятся',
-    hint: 'Вставьте ссылки на два-три сайта, которые вам по душе и на которые вы хотите, чтобы был похож ваш. Так я сразу пойму, какой вид вам нужен.',
-    kind: 'area',
-    rows: 3,
-    optional: true,
-    placeholder: 'https://example.com',
-  },
-  {
-    key: 'budget',
-    question: 'Примерный бюджет',
-    hint: 'Это ориентир, а не обязательство. Не знаете — выберите последний пункт.',
-    kind: 'list',
-    options: budgets,
-  },
-  {
-    key: 'timeline',
-    question: 'Когда хотелось бы запуститься',
-    hint: 'Тоже ориентир.',
-    kind: 'list',
-    options: timelines,
-  },
-  {
-    key: 'extra',
-    question: 'Что-нибудь ещё',
-    hint: 'Всё, что не влезло в поля выше.',
-    kind: 'area',
-    rows: 3,
-    optional: true,
-  },
-];
+export const BRIEF_SCREENS = 4;
 
-/** The steps of the form, so the fields and the progress bar always agree. */
-export const briefSteps = [
-  { id: 'about', title: 'О вас', fields: ['name', 'company', 'email', 'contact'] },
-  { id: 'project', title: 'Проект', fields: ['projectType', 'goal', 'description'] },
-  { id: 'shape', title: 'Детали', fields: ['audience', 'features', 'links'] },
-  { id: 'frame', title: 'Рамки', fields: ['budget', 'timeline', 'extra', 'consent'] },
-] as const;
+/*
+ * Every word the form says, in one shape. The site's English lives in
+ * lib/i18n/en.ts; the Russian is here, because the Mini App and the bot ask
+ * in Russian too and must say exactly what the site says.
+ */
+export type BriefCopy = {
+  name: { question: string; hint: string; placeholder: string };
+  contact: { question: string; hint: string };
+  methods: Record<ContactMethod, { label: string; placeholder: string }>;
+  projectType: { question: string; hint: string };
+  options: Record<string, { label: string }>;
+  details: { question: string; hint: string };
+  fields: {
+    details: { label: string; placeholder: string };
+    questions: { label: string; placeholder: string };
+    budget: { label: string; placeholder: string };
+  };
+  optional: string;
+  note: string;
+  errors: Record<ContactProblem | 'name' | 'method' | 'type' | 'details' | 'check' | 'failed' | 'offline', string>;
+  next: string;
+  back: string;
+  send: string;
+  sending: string;
+  honeypot: string;
+  done: {
+    title: string;
+    message: string;
+    prices: string;
+    work: string;
+    refLabel: string;
+    codeLabel: string;
+    track: string;
+    trackChat: string;
+  };
+};
+
+export const briefCopyRu: BriefCopy = {
+  name: { question: 'Как вас зовут?', hint: 'Просто имя, этого достаточно.', placeholder: 'Алишер' },
+  contact: {
+    question: 'Где вам ответить?',
+    hint: 'Выберите, где удобнее, и оставьте контакт.',
+  },
+  methods: {
+    Telegram: { label: 'Telegram', placeholder: '@username' },
+    WhatsApp: { label: 'WhatsApp', placeholder: '+992 900 00 00 00' },
+    Instagram: { label: 'Instagram', placeholder: '@username' },
+    Email: { label: 'Почта', placeholder: 'name@gmail.com' },
+    Телефон: { label: 'Телефон', placeholder: '+992 900 00 00 00' },
+  },
+  projectType: {
+    question: 'Что нужно сделать?',
+    hint: 'Выберите, что ближе. Не уверены — берите похожее, разберёмся.',
+  },
+  options: Object.fromEntries(projectTypes.map((value) => [value, { label: value }])),
+  details: {
+    question: 'Расскажите, что нужно',
+    hint: 'Своими словами. Можно коротко.',
+  },
+  fields: {
+    details: {
+      label: 'Что нужно сделать',
+      placeholder: 'Например: сайт для кофейни, чтобы принимать заказы онлайн',
+    },
+    questions: { label: 'Ваши вопросы', placeholder: 'Если хотите что-то спросить' },
+    budget: { label: 'Бюджет', placeholder: 'Например: 3 000 сомони' },
+  },
+  optional: 'необязательно',
+  note: 'Отправляя заявку, вы соглашаетесь, что я свяжусь с вами по этому проекту.',
+  errors: {
+    name: 'Как вас зовут?',
+    method: 'Выберите, где вам ответить',
+    required: contactMessages.required,
+    email: contactMessages.email,
+    phone: contactMessages.phone,
+    short: contactMessages.short,
+    type: 'Выберите, что нужно',
+    details: 'Напишите хотя бы пару слов о том, что нужно',
+    check: 'Проверьте этот ответ',
+    failed: 'Не получилось отправить. Попробуйте ещё раз.',
+    offline: 'Интернет пропал. Проверьте связь и нажмите ещё раз.',
+  },
+  next: 'Дальше',
+  back: 'Назад',
+  send: 'Отправить заявку',
+  sending: 'Отправляю…',
+  honeypot: 'Не заполняйте это поле',
+  done: {
+    title: 'Спасибо! Заявка у меня.',
+    message: 'Я уже взялся за ваш проект: прочитаю всё внимательно и отвечу в течение дня.',
+    prices: 'Посмотреть цены',
+    work: 'Посмотреть кейсы',
+    refLabel: 'Номер заявки',
+    codeLabel: 'Код для бота',
+    track: 'Статус можно узнать у бота в Telegram',
+    trackChat: 'Номер и код я отправил вам в чат.',
+  },
+};

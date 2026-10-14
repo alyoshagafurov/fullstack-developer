@@ -143,7 +143,7 @@ export default async function ApplicationsPage({
                   <span className="min-w-0">
                     <span className="block truncate text-sm">{lead.name}</span>
                     <span className="block truncate text-xs text-ink-3">
-                      {lead.company || lead.email}
+                      {lead.company || lead.email || lead.contact}
                     </span>
                   </span>
                   <span className="truncate text-sm text-ink-2">{lead.projectType}</span>

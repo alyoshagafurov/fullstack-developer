@@ -97,7 +97,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    if (!(await withinEmailQuota(data.email))) {
+    // Only an email address can be counted against; other contacts rely on the IP limit above.
+    if (data.contactMethod === 'Email' && !(await withinEmailQuota(data.contact.trim().toLowerCase()))) {
       return NextResponse.json(
         { error: 'С этой почты уже есть заявки. Напишите мне в Telegram, отвечу быстрее.' },
         { status: 429 },
