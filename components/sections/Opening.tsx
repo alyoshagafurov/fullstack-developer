@@ -59,8 +59,10 @@ export async function Opening() {
           show him. Now the section is exactly one screen and the type sits on
           the wall, which is the part of the photograph above his head. */}
       <div className="absolute inset-0 z-10 px-5 pt-20 md:pt-28 md:px-10">
-        {/* Desk screen: one column on the left — label, statement, then the paragraph under it. */}
-        <div className="mx-auto w-full max-w-[1440px]">
+        {/* Desk screen: label and statement on the left, the paragraph under them.
+            On a wide screen the paragraph moves to the empty wall on the right,
+            level with the statement's last line — on the left it sat on the leaves. */}
+        <div className="mx-auto w-full max-w-[1440px] xl:flex xl:items-end xl:justify-between xl:gap-16">
           <div className="min-w-0 text-center md:max-w-[46rem] md:text-left">
             <p
               data-hero="eyebrow"
@@ -89,7 +91,7 @@ export async function Opening() {
 
           <p
             data-hero="lede"
-            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-5 md:max-w-xl md:text-left md:text-base"
+            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-5 md:max-w-xl md:text-left md:text-base xl:mt-0 xl:max-w-sm xl:pb-2 xl:text-[1.0625rem]"
           >
             {t.hero.lede}
           </p>
