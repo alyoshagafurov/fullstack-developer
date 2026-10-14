@@ -130,20 +130,20 @@ export async function Opening() {
       </div>
 
       {/*
-       * The photograph, whole, at its own framing. Flush left on a desk screen,
-       * where it is narrower than the window; on a phone it is wider than the
-       * screen and shifted so that he, not the frame's centre, is centred, and
-       * pushed to the bottom of the column.
+       * The photograph, whole, at its own framing, shifted so that he — not the
+       * frame's centre — stands in the middle of the screen, under the logo.
+       * Both side edges are feathered into the wall, so where the window is
+       * wider than the picture there is no seam.
        */}
       <div
         data-hero="photo"
-        className="absolute bottom-0 left-1/2 aspect-[1672/941] h-[var(--ph)] -translate-x-[62%] md:left-0 md:translate-x-0"
+        className="absolute bottom-0 left-1/2 aspect-[1672/941] h-[var(--ph)] -translate-x-[62%]"
         style={{
           maskImage:
-            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
+            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)',
           maskComposite: 'intersect',
           WebkitMaskImage:
-            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to left, transparent, #000 8%)',
+            'linear-gradient(to bottom, transparent, #000 12%), linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)',
           WebkitMaskComposite: 'source-in',
         }}
       >
