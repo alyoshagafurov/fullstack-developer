@@ -58,12 +58,13 @@ export async function Opening() {
           grew, and he ended up below the fold on the one screen that has to
           show him. Now the section is exactly one screen and the type sits on
           the wall, which is the part of the photograph above his head. */}
-      <div className="absolute inset-0 z-10 px-5 pt-20 md:pt-32 md:px-10">
-        <div className="mx-auto w-full max-w-[1440px] md:flex md:flex-row-reverse md:items-start md:justify-between md:gap-16">
-          <div className="min-w-0 text-center md:w-1/2 md:text-right">
+      <div className="absolute inset-0 z-10 px-5 pt-20 md:pt-28 md:px-10">
+        {/* Desk screen: one column on the left — label, statement, then the paragraph under it. */}
+        <div className="mx-auto w-full max-w-[1440px]">
+          <div className="min-w-0 text-center md:max-w-[46rem] md:text-left">
             <p
               data-hero="eyebrow"
-              className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-start"
+              className="flex items-center justify-center gap-4 text-[0.6875rem] tracking-[0.22em] text-ink uppercase md:flex-row-reverse md:justify-end"
             >
               {/* The rule is a desk-screen device: centred type has no edge for it to hang off. */}
               <span aria-hidden className="hidden h-px w-10 bg-ink/50 md:block" />
@@ -73,7 +74,7 @@ export async function Opening() {
             {/* Three caps in the size: the screen's width, the screen's
                 height, and a ceiling. A short phone is the one that used to
                 push him off the bottom, so height gets a vote. */}
-            <h1 className="mt-3 text-[min(10vw,4.8svh,2.75rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4 md:text-[clamp(2.25rem,4.4vw,5.25rem)]">
+            <h1 className="mt-3 text-[min(10vw,4.8svh,2.75rem)] leading-[0.95] tracking-[-0.045em] text-ink uppercase md:mt-4 md:text-[clamp(2.25rem,3.9vw,4.75rem)]">
               {lines.map((line, index) => (
                 <span
                   key={line}
@@ -88,7 +89,7 @@ export async function Opening() {
 
           <p
             data-hero="lede"
-            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-1 md:text-left"
+            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-5 md:max-w-xl md:text-left md:text-base"
           >
             {t.hero.lede}
           </p>
