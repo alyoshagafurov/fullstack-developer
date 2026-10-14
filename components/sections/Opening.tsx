@@ -62,7 +62,7 @@ export async function Opening() {
         {/* Desk screen: label and statement on the left, the paragraph under them.
             On a wide screen the paragraph moves to the empty wall on the right,
             level with the statement's last line — on the left it sat on the leaves. */}
-        <div className="mx-auto w-full max-w-[1440px] xl:flex xl:items-end xl:justify-between xl:gap-16">
+        <div className="mx-auto w-full max-w-[1440px] md:flex md:items-start md:justify-between md:gap-12">
           <div className="min-w-0 text-center md:max-w-[46rem] md:text-left">
             <p
               data-hero="eyebrow"
@@ -91,7 +91,7 @@ export async function Opening() {
 
           <p
             data-hero="lede"
-            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-5 md:max-w-xl md:text-left md:text-base xl:mt-0 xl:max-w-sm xl:pb-2 xl:text-[1.0625rem]"
+            className="mx-auto mt-4 max-w-sm text-center text-[0.9375rem] leading-relaxed text-ink md:mx-0 md:mt-10 md:max-w-[19rem] md:shrink-0 md:text-left md:text-base lg:max-w-sm xl:text-[1.0625rem]"
           >
             {t.hero.lede}
           </p>
@@ -107,11 +107,21 @@ export async function Opening() {
         */}
         <div
           data-hero-cta
-          className="mt-6 flex items-center justify-center md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2"
+          className="mt-6 flex flex-wrap items-center justify-center gap-3 md:absolute md:inset-x-0 md:bottom-[calc(var(--ph)*0.0705+20px)] md:mt-0 md:translate-y-1/2"
         >
+          {/* The request button's twin: while it is on screen the floating one
+              stays down; scroll it away and the floating one rises. */}
+          <Link
+            href={localePath(lang, '/start')}
+            data-cta-twin=""
+            className="inline-flex min-h-12 min-w-44 items-center justify-center gap-3 rounded-full border border-ink bg-ink px-7 text-[0.875rem] font-medium text-paper transition-colors hover:bg-ink-2 md:min-h-14 md:min-w-52 md:border-paper md:bg-paper md:text-ink md:hover:bg-paper/85"
+          >
+            {t.common.getQuote}
+            <span aria-hidden>→</span>
+          </Link>
           <Link
             href={localePath(lang, '/work')}
-            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-ink bg-paper/85 px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:min-h-14 md:border-paper/70 md:bg-transparent md:text-paper md:hover:bg-paper md:hover:text-ink"
+            className="inline-flex min-h-12 min-w-44 items-center justify-center gap-3 rounded-full border border-ink bg-paper/85 px-7 text-[0.875rem] font-medium text-ink transition-colors hover:bg-ink hover:text-paper md:min-h-14 md:min-w-52 md:border-paper/70 md:bg-transparent md:text-paper md:hover:bg-paper md:hover:text-ink"
           >
             {t.common.seeWork}
             <span aria-hidden>→</span>
