@@ -27,6 +27,27 @@ export function getApi(): Api {
 }
 
 /*
+ * The bot's own @handle, for a t.me link built outside Telegram — the
+ * Instagram auto-reply is the one caller so far. Never hardcoded, the same
+ * principle as everywhere else this username is read: ask Telegram, once per
+ * instance, and cache the answer rather than keep asking.
+ */
+let cachedUsername: string | null | undefined;
+
+export async function getBotUsername(): Promise<string | null> {
+  if (cachedUsername !== undefined) return cachedUsername;
+  if (!botToken()) return null;
+  try {
+    const me = await getApi().getMe();
+    cachedUsername = me.username ?? null;
+  } catch (error) {
+    console.warn(`[bot] getBotUsername failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
+    return null; // not cached — the next call tries again
+  }
+  return cachedUsername;
+}
+
+/*
  * Teach Telegram the commands the bot answers.
  *
  * Two lists: everyone in a private chat gets the visitor's three, and each

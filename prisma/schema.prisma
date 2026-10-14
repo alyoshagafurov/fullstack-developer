@@ -247,6 +247,27 @@ model BotChat {
   @@map("aly_bot_chat")
 }
 
+/// Who has already been greeted on Instagram — a name list, not a
+/// conversation log. One row per person who has ever DM'd the account; no
+/// message content, nothing else is kept. `igsid` is the Instagram-scoped id
+/// Meta assigns that person for this professional account.
+///
+/// `/api/instagram/webhook` inserts a row here before it sends the greeting,
+/// never after; the primary key is the lock, so a redelivered or
+/// near-simultaneous webhook call for the same person loses the insert and
+/// sends nothing, rather than greeting them twice. Same pattern as
+/// `TaskReminderSent`'s claim-then-send.
+///
+/// Created by the application (lib/instagram/contacts.ts, `CREATE TABLE IF
+/// NOT EXISTS`), never by `prisma db push` — see the note at the top of this
+/// file.
+model InstagramContact {
+  igsid     String   @id
+  firstSeen DateTime @default(now())
+
+  @@map("aly_instagram_contact")
+}
+
 /// Telegram redelivers an update it did not get a 200 for. Recording the id
 /// before handling makes a redelivery a no-op instead of a second lead or a
 /// double status change. Rows older than a day are of no use and are pruned.
