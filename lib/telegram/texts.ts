@@ -39,8 +39,7 @@ export function visitorGreeting(prices: { landing: string | null; sites: string 
     '',
     'Делает их Алишер Гафуров, full-stack разработчик из Душанбе: сайты, интернет-магазины, веб-приложения и Telegram-боты — вот такие, как я. От идеи и дизайна до сервера и запуска, без посредников.',
     '',
-    `50+ проектов на фрилансе.${quoted.length ? ` ${quoted.join(', ')}.` : ''}`,
-    'Отвечает в течение дня, Пн–Сб.',
+    `60+ проектов на фрилансе.${quoted.length ? ` ${quoted.join(', ')}.` : ''}`,
     '',
     'Выбирай, куда нажать — или просто спроси, сколько стоит то, что нужно.',
   ].join('\n');
@@ -72,10 +71,10 @@ export const clientButtons = {
   idea: '💡 Рассказать идею',
   services: '🚀 Посмотреть, что я делаю',
   about: 'Об Алишере',
-  site: 'Сайт',
+  site: 'Веб-сайт',
   /*
    * The greeting's buttons. No emoji: they are navigation, and a row of
-   * pictograms reads as a menu rather than as the five things a visitor
+   * pictograms reads as a menu rather than as the three things a visitor
    * actually came for.
    */
   brief: 'Оставить заявку',
