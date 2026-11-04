@@ -109,20 +109,9 @@ const when = (date: Date) =>
   });
 
 /*
- * The visitor's menu: four buttons, nothing else.
- *
- * The owner's decision — the bot routes people rather than pretending to be the
- * funnel. Not one of these costs the webhook a round trip, so all four keep
- * working even while the bot itself is down.
- *
- * The first two are plain links out, to the portfolio and to his own Telegram.
- * The last two are `web_app`: Telegram opens them as a Mini App, in a window
- * over the chat rather than in a browser, and hands the page a signed
- * `initData` naming the person who pressed. That signature is why the Mini App
- * is worth more here than the link it replaces — a brief that arrives through
- * it is already attached to a Telegram chat, so status changes reach the client
- * without anyone typing a number, and a review arrives from someone Telegram
- * has vouched for rather than from an anonymous form.
+ * The visitor's menu: a brief inside Telegram, the owner's chat and the website.
+ * The brief opens as a Mini App with signed `initData`, so its submission can
+ * be attached to the client's Telegram chat for status notifications.
  *
  * `web_app` buttons work only in private chats, which is the only place this
  * bot talks to anyone.
@@ -134,11 +123,9 @@ function clientKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
     .webApp(clientButtons.brief, `${site.url}/mini/start`)
     .row()
-    .url(clientButtons.work, `${site.url}/ru/work`)
     .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
     .row()
-    .text(clientButtons.status, 'c:status')
-    .webApp(clientButtons.review, `${site.url}/mini/review`);
+    .url(clientButtons.site, site.url);
 }
 
 /* ------------------------------------------------------------ owner -- */
