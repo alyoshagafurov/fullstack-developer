@@ -1,6 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import { webhookCallback } from 'grammy';
 import { getBot } from '@/lib/telegram/bot';
+import { recordIncoming } from '@/lib/mobile/telegram';
+import { isAdmin } from '@/lib/telegram/api';
 
 /*
  * Telegram's door into the application.
@@ -36,6 +38,18 @@ export async function POST(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
+  // Store before the legacy dedup claim. Returning 503 here lets Telegram retry
+  // an unrecorded update without repeating bot actions. The unique key dedups it.
+  if (process.env.ALYOS_MOBILE_ENABLED === 'true') {
+    try {
+      const update = await request.clone().json();
+      const message = update.message;
+      if (Number.isSafeInteger(update.update_id) && message?.chat?.type === 'private'
+          && !isAdmin(message.from?.id) && typeof message.text === 'string' && !message.text.startsWith('/')) {
+        await recordIncoming(update.update_id, String(message.chat.id), message.text, message.message_id);
+      }
+    } catch { return new Response('History temporarily unavailable', { status: 503 }); }
+  }
   try {
     const handle = webhookCallback(getBot(), 'std/http', {
       secretToken: secret,
