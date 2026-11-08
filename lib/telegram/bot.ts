@@ -1,4 +1,5 @@
 import 'server-only';
+import { recordOwnerReply } from '@/lib/mobile/telegram';
 import { Bot, InlineKeyboard, type Context } from 'grammy';
 import { prisma } from '@/lib/prisma';
 import { briefSchema, checkContact, contactMessages } from '@/lib/content/brief';
@@ -225,6 +226,7 @@ async function ownerText(ctx: Context, text: string): Promise<boolean> {
   if (!target) return false;
 
   const ok = await sendWithRetry(target, escapeHtml(text));
+  await recordOwnerReply(ctx.update.update_id, target, text, ok).catch(() => console.error('[mobile] owner reply history unavailable'));
   await ctx.reply(ok ? glue.forwarded : glue.failed);
   return true;
 }
