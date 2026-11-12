@@ -33,6 +33,40 @@ const completion = z.object({
 });
 const model = 'openai/gpt-4.1-mini';
 
+const emptyFields = Object.fromEntries(stringFields.map(field => [field, null]));
+function basicCommand(text: string) {
+  const phrase = text.trim().replace(/^(?:aly|али|алиш)[,\s]+/iu, '').replace(/[.!?]+$/u, '').trim();
+  const search = /^(?:найди|покажи)\s+(заметку|клиента|проект)[:\s]+(.+)$/iu.exec(phrase);
+  const task = /^(?:создай|добавь)\s+задачу[:\s]+(.+?)\s+(?:на\s+)?(сегодня|завтра)(?:\s+в\s+([01]?\d|2[0-3]):([0-5]\d))?$/iu.exec(phrase);
+  const note = /^(?:создай|добавь|сохрани|запиши)\s+(заметку|идею)[:\s]+(.+)$/iu.exec(phrase);
+  const single = (value: string) => !/[;!?\n]|\.\s|\s(?:и|потом|затем)\s+(?:найди|покажи|создай|добавь|запиши|сохрани|удали|перенеси|отметь)(?=\s|$)/iu.test(value);
+  const fields = { ...emptyFields, reminder: false };
+
+  if (search && single(search[2])) {
+    const query = search[2].trim().replace(/^[«"]|[»"]$/gu, '').trim();
+    if (!query) return null;
+    const kind = search[1].toLowerCase();
+    const intent = kind === 'заметку' ? 'find_note' : kind === 'клиента' ? 'find_customer' : 'find_project';
+    return command.parse({ ...fields, intent, query });
+  }
+  if (task && single(task[1])) {
+    const title = task[1].trim();
+    if (!title || /(?:^|\s)(?:вчера|сегодня|завтра|послезавтра)(?=\s|$)/iu.test(title)) return null;
+    return command.parse({
+      ...fields, intent: 'create_task', title,
+      date: task[2].toLowerCase() === 'завтра' ? 'tomorrow' : 'today',
+      time: task[3] ? `${task[3].padStart(2, '0')}:${task[4]}` : null,
+    });
+  }
+  if (note && single(note[2])) {
+    const query = note[2].trim();
+    if (!query) return null;
+    const idea = note[1].toLowerCase() === 'идею';
+    return command.parse({ ...fields, intent: idea ? 'quick_capture' : 'create_note', title: query.slice(0, 120), query, category: idea ? 'Идеи' : null });
+  }
+  return null;
+}
+
 export async function POST(req: Request) {
   return route(async () => {
     const account = await owner(req);
@@ -45,11 +79,18 @@ export async function POST(req: Request) {
     } catch {
       return json({ error: 'Не удалось определить часовой пояс' }, 400);
     }
+    const basic = basicCommand(parsed.data.text);
+    if (basic && !parsed.data.rules.length) {
+      console.info('[mobile voice] basic command parsed');
+      return json(basic);
+    }
+
     let key = process.env.AI_GATEWAY_API_KEY;
     if (!key) {
       try {
         key = getVercelOidcTokenSync();
       } catch {
+        if (basic) return json(basic);
         console.warn('[mobile voice] gateway credentials unavailable');
         return json({ error: 'Сервер не получил доступ к облачному ИИ' }, 503);
       }
@@ -113,6 +154,16 @@ export async function POST(req: Request) {
       });
       if (!response.ok) {
         console.warn('[mobile voice] gateway status', response.status);
+        if (basic) return json(basic);
+        if (response.status === 402 || response.status === 403) {
+          const detail: unknown = await response.json().catch(() => null);
+          const parsedError = z.object({ error: z.object({ message: z.string() }) }).safeParse(detail);
+          const creditsUnavailable = response.status === 402 || (parsedError.success && /credit|payment method|billing/i.test(parsedError.data.error.message));
+          if (creditsUnavailable) {
+            return json({ error: 'Vercel не разрешает вызовы облачного ИИ из-за кредитов AI Gateway. Поиск заметок, создание задач на сегодня и завтра и запись идей доступны.' }, 503);
+          }
+          return json({ error: 'Vercel отклонил доступ к облачной модели. Проверьте доступ в AI Gateway.' }, 503);
+        }
         return json({ error: 'Облачный ИИ временно недоступен. Попробуйте позже' }, 503);
       }
       const result = completion.parse(await response.json());
