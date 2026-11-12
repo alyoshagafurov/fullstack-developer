@@ -1,3 +1,4 @@
+import { getVercelOidcTokenSync } from '@vercel/oidc';
 import { z } from 'zod';
 import { body, digest, json, owner, route } from '@/lib/mobile/server';
 import { prisma } from '@/lib/prisma';
@@ -44,8 +45,15 @@ export async function POST(req: Request) {
     } catch {
       return json({ error: 'Не удалось определить часовой пояс' }, 400);
     }
-    const key = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
-    if (!key) return json({ error: 'Облачный ИИ пока недоступен' }, 503);
+    let key = process.env.AI_GATEWAY_API_KEY;
+    if (!key) {
+      try {
+        key = getVercelOidcTokenSync();
+      } catch {
+        console.warn('[mobile voice] gateway credentials unavailable');
+        return json({ error: 'Сервер не получил доступ к облачному ИИ' }, 503);
+      }
+    }
 
     // Share the existing counter table, with a separate namespace and per-owner quota.
     const counter = digest('alyos-voice:' + account.id);
@@ -109,8 +117,10 @@ export async function POST(req: Request) {
       }
       const result = completion.parse(await response.json());
       const parsedCommand = command.parse(JSON.parse(result.choices[0].message.content));
+      console.info('[mobile voice] gateway command parsed');
       return json(parsedCommand);
-    } catch {
+    } catch (error) {
+      console.warn('[mobile voice] gateway response failed', error instanceof Error ? error.name : 'UnknownError');
       return json({ error: 'Не удалось разобрать команду. Попробуйте ещё раз' }, 503);
     }
   });
