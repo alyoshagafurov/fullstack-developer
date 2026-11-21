@@ -357,63 +357,79 @@ html:has([data-mini]) {
   animation: review-step-in 360ms var(--ease-studio) both;
 }
 
+
 /* ======================================================================
- * The public site — warm paper and black, with one orange.
+ * The public site — white, black, and one cobalt.
  *
- * Built from three concepts the owner picked: B (wide heavy type on warm
- * off-white, pictures set inside headlines, cards that stack), D (black and
- * white, a lens of colour that follows the pointer) and E (a bento grid of
- * small living tiles). Light and dark are not themes here: they alternate by
- * section. A section marked data-tone="dark" is black; everything else is
- * warm paper.
+ * Luxury minimalism: a white page, huge headlines in black, a few sections
+ * flooded with cobalt where the headline turns white. Headlines are only ever
+ * black or white; cobalt is for buttons, dots and those flooded sections.
+ *
+ *   data-tone="dark"   — near-black section, white type
+ *   data-tone="brand"  — cobalt section, white type
+ *   data-tone="light"  — white again, inside one of the above
  *
  * The class names are older than this look (wall, bone, brass, hall, …) and
- * now mean background, text, accent and the page column.
+ * mean background, text, accent and the page column.
  * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *));
+@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *));
 
 @theme {
-  --color-wall: #efeee9;
-  --color-wall-2: #ffffff;
-  --color-wall-3: #e3e1da;
-  --color-bone: #0f0f0f;
-  --color-bone-2: #55534e;
-  --color-bone-3: #6f6c66;
-  /* The one accent: a warm orange for markers, dots and the badge. */
-  --color-brass: #ff5a1f;
+  --color-wall: #ffffff;
+  --color-wall-2: #f4f4f2;
+  --color-wall-3: #e9e9e6;
+  --color-bone: #0b0b0c;
+  --color-bone-2: #5b5b60;
+  --color-bone-3: #77777c;
+  --color-brass: #2433ff;
+  --color-brass-2: #1a26d9;
   --color-whatsapp: #25d366;
-  --color-seam: rgb(15 15 15 / 0.1);
-  --color-seam-2: rgb(15 15 15 / 0.2);
+  --color-seam: rgb(11 11 12 / 0.09);
+  --color-seam-2: rgb(11 11 12 / 0.18);
 
-  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
-  --font-text: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  /* Bogle has no Cyrillic: Russian headlines fall through to Nunito Sans. */
+  --font-display: var(--font-bogle), var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-pacifico), cursive;
 
   --ease-gallery: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-tone='dark'] {
-  --color-wall: #0a0a0a;
-  --color-wall-2: #161616;
-  --color-wall-3: #232323;
-  --color-bone: #f2f1ec;
-  --color-bone-2: #a9a6a0;
-  --color-bone-3: #8e8b85;
-  --color-seam: rgb(242 241 236 / 0.12);
-  --color-seam-2: rgb(242 241 236 / 0.24);
+  --color-wall: #0b0b0c;
+  --color-wall-2: #161618;
+  --color-wall-3: #222225;
+  --color-bone: #ffffff;
+  --color-bone-2: rgb(255 255 255 / 0.68);
+  --color-bone-3: rgb(255 255 255 / 0.55);
+  --color-seam: rgb(255 255 255 / 0.12);
+  --color-seam-2: rgb(255 255 255 / 0.26);
 }
 
-/* Warm paper again, inside a black section. */
+[data-tone='brand'] {
+  --color-wall: #2433ff;
+  --color-wall-2: #3542ff;
+  --color-wall-3: #4652ff;
+  --color-bone: #ffffff;
+  --color-bone-2: rgb(255 255 255 / 0.78);
+  --color-bone-3: rgb(255 255 255 / 0.66);
+  --color-brass: #ffffff;
+  --color-seam: rgb(255 255 255 / 0.18);
+  --color-seam-2: rgb(255 255 255 / 0.34);
+}
+
 [data-tone='light'] {
-  --color-wall: #efeee9;
-  --color-wall-2: #ffffff;
-  --color-wall-3: #e3e1da;
-  --color-bone: #0f0f0f;
-  --color-bone-2: #55534e;
-  --color-bone-3: #6f6c66;
-  --color-seam: rgb(15 15 15 / 0.1);
-  --color-seam-2: rgb(15 15 15 / 0.2);
+  --color-wall: #ffffff;
+  --color-wall-2: #f4f4f2;
+  --color-wall-3: #e9e9e6;
+  --color-bone: #0b0b0c;
+  --color-bone-2: #5b5b60;
+  --color-bone-3: #77777c;
+  --color-brass: #2433ff;
+  --color-seam: rgb(11 11 12 / 0.09);
+  --color-seam-2: rgb(11 11 12 / 0.18);
 }
 
 @layer base {
@@ -426,14 +442,16 @@ html:has([data-mini]) {
     color: var(--color-bone);
     font-family: var(--font-text);
     font-weight: 400;
+    -webkit-font-smoothing: antialiased;
   }
 
   .museum [data-tone] {
     color: var(--color-bone);
+    background-color: var(--color-wall);
   }
 
   .museum ::selection {
-    background: var(--color-brass);
+    background: #2433ff;
     color: #fff;
   }
 
@@ -450,59 +468,82 @@ html:has([data-mini]) {
 }
 
 @layer components {
-  /* The headline: wide, heavy, in capitals — the voice of concept B. */
-  .hall-title {
+  /*
+   * The headline. Bogle ships one heavy weight; font-synthesis stops the
+   * browser from thickening it further, while the Cyrillic fallback is asked
+   * for its own heaviest cut.
+   */
+  .hall-title,
+  .room-title,
+  .mega {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(2.25rem, 6.6vw, 6.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
+    font-weight: 900;
+    font-synthesis: none;
+    letter-spacing: -0.035em;
     text-wrap: balance;
+  }
+
+  .hall-title {
+    font-size: clamp(2.5rem, 7.2vw, 7.25rem);
+    line-height: 0.95;
   }
 
   .room-title {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1.375rem, 3vw, 2.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    text-wrap: balance;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
   }
 
-  /* The one quiet line under a headline. */
+  /* The one giant word that fills a screen's width. */
+  .mega {
+    font-size: clamp(4.5rem, 21vw, 22rem);
+    line-height: 0.8;
+    letter-spacing: -0.055em;
+  }
+
+  /* The handwritten accent. */
+  .hand {
+    font-family: var(--font-hand);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* The one quiet line under a headline — thin. */
   .lead-line {
     font-family: var(--font-text);
-    font-weight: 400;
-    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    font-weight: 300;
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
     line-height: 1.5;
     color: var(--color-bone-2);
     text-wrap: pretty;
   }
 
+  /* The small text tucked in a corner. */
   .wall-note {
     font-family: var(--font-text);
-    font-weight: 400;
+    font-weight: 300;
     font-size: 0.9375rem;
     line-height: 1.6;
     color: var(--color-bone-2);
-    max-width: 40ch;
+    max-width: 34ch;
     text-wrap: pretty;
   }
 
   .wall-label {
     font-family: var(--font-text);
-    font-weight: 600;
-    font-size: 0.8125rem;
+    font-weight: 500;
+    font-size: 0.75rem;
     line-height: 1.3;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--color-bone-2);
   }
 
   .hall {
     position: relative;
     width: 100%;
-    max-width: 1320px;
+    max-width: 1360px;
     margin-inline: auto;
     padding-inline: 1.25rem;
   }
@@ -516,7 +557,7 @@ html:has([data-mini]) {
   .hall-wide {
     position: relative;
     width: 100%;
-    max-width: 1440px;
+    max-width: 1600px;
     margin-inline: auto;
     padding-inline: 0.75rem;
   }
@@ -527,41 +568,40 @@ html:has([data-mini]) {
     }
   }
 
-  /* A screenshot: rounded, a hairline. */
+  /* A screenshot or photo: softly rounded, no frame. */
   .exhibit {
     position: relative;
     overflow: hidden;
-    border-radius: 22px;
-    background: var(--color-wall-3);
-    box-shadow: 0 0 0 1px var(--color-seam);
+    border-radius: 20px;
+    background: var(--color-wall-2);
   }
 
-  /* A bento tile. */
   .tile {
     position: relative;
     overflow: hidden;
-    border-radius: 28px;
+    border-radius: 24px;
     background: var(--color-wall-2);
     color: var(--color-bone);
   }
 
   .btn-bone,
-  .btn-line {
+  .btn-line,
+  .btn-brand {
     display: inline-flex;
-    min-height: 3.25rem;
+    min-height: 3.5rem;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.75rem;
     border-radius: 9999px;
-    padding-inline: 1.75rem;
+    padding-inline: 1.9rem;
     font-family: var(--font-text);
     font-size: 1rem;
     font-weight: 600;
     transition:
-      background-color 250ms var(--ease-gallery),
-      color 250ms var(--ease-gallery),
-      border-color 250ms var(--ease-gallery),
-      transform 250ms var(--ease-gallery);
+      background-color 300ms var(--ease-gallery),
+      color 300ms var(--ease-gallery),
+      border-color 300ms var(--ease-gallery),
+      transform 300ms var(--ease-gallery);
   }
 
   .btn-bone {
@@ -569,8 +609,19 @@ html:has([data-mini]) {
     color: var(--color-wall);
   }
 
-  .btn-bone:hover {
-    transform: translateY(-1px);
+  .btn-brand {
+    background: #2433ff;
+    color: #fff;
+  }
+
+  [data-tone='brand'] .btn-brand {
+    background: #fff;
+    color: #2433ff;
+  }
+
+  .btn-bone:hover,
+  .btn-brand:hover {
+    transform: translateY(-2px);
   }
 
   .btn-line {
@@ -585,7 +636,7 @@ html:has([data-mini]) {
   .link-more {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     font-weight: 600;
     color: var(--color-bone);
     text-decoration: underline;
@@ -609,10 +660,9 @@ html:has([data-mini]) {
     text-underline-offset: 0.25em;
   }
 
-  /* Pacifico is gone; anything still asking for "script" gets the quiet line. */
   .script {
-    font-family: var(--font-text);
-    color: var(--color-bone-2);
+    font-family: var(--font-hand);
+    color: var(--color-brass);
   }
 }
 
@@ -649,17 +699,18 @@ html:has([data-mini]) {
   scroll-snap-type: none;
 }
 
-/* A screenshot waits in grey and comes into colour when it is looked at. */
-.museum [data-colour] img {
-  filter: grayscale(1) contrast(1.05);
-  transition:
-    filter 900ms var(--ease-gallery),
-    transform 900ms var(--ease-gallery);
+/* Photos ease in scale on hover inside a framed link. */
+.museum .zoom-on-hover img {
+  transition: transform 1200ms var(--ease-gallery);
 }
 
-.museum [data-colour].is-on img,
-.museum [data-colour]:hover img {
-  filter: none;
+.museum .zoom-on-hover:hover img {
+  transform: scale(1.04);
+}
+
+/* Older pages still ask for grey-to-colour; on white everything is in colour. */
+.museum [data-colour] img {
+  transition: transform 900ms var(--ease-gallery);
 }
 
 /*
@@ -667,8 +718,8 @@ html:has([data-mini]) {
  * form room those tokens are re-pointed at the site's.
  */
 .museum .form-room {
-  --color-paper: var(--color-wall-2);
-  --color-ground: var(--color-wall);
+  --color-paper: var(--color-wall);
+  --color-ground: var(--color-wall-2);
   --color-shelf: var(--color-wall-3);
   --color-ink: var(--color-bone);
   --color-ink-2: var(--color-bone-2);
@@ -680,13 +731,35 @@ html:has([data-mini]) {
 .museum .form-room h2,
 .museum .form-room label > span:first-child:not(.sr-only) {
   font-family: var(--font-display);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
+  font-weight: 900;
+  font-synthesis: none;
+  letter-spacing: -0.03em;
 }
 
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
   border-color: var(--color-bone);
-  box-shadow: 0 0 0 4px rgb(255 90 31 / 0.2);
+  box-shadow: 0 0 0 4px rgb(36 51 255 / 0.18);
+}
+
+/* An endless line, paused for anyone who asked for less motion. */
+@keyframes run-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.museum .run-left {
+  animation: run-left var(--run, 40s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .museum .run-left {
+    animation: none;
+  }
+}
+
+/* Bogle has one cut; never let the browser fake a heavier one. */
+.museum .font-display {
+  font-synthesis: none;
 }

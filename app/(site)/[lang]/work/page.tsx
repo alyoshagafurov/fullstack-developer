@@ -71,7 +71,7 @@ export default async function WorkPage() {
                     <div>
                       <h2
                         lang={row.fallback.title ? 'ru' : undefined}
-                        className="font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none font-extrabold"
+                        className="font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none font-black"
                       >
                         {row.title}
                       </h2>

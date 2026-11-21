@@ -46,18 +46,19 @@ export function Header({
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-  const [overDark, setOverDark] = useState(false);
+  const [under, setUnder] = useState<'light' | 'dark' | 'brand'>('light');
   const [moved, setMoved] = useState(false);
 
   useEffect(() => {
     const check = () => {
       setMoved(window.scrollY > 12);
       const probe = 28;
-      const dark = Array.from(document.querySelectorAll<HTMLElement>('main [data-tone="dark"]')).some((el) => {
+      const hit = Array.from(document.querySelectorAll<HTMLElement>('main section[data-tone]')).find((el) => {
         const box = el.getBoundingClientRect();
         return box.top <= probe && box.bottom >= probe;
       });
-      setOverDark(dark);
+      const tone = hit?.dataset.tone;
+      setUnder(tone === 'dark' || tone === 'brand' ? tone : 'light');
     };
     check();
     window.addEventListener('scroll', check, { passive: true });
@@ -70,10 +71,9 @@ export function Header({
 
   const href = (path: string) => localePath(lang, path);
   const items = [
+    { href: href('/'), label: copy.nav.home },
     { href: href('/work'), label: copy.nav.work },
     { href: href('/services'), label: copy.nav.services },
-    { href: href('/prices'), label: copy.nav.prices },
-    { href: href('/reviews'), label: copy.nav.reviews },
     { href: href('/about'), label: copy.nav.about },
     { href: href('/contacts'), label: copy.nav.contacts },
   ];
@@ -99,7 +99,7 @@ export function Header({
   return (
     <header data-chrome-header>
       <div
-        data-tone={overDark && !open ? 'dark' : 'light'}
+        data-tone={open ? 'light' : under}
         className={`fixed inset-x-0 top-0 z-50 text-bone transition-[background-color,border-color] duration-300 ${
           moved && !open ? 'border-b border-seam bg-wall/80 backdrop-blur-xl' : 'border-b border-transparent bg-transparent'
         }`}
@@ -130,7 +130,7 @@ export function Header({
                   <Link
                     href={item.href}
                     aria-current={current === stripLocale(item.href) ? 'page' : undefined}
-                    className="inline-flex min-h-11 items-center px-3 text-sm font-medium text-bone/75 transition-colors hover:text-bone aria-[current=page]:text-bone"
+                    className="inline-flex min-h-11 items-center px-3 text-[0.9375rem] font-normal text-bone/70 transition-colors hover:text-bone aria-[current=page]:text-bone"
                   >
                     {item.label}
                   </Link>
@@ -197,7 +197,7 @@ export function Header({
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="font-display block py-2 text-[1.75rem] font-extrabold uppercase tracking-tight text-bone"
+                        className="font-display block py-2 text-[2.5rem] leading-none font-black tracking-tight text-bone"
                       >
                         {item.label}
                       </Link>

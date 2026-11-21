@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Manrope, Unbounded } from 'next/font/google';
+import { BBH_Bogle, Nunito_Sans, Pacifico } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
@@ -25,18 +25,20 @@ import { getDictionary } from '@/lib/i18n/server';
 export const dynamicParams = false;
 
 /*
- * Two faces: Unbounded, wide and heavy, for headlines; Manrope for everything
- * read. Both carry Cyrillic.
+ * The three faces the owner pinned: BBH Bogle for headlines (Latin only, so
+ * Cyrillic headlines fall through to Nunito Sans at its heaviest), Nunito Sans
+ * light for every small line, Pacifico as a handwritten accent.
  */
-const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], variable: '--font-unbounded', display: 'swap' });
-const manrope = Manrope({ subsets: ['latin', 'cyrillic'], variable: '--font-manrope', display: 'swap' });
+const bogle = BBH_Bogle({ subsets: ['latin'], weight: '400', variable: '--font-bogle', display: 'swap', adjustFontFallback: false });
+const nunito = Nunito_Sans({ subsets: ['latin', 'cyrillic'], variable: '--font-nunito', display: 'swap' });
+const pacifico = Pacifico({ subsets: ['latin', 'cyrillic'], weight: '400', variable: '--font-pacifico', display: 'swap' });
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0a0a0a',
+  themeColor: '#ffffff',
   colorScheme: 'light',
 };
 
@@ -118,7 +120,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} className={`${unbounded.variable} ${manrope.variable}`}>
+    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable}`}>
       <body className="museum">
         <a
           href="#main"
