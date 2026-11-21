@@ -73,7 +73,7 @@ export function StickyCta({
     >
       <Link
         href={localePath(lang, '/start')}
-        className="pointer-events-auto flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#0f0f0f] px-6 text-base font-semibold text-[#efeee9] shadow-[0_10px_30px_-12px_rgb(0_0_0/0.45)] md:hidden"
+        className="pointer-events-auto flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#0071e3] px-6 text-base font-medium text-white shadow-[0_10px_30px_-12px_rgb(0_0_0/0.45)] md:hidden"
       >
         {label}
         <ArrowIcon />

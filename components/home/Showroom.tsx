@@ -45,9 +45,6 @@ export function Hero({
   ctaHref,
   seeWork,
   seeWorkHref,
-  capture,
-  captureTitle,
-  captureKind,
 }: {
   eyebrow: string;
   title: readonly string[];
@@ -56,14 +53,11 @@ export function Hero({
   ctaHref: string;
   seeWork: string;
   seeWorkHref: string;
-  capture: Capture | null;
-  captureTitle: string;
-  captureKind: string;
 }) {
   const reduce = useReducedMotion();
   return (
     <section data-tone="dark" aria-labelledby="hero-title" className="bg-black text-bone">
-      <div className="hall pt-36 text-center md:pt-44">
+      <div className="hall pt-36 pb-28 text-center md:pt-48 md:pb-40">
         <motion.p
           className="text-[1.0625rem] font-medium text-bone-2 md:text-[1.1875rem]"
           initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -103,50 +97,66 @@ export function Hero({
           </div>
         </motion.div>
       </div>
-      {capture && <DeviceZoom capture={capture} title={captureTitle} kind={captureKind} />}
     </section>
   );
 }
 
-/* A window on one of his sites that grows from a framed screen to the whole viewport. */
-function DeviceZoom({ capture, title, kind }: { capture: Capture; title: string; kind: string }) {
+/* ============================================================ manifesto */
+
+/*
+ * One paragraph, read the way Apple writes a keynote line: the words light up
+ * one by one as the page scrolls, so the visitor reads at the pace of the page.
+ */
+export function Manifesto({ text, accent }: { text: string; accent: string }) {
   const reduce = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] });
-  const scale = useTransform(scrollYProgress, [0.15, 0.62], [0.66, 1]);
-  const radius = useTransform(scrollYProgress, [0.15, 0.62], [26, 0]);
-  const shift = useTransform(scrollYProgress, [0.45, 1], ['0%', '-62%']);
-  const caption = useTransform(scrollYProgress, [0.66, 0.8], [0, 1]);
-  const glow = useTransform(scrollYProgress, [0.15, 0.5], [1, 0]);
-  // it starts a little below the top and rises to meet the edges as it grows
-  const lift = useTransform(scrollYProgress, [0.15, 0.62], ['6svh', '0svh']);
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const words = text.split(' ');
+  const marked = new Set(accent.split(' ').map((w) => w.toLowerCase()));
 
   return (
-    <div ref={ref} className="relative mt-12 h-[230svh] md:mt-14">
-      <div className="sticky top-0 flex h-[100svh] items-start justify-center overflow-hidden">
-        <motion.div
-          aria-hidden
-          style={reduce ? undefined : { opacity: glow }}
-          className="pointer-events-none absolute top-1/2 left-1/2 h-[60vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(41_151_255/0.22),transparent)] blur-2xl"
-        />
-        <motion.div
-          style={reduce ? { scale: 0.9, borderRadius: 20, transformOrigin: '50% 0%' } : { scale, borderRadius: radius, transformOrigin: '50% 0%', y: lift }}
-          className="relative h-[100svh] w-screen overflow-hidden bg-[#0b0b0c] shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_160px_-40px_rgb(0_0_0/0.9)]"
-        >
-          <motion.div style={reduce ? undefined : { y: shift }} className="absolute inset-x-0 top-0">
-            <Image src={capture.src} alt={title} width={capture.width} height={capture.height} sizes="100vw" className="h-auto w-full" priority />
-          </motion.div>
-          <motion.div style={{ opacity: caption }} className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pt-40 pb-10">
-            <div className="hall flex items-end justify-between gap-6 text-white">
-              <div>
-                <p className="text-sm text-white/70">{kind}</p>
-                <p className={`${display} mt-1 text-[clamp(2rem,4vw,3.5rem)]`}>{title}</p>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
+    <section ref={ref} data-tone="dark" className="relative h-[240svh] bg-black text-bone">
+      <div className="sticky top-0 flex h-[100svh] items-center">
+        <p className={`hall ${display} text-[clamp(1.9rem,4.3vw,4.1rem)] leading-[1.14]`}>
+          {words.map((word, i) => (
+            <Word
+              key={i}
+              word={word}
+              progress={scrollYProgress}
+              from={0.08 + (i / words.length) * 0.78}
+              to={0.08 + ((i + 1) / words.length) * 0.78}
+              reduce={!!reduce}
+              marked={marked.has(word.toLowerCase().replace(/[.,—]/g, ''))}
+            />
+          ))}
+        </p>
       </div>
-    </div>
+    </section>
+  );
+}
+
+function Word({
+  word,
+  progress,
+  from,
+  to,
+  reduce,
+  marked,
+}: {
+  word: string;
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  from: number;
+  to: number;
+  reduce: boolean;
+  marked: boolean;
+}) {
+  const opacity = useTransform(progress, [from, to], [0.16, 1]);
+  return (
+    <>
+      <motion.span style={reduce ? undefined : { opacity }} className={marked ? 'bg-gradient-to-r from-[#2997ff] to-[#a78bfa] bg-clip-text text-transparent' : undefined}>
+        {word}
+      </motion.span>{' '}
+    </>
   );
 }
 
@@ -199,10 +209,44 @@ export type ShowWork = {
   phone: Capture | null;
 };
 
-export function Showcase({
+function Device({ work }: { work: ShowWork }) {
+  return (
+    <div className="relative pb-[9%]">
+      <div className="overflow-hidden rounded-[18px] bg-white shadow-[0_2px_6px_rgb(0_0_0/0.05),0_40px_90px_-30px_rgb(0_0_0/0.35)] ring-1 ring-black/5">
+        <div className="flex h-9 items-center gap-2 border-b border-black/5 bg-[#f6f6f8] px-4">
+          <span className="size-3 rounded-full bg-[#ff5f57]" />
+          <span className="size-3 rounded-full bg-[#febc2e]" />
+          <span className="size-3 rounded-full bg-[#28c840]" />
+          <span className="mx-auto max-w-[60%] truncate rounded-md bg-black/[0.045] px-10 py-1 text-xs text-bone-2">{work.host ?? work.title}</span>
+        </div>
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <Image
+            src={work.desktop?.src ?? work.shot}
+            alt={work.title}
+            fill
+            sizes="(min-width: 768px) 58vw, 100vw"
+            className={`object-cover object-top ${work.desktop ? 'screen-drift' : ''}`}
+          />
+        </div>
+      </div>
+      {work.phone && (
+        <div className="absolute right-[-2%] bottom-0 w-[24%] min-w-[96px] rounded-[clamp(16px,2.6vw,34px)] bg-[#0b0b0c] p-[clamp(4px,0.6vw,8px)] shadow-[0_40px_80px_-20px_rgb(0_0_0/0.5)]">
+          <div className="relative aspect-[9/19.5] overflow-hidden rounded-[clamp(12px,2.1vw,28px)] bg-black">
+            <Image src={work.phone.src} alt="" fill sizes="20vw" className="screen-drift object-cover object-top" style={{ animationDelay: '-4s' }} />
+            <span className="absolute top-[2.2%] left-1/2 h-[3.2%] w-[32%] -translate-x-1/2 rounded-full bg-black" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function Works({
   id,
   title,
   sub,
+  all,
+  allHref,
   labels,
   openSite,
   details,
@@ -211,15 +255,13 @@ export function Showcase({
   id: string;
   title: string;
   sub: string;
+  all: string;
+  allHref: string;
   labels: { kind: string; year: string; client: string; result: string };
   openSite: string;
   details: string;
   works: ShowWork[];
 }) {
-  const [index, setIndex] = useState(0);
-  const work = works[index];
-  if (!work) return null;
-
   return (
     <section id={id} aria-labelledby="work-title" className="scroll-mt-16 bg-wall-2 py-28 md:py-40">
       <div className="hall">
@@ -230,96 +272,30 @@ export function Showcase({
           <p className="max-w-sm text-[clamp(1.0625rem,1.4vw,1.25rem)] leading-snug text-bone-2 md:text-right">{sub}</p>
         </Reveal>
 
-        {/* the model selector */}
-        <Reveal delay={0.1} className="-mx-5 mt-12 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:px-0">
-          <div role="tablist" aria-label={title} className="inline-flex gap-1 rounded-full bg-wall-3/70 p-1">
-            {works.map((w, i) => (
-              <button
-                key={w.slug}
-                type="button"
-                role="tab"
-                aria-selected={i === index}
-                onClick={() => setIndex(i)}
-                className="relative min-h-10 rounded-full px-5 text-[0.9375rem] font-medium whitespace-nowrap text-bone-2 transition-colors aria-selected:text-bone"
-              >
-                {i === index && (
-                  <motion.span layoutId="work-pill" className="absolute inset-0 -z-0 rounded-full bg-wall shadow-[0_1px_4px_rgb(0_0_0/0.12)]" transition={{ type: 'spring', stiffness: 380, damping: 34 }} />
-                )}
-                <span className="relative">{w.title}</span>
-              </button>
-            ))}
-          </div>
-        </Reveal>
-
-        <div className="mt-10 grid gap-12 md:mt-14 md:grid-cols-12 md:gap-10">
-          {/* the product */}
-          <div className="relative md:order-2 md:col-span-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={work.slug}
-                initial={{ opacity: 0, y: 24, scale: 0.985 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.7, ease: EASE }}
-                className="relative pb-[8%]"
-              >
-                <div className="overflow-hidden rounded-[18px] bg-white shadow-[0_2px_6px_rgb(0_0_0/0.05),0_40px_90px_-30px_rgb(0_0_0/0.35)] ring-1 ring-black/5">
-                  <div className="flex h-9 items-center gap-2 border-b border-black/5 bg-[#f6f6f8] px-4">
-                    <span className="size-3 rounded-full bg-[#ff5f57]" />
-                    <span className="size-3 rounded-full bg-[#febc2e]" />
-                    <span className="size-3 rounded-full bg-[#28c840]" />
-                    <span className="mx-auto max-w-[60%] truncate rounded-md bg-black/[0.045] px-10 py-1 text-xs text-bone-2">{work.host ?? work.title}</span>
-                  </div>
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image
-                      src={work.desktop?.src ?? work.shot}
-                      alt={work.title}
-                      fill
-                      sizes="(min-width: 768px) 60vw, 100vw"
-                      className={`object-cover object-top ${work.desktop ? 'screen-drift' : ''}`}
-                    />
-                  </div>
-                </div>
-                {work.phone && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, ease: EASE, delay: 0.25 }}
-                    className="absolute right-[-2%] bottom-0 w-[24%] min-w-[110px] rounded-[clamp(18px,2.6vw,34px)] bg-[#0b0b0c] p-[clamp(4px,0.6vw,8px)] shadow-[0_40px_80px_-20px_rgb(0_0_0/0.5)]"
-                  >
-                    <div className="relative aspect-[9/19.5] overflow-hidden rounded-[clamp(14px,2.1vw,28px)] bg-black">
-                      <Image src={work.phone.src} alt="" fill sizes="20vw" className="screen-drift object-cover object-top" style={{ animationDelay: '-4s' }} />
-                      <span className="absolute top-[2.2%] left-1/2 h-[3.2%] w-[32%] -translate-x-1/2 rounded-full bg-black" />
-                    </div>
-                  </motion.div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* its specification */}
-          <div className="md:order-1 md:col-span-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={work.slug}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE }}
-              >
-                <h3 className={`${display} text-[clamp(2.25rem,3.6vw,3.25rem)] leading-none [overflow-wrap:anywhere]`}>{work.title}</h3>
-                <dl className="mt-8 border-t border-seam">
+        <div className="mt-16 md:mt-24">
+          {works.map((work, i) => (
+            <article key={work.slug} className="grid items-center gap-10 border-t border-seam py-16 md:grid-cols-12 md:gap-12 md:py-24">
+              <Reveal className={`md:col-span-7 ${i % 2 ? 'md:order-2' : ''}`}>
+                <Device work={work} />
+              </Reveal>
+              <Reveal delay={0.12} className={`md:col-span-5 ${i % 2 ? 'md:order-1 md:pr-6' : 'md:pl-6'}`}>
+                <p className="text-[0.9375rem] text-bone-2">
+                  <span className="tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="mx-2.5 text-bone-3">·</span>
+                  {work.kind}
+                </p>
+                <h3 className={`${display} mt-3 text-[clamp(2.5rem,4.4vw,4rem)] leading-none [overflow-wrap:anywhere]`}>{work.title}</h3>
+                <p className="mt-5 text-[1.0625rem] leading-relaxed text-bone-2">{work.result}</p>
+                <dl className="mt-7 border-t border-seam">
                   {[
-                    [labels.kind, work.kind],
                     [labels.year, work.year],
                     [labels.client, work.client],
-                    [labels.result, work.result],
                   ]
                     .filter(([, v]) => v)
                     .map(([k, v]) => (
-                      <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-seam py-4 text-[0.9375rem]">
+                      <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-seam py-3.5 text-[0.9375rem]">
                         <dt className="text-bone-2">{k}</dt>
-                        <dd className="leading-snug">{v}</dd>
+                        <dd>{v}</dd>
                       </div>
                     ))}
                 </dl>
@@ -334,10 +310,17 @@ export function Showcase({
                     <ChevronIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+              </Reveal>
+            </article>
+          ))}
         </div>
+
+        <Reveal className="mt-4 flex justify-center border-t border-seam pt-14">
+          <Link href={allHref} className="group inline-flex min-h-12 items-center gap-2 rounded-full border border-seam-2 px-7 text-[1.0625rem] font-medium transition-colors hover:border-bone">
+            {all}
+            <ChevronIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

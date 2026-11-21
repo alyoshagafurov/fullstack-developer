@@ -595,9 +595,14 @@ html:has([data-mini]) {
       transform 300ms var(--ease-gallery);
   }
 
+  /* The primary action, Apple's way: one blue, everywhere. */
   .btn-bone {
-    background: var(--color-bone);
-    color: var(--color-wall);
+    background: #0071e3;
+    color: #fff;
+  }
+
+  .btn-bone:hover {
+    background: #0077ed;
   }
 
   .btn-brand {

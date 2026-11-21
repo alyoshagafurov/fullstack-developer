@@ -1,4 +1,4 @@
-import { Finale, Hero, Lineup, Showcase, Specs, Story, Voices, type Capture, type Line, type ShowWork, type Voice } from '@/components/home/Showroom';
+import { Finale, Hero, Lineup, Manifesto, Specs, Story, Voices, Works, type Capture, type Line, type ShowWork, type Voice } from '@/components/home/Showroom';
 import { startHref, whatsappHref } from '@/components/museum/links';
 import { isAlive } from '@/lib/alive';
 import { getPublishedCases, getTestimonials, localizeCases } from '@/lib/cases';
@@ -20,7 +20,7 @@ import { getDictionary } from '@/lib/i18n/server';
 export const revalidate = 300;
 
 /* Full-page captures of the live sites, for computer and phone. */
-const CAPTURES: Record<string, { desktop: Capture; phone: Capture }> = {
+const CAPTURES: Record<string, { desktop: Capture; phone: Capture | null }> = {
   'arusdomod-shop': {
     desktop: { src: '/cases/arusdomod-desktop.webp', width: 1440, height: 4500 },
     phone: { src: '/cases/arusdomod-phone.webp', width: 640, height: 9695 },
@@ -28,6 +28,10 @@ const CAPTURES: Record<string, { desktop: Capture; phone: Capture }> = {
   'autoshine-store': {
     desktop: { src: '/cases/autoshine-store-desktop.webp', width: 1440, height: 4500 },
     phone: { src: '/cases/autoshine-store-phone.webp', width: 640, height: 9695 },
+  },
+  'python-academy': {
+    desktop: { src: '/cases/python-academy-desktop.webp', width: 1440, height: 900 },
+    phone: null,
   },
 };
 
@@ -44,7 +48,7 @@ export default async function HomePage() {
   const ordered = [...rawCases].sort(
     (a, b) => Number(!!CAPTURES[b.slug]) - Number(!!CAPTURES[a.slug]) || Number(b.featured) - Number(a.featured),
   );
-  const cases = (await localizeCases(ordered, lang)).slice(0, 6);
+  const cases = (await localizeCases(ordered, lang)).slice(0, 3);
   const works: ShowWork[] = await Promise.all(
     cases.map(async (row) => {
       const alive = await isAlive(row.liveUrl);
@@ -64,7 +68,6 @@ export default async function HomePage() {
       };
     }),
   );
-  const lead = works.find((w) => w.desktop) ?? null;
 
   const priceOf = new Map(prices.map((row) => [row.slug, row.price]));
   const lines: Line[] = t.home.directions.map((item) => ({
@@ -96,12 +99,20 @@ export default async function HomePage() {
         ctaHref={startHref(lang)}
         seeWork={s.seeWork}
         seeWorkHref="#work"
-        capture={lead?.desktop ?? null}
-        captureTitle={lead?.title ?? ''}
-        captureKind={lead?.kind ?? ''}
       />
+      <Manifesto text={s.manifesto} accent={s.manifestoAccent} />
       <Specs items={s.specs} />
-      <Showcase id="work" title={s.workTitle} sub={s.workSub} labels={s.labels} openSite={s.openSite} details={s.details} works={works} />
+      <Works
+        id="work"
+        title={s.workTitle}
+        sub={s.workSub}
+        all={s.workAll}
+        allHref={localePath(lang, '/work')}
+        labels={s.labels}
+        openSite={s.openSite}
+        details={s.details}
+        works={works}
+      />
       <Lineup title={s.lineTitle} sub={s.lineSub} from={s.from} choose={s.choose} lines={lines} />
       <Story
         eyebrow={s.storyEyebrow}

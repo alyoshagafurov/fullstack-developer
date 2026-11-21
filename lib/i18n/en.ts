@@ -175,6 +175,9 @@ export const en = {
   /** Home: one huge headline per section, a small line in a corner. */
   /** The home in the manner of Apple and Porsche: the work presented as a product. */
   showroom: {
+    manifesto: 'I build websites, online stores and Telegram bots for businesses. Myself — from the idea and design to code and launch. So your clients find you, trust you from the first screen, and write.',
+    manifestoAccent: 'trust write',
+    workAll: 'All projects',
     eyebrow: 'Alisher Gafurov · web developer',
     title: ['Websites that', 'work for business.'],
     sub: 'Design, code and launch. One person, from the first message to the result.',
