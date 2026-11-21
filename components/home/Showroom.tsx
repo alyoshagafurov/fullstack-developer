@@ -103,60 +103,23 @@ export function Hero({
 
 /* ============================================================ manifesto */
 
-/*
- * One paragraph, read the way Apple writes a keynote line: the words light up
- * one by one as the page scrolls, so the visitor reads at the pace of the page.
- */
+/* One paragraph, set large on black: what he does and why it matters. */
 export function Manifesto({ text, accent }: { text: string; accent: string }) {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const words = text.split(' ');
   const marked = new Set(accent.split(' ').map((w) => w.toLowerCase()));
-
   return (
-    <section ref={ref} data-tone="dark" className="relative h-[240svh] bg-black text-bone">
-      <div className="sticky top-0 flex h-[100svh] items-center">
-        <p className={`hall ${display} text-[clamp(1.9rem,4.3vw,4.1rem)] leading-[1.14]`}>
-          {words.map((word, i) => (
-            <Word
-              key={i}
-              word={word}
-              progress={scrollYProgress}
-              from={0.08 + (i / words.length) * 0.78}
-              to={0.08 + ((i + 1) / words.length) * 0.78}
-              reduce={!!reduce}
-              marked={marked.has(word.toLowerCase().replace(/[.,—]/g, ''))}
-            />
+    <section data-tone="dark" className="bg-black py-28 text-bone md:py-40">
+      <Reveal className="hall">
+        <p className={`${display} text-[clamp(1.9rem,4.3vw,4.1rem)] leading-[1.14]`}>
+          {text.split(' ').map((word, i) => (
+            <span key={i}>
+              <span className={marked.has(word.toLowerCase().replace(/[.,—]/g, '')) ? 'bg-gradient-to-r from-[#2997ff] to-[#a78bfa] bg-clip-text text-transparent' : undefined}>
+                {word}
+              </span>{' '}
+            </span>
           ))}
         </p>
-      </div>
+      </Reveal>
     </section>
-  );
-}
-
-function Word({
-  word,
-  progress,
-  from,
-  to,
-  reduce,
-  marked,
-}: {
-  word: string;
-  progress: ReturnType<typeof useScroll>['scrollYProgress'];
-  from: number;
-  to: number;
-  reduce: boolean;
-  marked: boolean;
-}) {
-  const opacity = useTransform(progress, [from, to], [0.16, 1]);
-  return (
-    <>
-      <motion.span style={reduce ? undefined : { opacity }} className={marked ? 'bg-gradient-to-r from-[#2997ff] to-[#a78bfa] bg-clip-text text-transparent' : undefined}>
-        {word}
-      </motion.span>{' '}
-    </>
   );
 }
 
@@ -207,6 +170,9 @@ export type ShowWork = {
   desktop: Capture | null;
   shot: string;
   phone: Capture | null;
+  /** Tiny inlined previews, shown until the real captures arrive. */
+  blur?: string;
+  phoneBlur?: string;
 };
 
 function Device({ work }: { work: ShowWork }) {
@@ -225,6 +191,10 @@ function Device({ work }: { work: ShowWork }) {
             alt={work.title}
             fill
             sizes="(min-width: 768px) 58vw, 100vw"
+            // the captures are already sized and compressed: served as they are, straight from the CDN
+            unoptimized={!!work.desktop}
+            placeholder={work.blur ? 'blur' : 'empty'}
+            blurDataURL={work.blur}
             className={`object-cover object-top ${work.desktop ? 'screen-drift' : ''}`}
           />
         </div>
@@ -232,7 +202,17 @@ function Device({ work }: { work: ShowWork }) {
       {work.phone && (
         <div className="absolute right-[-2%] bottom-0 w-[24%] min-w-[96px] rounded-[clamp(16px,2.6vw,34px)] bg-[#0b0b0c] p-[clamp(4px,0.6vw,8px)] shadow-[0_40px_80px_-20px_rgb(0_0_0/0.5)]">
           <div className="relative aspect-[9/19.5] overflow-hidden rounded-[clamp(12px,2.1vw,28px)] bg-black">
-            <Image src={work.phone.src} alt="" fill sizes="20vw" className="screen-drift object-cover object-top" style={{ animationDelay: '-4s' }} />
+            <Image
+              src={work.phone.src}
+              alt=""
+              fill
+              sizes="20vw"
+              unoptimized
+              placeholder={work.phoneBlur ? 'blur' : 'empty'}
+              blurDataURL={work.phoneBlur}
+              className="screen-drift object-cover object-top"
+              style={{ animationDelay: '-4s' }}
+            />
             <span className="absolute top-[2.2%] left-1/2 h-[3.2%] w-[32%] -translate-x-1/2 rounded-full bg-black" />
           </div>
         </div>
