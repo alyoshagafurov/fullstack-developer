@@ -173,6 +173,31 @@ export const en = {
 
   /** The night museum: one headline per hall, a small label in a corner. */
   /** Home: one huge headline per section, a small line in a corner. */
+  /** The night city: a prototype of the home you fly through. */
+  city: {
+    role: 'Web developer · Dushanbe',
+    title: ['Websites that', 'bring you clients'],
+    sub: '50+ projects for businesses. Built by me, from idea to launch.',
+    cta: 'Discuss a project',
+    scrollCue: 'Scroll — we fly over the city',
+    skip: 'Skip the flight',
+    loading: 'The city is waking up',
+    districtTitle: 'The work district',
+    districtNote: 'Three of 50+ projects. Each tower carries a live site that scrolls while you watch.',
+    screenHint: 'The site scrolls on the facade',
+    openSite: 'Open the site',
+    howMade: 'How it was made',
+    kinds: {
+      'arusdomod-shop': 'Wedding outfits store',
+      'autoshine-store': 'Car care store',
+      'python-academy': 'Platform for learning Python',
+    } as Record<string, string>,
+    finalTitle: ['Your business —', 'next in this city'],
+    finalNote: 'A first draft in 1–3 days. You pay 50% once you have seen it.',
+    finalForm: 'Send a request',
+    chapters: { arrival: 'Arrival', contact: 'Contact' },
+  },
+
   /** Prototype: the first screen and one project; the site takes the work's colour. */
   stage: {
     eyebrow: 'Alisher Gafurov — web developer, Dushanbe',

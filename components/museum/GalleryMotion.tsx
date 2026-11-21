@@ -29,6 +29,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 let lenis: Lenis | null = null;
 
+/** Scroll the page to a position, smoothly when the smooth scroll is running. */
+export function scrollPageTo(top: number) {
+  if (lenis) lenis.scrollTo(top, { duration: 2.2 });
+  else window.scrollTo({ top, behavior: 'smooth' });
+}
+
 export function GalleryMotion() {
   const pathname = usePathname();
 
