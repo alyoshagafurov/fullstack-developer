@@ -11,10 +11,10 @@ import { site } from '@/lib/content/site';
 import { ArrowIcon, WhatsAppIcon } from '@/components/museum/Icons';
 
 /*
- * The bar along the top, in the manner of apple.com's: thin, translucent,
- * blurred over whatever scrolls under it, small links in the middle. On the
- * right: the theme switch, the language, and the request. Below 1024px the
- * links fold into a full-screen menu.
+ * The bar along the top. It reads the section under it: over a black section
+ * it turns itself dark (data-tone flips every colour token), over warm paper
+ * it is light. Clear at the very top, a blurred band once the page moves.
+ * Below 1024px the links fold into a full-screen menu.
  */
 
 export type HeaderCopy = {
@@ -46,6 +46,27 @@ export function Header({
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
+  const [overDark, setOverDark] = useState(false);
+  const [moved, setMoved] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      setMoved(window.scrollY > 12);
+      const probe = 28;
+      const dark = Array.from(document.querySelectorAll<HTMLElement>('main [data-tone="dark"]')).some((el) => {
+        const box = el.getBoundingClientRect();
+        return box.top <= probe && box.bottom >= probe;
+      });
+      setOverDark(dark);
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, [pathname]);
 
   const href = (path: string) => localePath(lang, path);
   const items = [
@@ -77,8 +98,13 @@ export function Header({
 
   return (
     <header data-chrome-header>
-      <div className="fixed inset-x-0 top-0 z-50 border-b border-seam bg-wall/75 backdrop-blur-xl backdrop-saturate-150">
-        <div className="hall-wide flex h-12 items-center justify-between gap-4 md:h-14">
+      <div
+        data-tone={overDark && !open ? 'dark' : 'light'}
+        className={`fixed inset-x-0 top-0 z-50 text-bone transition-[background-color,border-color] duration-300 ${
+          moved && !open ? 'border-b border-seam bg-wall/80 backdrop-blur-xl' : 'border-b border-transparent bg-transparent'
+        }`}
+      >
+        <div className="hall-wide flex h-14 items-center justify-between gap-4 md:h-16">
           <Link
             href={href('/')}
             aria-label={copy.header.home}
@@ -92,7 +118,7 @@ export function Header({
               height={462}
               priority
               unoptimized
-              className="h-5 w-auto dark:invert"
+              className="h-6 w-auto dark:invert"
               draggable={false}
             />
           </Link>
@@ -104,7 +130,7 @@ export function Header({
                   <Link
                     href={item.href}
                     aria-current={current === stripLocale(item.href) ? 'page' : undefined}
-                    className="inline-flex min-h-11 items-center px-3 text-[0.8125rem] text-bone/80 transition-colors hover:text-bone aria-[current=page]:text-bone"
+                    className="inline-flex min-h-11 items-center px-3 text-sm font-medium text-bone/75 transition-colors hover:text-bone aria-[current=page]:text-bone"
                   >
                     {item.label}
                   </Link>
@@ -114,11 +140,10 @@ export function Header({
           </nav>
 
           <div className="flex items-center gap-1.5">
-            <ThemeSwitch />
             <LangSwitch lang={lang} label={copy.header.language} />
             <Link
               href={href('/start')}
-              className="ml-1 hidden min-h-8 items-center rounded-full bg-[#0071e3] px-3.5 text-[0.8125rem] font-medium text-white transition-opacity hover:opacity-90 md:inline-flex"
+              className="ml-1 hidden min-h-10 items-center rounded-full bg-bone px-5 text-sm font-semibold text-wall transition-transform hover:-translate-y-px md:inline-flex"
             >
               {copy.getQuote}
             </Link>
@@ -172,7 +197,7 @@ export function Header({
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block py-2 text-[1.75rem] font-bold tracking-tight text-bone"
+                        className="font-display block py-2 text-[1.75rem] font-extrabold uppercase tracking-tight text-bone"
                       >
                         {item.label}
                       </Link>
@@ -202,48 +227,6 @@ export function Header({
         )}
       </AnimatePresence>
     </header>
-  );
-}
-
-/* Light or dark, remembered on this device. Until chosen, the system decides. */
-function ThemeSwitch() {
-  const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
-
-  useEffect(() => {
-    setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
-  }, []);
-
-  const next = theme === 'dark' ? 'light' : 'dark';
-
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        document.documentElement.dataset.theme = next;
-        try {
-          localStorage.setItem('aly-theme', next);
-        } catch {
-          // A browser that blocks storage still switches, just for this visit.
-        }
-        setTheme(next);
-      }}
-      aria-label={next === 'dark' ? 'Dark theme' : 'Light theme'}
-      className="inline-flex size-9 items-center justify-center rounded-full text-bone/80 transition-colors hover:bg-bone/10 hover:text-bone"
-    >
-      {theme === 'dark' ? (
-        <svg viewBox="0 0 20 20" className="size-[1.1rem]" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-          <circle cx="10" cy="10" r="3.6" />
-          <path
-            d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 20 20" className="size-[1.05rem]" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-          <path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7Z" strokeLinejoin="round" />
-        </svg>
-      )}
-    </button>
   );
 }
 

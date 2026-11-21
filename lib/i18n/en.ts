@@ -172,6 +172,21 @@ export const en = {
 
   /** The night museum: one headline per hall, a small label in a corner. */
   home: {
+    manifesto: ['I build', 'websites', 'for', 'business'],
+    badge: 'WRITE ON WHATSAPP · WRITE · ',
+    lensHint: 'Move the cursor over the photo.',
+    bento: {
+      projects: 'projects done',
+      clock: 'Now in Dushanbe',
+      online: 'Online',
+      offline: 'Will reply in the morning',
+      prices: 'Prices',
+      pricesFrom: 'from',
+      pricesLine: 'a website, a bot or a store',
+      whatsappTitle: 'Message on WhatsApp',
+      worksLabel: 'Work',
+      directionsHint: 'Tap a word — the request opens with it chosen.',
+    },
     heroOffer: 'I build websites',
     heroRole: 'Full-stack developer · Dushanbe',
     walkHint: 'Scroll — you are walking down the hall',

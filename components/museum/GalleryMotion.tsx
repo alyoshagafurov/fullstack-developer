@@ -18,6 +18,7 @@ import Lenis from 'lenis';
  *   data-magnetic       a button that leans toward the pointer
  *   data-parallax="n"   drifts n% against the scroll
  *   data-zoom           a picture that grows to full width as it scrolls in
+ *   data-colour         a screenshot that turns from grey to colour mid-screen
  *
  * The rule that matters most: nothing is hidden before this runs. Reveals are
  * set only on elements that start below the fold, and only once the script is
@@ -183,6 +184,14 @@ export function GalleryMotion() {
           });
         });
       }
+
+      // Screenshots wait in grey and come into colour in the middle of the screen.
+      const colour = new IntersectionObserver(
+        (entries) => entries.forEach((entry) => entry.target.classList.toggle('is-on', entry.isIntersecting)),
+        { rootMargin: '-25% 0px -40% 0px' },
+      );
+      document.querySelectorAll('[data-colour]').forEach((el) => colour.observe(el));
+      cleanups.push(() => colour.disconnect());
 
       // The light follows the pointer across any lit wall.
       document.querySelectorAll<HTMLElement>('[data-lit]').forEach((wall) => {

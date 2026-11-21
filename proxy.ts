@@ -54,5 +54,5 @@ function prefersRussian(header: string | null): boolean {
 }
 
 export const config = {
-  matcher: ['/((?!api(?:/|$)|admin(?:/|$)|mini(?:/|$)|_next|_vercel|.*\\..*).*)'],
+  matcher: ['/((?!api(?:/|$)|admin(?:/|$)|mini(?:/|$)|lab(?:/|$)|_next|_vercel|.*\\..*).*)'],
 };

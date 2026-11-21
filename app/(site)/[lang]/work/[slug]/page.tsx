@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getCase, getPublishedCases, localizeCases } from '@/lib/cases';
 import { alternatesFor, fill, localePath } from '@/lib/i18n';
@@ -128,12 +128,14 @@ export default async function CasePage({ params }: Params) {
       )}
 
       {rest.length > 0 && (
-        <section className="hall py-24 md:py-36" aria-label={t.work.screens}>
+        <section data-tone="dark" className="bg-wall py-24 md:py-36" aria-label={t.work.screens}>
+        <div className="hall">
           <ul className="grid gap-20 md:gap-32 lg:grid-cols-12">
             {rest.map((shot, index) => (
               <li
                 key={shot}
                 data-fade
+                data-colour
                 className={index % 3 === 2 ? 'lg:col-span-12' : index % 2 === 0 ? 'lg:col-span-8' : 'lg:col-span-7 lg:col-start-6'}
               >
                 <div className="exhibit overflow-hidden">
@@ -152,6 +154,7 @@ export default async function CasePage({ params }: Params) {
               </li>
             ))}
           </ul>
+        </div>
         </section>
       )}
 
@@ -160,7 +163,7 @@ export default async function CasePage({ params }: Params) {
           <Link href={localePath(lang, `/work/${next.slug}`)} className="group hall flex items-end justify-between gap-8 py-24 md:py-32">
             <span>
               <span className="block text-lg text-bone-2">{t.vitrine.next}</span>
-              <span className="hall-title mt-4 block text-[clamp(2.75rem,8vw,8rem)] transition-colors duration-500 group-hover:text-brass">
+              <span className="hall-title mt-4 block text-[clamp(2.75rem,8vw,8rem)] transition-colors duration-500 group-hover:underline group-hover:decoration-brass group-hover:decoration-2 group-hover:underline-offset-8">
                 {next.title}
               </span>
             </span>

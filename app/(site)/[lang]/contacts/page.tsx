@@ -62,7 +62,7 @@ export default async function ContactsPage() {
                 className="group grid grid-cols-[1fr_auto] items-center gap-6 py-10 md:py-14"
               >
                 <span>
-                  <span className="font-display flex items-center gap-4 text-[clamp(2.25rem,5vw,4rem)] leading-tight font-extrabold transition-colors duration-500 group-hover:text-brass">
+                  <span className="font-display flex items-center gap-4 text-[clamp(2.25rem,5vw,4rem)] leading-tight font-extrabold transition-colors duration-500 group-hover:underline group-hover:decoration-brass group-hover:decoration-2 group-hover:underline-offset-8">
                     {door.icon && <WhatsAppIcon className="size-[0.6em] shrink-0" />}
                     {door.label}
                   </span>

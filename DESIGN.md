@@ -1,261 +1,271 @@
 ---
 name: aly.lat
-description: A clean personal studio site in the manner of apple.com, in two themes. One headline, one quiet line and the picture, then a lot of air.
+description: A loud, airy personal studio site. Wide heavy capitals on warm paper, black sections that turn grey into colour, and a bento of small living tiles, with one orange.
 colors:
-  wall: "#ffffff"
-  wall-2: "#f5f5f7"
-  wall-3: "#e8e8ed"
-  bone: "#1d1d1f"
-  bone-2: "#6e6e73"
-  bone-3: "#86868b"
-  brass: "#0071e3"
-  seam: "rgb(0 0 0 / 0.08)"
-  seam-2: "rgb(0 0 0 / 0.16)"
-  dark-wall: "#000000"
-  dark-wall-2: "#161617"
-  dark-wall-3: "#1d1d1f"
-  dark-bone: "#f5f5f7"
-  dark-bone-2: "#a1a1a6"
-  dark-brass: "#2997ff"
-  dark-seam: "rgb(255 255 255 / 0.12)"
-  dark-seam-2: "rgb(255 255 255 / 0.24)"
+  paper: "#efeee9"
+  paper-raised: "#ffffff"
+  paper-sunk: "#e3e1da"
+  ink: "#0f0f0f"
+  ink-2: "#55534e"
+  ink-3: "#6f6c66"
+  seam: "rgb(15 15 15 / 0.1)"
+  seam-2: "rgb(15 15 15 / 0.2)"
+  night: "#0a0a0a"
+  night-raised: "#161616"
+  night-sunk: "#232323"
+  night-ink: "#f2f1ec"
+  night-ink-2: "#a9a6a0"
+  night-ink-3: "#8e8b85"
+  night-seam: "rgb(242 241 236 / 0.12)"
+  night-seam-2: "rgb(242 241 236 / 0.24)"
+  signal-orange: "#ff5a1f"
+  whatsapp-green: "#25d366"
 typography:
+  display-hero:
+    fontFamily: "Unbounded, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.75rem, 9vw, 9rem)"
+    fontWeight: 800
+    lineHeight: 0.95
+    letterSpacing: "-0.03em"
   display:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.5rem, 6.4vw, 5.5rem)"
+    fontFamily: "Unbounded, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.25rem, 6.6vw, 6.5rem)"
     fontWeight: 800
-    lineHeight: 1.04
-    letterSpacing: "-0.025em"
+    lineHeight: 1.02
+    letterSpacing: "-0.03em"
   headline:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.75rem, 3.6vw, 3rem)"
-    fontWeight: 800
-    lineHeight: 1.08
+    fontFamily: "Unbounded, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.375rem, 3vw, 2.5rem)"
+    fontWeight: 700
+    lineHeight: 1.05
     letterSpacing: "-0.02em"
   lead:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.125rem, 1.9vw, 1.5rem)"
+    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.0625rem, 1.6vw, 1.25rem)"
     fontWeight: 400
-    lineHeight: 1.35
-    letterSpacing: "-0.01em"
+    lineHeight: 1.5
   body:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.0625rem"
-    fontWeight: 400
-    lineHeight: 1.47
-    letterSpacing: "-0.005em"
-  note:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9375rem"
-    fontWeight: 300
+    fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.75rem"
+    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.8125rem"
     fontWeight: 600
     lineHeight: 1.3
-    letterSpacing: "0.02em"
-  signature:
-    fontFamily: "Pacifico, cursive"
-    fontSize: "2rem"
-    fontWeight: 400
-    lineHeight: 1
 rounded:
-  focus: "6px"
-  screenshot: "18px"
+  inset: "20px"
+  screenshot: "22px"
   tile: "28px"
-  portrait-top: "32px"
+  card: "32px"
+  block: "36px"
   pill: "9999px"
 spacing:
-  gutter: "1.25rem"
-  gutter-md: "2rem"
-  tile-gap: "0.75rem"
-  screen: "6rem"
-  screen-md: "9rem"
+  gutter-sm: "20px"
+  gutter-md: "40px"
+  bento-gap: "12px"
+  tile-pad: "24px"
+  section-sm: "96px"
+  section-lg: "144px"
+  column: "1320px"
+  column-wide: "1440px"
 components:
-  button-primary:
-    backgroundColor: "{colors.brass}"
-    textColor: "#ffffff"
-    typography: "{typography.body}"
+  button-solid:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
     rounded: "{rounded.pill}"
-    padding: "0 1.375rem"
-    height: "2.75rem"
-  button-outline:
+    padding: "0 28px"
+    height: "52px"
+    typography: "{typography.label}"
+  button-line:
     backgroundColor: "transparent"
-    textColor: "{colors.brass}"
-    typography: "{typography.body}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
-    padding: "0 1.375rem"
-    height: "2.75rem"
-  button-outline-hover:
-    backgroundColor: "{colors.brass}"
-    textColor: "#ffffff"
-  link-more:
-    textColor: "{colors.brass}"
-    typography: "{typography.body}"
-  tile:
-    backgroundColor: "{colors.wall-2}"
-    textColor: "{colors.bone}"
+    padding: "0 28px"
+    height: "52px"
+  bento-tile:
+    backgroundColor: "{colors.paper-raised}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.tile}"
-    padding: "3rem 1.5rem 0"
-  screenshot:
-    backgroundColor: "{colors.wall-3}"
+    padding: "{spacing.tile-pad}"
+  bento-tile-whatsapp:
+    backgroundColor: "{colors.whatsapp-green}"
+    rounded: "{rounded.tile}"
+    padding: "{spacing.tile-pad}"
+  stack-card:
+    backgroundColor: "{colors.night-raised}"
+    textColor: "{colors.night-ink}"
+    rounded: "{rounded.card}"
+    padding: "16px"
+  screenshot-frame:
+    backgroundColor: "{colors.paper-sunk}"
     rounded: "{rounded.screenshot}"
-  header-bar:
-    backgroundColor: "{colors.wall}"
-    textColor: "{colors.bone}"
-    height: "3.5rem"
-  header-request:
-    backgroundColor: "{colors.brass}"
-    textColor: "#ffffff"
+  closing-block:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.block}"
+    padding: "80px 24px"
+  header-quote:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
     rounded: "{rounded.pill}"
-    padding: "0 0.875rem"
-    height: "2rem"
+    padding: "0 20px"
+    height: "40px"
 ---
 
 # Design System: aly.lat
 
-Scope: the public site only (`app/(site)/[lang]/**`, `body.museum`). The admin and the Telegram Mini App keep the older studio tokens at the top of `app/globals.css` and are not described here. The site's class names come from an earlier look (wall, bone, brass, hall, exhibit). They now mean background, text, accent, page column and screenshot.
-
 ## Overview
 
-**Creative North Star: "The Product Page"**
+**Creative North Star: "The Poster Studio"**
 
-Each screen of the site works like a screen on apple.com. It has one big heavy headline in mixed case, one quiet line under it, at most two pill buttons or a chevron link, and then the picture: his photograph or a screenshot of the work. Everything else is air. The page gets its rhythm from alternating bands: white and #f5f5f7 in the light theme, black and #161617 in the dark one, with some bands that are dark in either theme. The owner chose this world. It replaced the earlier "dark house" world, and nothing from that world (room lighting, lamps, BBH Bogle) carries over.
+The site is a sequence of posters, not a scrolling document. Each section is one poster: one enormous headline in wide, heavy Unbounded capitals, one quiet line of Manrope beneath it, and one living thing (a lens, a counter, a stack, a running line of words). Warm off-white paper and near-black alternate section by section, so the page reads like prints pinned up in turns on a light wall and a dark one. There is no theme switch. Tone belongs to the section, not to the visitor.
 
-The site has two equal themes. The light theme uses Apple's white and very light grey with a near-black text and the #0071e3 blue. The dark theme uses Apple's Pro-page black with an off-white text and the #2997ff blue. Both themes share every class and only the variables change. Where a theme needs a different picture, the picture is swapped rather than tinted.
+Three moves give the world its character. Pictures are set inside headlines as if they were words: round-ended capsules that open in width as the sentence arrives. On black, the owner's photo and the screenshots wait in grey and turn to colour, through a round lens that follows the pointer (and drifts by itself on touch) or as a screenshot reaches the middle of the screen. And useful facts sit in a bento of small rounded tiles, each with its own small motion: a count rising, the Dushanbe clock with an online dot, a ring filling, tools running past, reviews changing by themselves.
 
-Density is low on purpose. The owner's rules are: one big headline and one small line per screen, a lot of air, no enumerated text lists, and a clean page.
+There is a lot of air. Sections breathe at 96 to 144px vertically, and the headline carries the whole section. Every section is built differently from the one before it. Motion is lively but never required: reduced motion stops every loop and reveal, and nothing is hidden before the motion script arrives.
 
 **Key Characteristics:**
-- Two full themes on `<html data-theme>`, plus fixed-tone sections (`data-tone="dark"` / `"light"`).
-- One type family, Nunito Sans: 800 for headlines, 400 for the lead line, 300 for small print.
-- Centered composition: headline, line, actions, picture.
-- Pill buttons, chevron text links, 28px tiles and 18px screenshots.
-- Flat surfaces. Depth comes from tone changes and a hairline, not from shadows.
+- Wide heavy uppercase display (Unbounded 800) against a calm humanist text face (Manrope).
+- Light and dark alternate by section through `data-tone`, never through a theme toggle.
+- One orange accent for markers, dots, rings, underlines and the badge; WhatsApp green only on WhatsApp doors.
+- Grey-to-colour as the reveal for photographs and screenshots on black.
+- Generous, rounded containers (20 to 36px) with everything interactive as a full pill.
+- One headline and one line per section; no enumerated text lists.
 
 ## Colors
 
-The palette is neutral with one accent. Greys sit close to Apple's own values, and a single blue (a different blue in each theme) carries every action.
+A warm two-tone ground (paper and night) with a single hot orange and a functional green.
 
 ### Primary
-- **Action Blue** (`brass` light / `dark-brass` dark): filled pill buttons, outlined pill borders, chevron text links, the header's request pill, the selection highlight, the focus ring and the form caret. Nothing decorative is blue.
+- **Signal Orange** (`signal-orange`): the one accent. Used for marker dots between marquee words, the filling progress ring, the underline of "more" links, the centre disc of the rotating badge, the focus ring, text selection, the input caret and form focus halo (at 20% alpha). On black it may colour large type on hover; on paper it stays a fill, a dot or a line.
+
+### Secondary
+- **WhatsApp Green** (`whatsapp-green`): reserved for WhatsApp. The full-width WhatsApp bento tile, the round WhatsApp button in the sticky bar, and the "online now" dot on the clock tile. Never decorative.
 
 ### Neutral
-- **Paper White / Pro Black** (`wall` / `dark-wall`): the default page band, and the inside of Choices tiles.
-- **Apple Mist / Graphite** (`wall-2` / `dark-wall-2`): alternate bands (Hero, Choices, Draft, inner page openings, footer) and the default tile fill.
-- **Silver Well / Deep Graphite** (`wall-3` / `dark-wall-3`): the background behind a screenshot while it loads, and the carousel's dot pill and play button.
-- **Ink / Frost** (`bone` / `dark-bone`): headlines, lead lines and primary text.
-- **Slate / Ash** (`bone-2` / `dark-bone-2`): secondary lines under headlines, small print and quiet links.
-- **Pewter** (`bone-3`, the same in both themes): small labels and carousel dots at rest. See the contrast rule below.
-- **Hairline** (`seam` / `dark-seam`, `seam-2` / `dark-seam-2`): the 1px ring around screenshots, the header's bottom edge, price-list dividers and input borders.
+- **Warm Paper** (`paper`): the default ground of every section and the warm block inside the closing section.
+- **Raised Paper** (`paper-raised`): bento tiles, alternate inner-page bands, the footer.
+- **Sunk Paper** (`paper-sunk`): the empty state behind a screenshot while it loads, and the track of the progress ring.
+- **Ink** (`ink`), **Ink 2** (`ink-2`), **Ink 3** (`ink-3`): headline, quiet line and meta text on paper. Ink 3 sits exactly at 4.5:1 on paper; it is the floor, not a step to go lighter from.
+- **Seam** (`seam`), **Seam 2** (`seam-2`): hairlines (marquee rules, price rows, the header once scrolled) and the outline-button stroke.
+- **Night** (`night`), **Night Raised** (`night-raised`), **Night Sunk** (`night-sunk`), **Night Ink 1-3**, **Night Seam 1-2**: the same roles re-pointed for a `data-tone="dark"` section. Stacked work cards use Night Raised on Night.
 
 ### Named Rules
-**The Variable Swap Rule.** A theme only redefines the `--color-*` variables, on `html[data-theme='dark']` and on `[data-tone]` sections. Components never hard-code a theme's hex. The one exception is white text on a filled blue pill. Tailwind's `dark:` variant matches both the dark theme and any `data-tone="dark"` section.
+**The Section Owns the Tone Rule.** A section is either `data-tone="dark"` or paper; tokens are re-pointed in place and components never pick a light or dark colour themselves. A paper island inside a black section (the closing block) declares `data-tone="light"`. The header reads the section under it and flips its own tone to match.
 
-**The Fixed Tone Rule.** `data-tone="dark"` makes a section dark in both themes (the Feature, the Closing, and tiles 2 and 3 of every four in the Tiles grid). `data-tone="light"` keeps a section light in both. Use fixed tones to create the black-and-white rhythm, not to style a single element.
+**The One Orange Rule.** Signal Orange is the only accent. It marks, it never fills a section, and on paper it is never used as reading text (2.7:1 against paper).
 
-**The Small Text Contrast Rule.** Text under 18px must reach 4.5:1 against the surface it sits on. In the light theme, Pewter `#86868b` measures 3.6:1 on white and 3.3:1 on Mist, so small labels in that theme belong in Slate. Pewter is safe for small text only on dark surfaces.
+**The Green Means WhatsApp Rule.** Green appears only where a tap opens WhatsApp or reports that he is answering now.
 
 ## Typography
 
-**Display Font:** Nunito Sans, loaded with `next/font` and the `wdth` axis (falls back to ui-sans-serif, system-ui)
-**Body Font:** Nunito Sans
-**Signature:** Pacifico, used only for his signature in the Closing
+**Display Font:** Unbounded (with ui-sans-serif, system-ui)
+**Body Font:** Manrope (with ui-sans-serif, system-ui)
 
-**Character:** The headlines are heavy and tight, and Nunito Sans's rounded terminals give them some warmth. The rest of the text is light and plain. The site uses one family, the way Apple does.
+**Character:** Unbounded is wide, round and heavy, set in capitals with tight tracking so a headline locks into a block that reads as an image. Manrope is plain and warm, and it only ever speaks quietly beside it. Both carry Cyrillic; the site is bilingual.
 
 ### Hierarchy
-- **Display** (800, `clamp(2.5rem, 6.4vw, 5.5rem)`, 1.04): the one headline of each screen and of each inner page opening. It is always mixed case. Single statement screens (Draft, the service price figure) push it larger, up to `clamp(3rem, 9vw, 9rem)`.
-- **Headline** (800, `clamp(1.75rem, 3.6vw, 3rem)`, 1.08): tile and choice titles, and section titles on inner pages.
-- **Lead** (400, `clamp(1.125rem, 1.9vw, 1.5rem)`, 1.35): the one quiet line under a headline. It is balanced, centered and limited to about `max-w-2xl`.
-- **Body** (400, 17px): button and link text, tile captions (16px) and review quotes (600, `clamp(1.25rem, 2.2vw, 1.875rem)`).
-- **Note** (300, 15px, 1.6, max 38ch): small print for readers who want it, in Slate.
-- **Label** (600, 12px, +0.02em, mixed case): field names in definition lists (contacts, thanks page, a service's "for whom") and work meta (client, year). It is never uppercase and never placed above a headline.
-- **Signature** (Pacifico 400, 2rem): his name at the end of the Closing, and nowhere else.
+- **Display Hero** (800, clamp(2.75rem, 9vw, 9rem), 0.95, uppercase): his name on the lens screen, one word per line, each rising out of its own mask.
+- **Display** (800, clamp(2.25rem, 6.6vw, 6.5rem), 1.02, -0.03em, uppercase): the one headline of every section and every inner page. Pages may push it larger (the statement at up to 7.75rem, the closing at up to 7.5rem, the next-case link at up to 8rem) or smaller (inner page heads at up to 5rem), but never change face, weight or case.
+- **Marquee Words** (Unbounded 800, clamp(3rem, 9vw, 8.5rem), 1, uppercase): the running line of directions.
+- **Headline** (700, clamp(1.375rem, 3vw, 2.5rem), 1.05, uppercase): card titles, tile statements, case section names.
+- **Tile Figures** (Unbounded 800, about clamp(2.5rem, 5vw, 4.5rem), 1, tabular figures): counter, clock, prices inside tiles.
+- **Lead** (Manrope 400, clamp(1.0625rem, 1.6vw, 1.25rem), 1.5, Ink 2): the one quiet line under a headline.
+- **Body** (Manrope 400, 0.9375rem, 1.6, Ink 2, max 40ch): short notes beside a headline.
+- **Label** (Manrope 600, 0.8125rem, 1.3, Ink 2, sentence case): a tile's name, a review's author, a screenshot caption.
 
 ### Named Rules
-**The One Headline Rule.** Each screen has one Display headline and one Lead line. A second headline-sized element on the same screen starts a new screen.
+**The One Shout Rule.** Each section has one Unbounded headline and one Manrope line. A second display-sized line in the same section is a new section.
 
-**The One Family Rule.** All text is Nunito Sans. Pacifico appears only in the signature.
+**The Words-as-Pictures Rule.** An image may sit inside a display headline as a capsule 0.8em tall with fully round ends, aligned to the baseline, that grows from zero width as the line enters view.
 
 ## Layout
 
-Two columns frame everything. The **hall** column is 1100px wide, with 1.25rem gutters that grow to 2rem from 768px. It holds headlines and text. The **hall-wide** column is 1440px wide, with 0.75rem gutters that grow to 1.25rem. It holds the header bar and the tile grid. Screens are centered stacks: the headline, the Lead line 12px below it, the actions 24–32px below that, and the picture 56–80px further down.
+Two columns of fixed width carry everything. The reading column is 1320px wide with 20px side gutters (40px from 768px). The wide column is 1440px with 12px gutters (24px from 768px) and holds the bento, the work stack and full-bleed pictures. Sections breathe at 96px top and bottom on phones and 128 to 144px from 768px; inner page heads start at 128 to 160px to clear the fixed header.
 
-Section padding sets the air: 5–6rem of vertical space on phones and 7–9rem from `md` upward. Tiles sit two to a row from `md` with a 12px gap (the Tiles grid), or one to four per row (Choices: 1 / 2 at `sm` / 4 at `lg`). Inner pages open with a Mist band (7rem top on phones, 9rem from `md`) that holds the page title, its line and its actions. The fixed header is 48px tall on phones and 56px from `md`, and its links fold into a full-screen menu below 1024px. On phones a sticky request pill sits at the bottom of the screen.
+A section's headline and its quiet line usually sit on opposite sides at the bottom edge: headline left, line and actions below it or right-aligned beside it, with the round badge pushed to the far right. Inner pages use a 12-column grid from 1024px for the headline and note pairing (7 + 4 columns, often mirrored on the next band).
 
-**The Air Rule.** When in doubt, add vertical space. Never add a second idea to a screen.
+The bento is 2 columns on phones and 4 from 768px, with a 12px gap and rows of at least 200px; the portrait tile spans 2 by 2 and the WhatsApp tile spans the full width at the bottom. Work cards stack: each sticks 18px lower than the one before (starting at 4.5rem), so they pile under the header as you scroll.
+
+**The Every Section Different Rule.** No two adjacent sections share a composition. A lens, a sentence with pictures, a bento, a stack, a running line and a closing block follow each other on the home page; inner pages alternate paper, raised paper and night bands.
 
 ## Elevation & Depth
 
-The page is flat. Depth comes from changes in tone between bands and tiles, and from a 1px Hairline ring (`box-shadow: 0 0 0 1px seam`) around every screenshot. The only translucent layer is the header: a 75% background over `backdrop-blur-xl` and `saturate(150%)`. The sticky phone controls carry the site's only real shadow.
+The system is flat and tonal. Depth comes from tone (night under paper, raised paper on paper), from pictures moving from grey to colour, and from things physically stacking. There is one structural shadow, on the stacked work cards, cast upward so each card darkens the one it covers. The sticky request bar carries a soft drop so it floats over any section. The header becomes an 80% translucent, blurred band once the page has moved.
 
 ### Shadow Vocabulary
-- **Floating control** (`box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45)`): only on the sticky request pill and the WhatsApp button fixed to the bottom of a phone screen.
-- **Screenshot hairline** (`box-shadow: 0 0 0 1px var(--color-seam)`): the edge of every screenshot.
+- **Stack shadow** (`box-shadow: 0 -30px 60px -30px rgb(0 0 0 / 0.9)`): only on work cards that pile on scroll.
+- **Floating bar** (`box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45)`): only on the sticky request and WhatsApp buttons.
+- **Screenshot hairline** (`box-shadow: 0 0 0 1px` Seam): the edge of every screenshot frame, not a lift.
 
 ### Named Rules
-**The Flat Surface Rule.** Tiles, bands and screenshots have no drop shadows. Only something that floats above the page while it scrolls gets a shadow.
+**The Grey Until Seen Rule.** On black, photographs and screenshots start in greyscale (contrast 1.05) and come into colour over 900ms when they reach the middle band of the screen, under the pointer, or inside the lens. Colour is the reward for attention.
 
 ## Shapes
 
-Corners follow a small fixed scale: 9999px pills for every button, the header request and the carousel controls; 28px tiles; 18px screenshots; and a 32px top-only rounding on the light-theme photographs, which sit on the band below them like a framed print. A screenshot inside a tile drops its bottom corners so it runs off the tile's lower edge. The Feature screenshot starts at a 36px radius and 84% scale, then grows to full width with square corners as it scrolls in. Cut-out photographs in the dark theme have no frame or radius: the figure stands directly on black.
+Everything is soft and large. Containers have generous radii that grow with their size: an inset picture 20px, a screenshot 22px, a bento tile 28px, a stacked card 32px, the closing block 36px. Every control is a full pill or a full circle: buttons, the language switch, tool chips, the arrow discs on tiles, the round badge. Lines are hairlines at 10 to 20% of the ink colour. Nothing is square-cornered except the full-bleed sections themselves.
+
+**The Round Lens Rule.** Circles carry meaning here: the colour lens, the rotating badge, the online dot, the progress ring, the arrow discs. A new interactive marker should be round before it is anything else.
 
 ## Components
 
 ### Buttons
-Light and confident, like Apple's own buttons.
-- **Shape:** full pill (9999px), at least 44px tall, 22px side padding, 17px weight 500.
-- **Primary (filled):** Action Blue background with white text. On hover it darkens to 86% blue mixed with black.
-- **Outline:** a 1px Action Blue border with blue text. On hover it fills blue with white text.
-- **Pairing:** a primary action and a WhatsApp outline (with its icon) appear together as one unit, called "the two doors". They are centered, 12px apart, and appear in the Hero, the Closing and the menu.
-- **Focus:** a 2px Action Blue outline, offset 3px, with a 6px radius.
+- **Shape:** full pill (9999px), at least 52px tall, 28px side padding, Manrope 600 at 1rem, with a 0.6rem gap for an icon.
+- **Solid:** Ink ground with Paper text; inside a dark section it inverts automatically (light ground, black text). Hover lifts it 1px over 250ms on the gallery ease.
+- **Line:** transparent with a 1.5px Seam 2 stroke and Ink text; hover darkens the stroke to Ink. Used for WhatsApp, Telegram and "visit the site".
+- **Header request:** a smaller solid pill (40px) in the header from 768px.
+- **Focus:** a 2px Signal Orange outline at 3px offset on every focusable element.
 
-### Text Links
-- **More link:** Action Blue, 17px, followed by a 12px stroked chevron with a 4px gap. It is underlined on hover. It is the default secondary action: open a work, see all works, read more. The Back link uses the same style with the chevron turned 180 degrees.
-- **Quiet link:** Slate text that turns to Ink and gains an underline on hover. It is used for contact lines and footer links.
+### Chips
+- **Tool chips:** Paper pills inside a raised tile, Manrope 600, 16px by 10px padding, running sideways in an endless loop over 22s.
 
 ### Cards / Containers
-- **Tile:** 28px corners with a Mist fill (Paper White in Choices), a centered headline, a caption and a More link, with no border and no shadow. In the Tiles grid, tiles 2 and 3 of every four are fixed dark, which makes a checkerboard of two light and two dark tiles. Hovering a tile raises its screenshot by 6px over 700ms.
-- **Screenshot (exhibit):** 18px corners, a Silver Well fill and a Hairline ring. The image is set to `object-cover object-top`.
+- **Bento tile:** Raised Paper, 28px radius, 24 to 28px padding, content pinned top and bottom (name and figure). A tile may declare `data-tone="dark"` to become a night tile inside the paper grid (the prices tile).
+- **Stacked work card:** Night Raised, 32px radius, 16 to 24px padding, title row in Headline type with year and an "open" link, then a 20px-radius screenshot at 16:10 (16:8 from 768px) that colours up and scales 2% on hover.
+- **Screenshot frame:** Sunk Paper behind, 22px radius, a hairline edge, image clipped.
+- **Closing block:** a Paper island (36px radius) inside a black section, with the headline, the line, a solid and a line button, and the badge.
 
 ### Inputs / Fields
-The request and review forms keep their own markup. Inside `.form-room` the older studio tokens are mapped to the site's variables, so the forms follow the theme. Labels and form headings use Nunito Sans 800. On focus a field's border turns Action Blue and gains a `0 0 0 4px` ring of 22% blue.
+- **Style:** the request and review forms inherit the section tokens; field labels and form headings switch to Unbounded 800 uppercase.
+- **Focus:** the border darkens to Ink with a 4px Signal Orange halo at 20% alpha; the caret is orange.
 
 ### Navigation
-- **Header bar:** fixed, with a translucent background, a Hairline bottom edge and background blur. It holds the wordmark on the left (inverted in dark), 13px links in the center (Ink at 80%, full Ink on hover or on the current page), and on the right the theme switch, the language switch and a small 32px blue request pill (`md` and up).
-- **Theme switch:** a 36px round icon button: a moon in the light theme and a sun in the dark. Clicking it writes `aly-theme` to localStorage. Before the first paint, an inline script in the site layout sets `data-theme` from `aly-theme`, or from `prefers-color-scheme` if nothing is stored.
-- **Mobile menu:** a full-screen panel with links in 28px weight 700, the two doors and a small note. It fades in with a 12px drop.
+- **Header:** fixed, 56px (64px from 768px), wordmark left (inverted on dark), Manrope 500 links at 0.875rem in Ink at 75% that sharpen to full Ink on hover or when current, a round language switch, the request pill. Transparent at the top, then an 80% blurred band with a hairline. It flips its own tone to match the section under it.
+- **Mobile menu:** below 1024px a full-screen Paper panel; the links are Unbounded 800 uppercase at 1.75rem, each rising in a little after the one before, followed by the request and WhatsApp buttons and a quiet contact line.
+- **Sticky request bar:** a solid Ink pill and a round green WhatsApp button that rise from below the fold after the first screen and sink away when a section with its own doors (lens, closing), the menu or a form page is on screen.
+- **Footer:** Raised Paper, quiet Manrope 0.8125rem, links in Ink 2 that darken on hover.
 
-### Highlights Carousel (signature)
-Reviews are shown the way Apple's "Get the highlights" carousel works. One tile sits in the center (52–84vw wide, at least 22–26rem tall) and its neighbors show at the edges. It snaps on a native horizontal scroll and advances every 6s. Under it sit a pill of dots (Silver Well background; the active dot is a 32px Ink bar, the others are 8px Pewter dots) and a round 48px play/pause button. Swiping, tapping a dot or reduced motion pauses it.
+### Colour Lens Hero
+His photograph fills the black first screen (100svh, at least 600px) in greyscale at 50% opacity; a second, full-colour copy shows only through a radial mask (radius clamp(120px, 16vw, 220px)) centred on the pointer, or drifting in a slow figure on touch screens. A gradient darkens the bottom for his name in Display Hero type, the offer line, and a solid and a line button.
 
-### Themed Pictures
-`.only-light` and `.only-dark` swap images by theme, and a fixed-dark section shows the dark version.
-- **Light theme:** his photographs as taken: `public/photo/about.webp` (Hero) and `public/gallery/work-phone.webp` (Person). Both have rounded tops.
-- **Dark theme:** cut-outs of the same moments, `public/photo/cut/hero.png` and `public/photo/cut/stand.png`. They are transparent PNGs set directly on black. **Provenance:** both were made from his own photographs with macOS Vision subject lifting (foreground subject extraction). They are not generated or illustrated. A new cut-out must be made the same way, from a real photograph of him.
+### Rotating Badge
+A 128 to 144px circle of Unbounded 700 text set on a circular path, rotating once every 16s, around a 56px Signal Orange disc holding an arrow that turns 45 degrees on hover. It is always a WhatsApp door.
+
+### Directions Marquee
+One endless line of huge uppercase direction words between two hairlines, each separated by an orange dot and each a link into the request form with that direction chosen; a word turns orange under the pointer. The loop runs 28s. Its accessible copy is the first set only.
+
+### Living Bento
+The tiles of concept E: a counter rising to its number over 1.8s, the Dushanbe clock (refreshed every 15s) with a green "online" or orange "offline" dot, a ring that draws itself over 2.2s, the price from, the tools loop, a review that changes every 6s with a 12px rise and fade, his portrait tile with an arrow disc, and the full-width WhatsApp tile with a pinging ring.
 
 ### Motion
-One script (`GalleryMotion`) reads attributes from the markup. `data-rise` lifts headline lines into their masks (1.25s expo-out, 90ms stagger). `data-fade` settles a tile up 48px out of a 6px blur. `data-zoom` scrubs the Feature screenshot from 0.84 scale and a 36px radius to full width. Wheels get smooth scrolling through Lenis, while touch scrolling stays native. Nothing above the fold is ever hidden before the script runs, and reduced motion turns every reveal off. Theme changes fade the background and text over 400ms (`cubic-bezier(0.25, 0.1, 0.25, 1)`).
+One script reads attributes from the markup: `data-rise` lifts headline lines out of their masks (1.25s, expo out, 0.09s stagger), `data-fade` settles an element up 48px from a 6px blur (1.3s), `data-colour` turns grey to colour mid-screen, `data-gallery` pins a horizontal track on wide screens. Reveals only apply to elements that start below the fold. Smooth scroll is for wheels and trackpads only. The house ease is `cubic-bezier(0.16, 1, 0.3, 1)`.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** give each screen one Display headline (800, mixed case), one Lead line and at most one set of actions: the two doors or one or two More links.
-- **Do** build every new surface from the `--color-*` variables so it works in both themes, and check it in both themes before shipping.
-- **Do** use `data-tone="dark"` on whole sections or whole tiles to create the black-and-white rhythm.
-- **Do** keep small text at 4.5:1 or better. In the light theme, use Slate (`#6e6e73`) rather than Pewter for any text under 18px.
-- **Do** frame every screenshot in an 18px radius with a Hairline ring, and every tile in a 28px radius.
-- **Do** swap pictures with `.only-light` / `.only-dark` when a theme needs a different image. Dark-theme cut-outs must come from his real photographs, made with subject lifting.
-- **Do** leave a lot of air: 6–9rem between screens and centered stacks.
+- **Do** give every section exactly one Unbounded 800 uppercase headline and one Manrope line, with at least 96px of air above and below.
+- **Do** set tone by section with `data-tone="dark"` or `data-tone="light"` and let the tokens follow; never hard-code a light or dark colour inside a component.
+- **Do** keep photographs and screenshots grey on black until they are seen, and bring them to colour through the lens, the middle of the screen, or the pointer.
+- **Do** make every control a pill or a circle, and every container a large soft rectangle (20 to 36px).
+- **Do** give a new section its own living behaviour (a count, a loop, a stack, a reveal) and make it stop cleanly under reduced motion.
+- **Do** keep Signal Orange to markers, dots, rings, underlines and the badge disc.
 
 ### Don't:
-- **Don't** list things as enumerated text (numbered steps, bullet lists of features). Say it once in a headline and a line, or give each item its own tile.
-- **Don't** put a small uppercase label or kicker above a headline. Labels are mixed-case field names, not section announcers.
-- **Don't** set headlines in uppercase, and don't use a second display family. BBH Bogle and the old studio fonts are retired from the public site.
-- **Don't** use Pacifico anywhere except his signature.
-- **Don't** add drop shadows to tiles, bands or screenshots. Only floating phone controls get a shadow.
-- **Don't** color anything Action Blue that is not an action or a focus state.
-- **Don't** bring the dark-house devices back (room lighting, lamps, pointer-following light). The `data-lit`, `data-magnetic`, `data-draw` and `data-parallax` hooks still exist in the motion script, but they are not part of this world.
-- **Don't** use the admin or Mini App tokens (`paper`, `ground`, `ink`, Onest) on the public site, except through the `.form-room` mapping.
+- **Don't** add a light/dark theme switch; tone belongs to the section.
+- **Don't** write enumerated text lists or bullet grids of features; one fact becomes one tile, one headline, or one running word.
+- **Don't** repeat a section's composition directly after itself.
+- **Don't** use Signal Orange for reading text on paper, or use green for anything that is not WhatsApp or online status.
+- **Don't** bring back Pacifico, BBH Bogle or any script or system display face; display is Unbounded, everything read is Manrope.
+- **Don't** hide content until a script arrives; reveals start from a visible state.

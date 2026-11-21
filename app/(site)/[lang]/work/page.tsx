@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { startHref } from '@/components/museum/links';
 import { getPublishedCases, localizeCases } from '@/lib/cases';
@@ -55,7 +55,7 @@ export default async function WorkPage() {
           <ul className="grid gap-x-10 gap-y-24 md:gap-y-32 lg:grid-cols-12">
             {cases.map((row, index) => (
               <li key={row.id} data-fade className={HANG[index % HANG.length]}>
-                <Link href={localePath(lang, `/work/${row.slug}`)} className="group block">
+                <Link href={localePath(lang, `/work/${row.slug}`)} data-colour className="group block">
                   <div className="relative pt-10">
                     <div className="exhibit aspect-[16/10] overflow-hidden">
                       <Image

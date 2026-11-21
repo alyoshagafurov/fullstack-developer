@@ -358,74 +358,67 @@ html:has([data-mini]) {
 }
 
 /* ======================================================================
- * The public site — clean, in the manner of apple.com.
+ * The public site — warm paper and black, with one orange.
  *
- * One idea per screen: a short heavy headline, one quiet line, at most two
- * pill buttons, and the picture. Two themes share every class: light (the
- * #f5f5f7 and white of apple.com) and dark (the black of Apple's Pro pages).
- * The theme lives on <html data-theme>; a section marked data-tone="dark" is
- * dark in both, which is how the page gets its black-and-white rhythm.
+ * Built from three concepts the owner picked: B (wide heavy type on warm
+ * off-white, pictures set inside headlines, cards that stack), D (black and
+ * white, a lens of colour that follows the pointer) and E (a bento grid of
+ * small living tiles). Light and dark are not themes here: they alternate by
+ * section. A section marked data-tone="dark" is black; everything else is
+ * warm paper.
  *
  * The class names are older than this look (wall, bone, brass, hall, …) and
- * now simply mean background, text, accent and the page column.
+ * now mean background, text, accent and the page column.
  * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *, [data-tone='dark'], [data-tone='dark'] *));
+@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *));
 
 @theme {
-  --color-wall: #ffffff;
-  --color-wall-2: #f5f5f7;
-  --color-wall-3: #e8e8ed;
-  --color-bone: #1d1d1f;
-  --color-bone-2: #6e6e73;
-  --color-bone-3: #86868b;
-  --color-brass: #0071e3;
-  --color-seam: rgb(0 0 0 / 0.08);
-  --color-seam-2: rgb(0 0 0 / 0.16);
+  --color-wall: #efeee9;
+  --color-wall-2: #ffffff;
+  --color-wall-3: #e3e1da;
+  --color-bone: #0f0f0f;
+  --color-bone-2: #55534e;
+  --color-bone-3: #6f6c66;
+  /* The one accent: a warm orange for markers, dots and the badge. */
+  --color-brass: #ff5a1f;
+  --color-whatsapp: #25d366;
+  --color-seam: rgb(15 15 15 / 0.1);
+  --color-seam-2: rgb(15 15 15 / 0.2);
 
-  --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-script: var(--font-pacifico), cursive;
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+  --font-text: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
-  --ease-gallery: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-gallery: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* The dark theme, and any section that is dark whatever the theme. */
-html[data-theme='dark'],
 [data-tone='dark'] {
-  --color-wall: #000000;
-  --color-wall-2: #161617;
-  --color-wall-3: #1d1d1f;
-  --color-bone: #f5f5f7;
-  --color-bone-2: #a1a1a6;
-  --color-bone-3: #86868b;
-  --color-brass: #2997ff;
-  --color-seam: rgb(255 255 255 / 0.12);
-  --color-seam-2: rgb(255 255 255 / 0.24);
+  --color-wall: #0a0a0a;
+  --color-wall-2: #161616;
+  --color-wall-3: #232323;
+  --color-bone: #f2f1ec;
+  --color-bone-2: #a9a6a0;
+  --color-bone-3: #8e8b85;
+  --color-seam: rgb(242 241 236 / 0.12);
+  --color-seam-2: rgb(242 241 236 / 0.24);
 }
 
-/* A section that stays light in the dark theme too. */
+/* Warm paper again, inside a black section. */
 [data-tone='light'] {
-  --color-wall: #ffffff;
-  --color-wall-2: #f5f5f7;
-  --color-wall-3: #e8e8ed;
-  --color-bone: #1d1d1f;
-  --color-bone-2: #6e6e73;
-  --color-bone-3: #86868b;
-  --color-brass: #0071e3;
-  --color-seam: rgb(0 0 0 / 0.08);
-  --color-seam-2: rgb(0 0 0 / 0.16);
+  --color-wall: #efeee9;
+  --color-wall-2: #ffffff;
+  --color-wall-3: #e3e1da;
+  --color-bone: #0f0f0f;
+  --color-bone-2: #55534e;
+  --color-bone-3: #6f6c66;
+  --color-seam: rgb(15 15 15 / 0.1);
+  --color-seam-2: rgb(15 15 15 / 0.2);
 }
 
 @layer base {
   html:has(body.museum) {
     background: var(--color-wall);
-    color-scheme: light;
-  }
-
-  html[data-theme='dark']:has(body.museum) {
-    color-scheme: dark;
   }
 
   body.museum {
@@ -433,10 +426,6 @@ html[data-theme='dark'],
     color: var(--color-bone);
     font-family: var(--font-text);
     font-weight: 400;
-    letter-spacing: -0.005em;
-    transition:
-      background-color 400ms var(--ease-gallery),
-      color 400ms var(--ease-gallery);
   }
 
   .museum [data-tone] {
@@ -461,22 +450,24 @@ html[data-theme='dark'],
 }
 
 @layer components {
-  /* The headline of a screen: heavy, tight, mixed case — never shouted. */
+  /* The headline: wide, heavy, in capitals — the voice of concept B. */
   .hall-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
-    line-height: 1.04;
-    letter-spacing: -0.025em;
+    font-size: clamp(2.25rem, 6.6vw, 6.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
   .room-title {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(1.75rem, 3.6vw, 3rem);
-    line-height: 1.08;
+    font-weight: 700;
+    font-size: clamp(1.375rem, 3vw, 2.5rem);
+    line-height: 1.05;
     letter-spacing: -0.02em;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
@@ -484,52 +475,41 @@ html[data-theme='dark'],
   .lead-line {
     font-family: var(--font-text);
     font-weight: 400;
-    font-size: clamp(1.125rem, 1.9vw, 1.5rem);
-    line-height: 1.35;
-    letter-spacing: -0.01em;
-    color: var(--color-bone);
-    text-wrap: balance;
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    line-height: 1.5;
+    color: var(--color-bone-2);
+    text-wrap: pretty;
   }
 
-  /* Small print for whoever wants it. */
   .wall-note {
     font-family: var(--font-text);
-    font-weight: 300;
+    font-weight: 400;
     font-size: 0.9375rem;
     line-height: 1.6;
     color: var(--color-bone-2);
-    max-width: 38ch;
+    max-width: 40ch;
     text-wrap: pretty;
   }
 
   .wall-label {
     font-family: var(--font-text);
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     line-height: 1.3;
-    letter-spacing: 0.02em;
     color: var(--color-bone-2);
-  }
-
-  /* Pacifico survives in one place only: his signature. */
-  .script {
-    font-family: var(--font-script);
-    font-weight: 400;
-    color: var(--color-bone-2);
-    line-height: 1;
   }
 
   .hall {
     position: relative;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1320px;
     margin-inline: auto;
     padding-inline: 1.25rem;
   }
 
   @media (min-width: 768px) {
     .hall {
-      padding-inline: 2rem;
+      padding-inline: 2.5rem;
     }
   }
 
@@ -543,20 +523,20 @@ html[data-theme='dark'],
 
   @media (min-width: 768px) {
     .hall-wide {
-      padding-inline: 1.25rem;
+      padding-inline: 1.5rem;
     }
   }
 
-  /* A screenshot: rounded, a hairline, nothing else. */
+  /* A screenshot: rounded, a hairline. */
   .exhibit {
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 22px;
     background: var(--color-wall-3);
     box-shadow: 0 0 0 1px var(--color-seam);
   }
 
-  /* A tile, the unit of apple.com's home page. */
+  /* A bento tile. */
   .tile {
     position: relative;
     overflow: hidden;
@@ -568,54 +548,54 @@ html[data-theme='dark'],
   .btn-bone,
   .btn-line {
     display: inline-flex;
-    min-height: 2.75rem;
+    min-height: 3.25rem;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     border-radius: 9999px;
-    padding-inline: 1.375rem;
+    padding-inline: 1.75rem;
     font-family: var(--font-text);
-    font-size: 1.0625rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-size: 1rem;
+    font-weight: 600;
     transition:
       background-color 250ms var(--ease-gallery),
       color 250ms var(--ease-gallery),
-      border-color 250ms var(--ease-gallery);
+      border-color 250ms var(--ease-gallery),
+      transform 250ms var(--ease-gallery);
   }
 
-  /* Apple fills its buttons with the deeper blue in both themes: white on it reads 4.6:1. */
   .btn-bone {
-    background: #0071e3;
-    color: #fff;
+    background: var(--color-bone);
+    color: var(--color-wall);
   }
 
   .btn-bone:hover {
-    background: #0077ed;
+    transform: translateY(-1px);
   }
 
   .btn-line {
-    border: 1px solid var(--color-brass);
-    color: var(--color-brass);
+    border: 1.5px solid var(--color-seam-2);
+    color: var(--color-bone);
   }
 
   .btn-line:hover {
-    background: var(--color-brass);
-    color: #fff;
+    border-color: var(--color-bone);
   }
 
-  /* Apple's text link: accent colour, a chevron, underline on hover. */
   .link-more {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    color: var(--color-brass);
-    font-size: 1.0625rem;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: var(--color-bone);
+    text-decoration: underline;
+    text-decoration-color: var(--color-brass);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
   }
 
   .link-more:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    text-decoration-thickness: 3px;
   }
 
   .link-quiet {
@@ -628,20 +608,12 @@ html[data-theme='dark'],
     text-decoration: underline;
     text-underline-offset: 0.25em;
   }
-}
 
-/* The theme swaps a picture where the two need different ones. */
-html[data-theme='dark'] .museum .only-light,
-.museum [data-tone='dark'] .only-light {
-  display: none;
-}
-
-html:not([data-theme='dark']) .museum .only-dark {
-  display: none;
-}
-
-html:not([data-theme='dark']) .museum [data-tone='dark'] .only-dark {
-  display: block;
+  /* Pacifico is gone; anything still asking for "script" gets the quiet line. */
+  .script {
+    font-family: var(--font-text);
+    color: var(--color-bone-2);
+  }
 }
 
 /* Reveals start from a visible state; the motion script moves them. */
@@ -669,7 +641,7 @@ html:not([data-theme='dark']) .museum [data-tone='dark'] .only-dark {
 }
 
 .museum [data-gallery-track] > * {
-  scroll-snap-align: center;
+  scroll-snap-align: start;
 }
 
 .museum [data-pinned] [data-gallery-track] {
@@ -677,14 +649,26 @@ html:not([data-theme='dark']) .museum [data-tone='dark'] .only-dark {
   scroll-snap-type: none;
 }
 
+/* A screenshot waits in grey and comes into colour when it is looked at. */
+.museum [data-colour] img {
+  filter: grayscale(1) contrast(1.05);
+  transition:
+    filter 900ms var(--ease-gallery),
+    transform 900ms var(--ease-gallery);
+}
+
+.museum [data-colour].is-on img,
+.museum [data-colour]:hover img {
+  filter: none;
+}
+
 /*
  * The request and review forms were drawn with the old studio tokens. Inside a
- * form room those tokens are re-pointed at the site's, so the forms keep their
- * logic and markup and follow the theme.
+ * form room those tokens are re-pointed at the site's.
  */
 .museum .form-room {
-  --color-paper: var(--color-wall);
-  --color-ground: var(--color-wall-2);
+  --color-paper: var(--color-wall-2);
+  --color-ground: var(--color-wall);
   --color-shelf: var(--color-wall-3);
   --color-ink: var(--color-bone);
   --color-ink-2: var(--color-bone-2);
@@ -697,13 +681,12 @@ html:not([data-theme='dark']) .museum [data-tone='dark'] .only-dark {
 .museum .form-room label > span:first-child:not(.sr-only) {
   font-family: var(--font-display);
   font-weight: 800;
+  text-transform: uppercase;
   letter-spacing: -0.02em;
 }
 
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
-  border-color: var(--color-brass);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brass) 22%, transparent);
+  border-color: var(--color-bone);
+  box-shadow: 0 0 0 4px rgb(255 90 31 / 0.2);
 }
-
-/* Lamps belonged to the dark house; in this look every picture is simply shown. */

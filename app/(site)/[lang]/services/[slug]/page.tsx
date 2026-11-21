@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { ArrowIcon, WhatsAppIcon } from '@/components/museum/Icons';
 import { SERVICE_TYPE, startHref, whatsappHref } from '@/components/museum/links';
 import { getService, services } from '@/lib/content/services';

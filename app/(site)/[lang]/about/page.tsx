@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { site } from '@/lib/content/site';
 import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';

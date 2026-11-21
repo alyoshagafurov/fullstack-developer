@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { SERVICE_HALLS, SERVICE_TYPE, startHref } from '@/components/museum/links';
 import { getPriceList } from '@/lib/prices';

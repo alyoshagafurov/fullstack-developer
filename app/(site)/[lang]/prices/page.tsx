@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Closing, Draft } from '@/components/apple/Sections';
+import { Closing } from '@/components/site/Closing';
 import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
 import { alternatesFor, localePath } from '@/lib/i18n';
@@ -40,7 +40,7 @@ export default async function PricesPage() {
                 href={localePath(lang, `/services/${service.slug}`)}
                 className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-6 md:grid-cols-[1fr_14rem_12rem] md:py-7"
               >
-                <span className="font-display text-[clamp(1.25rem,2.2vw,1.875rem)] leading-tight font-extrabold transition-colors duration-500 group-hover:text-brass">
+                <span className="font-display text-[clamp(1.25rem,2.2vw,1.875rem)] leading-tight font-extrabold transition-colors duration-500 group-hover:underline group-hover:decoration-brass group-hover:decoration-2 group-hover:underline-offset-8">
                   {service.title}
                 </span>
                 <span className="order-last col-span-2 text-sm text-bone-3 md:order-none md:col-span-1">
@@ -55,7 +55,6 @@ export default async function PricesPage() {
         </ul>
       </section>
 
-      <Draft t={t} />
       <Closing lang={lang} t={t} />
     </>
   );

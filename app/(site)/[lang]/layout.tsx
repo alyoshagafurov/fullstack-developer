@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Nunito_Sans, Pacifico } from 'next/font/google';
+import { Manrope, Unbounded } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
@@ -25,28 +25,19 @@ import { getDictionary } from '@/lib/i18n/server';
 export const dynamicParams = false;
 
 /*
- * One family for everything, the way apple.com uses one: Nunito Sans, heavy
- * for headlines and light for small print. Pacifico is kept for his signature
- * only.
+ * Two faces: Unbounded, wide and heavy, for headlines; Manrope for everything
+ * read. Both carry Cyrillic.
  */
-const nunito = Nunito_Sans({
-  subsets: ['latin', 'cyrillic'],
-  variable: '--font-nunito',
-  display: 'swap',
-  axes: ['wdth'],
-});
-const pacifico = Pacifico({ weight: '400', subsets: ['latin', 'cyrillic'], variable: '--font-pacifico', display: 'swap' });
+const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], variable: '--font-unbounded', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin', 'cyrillic'], variable: '--font-manrope', display: 'swap' });
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f5f5f7' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
-  ],
-  colorScheme: 'light dark',
+  themeColor: '#0a0a0a',
+  colorScheme: 'light',
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -127,18 +118,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} className={`${nunito.variable} ${pacifico.variable}`}
-      suppressHydrationWarning>
-      <head>
-        {/* The theme is set before the first paint: the visitor's own choice,
-            else their system's. Without this the page would flash light. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{var t=localStorage.getItem('aly-theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}",
-          }}
-        />
-      </head>
+    <html lang={lang} className={`${unbounded.variable} ${manrope.variable}`}>
       <body className="museum">
         <a
           href="#main"

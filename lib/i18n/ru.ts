@@ -104,6 +104,21 @@ export const ru: Dictionary = {
 
   /** Ночной музей: один заголовок на зал, маленькая этикетка в углу. */
   home: {
+    manifesto: ['Делаю', 'сайты', 'для', 'бизнеса'],
+    badge: 'НАПИСАТЬ В WHATSAPP · НАПИСАТЬ · ',
+    lensHint: 'Наведите курсор на фото.',
+    bento: {
+      projects: 'проектов сделано',
+      clock: 'Сейчас в Душанбе',
+      online: 'На связи',
+      offline: 'Отвечу утром',
+      prices: 'Цены',
+      pricesFrom: 'от',
+      pricesLine: 'сайт, бот или магазин',
+      whatsappTitle: 'Написать в WhatsApp',
+      worksLabel: 'Работы',
+      directionsHint: 'Нажмите на слово — откроется заявка, где оно уже выбрано.',
+    },
     heroOffer: 'Делаю сайты',
     heroRole: 'Full-stack разработчик · Душанбе',
     walkHint: 'Прокручивайте — вы идёте по коридору',

@@ -1,339 +1,346 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-21T10:13:08+00:00",
+  "generatedAt": "2026-11-21T10:56:38+00:00",
   "title": "Design System: aly.lat",
   "extensions": {
     "colorMeta": {
-      "wall": {
+      "paper": {
         "role": "neutral",
-        "displayName": "Paper White",
+        "displayName": "Warm Paper",
+        "canonical": "#efeee9",
+        "tonalRamp": [
+          "#2c2a20",
+          "#4a4636",
+          "#6d684f",
+          "#948d6b",
+          "#ada88f",
+          "#c7c4b2",
+          "#dfddd3",
+          "#f4f4f0"
+        ],
+        "cssVariable": "--color-wall"
+      },
+      "paper-raised": {
+        "role": "neutral",
+        "displayName": "Raised Paper",
         "canonical": "#ffffff",
         "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
+          "#262626",
+          "#404040",
+          "#5e5e5e",
+          "#808080",
+          "#9e9e9e",
+          "#bdbdbd",
+          "#d9d9d9",
+          "#f2f2f2"
+        ],
+        "cssVariable": "--color-wall-2"
       },
-      "wall-2": {
+      "paper-sunk": {
         "role": "neutral",
-        "displayName": "Apple Mist",
-        "canonical": "#f5f5f7",
+        "displayName": "Sunk Paper",
+        "canonical": "#e3e1da",
         "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
+          "#2c2921",
+          "#494537",
+          "#6b6651",
+          "#91896e",
+          "#aca691",
+          "#c6c2b4",
+          "#dedcd3",
+          "#f4f3f0"
+        ],
+        "cssVariable": "--color-wall-3"
       },
-      "wall-3": {
-        "role": "neutral",
-        "displayName": "Silver Well",
-        "canonical": "#e8e8ed",
-        "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
-      },
-      "bone": {
+      "ink": {
         "role": "neutral",
         "displayName": "Ink",
-        "canonical": "#1d1d1f",
+        "canonical": "#0f0f0f",
         "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
-      },
-      "bone-2": {
-        "role": "neutral",
-        "displayName": "Slate",
-        "canonical": "#6e6e73",
-        "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
-      },
-      "bone-3": {
-        "role": "neutral",
-        "displayName": "Pewter",
-        "canonical": "#86868b",
-        "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
+          "#262626",
+          "#404040",
+          "#5e5e5e",
+          "#808080",
+          "#9e9e9e",
+          "#bdbdbd",
+          "#d9d9d9",
+          "#f2f2f2"
         ],
-        "note": "3.6:1 on white, 3.3:1 on Mist: not for small text in the light theme."
+        "cssVariable": "--color-bone"
       },
-      "brass": {
-        "role": "primary",
-        "displayName": "Action Blue (light)",
-        "canonical": "#0071e3",
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#55534e",
         "tonalRamp": [
-          "#00254d",
-          "#003a75",
-          "#004f9e",
-          "#0066cc",
-          "#0071e3",
-          "#2997ff",
-          "#6bb6ff",
-          "#cce6ff"
-        ]
+          "#282725",
+          "#42413d",
+          "#62605a",
+          "#85827a",
+          "#a2a09a",
+          "#c0beba",
+          "#dad9d7",
+          "#f3f2f2"
+        ],
+        "cssVariable": "--color-bone-2"
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#6f6c66",
+        "tonalRamp": [
+          "#282725",
+          "#42413d",
+          "#62605a",
+          "#85817a",
+          "#a29f9a",
+          "#c0beba",
+          "#dad9d7",
+          "#f3f2f2"
+        ],
+        "cssVariable": "--color-bone-3"
       },
       "seam": {
         "role": "neutral",
-        "displayName": "Hairline (light)",
-        "canonical": "rgb(0 0 0 / 0.08)",
-        "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
+        "displayName": "Seam",
+        "canonical": "rgb(15 15 15 / 0.1)",
+        "cssVariable": "--color-seam"
       },
       "seam-2": {
         "role": "neutral",
-        "displayName": "Hairline Strong (light)",
-        "canonical": "rgb(0 0 0 / 0.16)",
-        "tonalRamp": [
-          "#1d1d1f",
-          "#424245",
-          "#6e6e73",
-          "#86868b",
-          "#a1a1a6",
-          "#d2d2d7",
-          "#e8e8ed",
-          "#f5f5f7"
-        ]
+        "displayName": "Seam 2",
+        "canonical": "rgb(15 15 15 / 0.2)",
+        "cssVariable": "--color-seam-2"
       },
-      "dark-wall": {
+      "night": {
         "role": "neutral",
-        "displayName": "Pro Black",
-        "canonical": "#000000",
+        "displayName": "Night",
+        "canonical": "#0a0a0a",
         "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
-      },
-      "dark-wall-2": {
-        "role": "neutral",
-        "displayName": "Graphite",
-        "canonical": "#161617",
-        "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
-      },
-      "dark-wall-3": {
-        "role": "neutral",
-        "displayName": "Deep Graphite",
-        "canonical": "#1d1d1f",
-        "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
-      },
-      "dark-bone": {
-        "role": "neutral",
-        "displayName": "Frost",
-        "canonical": "#f5f5f7",
-        "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
-      },
-      "dark-bone-2": {
-        "role": "neutral",
-        "displayName": "Ash",
-        "canonical": "#a1a1a6",
-        "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
-      },
-      "dark-brass": {
-        "role": "primary",
-        "displayName": "Action Blue (dark)",
-        "canonical": "#2997ff",
-        "tonalRamp": [
-          "#00254d",
-          "#003a75",
-          "#004f9e",
-          "#0066cc",
-          "#0071e3",
-          "#2997ff",
-          "#6bb6ff",
-          "#cce6ff"
+          "#262626",
+          "#404040",
+          "#5e5e5e",
+          "#808080",
+          "#9e9e9e",
+          "#bdbdbd",
+          "#d9d9d9",
+          "#f2f2f2"
         ],
-        "note": "White text on it measures 3.0:1; open defect on the filled pill."
+        "cssVariable": "--color-wall (inside [data-tone=\"dark\"])"
       },
-      "dark-seam": {
+      "night-raised": {
         "role": "neutral",
-        "displayName": "Hairline (dark)",
-        "canonical": "rgb(255 255 255 / 0.12)",
+        "displayName": "Night Raised",
+        "canonical": "#161616",
         "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
+          "#262626",
+          "#404040",
+          "#5e5e5e",
+          "#808080",
+          "#9e9e9e",
+          "#bdbdbd",
+          "#d9d9d9",
+          "#f2f2f2"
+        ],
+        "cssVariable": "--color-wall-2 (inside [data-tone=\"dark\"])"
       },
-      "dark-seam-2": {
+      "night-sunk": {
         "role": "neutral",
-        "displayName": "Hairline Strong (dark)",
-        "canonical": "rgb(255 255 255 / 0.24)",
+        "displayName": "Night Sunk",
+        "canonical": "#232323",
         "tonalRamp": [
-          "#000000",
-          "#161617",
-          "#1d1d1f",
-          "#2c2c2e",
-          "#424245",
-          "#6e6e73",
-          "#a1a1a6",
-          "#f5f5f7"
-        ]
+          "#262626",
+          "#404040",
+          "#5e5e5e",
+          "#808080",
+          "#9e9e9e",
+          "#bdbdbd",
+          "#d9d9d9",
+          "#f2f2f2"
+        ],
+        "cssVariable": "--color-wall-3 (inside [data-tone=\"dark\"])"
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "#f2f1ec",
+        "tonalRamp": [
+          "#2d2b1f",
+          "#4c4834",
+          "#706a4d",
+          "#978f68",
+          "#b0aa8c",
+          "#c9c5b0",
+          "#e0ded2",
+          "#f5f4f0"
+        ],
+        "cssVariable": "--color-bone (inside [data-tone=\"dark\"])"
+      },
+      "night-ink-2": {
+        "role": "neutral",
+        "displayName": "Night Ink 2",
+        "canonical": "#a9a6a0",
+        "tonalRamp": [
+          "#282724",
+          "#43413d",
+          "#63605a",
+          "#868279",
+          "#a3a099",
+          "#c0beb9",
+          "#dbd9d7",
+          "#f3f2f2"
+        ],
+        "cssVariable": "--color-bone-2 (inside [data-tone=\"dark\"])"
+      },
+      "night-ink-3": {
+        "role": "neutral",
+        "displayName": "Night Ink 3",
+        "canonical": "#8e8b85",
+        "tonalRamp": [
+          "#282725",
+          "#42413d",
+          "#62605b",
+          "#84817b",
+          "#a29f9a",
+          "#bfbeba",
+          "#dad9d7",
+          "#f3f2f2"
+        ],
+        "cssVariable": "--color-bone-3 (inside [data-tone=\"dark\"])"
+      },
+      "night-seam": {
+        "role": "neutral",
+        "displayName": "Night Seam",
+        "canonical": "rgb(242 241 236 / 0.12)",
+        "cssVariable": "--color-seam (inside [data-tone=\"dark\"])"
+      },
+      "night-seam-2": {
+        "role": "neutral",
+        "displayName": "Night Seam 2",
+        "canonical": "rgb(242 241 236 / 0.24)",
+        "cssVariable": "--color-seam-2 (inside [data-tone=\"dark\"])"
+      },
+      "signal-orange": {
+        "role": "primary",
+        "displayName": "Signal Orange",
+        "canonical": "#ff5a1f",
+        "tonalRamp": [
+          "#4c1400",
+          "#802200",
+          "#bd3200",
+          "#ff4300",
+          "#ff703d",
+          "#ff9d7a",
+          "#ffc7b2",
+          "#ffece5"
+        ],
+        "cssVariable": "--color-brass"
+      },
+      "whatsapp-green": {
+        "role": "secondary",
+        "displayName": "WhatsApp Green",
+        "canonical": "#25d366",
+        "tonalRamp": [
+          "#0b411f",
+          "#136c34",
+          "#1ca14e",
+          "#26d969",
+          "#5ae28d",
+          "#8eebb1",
+          "#bef4d2",
+          "#e9fbf0"
+        ],
+        "cssVariable": "--color-whatsapp"
       }
     },
     "typographyMeta": {
+      "display-hero": {
+        "displayName": "Display Hero",
+        "purpose": "His name on the lens screen, one word per masked line."
+      },
       "display": {
         "displayName": "Display",
-        "purpose": "The one headline of a screen or inner page opening. 800, mixed case."
+        "purpose": "The one Unbounded uppercase headline of every section and page."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Tile and choice titles; inner section titles."
+        "purpose": "Card titles, tile statements, case section names."
       },
       "lead": {
         "displayName": "Lead",
-        "purpose": "The one quiet line under a headline."
+        "purpose": "The one quiet Manrope line under a headline."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Buttons, links, captions, running text."
-      },
-      "note": {
-        "displayName": "Note",
-        "purpose": "Small print in Slate, 38ch max."
+        "purpose": "Short notes beside a headline, max 40ch."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Mixed-case field names in definition lists and work meta. Never a kicker."
-      },
-      "signature": {
-        "displayName": "Signature",
-        "purpose": "Pacifico, his signature in the Closing only."
+        "purpose": "Tile names, review authors, screenshot captions; sentence case."
       }
     },
     "shadows": [
       {
-        "name": "floating-control",
+        "name": "stack",
+        "value": "0 -30px 60px -30px rgb(0 0 0 / 0.9)",
+        "purpose": "Stacked work cards casting onto the card beneath."
+      },
+      {
+        "name": "floating-bar",
         "value": "0 10px 30px -12px rgb(0 0 0 / 0.45)",
-        "purpose": "Only the sticky phone request pill and WhatsApp button."
+        "purpose": "Sticky request and WhatsApp buttons."
       },
       {
         "name": "screenshot-hairline",
         "value": "0 0 0 1px var(--color-seam)",
-        "purpose": "The edge of every screenshot."
-      },
-      {
-        "name": "field-focus",
-        "value": "0 0 0 4px color-mix(in srgb, var(--color-brass) 22%, transparent)",
-        "purpose": "Form field focus inside .form-room."
+        "purpose": "Edge of every screenshot frame."
       }
     ],
     "motion": [
       {
         "name": "ease-gallery",
-        "value": "cubic-bezier(0.25, 0.1, 0.25, 1)",
-        "purpose": "Theme fade (400ms), button state (250ms), tile hover lift (700ms)."
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "House ease for buttons, colour reveals, name rise, counters."
       },
       {
         "name": "rise",
-        "value": "1.25s expo.out, 90ms stagger",
-        "purpose": "data-rise: headline lines lift into their masks."
+        "value": "1.25s expo.out, 0.09s stagger, yPercent 105 to 0",
+        "purpose": "data-rise: headline lines lift out of their masks."
       },
       {
         "name": "fade",
-        "value": "1.3s expo.out, y 48px, blur 6px",
-        "purpose": "data-fade: tiles settle into place."
+        "value": "1.3s expo.out, y 48px and blur 6px to rest",
+        "purpose": "data-fade: tiles and pictures settle into place."
       },
       {
-        "name": "zoom",
-        "value": "scale 0.84 -> 1, radius 36px -> 0, scrubbed top 95% to top 15%",
-        "purpose": "data-zoom: the Feature screenshot grows to full width."
+        "name": "colour",
+        "value": "filter grayscale(1) contrast(1.05) to none, 900ms ease-gallery",
+        "purpose": "data-colour: screenshots turn to colour mid-screen or on hover."
       },
       {
-        "name": "highlights-hold",
-        "value": "6000ms",
-        "purpose": "Highlights carousel auto-advance interval."
+        "name": "badge-spin",
+        "value": "360deg over 16s, linear, infinite",
+        "purpose": "Rotating text badge."
+      },
+      {
+        "name": "marquee-directions",
+        "value": "-50% over 28s, linear, infinite",
+        "purpose": "Directions line of huge words."
+      },
+      {
+        "name": "marquee-tools",
+        "value": "-50% over 22s, linear, infinite",
+        "purpose": "Tools chip loop in the bento."
+      },
+      {
+        "name": "review-rotate",
+        "value": "every 6s, 0.5s opacity and 12px rise",
+        "purpose": "Rotating review tile."
+      },
+      {
+        "name": "sticky-rise",
+        "value": "680ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Sticky request bar rising from below the fold."
       }
     ],
     "breakpoints": [
@@ -354,158 +361,154 @@
         "value": "1280px"
       }
     ],
-    "themes": {
-      "attribute": "html[data-theme]",
-      "storageKey": "aly-theme",
-      "fallback": "prefers-color-scheme",
-      "fixedTone": "[data-tone=\"dark\"|\"light\"]",
-      "tailwindVariant": "dark: matches data-theme=dark and data-tone=dark",
-      "pictureSwap": ".only-light / .only-dark",
-      "pictures": {
-        "light": [
-          "public/photo/about.webp",
-          "public/gallery/work-phone.webp"
-        ],
-        "dark": [
-          "public/photo/cut/hero.png",
-          "public/photo/cut/stand.png"
-        ],
-        "provenance": "Dark-theme cut-outs lifted from his own photographs with macOS Vision subject lifting; not generated."
-      }
-    },
-    "scope": "Public site only (body.museum). Admin and Mini App keep the older studio tokens."
+    "toneModel": {
+      "attribute": "data-tone",
+      "values": [
+        "dark",
+        "light"
+      ],
+      "note": "Tokens --color-wall*, --color-bone*, --color-seam* are re-pointed inside [data-tone]; the header flips its own data-tone to match the section under it. No theme switch."
+    }
   },
   "components": [
     {
-      "name": "Primary Pill",
+      "name": "Solid Button",
       "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Filled accent pill: the request. Paired with the outline WhatsApp pill as the two doors.",
-      "html": "<button class=\"ds-btn-primary\">Get a quote</button>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-btn-primary{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);border:none;background:var(--color-brass);color:#fff}.ds-btn-primary:hover{background:color-mix(in srgb,var(--color-brass) 86%,black)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
+      "refersTo": "button-solid",
+      "description": "The primary request action; inverts inside a dark section.",
+      "html": "<a class=\"ds-btn-solid\" href=\"#\">Get a quote <svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
+      "css": ".ds-btn-solid{display:inline-flex;align-items:center;gap:.6rem;min-height:3.25rem;padding:0 1.75rem;border-radius:9999px;background:var(--color-bone,#0f0f0f);color:var(--color-wall,#efeee9);font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif;font-size:1rem;font-weight:600;text-decoration:none;transition:transform 250ms cubic-bezier(.16,1,.3,1)}.ds-btn-solid:hover{transform:translateY(-1px)}.ds-btn-solid:hover svg{transform:translateX(4px)}.ds-btn-solid svg{transition:transform 500ms}.ds-btn-solid:focus-visible{outline:2px solid #ff5a1f;outline-offset:3px}"
     },
     {
-      "name": "Outline Pill",
+      "name": "Line Button",
       "kind": "button",
-      "refersTo": "button-outline",
-      "description": "Accent-bordered pill; fills on hover. Carries the WhatsApp door.",
-      "html": "<button class=\"ds-btn-line\">WhatsApp</button>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-btn-line{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);background:transparent;border:1px solid var(--color-brass);color:var(--color-brass)}.ds-btn-line:hover{background:var(--color-brass);color:#fff}.ds-btn-line:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
+      "refersTo": "button-line",
+      "description": "Secondary doors: WhatsApp, Telegram, visit the site.",
+      "html": "<a class=\"ds-btn-line\" href=\"#\">Telegram</a>",
+      "css": ".ds-btn-line{display:inline-flex;align-items:center;gap:.6rem;min-height:3.25rem;padding:0 1.75rem;border-radius:9999px;border:1.5px solid rgb(15 15 15 / .2);color:#0f0f0f;background:transparent;font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif;font-size:1rem;font-weight:600;text-decoration:none;transition:border-color 250ms cubic-bezier(.16,1,.3,1)}.ds-btn-line:hover{border-color:#0f0f0f}.ds-btn-line:focus-visible{outline:2px solid #ff5a1f;outline-offset:3px}"
     },
     {
-      "name": "More Link",
-      "kind": "custom",
-      "refersTo": "link-more",
-      "description": "Apple-style text link with a chevron; the default secondary action.",
-      "html": "<a href=\"#\" class=\"ds-link-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-link-more{display:inline-flex;align-items:center;gap:.25rem;color:var(--color-brass);font-family:var(--font-text);font-size:1.0625rem;text-decoration:none}.ds-link-more:hover{text-decoration:underline;text-underline-offset:.2em}.ds-link-more:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;border-radius:6px}"
-    },
-    {
-      "name": "Work Tile",
-      "kind": "card",
-      "refersTo": "tile",
-      "description": "28px tile: centered headline, caption, More link, screenshot running off the bottom edge.",
-      "html": "<a href=\"#\" class=\"ds-tile\"><h3 class=\"ds-tile-title\">Studio site</h3><p class=\"ds-tile-cap\">A site for a dental clinic</p><span class=\"ds-tile-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><div class=\"ds-tile-shot\"></div></a>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-tile{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:3rem;border-radius:28px;overflow:hidden;background:var(--color-wall-2);color:var(--color-bone);text-decoration:none;font-family:var(--font-text);max-width:420px}.ds-tile-title{margin:0;padding:0 1.5rem;font-weight:800;font-size:2rem;line-height:1.08;letter-spacing:-.02em}.ds-tile-cap{margin:.5rem 0 0;padding:0 1.5rem;font-size:1rem;color:var(--color-bone-2)}.ds-tile-more{display:inline-flex;align-items:center;gap:.25rem;margin-top:.75rem;color:var(--color-brass);font-size:1.0625rem}.ds-tile-shot{margin-top:2.5rem;width:86%;aspect-ratio:16/10;border-radius:18px 18px 0 0;background:var(--color-wall-3);box-shadow:0 0 0 1px var(--color-seam);transition:transform 700ms var(--ease-gallery)}.ds-tile:hover .ds-tile-shot{transform:translateY(-6px)}.ds-tile:hover .ds-tile-more{text-decoration:underline}.ds-tile:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
-    },
-    {
-      "name": "Dark Tile",
-      "kind": "card",
-      "refersTo": "tile",
-      "description": "The same tile under data-tone=\"dark\": the checkerboard partner in the Tiles grid.",
-      "html": "<a href=\"#\" class=\"ds-tile-dark\"><h3 class=\"ds-td-title\">Telegram app</h3><p class=\"ds-td-cap\">A Mini App for orders</p><span class=\"ds-td-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></a>",
-      "css": ".ds-tile-dark{display:flex;flex-direction:column;align-items:center;text-align:center;padding:3rem 1.5rem;border-radius:28px;background:#161617;color:#f5f5f7;text-decoration:none;font-family:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;max-width:420px}.ds-td-title{margin:0;font-weight:800;font-size:2rem;line-height:1.08;letter-spacing:-.02em}.ds-td-cap{margin:.5rem 0 0;color:#a1a1a6}.ds-td-more{display:inline-flex;align-items:center;gap:.25rem;margin-top:.75rem;color:#2997ff;font-size:1.0625rem}.ds-tile-dark:hover .ds-td-more{text-decoration:underline}.ds-tile-dark:focus-visible{outline:2px solid #2997ff;outline-offset:3px}"
-    },
-    {
-      "name": "Screen Head",
-      "kind": "custom",
-      "refersTo": "",
-      "description": "One Display headline, one Lead line, the two doors. The unit of every screen.",
-      "html": "<section class=\"ds-screen\"><h1 class=\"ds-display\">Aly Latypov</h1><p class=\"ds-lead\">Sites, Telegram apps and AI assistants, made by one person.</p><div class=\"ds-doors\"><button class=\"ds-d1\">Get a quote</button><button class=\"ds-d2\">WhatsApp</button></div></section>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-screen{text-align:center;padding:6rem 1.25rem;background:var(--color-wall-2);color:var(--color-bone);font-family:var(--font-text)}.ds-display{margin:0;font-weight:800;font-size:clamp(2.5rem,6.4vw,5.5rem);line-height:1.04;letter-spacing:-.025em;text-wrap:balance}.ds-lead{margin:.75rem auto 0;max-width:42rem;font-size:clamp(1.125rem,1.9vw,1.5rem);line-height:1.35;letter-spacing:-.01em;text-wrap:balance}.ds-doors{margin-top:1.75rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}.ds-d1,.ds-d2{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);}.ds-d1{border:none;background:var(--color-brass);color:#fff}.ds-d1:hover{background:color-mix(in srgb,var(--color-brass) 86%,black)}.ds-d2{background:transparent;border:1px solid var(--color-brass);color:var(--color-brass)}.ds-d2:hover{background:var(--color-brass);color:#fff}.ds-d1:focus-visible,.ds-d2:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
-    },
-    {
-      "name": "Header Bar",
+      "name": "Header",
       "kind": "nav",
-      "refersTo": "header-bar",
-      "description": "Fixed translucent bar: wordmark, 13px links, theme switch, language, small request pill.",
-      "html": "<header class=\"ds-nav\"><span class=\"ds-nav-mark\">aly</span><nav class=\"ds-nav-links\"><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">Services</a><a href=\"#\">Prices</a><a href=\"#\">About</a></nav><div class=\"ds-nav-end\"><button class=\"ds-nav-theme\" aria-label=\"Dark theme\"><svg viewBox=\"0 0 20 20\" width=\"17\" height=\"17\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7Z\" stroke-linejoin=\"round\"/></svg></button><a href=\"#\" class=\"ds-nav-cta\">Get a quote</a></div></header>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:3.5rem;padding:0 1.25rem;background:rgb(255 255 255 / .75);backdrop-filter:blur(24px) saturate(1.5);border-bottom:1px solid var(--color-seam);font-family:var(--font-text);color:var(--color-bone)}.ds-nav-mark{font-weight:800;font-size:1.25rem}.ds-nav-links{display:flex;gap:.25rem}.ds-nav-links a{padding:0 .75rem;font-size:.8125rem;color:rgb(29 29 31 / .8);text-decoration:none;transition:color 200ms}.ds-nav-links a:hover,.ds-nav-links a[aria-current=page]{color:var(--color-bone)}.ds-nav-end{display:flex;align-items:center;gap:.375rem}.ds-nav-theme{display:inline-flex;width:2.25rem;height:2.25rem;align-items:center;justify-content:center;border:none;border-radius:9999px;background:transparent;color:rgb(29 29 31 / .8);cursor:pointer}.ds-nav-theme:hover{background:rgb(29 29 31 / .1);color:var(--color-bone)}.ds-nav-cta{display:inline-flex;min-height:2rem;align-items:center;border-radius:9999px;padding:0 .875rem;background:var(--color-brass);color:#fff;font-size:.8125rem;font-weight:500;text-decoration:none}.ds-nav-cta:hover{opacity:.9}.ds-nav a:focus-visible,.ds-nav button:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;border-radius:6px}"
+      "refersTo": "header-quote",
+      "description": "Fixed bar that flips tone to match the section beneath it.",
+      "html": "<header class=\"ds-header\"><span class=\"ds-header-mark\">aly</span><nav class=\"ds-header-nav\"><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">Services</a><a href=\"#\">Prices</a><a href=\"#\">About</a></nav><span class=\"ds-header-end\"><a class=\"ds-header-lang\" href=\"#\">RU</a><a class=\"ds-header-cta\" href=\"#\">Get a quote</a></span></header>",
+      "css": ".ds-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:4rem;padding:0 1.5rem;background:rgb(239 238 233 / .8);backdrop-filter:blur(24px);border-bottom:1px solid rgb(15 15 15 / .1);color:#0f0f0f;font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif}.ds-header-mark{font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:800;font-size:1.25rem}.ds-header-nav{display:flex;gap:.25rem}.ds-header-nav a{padding:0 .75rem;min-height:2.75rem;display:inline-flex;align-items:center;font-size:.875rem;font-weight:500;color:rgb(15 15 15 / .75);text-decoration:none;transition:color 200ms}.ds-header-nav a:hover,.ds-header-nav a[aria-current=page]{color:#0f0f0f}.ds-header-end{display:flex;align-items:center;gap:.375rem}.ds-header-lang{display:inline-grid;place-items:center;min-width:2.25rem;min-height:2.25rem;border-radius:9999px;font-size:.75rem;font-weight:600;color:rgb(15 15 15 / .8);text-decoration:none}.ds-header-lang:hover{background:rgb(15 15 15 / .1)}.ds-header-cta{display:inline-flex;align-items:center;min-height:2.5rem;padding:0 1.25rem;border-radius:9999px;background:#0f0f0f;color:#efeee9;font-size:.875rem;font-weight:600;text-decoration:none;transition:transform 200ms}.ds-header-cta:hover{transform:translateY(-1px)}.ds-header a:focus-visible{outline:2px solid #ff5a1f;outline-offset:3px}"
     },
     {
-      "name": "Highlights Controls",
+      "name": "Bento Clock Tile",
+      "kind": "card",
+      "refersTo": "bento-tile",
+      "description": "A living tile: Dushanbe time with an online dot.",
+      "html": "<div class=\"ds-tile\"><p class=\"ds-tile-label\">Dushanbe</p><p class=\"ds-tile-figure\">14:32</p><p class=\"ds-tile-status\"><span class=\"ds-dot\"></span>Answering now</p></div>",
+      "css": ".ds-tile{display:flex;flex-direction:column;justify-content:space-between;min-height:200px;padding:1.75rem;border-radius:28px;background:#fff;color:#0f0f0f;font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif}.ds-tile-label{margin:0;font-size:.8125rem;font-weight:600;line-height:1.3;color:#55534e}.ds-tile-figure{margin:.75rem 0 0;font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:800;font-size:3.5rem;line-height:1;font-variant-numeric:tabular-nums}.ds-tile-status{margin:1rem 0 0;display:flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:500}.ds-dot{width:10px;height:10px;border-radius:9999px;background:#25d366}"
+    },
+    {
+      "name": "Progress Ring Tile",
+      "kind": "card",
+      "refersTo": "bento-tile",
+      "description": "A wide tile whose orange ring draws itself to the promise.",
+      "html": "<div class=\"ds-ring-tile\"><svg viewBox=\"0 0 40 40\" class=\"ds-ring\" aria-hidden=\"true\"><circle cx=\"20\" cy=\"20\" r=\"16\" fill=\"none\" stroke=\"#e3e1da\" stroke-width=\"4.5\"/><circle class=\"ds-ring-arc\" cx=\"20\" cy=\"20\" r=\"16\" fill=\"none\" stroke=\"#ff5a1f\" stroke-width=\"4.5\" stroke-linecap=\"round\" pathLength=\"1\"/></svg><p class=\"ds-ring-title\">First draft in three days</p></div>",
+      "css": ".ds-ring-tile{display:flex;align-items:center;gap:1.5rem;padding:1.75rem;border-radius:28px;background:#fff;color:#0f0f0f}.ds-ring{width:96px;height:96px;flex-shrink:0;transform:rotate(-90deg)}.ds-ring-arc{stroke-dasharray:1;stroke-dashoffset:1;animation:ds-draw 2.2s ease-in-out forwards}@keyframes ds-draw{to{stroke-dashoffset:0}}.ds-ring-title{margin:0;font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:700;font-size:1.75rem;line-height:1.05;letter-spacing:-.02em;text-transform:uppercase}@media (prefers-reduced-motion:reduce){.ds-ring-arc{animation:none;stroke-dashoffset:0}}"
+    },
+    {
+      "name": "Rotating Badge",
       "kind": "custom",
-      "refersTo": "",
-      "description": "Carousel dot pill and play/pause under the review highlights.",
-      "html": "<div class=\"ds-hl\"><div class=\"ds-hl-dots\" role=\"tablist\"><button class=\"ds-dot on\" aria-label=\"1\"></button><button class=\"ds-dot\" aria-label=\"2\"></button><button class=\"ds-dot\" aria-label=\"3\"></button></div><button class=\"ds-hl-play\" aria-label=\"Pause\"><svg viewBox=\"0 0 12 12\" width=\"12\" height=\"12\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"2\" y=\"1.5\" width=\"2.6\" height=\"9\" rx=\".8\"/><rect x=\"7.4\" y=\"1.5\" width=\"2.6\" height=\"9\" rx=\".8\"/></svg></button></div>",
-      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-hl{display:flex;gap:.75rem;align-items:center;justify-content:center}.ds-hl-dots{display:flex;align-items:center;gap:.625rem;height:3rem;padding:0 1.25rem;border-radius:9999px;background:var(--color-wall-3)}.ds-dot{width:.5rem;height:.5rem;border:none;padding:0;border-radius:9999px;background:rgb(134 134 139 / .7);cursor:pointer;transition:all 500ms}.ds-dot:hover{background:var(--color-bone-2)}.ds-dot.on{width:2rem;background:var(--color-bone)}.ds-hl-play{display:inline-flex;width:3rem;height:3rem;align-items:center;justify-content:center;border:none;border-radius:9999px;background:var(--color-wall-3);color:var(--color-bone);cursor:pointer}.ds-dot:focus-visible,.ds-hl-play:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
+      "description": "Circular running text around an orange disc; always a WhatsApp door.",
+      "html": "<a class=\"ds-badge\" href=\"#\" aria-label=\"WhatsApp\"><svg viewBox=\"0 0 100 100\" class=\"ds-badge-ring\" aria-hidden=\"true\"><defs><path id=\"ds-badge-c\" d=\"M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0\"/></defs><text font-size=\"7\" letter-spacing=\"1.2\" fill=\"currentColor\"><textPath href=\"#ds-badge-c\">WRITE TO ME · WHATSAPP · WRITE TO ME · WHATSAPP ·</textPath></text></svg><span class=\"ds-badge-disc\"><svg viewBox=\"0 0 16 16\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></a>",
+      "css": ".ds-badge{position:relative;display:grid;place-items:center;width:144px;height:144px;color:#0f0f0f}.ds-badge-ring{position:absolute;inset:0;font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:700;animation:ds-spin 16s linear infinite}@keyframes ds-spin{to{transform:rotate(360deg)}}.ds-badge-disc{display:grid;place-items:center;width:56px;height:56px;border-radius:9999px;background:#ff5a1f;color:#fff;transition:transform 500ms}.ds-badge:hover .ds-badge-disc{transform:rotate(45deg)}.ds-badge:focus-visible{outline:2px solid #ff5a1f;outline-offset:3px;border-radius:9999px}@media (prefers-reduced-motion:reduce){.ds-badge-ring{animation:none}}"
+    },
+    {
+      "name": "Stacked Work Card",
+      "kind": "card",
+      "refersTo": "stack-card",
+      "description": "Night card that piles on scroll; its screenshot waits in grey.",
+      "html": "<div class=\"ds-stack-wrap\"><a class=\"ds-stack\" href=\"#\"><span class=\"ds-stack-row\"><span class=\"ds-stack-title\">Coffee House</span><span class=\"ds-stack-open\">Open <svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></span><span class=\"ds-stack-shot\"></span></a></div>",
+      "css": ".ds-stack-wrap{background:#0a0a0a;padding:1.5rem}.ds-stack{display:block;padding:1.25rem;border-radius:32px;background:#161616;color:#f2f1ec;text-decoration:none;box-shadow:0 -30px 60px -30px rgb(0 0 0 / .9)}.ds-stack-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0 .5rem 1rem}.ds-stack-title{font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:700;font-size:1.75rem;line-height:1.05;text-transform:uppercase;letter-spacing:-.02em}.ds-stack-open{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif;font-weight:600;font-size:.875rem}.ds-stack-open svg{transition:transform 500ms}.ds-stack:hover .ds-stack-open svg{transform:translateX(4px)}.ds-stack-shot{display:block;aspect-ratio:16/8;border-radius:20px;background:linear-gradient(135deg,#ff5a1f,#3a6df0);filter:grayscale(1) contrast(1.05);transition:filter 900ms cubic-bezier(.16,1,.3,1)}.ds-stack:hover .ds-stack-shot{filter:none}.ds-stack:focus-visible{outline:2px solid #ff5a1f;outline-offset:3px}"
+    },
+    {
+      "name": "Directions Marquee",
+      "kind": "custom",
+      "description": "Huge uppercase words between hairlines, separated by orange dots.",
+      "html": "<div class=\"ds-marquee\"><div class=\"ds-marquee-track\"><a href=\"#\">Sites<span class=\"ds-mdot\"></span></a><a href=\"#\">Stores<span class=\"ds-mdot\"></span></a><a href=\"#\">Bots<span class=\"ds-mdot\"></span></a><a href=\"#\">Apps<span class=\"ds-mdot\"></span></a><a href=\"#\" aria-hidden=\"true\" tabindex=\"-1\">Sites<span class=\"ds-mdot\"></span></a><a href=\"#\" aria-hidden=\"true\" tabindex=\"-1\">Stores<span class=\"ds-mdot\"></span></a><a href=\"#\" aria-hidden=\"true\" tabindex=\"-1\">Bots<span class=\"ds-mdot\"></span></a><a href=\"#\" aria-hidden=\"true\" tabindex=\"-1\">Apps<span class=\"ds-mdot\"></span></a></div></div>",
+      "css": ".ds-marquee{overflow:hidden;border-block:1px solid rgb(15 15 15 / .1);padding:1.5rem 0;background:#efeee9}.ds-marquee-track{display:flex;gap:2.5rem;width:max-content;animation:ds-run 28s linear infinite}@keyframes ds-run{to{transform:translateX(-50%)}}.ds-marquee a{display:flex;align-items:center;gap:2.5rem;font-family:var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;font-weight:800;font-size:5rem;line-height:1;text-transform:uppercase;white-space:nowrap;color:#0f0f0f;text-decoration:none;transition:color 200ms}.ds-marquee a:hover{color:#ff5a1f}.ds-mdot{display:inline-block;width:.22em;height:.22em;border-radius:9999px;background:#ff5a1f}@media (prefers-reduced-motion:reduce){.ds-marquee-track{animation:none}}"
+    },
+    {
+      "name": "Tool Chip",
+      "kind": "chip",
+      "description": "Paper pill in the running tools tile.",
+      "html": "<span class=\"ds-chip\">Next.js</span> <span class=\"ds-chip\">TypeScript</span>",
+      "css": ".ds-chip{display:inline-block;padding:.625rem 1rem;border-radius:9999px;background:#efeee9;color:#0f0f0f;font-family:var(--font-manrope), ui-sans-serif, system-ui, sans-serif;font-weight:600;font-size:1rem;white-space:nowrap}"
     }
   ],
   "narrative": {
-    "northStar": "The Product Page",
-    "overview": "Each screen of the site works like a screen on apple.com. It has one big heavy headline in mixed case, one quiet line under it, at most two pill buttons or a chevron link, and then the picture: his photograph or a screenshot of the work. Everything else is air. The page gets its rhythm from alternating bands: white and #f5f5f7 in the light theme, black and #161617 in the dark one, with some bands that are dark in either theme. The owner chose this world. It replaced the earlier \"dark house\" world, and nothing from that world (room lighting, lamps, BBH Bogle) carries over.\n\nThe site has two equal themes. The light theme uses Apple's white and very light grey with a near-black text and the #0071e3 blue. The dark theme uses Apple's Pro-page black with an off-white text and the #2997ff blue. Both themes share every class and only the variables change. Where a theme needs a different picture, the picture is swapped rather than tinted.\n\nDensity is low on purpose. The owner's rules are: one big headline and one small line per screen, a lot of air, no enumerated text lists, and a clean page.",
+    "northStar": "The Poster Studio",
+    "overview": "The site is a sequence of posters, not a scrolling document. Each section is one poster: one enormous headline in wide, heavy Unbounded capitals, one quiet line of Manrope beneath it, and one living thing (a lens, a counter, a stack, a running line of words). Warm off-white paper and near-black alternate section by section, so the page reads like prints pinned up in turns on a light wall and a dark one. There is no theme switch. Tone belongs to the section, not to the visitor.\n\nThree moves give the world its character. Pictures are set inside headlines as if they were words: round-ended capsules that open in width as the sentence arrives. On black, the owner's photo and the screenshots wait in grey and turn to colour, through a round lens that follows the pointer (and drifts by itself on touch) or as a screenshot reaches the middle of the screen. And useful facts sit in a bento of small rounded tiles, each with its own small motion: a count rising, the Dushanbe clock with an online dot, a ring filling, tools running past, reviews changing by themselves.\n\nThere is a lot of air. Sections breathe at 96 to 144px vertically, and the headline carries the whole section. Every section is built differently from the one before it. Motion is lively but never required: reduced motion stops every loop and reveal, and nothing is hidden before the motion script arrives.",
     "keyCharacteristics": [
-      "Two full themes on `<html data-theme>`, plus fixed-tone sections (`data-tone=\"dark\"` / `\"light\"`).",
-      "One type family, Nunito Sans: 800 for headlines, 400 for the lead line, 300 for small print.",
-      "Centered composition: headline, line, actions, picture.",
-      "Pill buttons, chevron text links, 28px tiles and 18px screenshots.",
-      "Flat surfaces. Depth comes from tone changes and a hairline, not from shadows."
+      "Wide heavy uppercase display (Unbounded 800) against a calm humanist text face (Manrope).",
+      "Light and dark alternate by section through `data-tone`, never through a theme toggle.",
+      "One orange accent for markers, dots, rings, underlines and the badge; WhatsApp green only on WhatsApp doors.",
+      "Grey-to-colour as the reveal for photographs and screenshots on black.",
+      "Generous, rounded containers (20 to 36px) with everything interactive as a full pill.",
+      "One headline and one line per section; no enumerated text lists."
     ],
     "rules": [
       {
-        "name": "The Variable Swap Rule",
-        "body": "A theme only redefines the `--color-*` variables, on `html[data-theme='dark']` and on `[data-tone]` sections. Components never hard-code a theme's hex. The one exception is white text on a filled blue pill. Tailwind's `dark:` variant matches both the dark theme and any `data-tone=\"dark\"` section.",
+        "name": "The Section Owns the Tone Rule",
+        "body": "A section is either `data-tone=\"dark\"` or paper; tokens are re-pointed in place and components never pick a light or dark colour themselves. A paper island inside a black section (the closing block) declares `data-tone=\"light\"`. The header reads the section under it and flips its own tone to match.",
         "section": "colors"
       },
       {
-        "name": "The Fixed Tone Rule",
-        "body": "`data-tone=\"dark\"` makes a section dark in both themes (the Feature, the Closing, and tiles 2 and 3 of every four in the Tiles grid). `data-tone=\"light\"` keeps a section light in both. Use fixed tones to create the black-and-white rhythm, not to style a single element.",
+        "name": "The One Orange Rule",
+        "body": "Signal Orange is the only accent. It marks, it never fills a section, and on paper it is never used as reading text (2.7:1 against paper).",
         "section": "colors"
       },
       {
-        "name": "The Small Text Contrast Rule",
-        "body": "Text under 18px must reach 4.5:1 against the surface it sits on. In the light theme, Pewter `#86868b` measures 3.6:1 on white and 3.3:1 on Mist, so small labels in that theme belong in Slate. Pewter is safe for small text only on dark surfaces.",
+        "name": "The Green Means WhatsApp Rule",
+        "body": "Green appears only where a tap opens WhatsApp or reports that he is answering now.",
         "section": "colors"
       },
       {
-        "name": "The One Headline Rule",
-        "body": "Each screen has one Display headline and one Lead line. A second headline-sized element on the same screen starts a new screen.",
+        "name": "The One Shout Rule",
+        "body": "Each section has one Unbounded headline and one Manrope line. A second display-sized line in the same section is a new section.",
         "section": "typography"
       },
       {
-        "name": "The One Family Rule",
-        "body": "All text is Nunito Sans. Pacifico appears only in the signature.",
+        "name": "The Words-as-Pictures Rule",
+        "body": "An image may sit inside a display headline as a capsule 0.8em tall with fully round ends, aligned to the baseline, that grows from zero width as the line enters view.",
         "section": "typography"
       },
       {
-        "name": "The Air Rule",
-        "body": "When in doubt, add vertical space. Never add a second idea to a screen.",
+        "name": "The Every Section Different Rule",
+        "body": "No two adjacent sections share a composition. A lens, a sentence with pictures, a bento, a stack, a running line and a closing block follow each other on the home page; inner pages alternate paper, raised paper and night bands.",
         "section": "layout"
       },
       {
-        "name": "The Flat Surface Rule",
-        "body": "Tiles, bands and screenshots have no drop shadows. Only something that floats above the page while it scrolls gets a shadow.",
+        "name": "The Grey Until Seen Rule",
+        "body": "On black, photographs and screenshots start in greyscale (contrast 1.05) and come into colour over 900ms when they reach the middle band of the screen, under the pointer, or inside the lens. Colour is the reward for attention.",
         "section": "elevation"
+      },
+      {
+        "name": "The Round Lens Rule",
+        "body": "Circles carry meaning here: the colour lens, the rotating badge, the online dot, the progress ring, the arrow discs. A new interactive marker should be round before it is anything else.",
+        "section": "shapes"
       }
     ],
     "dos": [
-      "**Do** give each screen one Display headline (800, mixed case), one Lead line and at most one set of actions: the two doors or one or two More links.",
-      "**Do** build every new surface from the `--color-*` variables so it works in both themes, and check it in both themes before shipping.",
-      "**Do** use `data-tone=\"dark\"` on whole sections or whole tiles to create the black-and-white rhythm.",
-      "**Do** keep small text at 4.5:1 or better. In the light theme, use Slate (`#6e6e73`) rather than Pewter for any text under 18px.",
-      "**Do** frame every screenshot in an 18px radius with a Hairline ring, and every tile in a 28px radius.",
-      "**Do** swap pictures with `.only-light` / `.only-dark` when a theme needs a different image. Dark-theme cut-outs must come from his real photographs, made with subject lifting.",
-      "**Do** leave a lot of air: 6–9rem between screens and centered stacks."
+      "**Do** give every section exactly one Unbounded 800 uppercase headline and one Manrope line, with at least 96px of air above and below.",
+      "**Do** set tone by section with `data-tone=\"dark\"` or `data-tone=\"light\"` and let the tokens follow; never hard-code a light or dark colour inside a component.",
+      "**Do** keep photographs and screenshots grey on black until they are seen, and bring them to colour through the lens, the middle of the screen, or the pointer.",
+      "**Do** make every control a pill or a circle, and every container a large soft rectangle (20 to 36px).",
+      "**Do** give a new section its own living behaviour (a count, a loop, a stack, a reveal) and make it stop cleanly under reduced motion.",
+      "**Do** keep Signal Orange to markers, dots, rings, underlines and the badge disc."
     ],
     "donts": [
-      "**Don't** list things as enumerated text (numbered steps, bullet lists of features). Say it once in a headline and a line, or give each item its own tile.",
-      "**Don't** put a small uppercase label or kicker above a headline. Labels are mixed-case field names, not section announcers.",
-      "**Don't** set headlines in uppercase, and don't use a second display family. BBH Bogle and the old studio fonts are retired from the public site.",
-      "**Don't** use Pacifico anywhere except his signature.",
-      "**Don't** add drop shadows to tiles, bands or screenshots. Only floating phone controls get a shadow.",
-      "**Don't** color anything Action Blue that is not an action or a focus state.",
-      "**Don't** bring the dark-house devices back (room lighting, lamps, pointer-following light). The `data-lit`, `data-magnetic`, `data-draw` and `data-parallax` hooks still exist in the motion script, but they are not part of this world.",
-      "**Don't** use the admin or Mini App tokens (`paper`, `ground`, `ink`, Onest) on the public site, except through the `.form-room` mapping."
+      "**Don't** add a light/dark theme switch; tone belongs to the section.",
+      "**Don't** write enumerated text lists or bullet grids of features; one fact becomes one tile, one headline, or one running word.",
+      "**Don't** repeat a section's composition directly after itself.",
+      "**Don't** use Signal Orange for reading text on paper, or use green for anything that is not WhatsApp or online status.",
+      "**Don't** bring back Pacifico, BBH Bogle or any script or system display face; display is Unbounded, everything read is Manrope.",
+      "**Don't** hide content until a script arrives; reveals start from a visible state."
     ]
   }
 }
