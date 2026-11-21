@@ -31,7 +31,7 @@ const CAPTURES: Record<string, { desktop: Capture; phone: Capture | null }> = {
     phone: { src: '/cases/autoshine-store-phone.webp', width: 420, height: 4200 },
   },
   'python-academy': {
-    desktop: { src: '/cases/python-academy-desktop.webp', width: 1200, height: 750 },
+    desktop: { src: '/cases/python-academy-desktop.webp', width: 1200, height: 2368 },
     phone: null,
   },
 };

@@ -179,13 +179,20 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
             );
           }
 
+          /*
+           * The client screens are light, like the site; the owner's admin
+           * keeps its black. Telegram's own bars take the same colour so the
+           * window reads as one surface.
+           */
+          const surface = window.location.pathname.startsWith('/mini/admin') ? VOID : '#ffffff';
           if (app.isVersionAtLeast('6.1')) {
-            app.setBackgroundColor(VOID);
+            app.setBackgroundColor(surface);
             // An arbitrary hex only lands from 6.9; before that the two
-            // keywords are all Telegram accepts, and neither is this black.
-            if (app.isVersionAtLeast('6.9')) app.setHeaderColor(VOID);
+            // keywords are all Telegram accepts.
+            if (app.isVersionAtLeast('6.9')) app.setHeaderColor(surface);
+            else app.setHeaderColor('bg_color');
           }
-          if (app.isVersionAtLeast('7.10')) app.setBottomBarColor(VOID);
+          if (app.isVersionAtLeast('7.10')) app.setBottomBarColor(surface);
 
           /*
            * A vertical drag closes a Mini App. That is the right default for a

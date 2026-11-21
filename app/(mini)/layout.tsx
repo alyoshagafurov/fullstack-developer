@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource-variable/onest';
 import '../globals.css';
+import { Inter, Inter_Tight } from 'next/font/google';
 import { TelegramProvider } from '@/components/mini/telegram';
 import { site } from '@/lib/content/site';
 
@@ -39,6 +40,10 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
+/* The site's two faces, so the Mini App reads as the same hand. */
+const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'], variable: '--font-inter-tight', display: 'swap' });
+const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter', display: 'swap' });
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { absolute: 'aly' },
@@ -53,7 +58,7 @@ export const metadata: Metadata = {
  */
 export default function MiniLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={`${inter.variable} ${interTight.variable}`}>
       <body>
         <TelegramProvider>{children}</TelegramProvider>
       </body>

@@ -211,7 +211,6 @@ function Device({ work }: { work: ShowWork }) {
               placeholder={work.phoneBlur ? 'blur' : 'empty'}
               blurDataURL={work.phoneBlur}
               className="screen-drift object-cover object-top"
-              style={{ animationDelay: '-4s' }}
             />
             <span className="absolute top-[2.2%] left-1/2 h-[3.2%] w-[32%] -translate-x-1/2 rounded-full bg-black" />
           </div>

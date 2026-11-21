@@ -18,13 +18,9 @@ export default async function NewReviewPage() {
   const { lang, t } = await getDictionary();
 
   return (
-    <section className="form-room relative isolate min-h-[100svh] overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_18%,rgb(255_236_204/0.1),transparent_55%)]"
-      />
+    <section className="relative min-h-[100svh] bg-wall">
       <div className="hall flex min-h-[100svh] flex-col justify-center pt-28 pb-16 md:pt-32">
-        <p className="lead-line mb-6 text-center text-bone-2">{t.reviewsPage.newTitle}</p>
+        <p className="mb-8 text-center text-[1.0625rem] font-medium text-bone-2">{t.reviewsPage.newTitle}</p>
         <ReviewForm lang={lang} copy={t.reviewForm} />
       </div>
     </section>

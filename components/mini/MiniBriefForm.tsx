@@ -91,12 +91,12 @@ export function MiniBriefForm() {
           <>
             <button type="button" onClick={() => open('/ru/prices')} className={primary}>
               {copy.done.prices}
-              <span aria-hidden>→</span>
+              
             </button>
             <button
               type="button"
               onClick={() => open('/ru/work')}
-              className="mt-2.5 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full border border-white/30 px-6 text-[0.9375rem] font-medium text-paper transition-colors hover:border-white"
+              className="mt-2.5 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-[14px] bg-wall-2 px-6 text-[1.0625rem] font-semibold text-[#0071e3] transition-colors active:bg-wall-3"
             >
               {copy.done.work}
             </button>
@@ -111,23 +111,23 @@ export function MiniBriefForm() {
 
           {sent.ref && (
             <dl className="mx-auto mt-8 grid max-w-sm gap-2 text-left">
-              <div className="rounded-2xl border border-white/15 px-5 py-3.5">
-                <dt className="text-[0.625rem] tracking-[0.18em] text-paper/45 uppercase">
+              <div className="rounded-[14px] bg-wall-2 px-5 py-3.5">
+                <dt className="text-sm text-bone-3">
                   {copy.done.refLabel}
                 </dt>
                 <dd className="tabular mt-1 font-semibold">{sent.ref}</dd>
               </div>
               {sent.code && (
-                <div className="rounded-2xl border border-white/15 px-5 py-3.5">
-                  <dt className="text-[0.625rem] tracking-[0.18em] text-paper/45 uppercase">
+                <div className="rounded-[14px] bg-wall-2 px-5 py-3.5">
+                  <dt className="text-sm text-bone-3">
                     {copy.done.codeLabel}
                   </dt>
-                  <dd className="tabular mt-1 text-xs break-all text-paper/80">{sent.code}</dd>
+                  <dd className="tabular mt-1 text-xs break-all text-bone-2">{sent.code}</dd>
                 </div>
               )}
             </dl>
           )}
-          {inside && <p className="mt-4 text-xs text-paper/45">{copy.done.trackChat}</p>}
+          {inside && <p className="mt-4 text-xs text-bone-3">{copy.done.trackChat}</p>}
         </div>
       </MiniStage>
     );
@@ -143,7 +143,7 @@ export function MiniBriefForm() {
         {text}
       </p>
     ) : null;
-  const fieldLabel = 'mb-2 flex items-baseline gap-2 text-[0.6875rem] tracking-[0.16em] text-paper/55 uppercase';
+  const fieldLabel = 'mb-2 flex items-baseline gap-2 text-[0.9375rem] font-medium text-bone';
 
   return (
     <form
@@ -163,13 +163,13 @@ export function MiniBriefForm() {
         footer={
           <>
             {brief.formError && (
-              <p role="alert" className="mb-4 text-sm text-paper/80">
+              <p role="alert" className="mb-4 text-sm text-bone-2">
                 {brief.formError}
               </p>
             )}
             <button type="submit" disabled={brief.sending} className={primary}>
               {last ? (brief.sending ? copy.sending : copy.send) : copy.next}
-              <span aria-hidden>→</span>
+              
             </button>
             {step > 0 && (
               <div className="mt-2 flex justify-center">
@@ -178,7 +178,7 @@ export function MiniBriefForm() {
                 </button>
               </div>
             )}
-            {last && <p className="mt-3 text-center text-[0.6875rem] text-paper/40">{copy.note}</p>}
+            {last && <p className="mt-3 text-center text-[0.6875rem] text-bone-3">{copy.note}</p>}
           </>
         }
       >
@@ -210,7 +210,7 @@ export function MiniBriefForm() {
               <>
                 <fieldset>
                   <legend className="sr-only">{copy.contact.question}</legend>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid gap-2">
                     {contactMethods.map((value) => (
                       <button
                         key={value}
@@ -255,7 +255,7 @@ export function MiniBriefForm() {
               <>
                 <fieldset>
                   <legend className="sr-only">{copy.projectType.question}</legend>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid gap-2">
                     {projectTypes.map((value) => (
                       <button
                         key={value}
@@ -296,7 +296,7 @@ export function MiniBriefForm() {
                 <div>
                   <label htmlFor="mini-questions" className={fieldLabel}>
                     {copy.fields.questions.label}
-                    <span className="tracking-normal normal-case">· {copy.optional}</span>
+                    <span className="text-sm font-normal text-bone-3">{copy.optional}</span>
                   </label>
                   <textarea
                     id="mini-questions"
@@ -311,7 +311,7 @@ export function MiniBriefForm() {
                 <div>
                   <label htmlFor="mini-budget" className={fieldLabel}>
                     {copy.fields.budget.label}
-                    <span className="tracking-normal normal-case">· {copy.optional}</span>
+                    <span className="text-sm font-normal text-bone-3">{copy.optional}</span>
                   </label>
                   <input
                     id="mini-budget"

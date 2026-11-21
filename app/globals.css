@@ -277,6 +277,10 @@ body:has([data-mini]) {
   background: var(--color-void);
 }
 
+body:has([data-mini='client']) {
+  background: #ffffff;
+}
+
 html:has([data-mini]) {
   scroll-behavior: auto;
   overscroll-behavior-y: contain;
@@ -760,17 +764,21 @@ html:has([data-mini]) {
 /* A page inside a device screen, slowly scrolled from top to bottom and back. */
 @keyframes screen-drift {
   0%,
-  12% {
+  8% {
     object-position: 50% 0%;
   }
-  88%,
+  92%,
   100% {
     object-position: 50% 100%;
   }
 }
 
+/*
+ * The computer and the phone of one project share this exact timing, so the
+ * two screens travel down the same page together, like one site on two devices.
+ */
 .museum .screen-drift {
-  animation: screen-drift 16s ease-in-out infinite alternate;
+  animation: screen-drift 9s ease-in-out infinite alternate;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -779,3 +787,9 @@ html:has([data-mini]) {
   }
 }
 
+
+/* The client screens of the Mini App are light, in the site's type; the admin keeps its own dark look. */
+[data-mini='client'] {
+  color-scheme: light;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}

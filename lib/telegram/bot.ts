@@ -121,12 +121,15 @@ const when = (date: Date) =>
  * but nothing here opens it; treat it as dormant rather than live.
  */
 function clientKeyboard(): InlineKeyboard {
+  // One wide first action, then what people look at before deciding, then the rest.
   return new InlineKeyboard()
     .webApp(clientButtons.brief, `${site.url}/mini/start`)
     .row()
-    .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`)
+    .url(clientButtons.work, `${site.url}/ru/work`)
+    .url(clientButtons.prices, `${site.url}/ru/prices`)
     .row()
-    .url(clientButtons.site, site.url);
+    .webApp(clientButtons.review, `${site.url}/mini/review`)
+    .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`);
 }
 
 /* ------------------------------------------------------------ owner -- */

@@ -28,11 +28,7 @@ export default async function StartPage({ searchParams }: { searchParams: Promis
   const initialType = (projectTypes as readonly string[]).includes(type ?? '') ? type : undefined;
 
   return (
-    <section className="form-room relative isolate min-h-[100svh] overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_18%,rgb(255_236_204/0.1),transparent_55%)]"
-      />
+    <section className="relative min-h-[100svh] bg-wall">
       <div className="hall flex min-h-[100svh] flex-col pt-28 pb-16 md:pt-32">
         <div className="flex-1">
           <BriefForm lang={lang} copy={t.brief} initialType={initialType} />

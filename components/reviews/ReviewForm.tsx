@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowIcon } from '@/components/museum/Icons';
 import { useEffect, useRef, useState } from 'react';
+import * as kit from '@/components/forms/kit';
 import {
   genders,
   reviewQuestions,
@@ -35,18 +35,6 @@ import type { Dictionary } from '@/lib/i18n/en';
 type ReviewCopy = Dictionary['reviewForm'];
 
 const steps = reviewQuestions;
-
-/*
- * The answer box is a white surface on the band's pale grey, not a rectangle
- * drawn in outline. Figure and ground do the work a border was doing badly:
- * it reads as somewhere to write before it is read as anything else, which is
- * the one thing this element has to do.
- */
-const box =
-  'w-full rounded-2xl text-left border border-line-2 bg-paper px-6 py-5 text-[1.125rem] leading-relaxed tracking-[-0.01em] text-ink shadow-[0_1px_2px_rgba(11,11,11,0.04)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-3 focus:border-ink focus:shadow-[0_0_0_5px_rgba(11,11,11,0.06)] md:px-8 md:py-6 md:text-[1.375rem]';
-
-const primary =
-  'inline-flex min-h-14 items-center gap-3 rounded-full bg-ink px-8 text-[0.9375rem] font-semibold tracking-[0.02em] text-paper transition-colors hover:bg-ink-2 disabled:opacity-40';
 
 export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
   const [step, setStep] = useState(0);
@@ -157,10 +145,12 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
   if (done) {
     return (
       <div className="flex min-h-[70svh] flex-col items-center justify-center text-center">
-        <p
-          role="status"
-          className="mx-auto max-w-3xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance"
-        >
+        <span className="grid size-16 place-items-center rounded-full bg-[#0071e3] text-white">
+          <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M5 12.5 10 17l9-10" />
+          </svg>
+        </span>
+        <p role="status" className={`${kit.question} mx-auto mt-8 max-w-3xl`}>
           {copy.done}
         </p>
       </div>
@@ -174,34 +164,17 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
         advance();
       }}
       noValidate
-      className="flex min-h-[70svh] flex-col items-center justify-center text-center"
+      className="mx-auto flex min-h-[68svh] w-full max-w-2xl flex-col justify-center text-center"
     >
-      {/* Where the visitor is, and how much is left. Hairline, like everything. */}
-      <div className="mb-12 flex w-full max-w-2xl items-center gap-5">
-        <span className="tabular text-[0.6875rem] tracking-[0.18em] text-ink-3 uppercase">
-          {step + 1} / {steps.length}
-        </span>
-        <span aria-hidden className="h-px flex-1 bg-line-2">
-          <span
-            className="block h-px bg-ink transition-[width] duration-500 ease-[var(--ease-studio)] motion-reduce:transition-none"
-            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
-          />
-        </span>
-      </div>
+      <kit.Steps at={step} of={steps.length} />
 
-      <div key={step} className="review-step w-full">
+      <div key={step} className="review-step mt-12 w-full">
         <label htmlFor={`review-${current.key}`} className="block">
-          <span className="mx-auto block max-w-4xl text-[clamp(1.875rem,4.8vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance">
-            {words.question}
-          </span>
-          {words.hint && (
-            <span className="mx-auto mt-4 block max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">
-              {words.hint}
-            </span>
-          )}
+          <span className={`${kit.question} block`}>{words.question}</span>
+          {words.hint && <span className={`${kit.hint} mx-auto block max-w-xl`}>{words.hint}</span>}
         </label>
 
-        <div className="mx-auto mt-8 w-full max-w-2xl">
+        <div className="mt-9 w-full text-left">
           {current.key === 'name' && (
             <input
               id="review-name"
@@ -210,7 +183,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
               placeholder={words.placeholder ?? current.placeholder}
-              className={box}
+              className={kit.field}
             />
           )}
 
@@ -222,7 +195,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
               onChange={(event) => setCompany(event.target.value)}
               autoComplete="organization"
               placeholder={words.placeholder ?? current.placeholder}
-              className={box}
+              className={kit.field}
             />
           )}
 
@@ -241,7 +214,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
                   advance();
                 }
               }}
-              className={`${box} min-h-[10rem] resize-y`}
+              className={`${kit.field} min-h-[10rem] resize-y`}
             />
           )}
 
@@ -260,8 +233,8 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
                       setRating(value);
                       setError('');
                     }}
-                    className={`size-14 text-[2.5rem] leading-none transition-colors md:size-16 md:text-[3rem] ${
-                      value <= (hover || rating) ? 'text-ink' : 'text-line-2'
+                    className={`size-14 text-[2.5rem] leading-none transition-[color,transform] active:scale-90 md:size-16 md:text-[3rem] ${
+                      value <= (hover || rating) ? 'text-[#ff9f0a]' : 'text-wall-3'
                     }`}
                   >
                     ★
@@ -274,7 +247,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
           {current.key === 'gender' && (
             <fieldset>
               <legend className="sr-only">{copy.photoLegend}</legend>
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="grid gap-2.5 sm:grid-cols-2">
                 {genders.map((value) => (
                   <button
                     key={value}
@@ -284,13 +257,10 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
                       setGender(value);
                       setError('');
                     }}
-                    className={`inline-flex min-h-14 items-center rounded-full border px-8 text-base transition-colors ${
-                      gender === value
-                        ? 'border-ink bg-ink text-paper'
-                        : 'border-line-2 text-ink-2 hover:border-ink hover:text-ink'
-                    }`}
+                    className={kit.tile(gender === value)}
                   >
                     {copy.genders[value]}
+                    <kit.Tick on={gender === value} />
                   </button>
                 ))}
               </div>
@@ -299,7 +269,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
         </div>
 
         {error && (
-          <p role="alert" className="mt-6 text-base">
+          <p role="alert" className={kit.problem}>
             {error}
           </p>
         )}
@@ -314,28 +284,27 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
       </div>
 
       {formError && (
-        <p role="alert" className="mt-8 text-sm">
+        <p role="alert" className={kit.problem}>
           {formError}
         </p>
       )}
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
-        <button type="submit" disabled={sending} className={primary}>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+        <button type="submit" disabled={sending} className={kit.primary}>
           {last ? (sending ? copy.sending : copy.send) : copy.next}
-          <ArrowIcon />
         </button>
 
         {step > 0 && (
           <button
             type="button"
             onClick={back}
-            className="text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
+            className={kit.back}
           >
             {copy.back}
           </button>
         )}
 
-        {last && <p className="text-xs text-ink-3">{copy.afterCheck}</p>}
+        {last && <p className={`${kit.fine} w-full`}>{copy.afterCheck}</p>}
       </div>
     </form>
   );
