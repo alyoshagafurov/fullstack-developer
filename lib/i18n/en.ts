@@ -173,6 +173,51 @@ export const en = {
 
   /** The night museum: one headline per hall, a small label in a corner. */
   /** Home: one huge headline per section, a small line in a corner. */
+  /** The home in the manner of Apple and Porsche: the work presented as a product. */
+  showroom: {
+    manifesto: 'I build websites, online stores and Telegram bots for businesses. Myself — from the idea and design to code and launch. So your clients find you, trust you from the first screen, and write.',
+    manifestoAccent: 'trust write',
+    workAll: 'All projects',
+    eyebrow: 'Alisher Gafurov · web developer',
+    title: ['Websites that', 'work for business.'],
+    sub: 'Design, code and launch. One person, from the first message to the result.',
+    cta: 'Discuss a project',
+    seeWork: 'See the work',
+    specs: [
+      { value: '50+', label: 'projects launched' },
+      { value: '1–3', label: 'days to a first draft' },
+      { value: '50%', label: 'paid after the draft' },
+      { value: '3', label: 'languages: RU · EN · TJ' },
+    ],
+    workTitle: 'The work.',
+    workSub: 'Real projects. Running right now.',
+    labels: { kind: 'Type', year: 'Year', client: 'Client', result: 'Result' },
+    openSite: 'Open the site',
+    details: 'Details',
+    desktop: 'Desktop',
+    phone: 'Phone',
+    kinds: {
+      'arusdomod-shop': 'Wedding outfits store',
+      'autoshine-store': 'Car care store',
+      parfumeria: 'Perfume store',
+      'python-academy': 'Platform for learning Python',
+      tajshop: 'Clothing store',
+    } as Record<string, string>,
+    lineTitle: 'What does your business need?',
+    lineSub: 'Pick a direction — the request opens with it chosen.',
+    from: 'from',
+    choose: 'Discuss',
+    storyEyebrow: 'Who builds it',
+    storyTitle: ['One person.', 'The whole project.'],
+    storyText: 'Idea, design, code, server and launch. Nothing is handed to “another guy” — you talk to the one who builds it.',
+    storyMore: 'About me',
+    voicesTitle: 'Clients say.',
+    finalTitle: 'Shall we start?',
+    finalSub: 'A first draft in 1–3 days. You pay 50% once you have seen it.',
+    prev: 'Previous',
+    next: 'Next',
+  },
+
   /** Prototype: the first screen and one project; the site takes the work's colour. */
   stage: {
     eyebrow: 'Alisher Gafurov — web developer, Dushanbe',

@@ -143,7 +143,7 @@ export function Header({
             <LangSwitch lang={lang} label={copy.header.language} />
             <Link
               href={href('/start')}
-              className="ml-1 hidden min-h-10 items-center rounded-full bg-bone px-5 text-sm font-semibold text-wall transition-transform hover:-translate-y-px md:inline-flex"
+              className="ml-1 hidden min-h-10 items-center rounded-full bg-[#0071e3] px-5 text-sm font-medium text-white transition-colors hover:bg-[#0077ed] md:inline-flex"
             >
               {copy.getQuote}
             </Link>
