@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowIcon } from '@/components/museum/Icons';
 import { useEffect, useRef, useState } from 'react';
 import {
   genders,
@@ -321,7 +322,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={sending} className={primary}>
           {last ? (sending ? copy.sending : copy.send) : copy.next}
-          <span aria-hidden>→</span>
+          <ArrowIcon />
         </button>
 
         {step > 0 && (

@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T09:24:28.225465+00:00",
+  "title": "Design System: aly.lat",
+  "extensions": {
+    "scope": "Public site under app/(site)/[lang] (body.museum) only. Admin and Telegram Mini App keep the older studio tokens and are out of scope.",
+    "colorMeta": {
+      "wall": {
+        "role": "neutral",
+        "displayName": "Night Wall",
+        "canonical": "#0e0f0e",
+        "tonalRamp": [
+          "#0e0f0e",
+          "#151715",
+          "#1d201d",
+          "#2a2e2a",
+          "#3d413d",
+          "#5a5e59",
+          "#8f938e",
+          "#e9ece8"
+        ]
+      },
+      "wall-2": {
+        "role": "neutral",
+        "displayName": "Raised Wall",
+        "canonical": "#151715",
+        "tonalRamp": [
+          "#0e0f0e",
+          "#151715",
+          "#1d201d",
+          "#2a2e2a",
+          "#3d413d",
+          "#5a5e59",
+          "#8f938e",
+          "#e9ece8"
+        ]
+      },
+      "wall-3": {
+        "role": "neutral",
+        "displayName": "Alcove",
+        "canonical": "#1d201d",
+        "tonalRamp": [
+          "#0e0f0e",
+          "#151715",
+          "#1d201d",
+          "#2a2e2a",
+          "#3d413d",
+          "#5a5e59",
+          "#8f938e",
+          "#e9ece8"
+        ]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "#ece7dd",
+        "tonalRamp": [
+          "oklch(15% 0.015 80)",
+          "oklch(25% 0.015 80)",
+          "oklch(35% 0.015 80)",
+          "oklch(45% 0.015 80)",
+          "oklch(55% 0.015 80)",
+          "oklch(65% 0.015 80)",
+          "oklch(80% 0.015 80)",
+          "oklch(95% 0.015 80)"
+        ]
+      },
+      "bone-2": {
+        "role": "neutral",
+        "displayName": "Worn Bone",
+        "canonical": "#b3ada2",
+        "tonalRamp": [
+          "oklch(15% 0.015 80)",
+          "oklch(25% 0.015 80)",
+          "oklch(35% 0.015 80)",
+          "oklch(45% 0.015 80)",
+          "oklch(55% 0.015 80)",
+          "oklch(65% 0.015 80)",
+          "oklch(80% 0.015 80)",
+          "oklch(95% 0.015 80)"
+        ]
+      },
+      "bone-3": {
+        "role": "neutral",
+        "displayName": "Faded Bone",
+        "canonical": "#8c877e",
+        "tonalRamp": [
+          "oklch(15% 0.015 80)",
+          "oklch(25% 0.015 80)",
+          "oklch(35% 0.015 80)",
+          "oklch(45% 0.015 80)",
+          "oklch(55% 0.015 80)",
+          "oklch(65% 0.015 80)",
+          "oklch(80% 0.015 80)",
+          "oklch(95% 0.015 80)"
+        ]
+      },
+      "brass": {
+        "role": "primary",
+        "displayName": "Gallery Brass",
+        "canonical": "#c8a46b",
+        "tonalRamp": [
+          "oklch(15% 0.09 75)",
+          "oklch(25% 0.09 75)",
+          "oklch(35% 0.09 75)",
+          "oklch(45% 0.09 75)",
+          "oklch(55% 0.09 75)",
+          "oklch(65% 0.09 75)",
+          "oklch(80% 0.09 75)",
+          "oklch(95% 0.09 75)"
+        ]
+      },
+      "seam": {
+        "role": "neutral",
+        "displayName": "Seam",
+        "canonical": "rgb(236 231 221 / 0.1)"
+      },
+      "seam-2": {
+        "role": "neutral",
+        "displayName": "Seam Strong",
+        "canonical": "rgb(236 231 221 / 0.2)"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Hall Title",
+        "purpose": "One per section; the hall's name, huge, in line masks. RU: Nunito Sans Black, font-stretch 75%, uppercase."
+      },
+      "headline": {
+        "displayName": "Room Title",
+        "purpose": "Sub-rooms inside inner pages; same RU condensed-caps treatment."
+      },
+      "title": {
+        "displayName": "Work Name",
+        "purpose": "Names of works under their frames; Bogle words used as navigation."
+      },
+      "body": {
+        "displayName": "Wall Note",
+        "purpose": "The only reading text: small, thin, in a corner, max 34ch, Worn Bone."
+      },
+      "label": {
+        "displayName": "Wall Label",
+        "purpose": "Captions, client/year, field and definition labels; never above a headline."
+      },
+      "script": {
+        "displayName": "Curator's Pencil",
+        "purpose": "Pacifico in brass, one aside under a headline, rotated -3 to -4deg."
+      }
+    },
+    "shadows": [
+      {
+        "name": "frame-cast",
+        "value": "0 40px 80px -30px rgb(0 0 0 / 0.75), 0 18px 30px -18px rgb(0 0 0 / 0.6)",
+        "purpose": "Every exhibit frame; paired with outline 1px seam, offset 10px."
+      },
+      {
+        "name": "floating-door",
+        "value": "0 18px 40px -16px rgb(0 0 0 / 0.8)",
+        "purpose": "Sticky request and WhatsApp doors only."
+      },
+      {
+        "name": "brass-focus-halo",
+        "value": "0 0 0 4px rgb(200 164 107 / 0.28)",
+        "purpose": "Focused inputs in a form room."
+      }
+    ],
+    "lightPools": [
+      {
+        "name": "wall-pool",
+        "value": "radial-gradient(circle at calc(var(--lx) * 1%) calc(var(--ly) * 1%), rgb(255 236 204 / 0.12-0.15), transparent 50-55%)",
+        "purpose": "Behind each lit hall; follows the pointer on [data-lit] walls."
+      },
+      {
+        "name": "lamp",
+        "value": "radial-gradient(ellipse 34-50% 60-75% at 50% 0%, rgb(255 236 204 / 0.16-0.24), transparent 70-72%)",
+        "purpose": "The lamp above an exhibit frame."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-gallery",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All museum transitions: buttons, hovers, lamps, image scale."
+      },
+      {
+        "name": "lamp-switch",
+        "value": "opacity / filter 900ms ease-gallery; dim state lamp 0.12, image brightness(0.55) saturate(0.7)",
+        "purpose": "The one authored moment: an exhibit's lamp comes up at the middle of the hall (data-lamp, .is-lit). Off without script or with reduced motion = always lit."
+      },
+      {
+        "name": "rise",
+        "value": "lines yPercent 105 -> 0, 1.25s expo.out, stagger 0.09, at top 88%",
+        "purpose": "data-rise headline lines; only for elements starting below 92% of the viewport."
+      },
+      {
+        "name": "fade",
+        "value": "y 48, opacity 0, blur 6px -> settled, 1.3s expo.out, at top 90%",
+        "purpose": "data-fade; only below the fold."
+      },
+      {
+        "name": "gallery-walk",
+        "value": "pinned horizontal scrub 0.7, >=1024px",
+        "purpose": "data-gallery work hall walks sideways; native snap swipe on phones."
+      },
+      {
+        "name": "magnetic",
+        "value": "quickTo 0.5s power3.out, 0.22x / 0.3y",
+        "purpose": "data-magnetic hero doors, fine pointers only."
+      },
+      {
+        "name": "pointer-light",
+        "value": "quickTo --lx/--ly 0.9s power3.out",
+        "purpose": "data-lit walls, fine pointers only."
+      },
+      {
+        "name": "smooth-scroll",
+        "value": "Lenis lerp 0.11",
+        "purpose": "Wheel and trackpad only; disabled under reduced motion."
+      },
+      {
+        "name": "sticky-in",
+        "value": "transform 680ms cubic-bezier(0.16,1,0.3,1), opacity 260ms ease-out",
+        "purpose": "Floating doors arriving after 60% viewport scroll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Request Door (Bone Pill)",
+      "kind": "button",
+      "refersTo": "button-bone",
+      "description": "The primary door: the request form. Filled bone pill on the dark wall.",
+      "html": "<a class=\"ds-btn-bone\" href=\"#\">Get a quote <svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
+      "css": ".ds-btn-bone{display:inline-flex;min-height:3.5rem;align-items:center;justify-content:center;gap:0.75rem;border-radius:9999px;padding:0 1.875rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.9375rem;font-weight:500;letter-spacing:0.01em;text-decoration:none;cursor:pointer;transition:background-color 300ms cubic-bezier(0.16,1,0.3,1),color 300ms cubic-bezier(0.16,1,0.3,1),border-color 300ms cubic-bezier(0.16,1,0.3,1);background:#ece7dd;color:#0e0f0e;border:0;} .ds-btn-bone svg{transition:transform 500ms cubic-bezier(0.16,1,0.3,1);} .ds-btn-bone:hover{background:#fff;} .ds-btn-bone:hover svg{transform:translateX(4px);} .ds-btn-bone:focus-visible{outline:2px solid #c8a46b;outline-offset:4px;}"
+    },
+    {
+      "name": "WhatsApp Door (Line Pill)",
+      "kind": "button",
+      "refersTo": "button-line",
+      "description": "The second door: WhatsApp, outlined pill beside the request.",
+      "html": "<a class=\"ds-btn-line\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/></svg>WhatsApp</a>",
+      "css": ".ds-btn-line{display:inline-flex;min-height:3.5rem;align-items:center;justify-content:center;gap:0.75rem;border-radius:9999px;padding:0 1.875rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.9375rem;font-weight:500;letter-spacing:0.01em;text-decoration:none;cursor:pointer;transition:background-color 300ms cubic-bezier(0.16,1,0.3,1),color 300ms cubic-bezier(0.16,1,0.3,1),border-color 300ms cubic-bezier(0.16,1,0.3,1);background:transparent;color:#ece7dd;border:1px solid rgb(236 231 221 / 0.2);} .ds-btn-line:hover{border-color:#ece7dd;background:rgb(236 231 221 / 0.06);} .ds-btn-line:focus-visible{outline:2px solid #c8a46b;outline-offset:4px;}"
+    },
+    {
+      "name": "Round Arrow Door",
+      "kind": "button",
+      "refersTo": "door-round",
+      "description": "Circle with one arrow that ends list rows and next-case links; brass on hover.",
+      "html": "<a class=\"ds-door\" href=\"#\" aria-label=\"Open\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
+      "css": ".ds-door{display:inline-flex;width:3.5rem;height:3.5rem;align-items:center;justify-content:center;border-radius:9999px;border:1px solid rgb(236 231 221 / 0.2);color:#ece7dd;transition:border-color 500ms,color 500ms,background-color 500ms;} .ds-door svg{width:20px;height:20px;} .ds-door:hover{border-color:#c8a46b;color:#c8a46b;} .ds-door:focus-visible{outline:2px solid #c8a46b;outline-offset:4px;}"
+    },
+    {
+      "name": "Quiet Link",
+      "kind": "custom",
+      "refersTo": "link-quiet",
+      "description": "Inline secondary link: worn bone, seam underline that turns brass.",
+      "html": "<p class=\"ds-note\">Every case is real. <a class=\"ds-link\" href=\"#\">All work</a></p>",
+      "css": ".ds-note{font-family:'Nunito Sans',sans-serif;font-weight:300;font-size:0.875rem;line-height:1.65;color:#b3ada2;} .ds-link{color:#b3ada2;text-decoration:underline;text-decoration-color:rgb(236 231 221 / 0.2);text-underline-offset:0.3em;transition:color 250ms,text-decoration-color 250ms;} .ds-link:hover{color:#ece7dd;text-decoration-color:#c8a46b;} .ds-link:focus-visible{outline:2px solid #c8a46b;outline-offset:4px;border-radius:2px;}"
+    },
+    {
+      "name": "Exhibit Frame",
+      "kind": "card",
+      "refersTo": "exhibit-frame",
+      "description": "A work hung on the wall under its lamp: hard corners, cast shadow, hairline mat outline, caption row.",
+      "html": "<figure class=\"ds-exhibit-wrap\"><div class=\"ds-lamp\"></div><div class=\"ds-exhibit\"></div><figcaption class=\"ds-cap\"><span class=\"ds-cap-title\">ArusDomod</span><span class=\"ds-label\">Online store · 2025</span></figcaption></figure>",
+      "css": ".ds-exhibit-wrap{position:relative;margin:0;padding-top:2.5rem;max-width:28rem;} .ds-lamp{position:absolute;left:-4%;right:-4%;top:0;bottom:30%;pointer-events:none;background:radial-gradient(ellipse 34% 75% at 50% 0%,rgb(255 236 204 / 0.24),transparent 72%);} .ds-exhibit{position:relative;aspect-ratio:16/10;background:#151715;box-shadow:0 40px 80px -30px rgb(0 0 0 / 0.75),0 18px 30px -18px rgb(0 0 0 / 0.6);outline:1px solid rgb(236 231 221 / 0.1);outline-offset:10px;transition:transform 1.4s cubic-bezier(0.16,1,0.3,1);} .ds-exhibit-wrap:hover .ds-exhibit{transform:scale(1.02);} .ds-cap{margin-top:1.75rem;display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;} .ds-cap-title{font-family:'BBH Bogle','Nunito Sans',sans-serif;font-weight:900;font-synthesis:none;font-size:1.75rem;line-height:1;color:#ece7dd;} .ds-label{font-family:'Nunito Sans',sans-serif;font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;color:#8c877e;}"
+    },
+    {
+      "name": "Hall Head",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "One huge Bogle headline at the foot of the room, brass script aside, thin note in the opposite corner.",
+      "html": "<section class=\"ds-hall\"><h1 class=\"ds-hall-title\">Work that<br>stays lit</h1><p class=\"ds-script\">made by one person</p><p class=\"ds-wall-note\">Idea, design, code and launch. No middlemen.</p></section>",
+      "css": ".ds-hall{position:relative;padding:3rem 1.25rem;background:#0e0f0e radial-gradient(circle at 24% 20%,rgb(255 236 204 / 0.12),transparent 50%);color:#ece7dd;} .ds-hall-title{margin:0;font-family:'BBH Bogle','Nunito Sans',sans-serif;font-weight:900;font-synthesis:none;font-size:clamp(3rem,9vw,6rem);line-height:0.88;letter-spacing:-0.015em;text-wrap:balance;} .ds-script{margin:0.5rem 0 0 0.25rem;font-family:Pacifico,cursive;color:#c8a46b;font-size:2rem;line-height:1;transform:rotate(-3deg);transform-origin:left;} .ds-wall-note{margin:3rem 0 0 auto;max-width:34ch;text-align:right;font-family:'Nunito Sans',sans-serif;font-weight:300;font-size:0.875rem;line-height:1.65;color:#b3ada2;}"
+    },
+    {
+      "name": "Form Room Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Request/review field on the raised wall; brass caret, brass border and halo on focus; Bogle label.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Your name</span><input class=\"ds-input\" placeholder=\"Alisher\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:0.75rem;max-width:24rem;} .ds-field-label{font-family:'BBH Bogle','Nunito Sans',sans-serif;font-weight:900;font-synthesis:none;font-size:1.25rem;color:#ece7dd;letter-spacing:-0.005em;} .ds-input{min-height:3.5rem;padding:0 1.25rem;background:#151715;color:#ece7dd;caret-color:#c8a46b;border:1px solid rgb(236 231 221 / 0.2);border-radius:1rem;font-family:'Nunito Sans',sans-serif;font-weight:300;font-size:1rem;outline:none;transition:border-color 250ms,box-shadow 250ms;} .ds-input::placeholder{color:#8c877e;} .ds-input:focus{border-color:#c8a46b;box-shadow:0 0 0 4px rgb(200 164 107 / 0.28);}"
+    },
+    {
+      "name": "Header Nav",
+      "kind": "nav",
+      "refersTo": "link-quiet",
+      "description": "Fixed header: inverted wordmark, worn-bone nav with a 1px brass underline on the current page, small bone request pill.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-mark\">aly</span><ul><li><a href=\"#\" aria-current=\"page\">Work</a></li><li><a href=\"#\">Services</a></li><li><a href=\"#\">Prices</a></li></ul><a class=\"ds-nav-cta\" href=\"#\">Get a quote</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;height:5rem;padding:0 1.25rem;background:rgb(14 15 14 / 0.95);border-bottom:1px solid rgb(236 231 221 / 0.1);font-family:'Nunito Sans',sans-serif;} .ds-mark{font-family:'BBH Bogle',sans-serif;font-size:1.5rem;color:#ece7dd;} .ds-nav ul{display:flex;gap:0.25rem;list-style:none;margin:0;padding:0;} .ds-nav ul a{position:relative;display:inline-flex;min-height:2.75rem;align-items:center;padding:0 0.875rem;font-size:0.875rem;color:#b3ada2;text-decoration:none;transition:color 250ms;} .ds-nav ul a:hover,.ds-nav ul a[aria-current=page]{color:#ece7dd;} .ds-nav ul a[aria-current=page]::after{content:'';position:absolute;left:0.875rem;right:0.875rem;bottom:0.5rem;height:1px;background:#c8a46b;} .ds-nav ul a:focus-visible,.ds-nav-cta:focus-visible{outline:2px solid #c8a46b;outline-offset:4px;border-radius:2px;} .ds-nav-cta{display:inline-flex;min-height:2.75rem;align-items:center;padding:0 1.25rem;border-radius:9999px;background:#ece7dd;color:#0e0f0e;font-size:0.875rem;font-weight:500;text-decoration:none;transition:background-color 300ms;} .ds-nav-cta:hover{background:#fff;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night Museum",
+    "overview": "Every section is a hall: a dark painted wall, one thing hung on it under its own warm light, and the hall's name set huge. Whatever someone might want to read sits small and thin in a corner, like the label next to a painting. The visitor walks through the halls instead of reading a landing page. The density is deliberately low. Each screen holds one statement, one exhibit and one quiet note, with a lot of dark air around them.\n\nThe owner fixed the system's character himself. Every section has one huge headline and a small thin piece of text in a corner. There are no enumerated lists. Headings are BBH Bogle and only BBH Bogle, small text is Nunito Sans at a thin weight, and Pacifico is the brass handwritten accent. The whole site stays clean with lots of air. Light is the material. Warm radial pools (`rgb(255 236 204)` at 5 to 24% alpha) are the only gradients. A fine plaster grain over the whole page (6% opacity, screen blend) keeps the walls painted rather than rendered.\n\nThe movement has a ceiling. Content is fully visible at first paint, and reveals only touch elements that start below the fold. The one authored motion moment is the lamp: an exhibit waits in the dark and its light comes up as it reaches the middle of the hall.",
+    "keyCharacteristics": [
+      "Charcoal walls in three tonal steps, bone ink, brass used only as a pencil mark.",
+      "One huge Bogle headline per hall, set flush-left at the foot of the room. One small thin Nunito note in the opposite corner.",
+      "Work shown as framed exhibits with real cast shadows and a hairline frame offset from the picture.",
+      "Two doors everywhere: the request (filled bone pill) and WhatsApp (outlined pill or round button).",
+      "Motion that adds to a page that is already complete, never motion that a page waits on."
+    ],
+    "rules": [
+      {
+        "name": "The Curator's Pencil Rule",
+        "body": "Brass marks things. It never paints them. Allowed: script lines, 1px markers, hover ink, focus, selection. A brass area larger than a 64px round button on hover is off-system.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Light Rule",
+        "body": "The only gradients are warm light pools of `rgb(255 236 204)` falling on the wall: radial, low alpha, fading to transparent by about 50 to 72%. There are no colored gradients and no gradient text.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Voice Per Role Rule",
+        "body": "Bogle is used only for headings and heading-scale words. Nunito is used only for small text. Pacifico is used only as the brass accent. Bogle is never used for body text, Nunito is never used for an English headline, and Pacifico is never used for content someone must read to act.",
+        "section": "typography"
+      },
+      {
+        "name": "The Russian Headline Rule",
+        "body": "Bogle draws only Latin capitals, so Cyrillic falls through to Nunito Sans Black. Under `:lang(ru)`, every hall title, room title, `.font-display` word and form-room heading is set at `font-stretch: 75%`, `text-transform: uppercase` and letter-spacing -0.005em, so the Russian site keeps the same condensed-caps mass. Every Bogle stack asks for weight 900 with `font-synthesis: none`. Bogle answers at its own single weight, and the Nunito fallback answers at Black.",
+        "section": "typography"
+      },
+      {
+        "name": "The Corner Note Rule",
+        "body": "Each hall has one huge headline and one small thin note, and the note sits away from the headline, in the opposite corner or at the end of the row. A hall never gets a paragraph block under its headline.",
+        "section": "typography"
+      },
+      {
+        "name": "The Look Don't Read Rule",
+        "body": "Each section holds one statement. If a section needs a list, it is a set of large words separated by hairline seams (as in Directions). It is never a numbered sequence of steps.",
+        "section": "layout"
+      },
+      {
+        "name": "The Lit Wall Rule",
+        "body": "Depth is lighting. A section gets a warm radial pool behind its content. On halls marked as lit, the pool follows the pointer through `--lx`/`--ly`, and without the script it stays where the stylesheet put it, so the room is lit either way. Cards, panels and layered surfaces don't stand in for depth.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** give every section one display headline and one thin corner note, and nothing else competing.",
+      "**Do** set every heading in Bogle 900 with `font-synthesis: none`. Let `:lang(ru)` carry it into Nunito Sans Black at 75% width in uppercase.",
+      "**Do** keep content visible at first paint. Apply rise and fade reveals only to elements whose top starts below 92% of the viewport height, and only once the script is running.",
+      "**Do** keep the lamp as the single authored motion moment. Other motion (line rises, fades, parallax, pointer light, magnetic doors, the sideways work walk, Lenis smooth wheel scroll) supports it and switches off under `prefers-reduced-motion`.",
+      "**Do** put the two doors, request and WhatsApp, in every hall that asks for action. Mark that hall `data-doors` so the floating pair stands aside.",
+      "**Do** hang work as framed exhibits with Frame Cast and the 10px offset seam outline.",
+      "**Do** keep text at Faded Bone or brighter. Faded Bone is the contrast floor."
+    ],
+    "donts": [
+      "**Don't** build numbered or enumerated step lists (\"01 Request / 02 Consultation / ...\"), and don't use bullet-heavy feature lists.",
+      "**Don't** use Nunito for an English headline, Bogle for body text, or Pacifico for anything a visitor must read to act.",
+      "**Don't** fill large areas with brass or use it for body text.",
+      "**Don't** hide content with initial opacity 0 in CSS or in server markup. A slow phone must see the page, not a blank wall.",
+      "**Don't** put white or light cards on the wall. Raised surfaces are Raised Wall or Alcove, and only exhibits cast shadows.",
+      "**Don't** add small uppercase labels above headlines. The hall's name stands alone, with the script line under it.",
+      "**Don't** add a third door or a competing call to action. The request and WhatsApp are the only two."
+    ]
+  }
+}

@@ -349,11 +349,355 @@ html:has([data-mini]) {
 /* One question replaces another: it arrives, it does not slide in from off-screen. */
 @keyframes review-step-in {
   from {
-    opacity: 0;
     transform: translateY(10px);
   }
 }
 
 .review-step {
   animation: review-step-in 360ms var(--ease-studio) both;
+}
+
+/* ======================================================================
+ * The night museum — the public site.
+ *
+ * Every hall is a dark wall with one thing on it under its own light. The
+ * headline is the exhibit's name, set huge in BBH Bogle; whatever someone
+ * may want to read sits small and thin in a corner, like the label beside a
+ * painting. Brass is the curator's pencil: Pacifico notes and tiny markers,
+ * nothing else. The admin and the Mini App keep the tokens above; everything
+ * below applies only under `body.museum`.
+ * ==================================================================== */
+
+@theme {
+  --color-wall: #0e0f0e;
+  --color-wall-2: #151715;
+  --color-wall-3: #1d201d;
+  --color-bone: #ece7dd;
+  /* Thin text on the wall. 8.6:1 on --wall, still 7.9:1 on --wall-2. */
+  --color-bone-2: #b3ada2;
+  /* Labels and the quietest text: 5.4:1 on --wall. */
+  --color-bone-3: #8c877e;
+  --color-brass: #c8a46b;
+  --color-seam: rgb(236 231 221 / 0.1);
+  --color-seam-2: rgb(236 231 221 / 0.2);
+
+  --font-display: var(--font-bogle), var(--font-nunito), ui-sans-serif, sans-serif;
+  --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-pacifico), cursive;
+
+  --ease-gallery: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  body.museum {
+    background: var(--color-wall);
+    color: var(--color-bone);
+    font-family: var(--font-text);
+    font-weight: 300;
+    color-scheme: dark;
+  }
+
+  .museum ::selection {
+    background: var(--color-brass);
+    color: var(--color-wall);
+  }
+
+  .museum :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .museum h1,
+  .museum h2,
+  .museum h3 {
+    letter-spacing: -0.01em;
+  }
+
+  /* The scrollbar is part of the room, not the browser's. */
+  html:has(body.museum) {
+    scrollbar-color: var(--color-wall-3) var(--color-wall);
+    background: var(--color-wall);
+  }
+
+  .museum input,
+  .museum textarea {
+    caret-color: var(--color-brass);
+  }
+}
+
+@layer components {
+  /*
+   * The headline of a hall. BBH Bogle ships one weight and Latin only, so the
+   * stack asks for 900: Bogle answers at its own weight (synthesis is off) and
+   * Russian falls through to Nunito Sans Black, which holds the same mass.
+   */
+  .hall-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-synthesis: none;
+    font-size: clamp(3.25rem, 10.5vw, 10.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .room-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-synthesis: none;
+    font-size: clamp(2.25rem, 5.6vw, 5.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* The wall label: small, thin, for whoever leans in. */
+  .wall-note {
+    font-family: var(--font-text);
+    font-weight: 300;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-bone-2);
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+
+  .wall-label {
+    font-family: var(--font-text);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-bone-3);
+  }
+
+  /* The curator's pencil. */
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    color: var(--color-brass);
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .hall {
+    position: relative;
+    width: 100%;
+    max-width: 1680px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .hall {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .hall {
+      padding-inline: 4.5rem;
+    }
+  }
+
+  /*
+   * A pool of light on the wall. Positioned by --lx / --ly, which the
+   * spotlight script moves with the pointer; without the script it stays where
+   * the stylesheet put it, so the room is lit either way.
+   */
+  .spotlight {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--lx, 70%) var(--ly, 30%),
+      rgb(255 236 204 / 0.16) 0%,
+      rgb(255 236 204 / 0.06) 22%,
+      transparent 52%
+    );
+  }
+
+  /* A frame on the wall: hairline, a little air, a real cast shadow. */
+  .exhibit {
+    position: relative;
+    background: var(--color-wall-2);
+    box-shadow:
+      0 40px 80px -30px rgb(0 0 0 / 0.75),
+      0 18px 30px -18px rgb(0 0 0 / 0.6);
+    outline: 1px solid var(--color-seam);
+    outline-offset: 10px;
+  }
+
+  .btn-bone,
+  .btn-line {
+    display: inline-flex;
+    min-height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border-radius: 9999px;
+    padding-inline: 1.875rem;
+    font-family: var(--font-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition:
+      background-color 300ms var(--ease-gallery),
+      color 300ms var(--ease-gallery),
+      border-color 300ms var(--ease-gallery);
+  }
+
+  .btn-bone {
+    background: var(--color-bone);
+    color: var(--color-wall);
+  }
+
+  .btn-bone:hover {
+    background: #fff;
+  }
+
+  .btn-line {
+    border: 1px solid var(--color-seam-2);
+    color: var(--color-bone);
+  }
+
+  .btn-line:hover {
+    border-color: var(--color-bone);
+    background: rgb(236 231 221 / 0.06);
+  }
+
+  .link-quiet {
+    color: var(--color-bone-2);
+    text-decoration: underline;
+    text-decoration-color: var(--color-seam-2);
+    text-underline-offset: 0.3em;
+    transition: color 250ms, text-decoration-color 250ms;
+  }
+
+  .link-quiet:hover {
+    color: var(--color-bone);
+    text-decoration-color: var(--color-brass);
+  }
+}
+
+/*
+ * Reveals start from a visible state. The script below the fold is what moves
+ * them; nothing here hides content before JavaScript has run.
+ */
+.museum .line-mask {
+  display: block;
+  overflow: hidden;
+  /* Room above and below for accents (Й, Ё) and descenders the mask would clip. */
+  padding-block: 0.14em 0.08em;
+  margin-block: -0.14em -0.08em;
+}
+
+.museum .line-mask > span {
+  display: block;
+}
+
+/* The work hall's track: a native swipe until the script pins the hall. */
+.museum [data-gallery-track] {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.museum [data-gallery-track]::-webkit-scrollbar {
+  display: none;
+}
+
+.museum [data-gallery-track] > * {
+  scroll-snap-align: start;
+}
+
+.museum [data-pinned] [data-gallery-track] {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+/*
+ * Bogle draws only Latin, and only capitals: lowercase letters come out as
+ * small caps. Cyrillic falls back to Nunito Sans, which on its own is wide
+ * and mixed-case — a different voice. Narrowed to its condensed width and set
+ * in capitals, Nunito Sans Black stands close to Bogle, so the Russian site
+ * keeps the same headline.
+ */
+.museum:lang(ru) .hall-title,
+.museum:lang(ru) .room-title,
+.museum:lang(ru) .font-display {
+  font-stretch: 75%;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+/*
+ * The request and review forms were drawn with the old studio tokens. Inside
+ * a form room those tokens are re-pointed at the museum's, so the forms keep
+ * their logic and markup and simply take on the dark wall: fields on the
+ * raised wall, bone ink, the filled button in bone.
+ */
+.museum .form-room {
+  --color-paper: var(--color-wall-2);
+  --color-ground: var(--color-wall);
+  --color-shelf: var(--color-wall-3);
+  --color-ink: var(--color-bone);
+  --color-ink-2: var(--color-bone-2);
+  --color-ink-3: var(--color-bone-3);
+  --color-line: var(--color-seam);
+  --color-line-2: var(--color-seam-2);
+}
+
+.museum .form-room h2,
+.museum .form-room label > span:first-child:not(.sr-only) {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-synthesis: none;
+  letter-spacing: -0.005em;
+}
+
+.museum:lang(ru) .form-room h2,
+.museum:lang(ru) .form-room label > span:first-child:not(.sr-only) {
+  font-stretch: 75%;
+  text-transform: uppercase;
+}
+
+.museum .form-room input,
+.museum .form-room textarea {
+  font-weight: 300;
+}
+
+/*
+ * The lamp. With the motion script running, an exhibit waits in the dark and
+ * its pool of light comes up when it reaches the middle of the hall. Without
+ * the script (or with reduced motion) every lamp is simply on.
+ */
+html.lamps .museum [data-lamp] .lamp {
+  opacity: 0.12;
+  transition: opacity 900ms var(--ease-gallery);
+}
+
+html.lamps .museum [data-lamp] .lit-image {
+  filter: brightness(0.55) saturate(0.7);
+  transition:
+    filter 900ms var(--ease-gallery),
+    transform 1.4s var(--ease-gallery);
+}
+
+html.lamps .museum [data-lamp].is-lit .lamp {
+  opacity: 1;
+}
+
+html.lamps .museum [data-lamp].is-lit .lit-image {
+  filter: none;
+}
+
+/* A focus ring the dark wall can show. */
+.museum .form-room input:focus,
+.museum .form-room textarea:focus {
+  box-shadow: 0 0 0 4px rgb(200 164 107 / 0.28);
+  border-color: var(--color-brass);
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowIcon } from '@/components/museum/Icons';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { BRIEF_SCREENS, contactMethods, projectTypes, type BriefCopy } from '@/lib/content/brief';
@@ -50,7 +51,16 @@ function Problem({ text }: { text?: string }) {
   );
 }
 
-export function BriefForm({ lang, copy }: { lang: Locale; copy: BriefCopy }) {
+export function BriefForm({
+  lang,
+  copy,
+  initialType,
+}: {
+  lang: Locale;
+  copy: BriefCopy;
+  /** A project type chosen before the form opened, e.g. a direction on the home page. */
+  initialType?: string;
+}) {
   const router = useRouter();
   const website = useRef<HTMLInputElement>(null);
   const answer = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
@@ -59,6 +69,7 @@ export function BriefForm({ lang, copy }: { lang: Locale; copy: BriefCopy }) {
     copy,
     serverWordsOk: lang === 'ru',
     draftKey: 'aly-brief-v2',
+    initial: initialType ? { projectType: initialType } : undefined,
     onSent: ({ ref, code }) => {
       // The code is shown once, on the next page. Only the number and code go
       // in the address — nothing the visitor typed about themselves.
@@ -85,6 +96,7 @@ export function BriefForm({ lang, copy }: { lang: Locale; copy: BriefCopy }) {
 
   return (
     <form
+      data-form
       onSubmit={(event) => {
         event.preventDefault();
         brief.advance({}, website.current?.value ?? '');
@@ -265,7 +277,7 @@ export function BriefForm({ lang, copy }: { lang: Locale; copy: BriefCopy }) {
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
         <button type="submit" disabled={brief.sending} className={primary}>
           {last ? (brief.sending ? copy.sending : copy.send) : copy.next}
-          <span aria-hidden>→</span>
+          <ArrowIcon />
         </button>
 
         {step > 0 && (

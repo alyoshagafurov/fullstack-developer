@@ -26,9 +26,31 @@ export function proxy(request: NextRequest) {
 
   if (pathname === '/ru' || pathname.startsWith('/ru/')) return NextResponse.next();
 
+  /*
+   * A first visit from a Russian-reading browser goes to /ru. Local clients in
+   * Tajikistan and abroad are equal audiences, so the browser decides — but
+   * only once: a language picked in the switcher is stored in a cookie and
+   * outranks it. Crawlers send no Accept-Language and keep the English pages.
+   */
+  const chosen = request.cookies.get('aly-lang')?.value;
+  if (!chosen && prefersRussian(request.headers.get('accept-language'))) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === '/' ? '/ru' : `/ru${pathname}`;
+    return NextResponse.redirect(url, 307);
+  }
+
   const url = request.nextUrl.clone();
   url.pathname = pathname === '/' ? '/en' : `/en${pathname}`;
   return NextResponse.rewrite(url);
+}
+
+/* Languages whose readers are better served by the Russian site than the English one. */
+const RUSSIAN_READERS = new Set(['ru', 'tg', 'uz', 'ky', 'kk', 'be', 'uk', 'az', 'hy', 'ka', 'tk']);
+
+function prefersRussian(header: string | null): boolean {
+  if (!header) return false;
+  const first = header.split(',')[0]?.trim().split(';')[0]?.toLowerCase() ?? '';
+  return RUSSIAN_READERS.has(first.split('-')[0] ?? '');
 }
 
 export const config = {

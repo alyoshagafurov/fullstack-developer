@@ -33,6 +33,8 @@ export type PriceOverride = {
 };
 
 export async function getOverrides(): Promise<Map<string, PriceOverride>> {
+  // A checkout with no database simply has no overrides; nothing to report.
+  if (process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL) return new Map();
   const rows = await safely<PriceOverride[]>(
     'service prices',
     () =>

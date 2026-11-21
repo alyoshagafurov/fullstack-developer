@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
-import { Band } from '@/components/ui/Band';
-import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
-import { StudioObject } from '@/components/ui/StudioObject';
+import Link from 'next/link';
+import { Lines } from '@/components/museum/Lines';
+import { ArrowIcon } from '@/components/museum/Icons';
 import { site } from '@/lib/content/site';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+
+/*
+ * After the request: the thanks as the room's headline, the reference number
+ * and status code as the small label in the corner, and the way on.
+ */
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getDictionary();
@@ -15,13 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/*
- * After the request: one large sentence saying he is on it, and two ways to
- * keep looking while they wait — the prices and the work.
- *
- * The request number and the bot code stay, set small underneath: the code is
- * shown only once, and it is what lets the client ask the bot how it is going.
- */
 export default async function ThanksPage({
   searchParams,
 }: {
@@ -35,55 +32,52 @@ export default async function ThanksPage({
   const bot = `https://t.me/${site.contact.bot}?start=status`;
 
   return (
-    <Band tone="ground" innerClassName="flex min-h-[100svh] flex-col justify-center py-28 md:py-32">
-      <div className="grid items-center gap-14 md:grid-cols-[1fr_16rem] md:gap-20">
-        <div data-reveal="group">
-          <h1 className="max-w-3xl text-[clamp(2.25rem,6vw,4.75rem)] leading-[1.02] font-bold tracking-[-0.045em] text-balance">
-            {done.title}
-          </h1>
-          <p className="mt-8 max-w-xl text-[clamp(1.0625rem,1.6vw,1.375rem)] leading-relaxed text-ink-2">
-            {done.message}
-          </p>
+    <section className="relative isolate min-h-[100svh] overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_35%,rgb(255_236_204/0.12),transparent_55%)]"
+      />
+      <div className="hall flex min-h-[100svh] flex-col justify-end pt-32 pb-16 md:pb-24">
+        <h1 className="hall-title text-[clamp(3rem,9vw,9rem)]">
+          <Lines lines={[done.title]} />
+        </h1>
+        <p className="script mt-4 -rotate-[3deg] text-[clamp(1.5rem,2.6vw,2.5rem)]">{t.common.responseTime}</p>
 
-          <div className="mt-12 flex flex-wrap items-center gap-3">
-            <CTA href={localePath(lang, '/prices')} size="lg">
-              {done.prices}
-            </CTA>
-            <PillLink href={localePath(lang, '/work')} variant="outline">
+        <div className="mt-14 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-wrap gap-3">
+            <Link href={localePath(lang, '/work')} className="btn-bone group">
               {done.work}
-            </PillLink>
+              <ArrowIcon className="transition-transform duration-500 group-hover:translate-x-1" />
+            </Link>
+            <Link href={localePath(lang, '/prices')} className="btn-line">
+              {done.prices}
+            </Link>
           </div>
 
-          {refValid && (
-            <div className="mt-16 max-w-xl border-t border-line pt-6">
-              <dl className="grid gap-5 sm:grid-cols-2">
+          <div className="md:text-right">
+            <p className="wall-note md:ml-auto">{done.message}</p>
+            {refValid && (
+              <dl className="mt-6 space-y-3">
                 <div>
-                  <dt className="label mb-2">{done.refLabel}</dt>
-                  <dd className="tabular text-lg tracking-[-0.01em]">{refValid}</dd>
+                  <dt className="wall-label">{done.refLabel}</dt>
+                  <dd className="mt-1 text-base text-bone tabular-nums">{refValid}</dd>
                 </div>
                 {codeValid && (
-                  <div className="min-w-0">
-                    <dt className="label mb-2">{done.codeLabel}</dt>
-                    <dd className="font-mono text-xs break-all text-ink-2">{codeValid}</dd>
+                  <div>
+                    <dt className="wall-label">{done.codeLabel}</dt>
+                    <dd className="mt-1 font-mono text-xs break-all text-bone-2">{codeValid}</dd>
                   </div>
                 )}
               </dl>
-              <a
-                href={bot}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
-              >
-                {done.track} <span aria-hidden>→</span>
+            )}
+            {refValid && (
+              <a href={bot} target="_blank" rel="noopener noreferrer" className="link-quiet mt-5 inline-block text-sm">
+                {done.track}
               </a>
-            </div>
-          )}
-        </div>
-
-        <div className="relative aspect-square w-40 justify-self-start md:w-full md:justify-self-end">
-          <StudioObject src="/objects/laptop.webp" alt="" sizes="(min-width: 768px) 16rem, 10rem" />
+            )}
+          </div>
         </div>
       </div>
-    </Band>
+    </section>
   );
 }

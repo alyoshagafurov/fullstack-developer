@@ -1,16 +1,19 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Band } from '@/components/ui/Band';
-import { Invite } from '@/components/sections/Invite';
-import { PageOpening } from '@/components/ui/PageOpening';
-import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
-import { StudioObject } from '@/components/ui/StudioObject';
+import { HallHead } from '@/components/museum/HallHead';
+import { ClosingHall } from '@/components/museum/home/Halls';
+import { ArrowIcon } from '@/components/museum/Icons';
+import { startHref } from '@/components/museum/links';
 import { getPublishedCases, localizeCases } from '@/lib/cases';
 import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 
+/*
+ * Every published work, hung salon-style: large and small frames alternate
+ * down the wall, each with its label in the corner. Published from the admin,
+ * so revalidated rather than built once.
+ */
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,118 +25,79 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/*
- * The register of work.
- *
- * Rows alternate so the page reads as a walk past a display rather than a grid
- * of equal tiles. With nothing published yet the page says so plainly and
- * offers the services instead: an empty state is honest, invented work is not.
- *
- * A case the owner has not translated yet keeps his Russian words, marked as
- * Russian so a screen reader does not read them with English pronunciation.
- */
+/* Where each frame hangs on a twelve-column wall, repeating every four works. */
+const HANG = [
+  'lg:col-span-7',
+  'lg:col-span-4 lg:col-start-9 lg:mt-[28vh]',
+  'lg:col-span-5 lg:col-start-2',
+  'lg:col-span-6 lg:col-start-7 lg:mt-[16vh]',
+];
+
 export default async function WorkPage() {
   const { lang, t } = await getDictionary();
   const cases = await localizeCases(await getPublishedCases(), lang);
 
   return (
     <>
-      <PageOpening eyebrow={t.work.eyebrow} title={t.work.title} lede={t.about.difference} />
+      <HallHead title={t.home.workTitle} script={t.home.workScript} note={t.work.metaDescription} />
 
       {cases.length === 0 ? (
-        <Band tone="paper" innerClassName="py-24 md:py-36">
-          <div className="max-w-2xl">
-            <p className="text-[clamp(1.25rem,2.6vw,1.875rem)] leading-[1.3] tracking-[-0.02em]">
-              {t.work.emptyTitle}
-            </p>
-            <p className="mt-6 text-base leading-relaxed text-ink-2">{t.work.emptyBody}</p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <PillLink href={localePath(lang, '/services')} variant="outline">
-                {t.common.seeServices}
-              </PillLink>
-              <CTA href={localePath(lang, '/start')}>{t.common.getQuote}</CTA>
-            </div>
-          </div>
-        </Band>
+        <section className="hall pb-32">
+          <p className="room-title max-w-3xl">{t.work.emptyTitle}</p>
+          <p className="wall-note mt-8">{t.work.emptyBody}</p>
+          <Link href={startHref(lang)} className="btn-bone mt-10">
+            {t.common.getQuote}
+            <ArrowIcon />
+          </Link>
+        </section>
       ) : (
-        <Band tone="paper" innerClassName="py-12 md:py-20">
-          <ol data-reveal="group" className="divide-y divide-line">
-            {cases.map((row, index) => {
-              /*
-               * A case that carries the client's mark runs mark, words, object.
-               * That three-part row is its own rhythm, so it does not alternate;
-               * without a mark the object leads and the sides swap, as before.
-               */
-              const logo = row.logoUrl;
-              const flip = !logo && index % 2 === 1;
-              return (
-                <li key={row.id}>
-                  <Link
-                    href={localePath(lang, `/work/${row.slug}`)}
-                    className={`group grid items-center gap-8 py-12 md:py-16 ${
-                      logo
-                        ? 'md:grid-cols-[13rem_1fr_13rem] md:gap-12'
-                        : flip
-                          ? 'md:grid-cols-[1fr_16rem]'
-                          : 'md:grid-cols-[16rem_1fr]'
-                    }`}
-                  >
-                    {logo && (
-                      <div className="relative h-14 w-40 md:h-24 md:w-full">
-                        <Image
-                          src={logo}
-                          alt=""
-                          fill
-                          sizes="(min-width: 768px) 13rem, 10rem"
-                          className="object-contain object-left transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-1 md:object-center"
-                        />
-                      </div>
-                    )}
-
-                    <div className={`min-w-0 ${logo ? '' : flip ? 'md:order-1' : 'md:order-2'}`}>
-                      <p className="label mb-4">
-                        {[row.client, row.year].filter(Boolean).join(' · ')}
-                      </p>
+        <section className="hall pb-32 md:pb-48" aria-label={t.work.metaTitle}>
+          <ul className="grid gap-x-10 gap-y-24 md:gap-y-32 lg:grid-cols-12">
+            {cases.map((row, index) => (
+              <li key={row.id} data-fade data-lamp className={HANG[index % HANG.length]}>
+                <Link href={localePath(lang, `/work/${row.slug}`)} className="group block">
+                  <div className="relative pt-10">
+                    <div
+                      aria-hidden
+                      className="lamp pointer-events-none absolute -inset-x-[4%] top-0 bottom-[30%] bg-[radial-gradient(ellipse_34%_75%_at_50%_0%,rgb(255_236_204/0.22),transparent_72%)]"
+                    />
+                    <div className="exhibit aspect-[16/10] overflow-hidden">
+                      <Image
+                        src={row.screenshots[0] || row.objectImage}
+                        alt={row.title}
+                        fill
+                        sizes="(min-width: 1024px) 58vw, 92vw"
+                        className="lit-image object-cover object-top transition-transform duration-[1.4s] ease-[var(--ease-gallery)] group-hover:scale-[1.04]"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-8 flex items-start justify-between gap-6">
+                    <div>
                       <h2
                         lang={row.fallback.title ? 'ru' : undefined}
-                        className="text-[clamp(1.75rem,4vw,3rem)] leading-tight tracking-[-0.03em]"
+                        className="font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none font-black [font-synthesis:none]"
                       >
                         {row.title}
                       </h2>
-                      <p
-                        lang={row.fallback.task ? 'ru' : undefined}
-                        className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-2 md:text-base"
-                      >
-                        {row.task}
-                      </p>
-                      {row.technologies.length > 0 && (
-                        <p className="mt-5 text-xs tracking-[0.06em] text-ink-3">
-                          {row.technologies.join(' · ')}
-                        </p>
-                      )}
+                      <p className="wall-label mt-3">{[row.client, row.year].filter(Boolean).join(' · ')}</p>
                     </div>
-
-                    <div
-                      className={`relative aspect-square w-36 md:w-full ${
-                        logo ? '' : `max-md:order-first ${flip ? 'md:order-2' : 'md:order-1'}`
-                      }`}
-                    >
-                      <StudioObject
-                        src={row.objectImage}
-                        alt=""
-                        sizes="(min-width: 768px) 16rem, 9rem"
-                        className="transition-transform duration-500 ease-[var(--ease-studio)] group-hover:-translate-y-2"
-                      />
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ol>
-        </Band>
+                    <span className="mt-1 inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-seam-2 transition-colors duration-500 group-hover:border-brass group-hover:bg-brass group-hover:text-wall">
+                      <ArrowIcon className="size-4" />
+                    </span>
+                  </div>
+                  {row.task && (
+                    <p lang={row.fallback.task ? 'ru' : undefined} className="wall-note mt-5 line-clamp-3">
+                      {row.task}
+                    </p>
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
-      <Invite />
+      <ClosingHall lang={lang} t={t} />
     </>
   );
 }

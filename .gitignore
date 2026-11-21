@@ -21,3 +21,8 @@ public/**/*.png
 /IMG_*.HEIC
 /IMG_*.JPG
 /IMG_*.MOV
+
+.impeccable/review/
+.impeccable/config.local.json
+.impeccable/build/
+.impeccable/direction-payload.json

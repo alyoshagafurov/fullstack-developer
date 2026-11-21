@@ -52,7 +52,6 @@ export const site = {
   stats: [
     { value: '50+', label: 'проектов на фрилансе' },
     { value: '10+', label: 'технологий' },
-    { value: '2 года', label: 'работы разработчиком' },
   ],
 
   /** 10.1–10.3 */
@@ -62,6 +61,8 @@ export const site = {
     instagram: 'alygafurov',
     phone: '+992 918 79 32 31',
     phoneHref: '+992918793231',
+    /** WhatsApp on the same number, digits only, as wa.me wants it. */
+    whatsapp: '992918793231',
     github: 'https://github.com/alyoshagafurov',
     /** 14.2 — the bot, as Telegram registered it */
     bot: 'alygafurov_bot',

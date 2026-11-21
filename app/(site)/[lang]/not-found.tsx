@@ -1,38 +1,37 @@
-import { Band } from '@/components/ui/Band';
-import { CTA } from '@/components/ui/CTA';
-import { PillLink } from '@/components/ui/Pill';
-import { StudioObject } from '@/components/ui/StudioObject';
+import Link from 'next/link';
+import { Lines } from '@/components/museum/Lines';
+import { ArrowIcon } from '@/components/museum/Icons';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 
-/*
- * The 404 belongs to the same world: an object on the shelf, a caption, one
- * pill home. Not a shrug and a broken-link icon.
- */
+/* An empty wall where a work used to hang: the label says what happened. */
 export default async function NotFound() {
   const { lang, t } = await getDictionary();
 
   return (
-    <Band tone="ground" innerClassName="flex min-h-[100svh] flex-col justify-center py-32">
-      <div className="grid items-center gap-12 md:grid-cols-[1fr_18rem] md:gap-20">
-        <div>
-          <p className="label mb-6">404</p>
-          <h1 className="max-w-2xl text-[clamp(2rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.04em]">
-            {t.notFound.title}
-          </h1>
-          <p className="mt-8 max-w-md text-base leading-relaxed text-ink-2">{t.notFound.body}</p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <CTA href={localePath(lang, '/')}>{t.common.backHome}</CTA>
-            <PillLink href={localePath(lang, '/services')} variant="outline">
-              {t.common.seeServices}
-            </PillLink>
+    <section className="relative isolate min-h-[100svh] overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_70%_30%,rgb(255_236_204/0.1),transparent_50%)]"
+      />
+      <div className="hall flex min-h-[100svh] flex-col justify-end pt-32 pb-16 md:pb-24">
+        <p className="script text-[clamp(2rem,4vw,3.5rem)]">404</p>
+        <h1 className="hall-title mt-4 text-[clamp(3rem,9vw,9rem)]">
+          <Lines lines={[t.notFound.title]} />
+        </h1>
+        <div className="mt-14 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-wrap gap-3">
+            <Link href={localePath(lang, '/')} className="btn-bone group">
+              {t.common.backHome}
+              <ArrowIcon className="transition-transform duration-500 group-hover:translate-x-1" />
+            </Link>
+            <Link href={localePath(lang, '/work')} className="btn-line">
+              {t.common.seeWork}
+            </Link>
           </div>
-        </div>
-
-        <div className="relative aspect-square w-40 justify-self-start md:w-full md:justify-self-end">
-          <StudioObject src="/objects/phone.webp" alt="" sizes="(min-width: 768px) 18rem, 10rem" />
+          <p className="wall-note md:text-right">{t.notFound.body}</p>
         </div>
       </div>
-    </Band>
+    </section>
   );
 }

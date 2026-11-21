@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/onest';
+import { BBH_Bogle, Nunito_Sans, Pacifico } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
 import { Footer } from '@/components/chrome/Footer';
-import { Grain } from '@/components/ui/Grain';
-import { MotionRoot } from '@/components/motion/MotionRoot';
+import { GalleryMotion } from '@/components/museum/GalleryMotion';
+import { whatsappHref } from '@/components/museum/links';
 import { site } from '@/lib/content/site';
 import { alternatesFor, locales, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
@@ -23,13 +24,27 @@ import { getDictionary } from '@/lib/i18n/server';
 
 export const dynamicParams = false;
 
+/*
+ * The three faces the owner chose. Bogle is the headline and nothing else;
+ * Nunito Sans carries the small thin text and, at Black, every Cyrillic
+ * headline Bogle cannot draw; Pacifico is the curator's handwriting.
+ */
+const bogle = BBH_Bogle({ weight: '400', subsets: ['latin'], variable: '--font-bogle', display: 'swap' });
+const nunito = Nunito_Sans({
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-nunito',
+  display: 'swap',
+  axes: ['wdth'],
+});
+const pacifico = Pacifico({ weight: '400', subsets: ['latin', 'cyrillic'], variable: '--font-pacifico', display: 'swap' });
+
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
 export const viewport: Viewport = {
-  themeColor: '#050505',
-  colorScheme: 'light',
+  themeColor: '#0e0f0e',
+  colorScheme: 'dark',
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,6 +97,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         url: site.url,
         email: site.contact.email,
         telephone: site.contact.phoneHref,
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'sales',
+          url: `https://wa.me/${site.contact.whatsapp}`,
+          availableLanguage: ['Russian', 'English', 'Tajik'],
+        },
         knowsLanguage: ['ru', 'en', 'tg'],
         knowsAbout: ['Web development', 'Next.js', 'React', 'TypeScript', 'Node.js', 'Python', 'Telegram bots', 'Online stores'],
         address: { '@type': 'PostalAddress', addressLocality: 'Dushanbe', addressCountry: 'TJ' },
@@ -104,24 +125,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    /* The inline script below adds a class to <html> before React hydrates;
-       React would otherwise report the server/client attribute difference. */
-    <html lang={lang} suppressHydrationWarning>
-      <head>
-        {/* Marks the document before first paint so the opening can start hidden
-            and arrive, rather than appear and then re-appear. Only when motion is
-            welcome; never without JavaScript, when the page is simply there. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion')",
-          }}
-        />
-      </head>
-      <body>
+    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable}`}>
+      <body className="museum">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-bone focus:px-5 focus:py-3 focus:text-sm focus:text-wall"
         >
           {t.common.skipToContent}
         </a>
@@ -131,12 +139,20 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             header: t.header,
             nav: t.nav,
             getQuote: t.common.getQuote,
+            whatsapp: t.common.whatsapp,
           }}
+          whatsappHref={whatsappHref(t)}
         />
         <main id="main">{children}</main>
         <Footer />
-        <Grain />
-        <MotionRoot />
+        {/* Plaster, barely: the walls are painted, not rendered. */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-[55] opacity-[0.06] mix-blend-screen"
+          style={{ backgroundImage: 'url(/texture/grain.webp)', backgroundSize: '320px 320px' }}
+        />
+        <GalleryMotion />
+        <Analytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

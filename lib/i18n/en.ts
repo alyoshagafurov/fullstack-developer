@@ -115,6 +115,8 @@ export const en = {
   },
 
   common: {
+    whatsapp: 'WhatsApp',
+    whatsappText: 'Hello! I would like to discuss a project.',
     skipToContent: 'Skip to content',
     getQuote: 'Get a quote',
     seeWork: 'See my work',
@@ -168,6 +170,45 @@ export const en = {
     photoAlt: 'Alisher Gafurov, web developer',
   },
 
+  /** The night museum: one headline per hall, a small label in a corner. */
+  home: {
+    heroTitle: ['I build', 'websites'],
+    heroScript: 'for your business',
+    heroNote:
+      'Online stores, Telegram bots and web apps too. Design, code and launch — all by me. You talk to one person from the first message to the launch.',
+    heroLit: 'Now on show',
+    workTitle: 'The work',
+    workScript: 'from idea to launch',
+    workNote: 'Real projects, built from scratch and running today. Drag or scroll through them; each one opens.',
+    workAll: 'All projects',
+    workOpen: 'Open',
+    directionsTitle: 'What do you need?',
+    directionsNote:
+      'Pick one and the request opens with it already chosen. Not sure? Write on WhatsApp in your own words.',
+    directionsFrom: 'from',
+    directions: [
+      { key: 'sites', word: 'Websites', script: 'and landing pages', type: 'Сайт', price: 'landing' },
+      { key: 'stores', word: 'Stores', script: 'that sell online', type: 'Интернет-магазин', price: 'ecommerce' },
+      { key: 'bots', word: 'Bots', script: 'Telegram & Mini Apps', type: 'Telegram-бот', price: 'telegram-bots' },
+      { key: 'apps', word: 'Apps', script: 'web apps and CRM', type: 'Web-приложение', price: 'web-apps' },
+    ],
+    voicesTitle: 'Clients say',
+    voicesNote: 'Unedited reviews from people I built for.',
+    voicesAll: 'All reviews',
+    personTitle: ['One person.', 'The whole project.'],
+    personScript: 'Alisher',
+    personNote:
+      'Idea, design, code, server and launch. Nothing is handed to “another guy”. 50+ projects for clients in Tajikistan and abroad, 3–4 years in the work.',
+    personMore: 'More about me',
+    personAlt: 'Alisher Gafurov at work',
+    draftTitle: ['First draft', 'in 1–3 days'],
+    draftScript: 'then we decide',
+    draftNote:
+      'You pay 50% after you have seen the first draft, the rest when everything is done. Three rounds of changes in the month after launch are included.',
+    closeTitle: ['Got an idea?', 'Let’s build it.'],
+    closeNote: 'A request takes two minutes and commits you to nothing. I reply within a day, Mon–Sat, Dushanbe time (UTC+5).',
+  },
+
   marquee: [
     'Websites for your business',
     'From idea to launch',
@@ -182,7 +223,6 @@ export const en = {
     stats: [
       { value: '50+', label: 'projects done' },
       { value: '10+', label: 'technologies I work with' },
-      { value: '2 years', label: 'working as a developer' },
     ],
   },
 
@@ -496,7 +536,7 @@ export const en = {
     task: 'The problem',
     solution: 'What I did',
     result: 'The result',
-    tech: 'Built with',
+    tech: 'Inside',
     screens: 'Screens',
     screenAlt: '{title}: screen {n}',
     open: 'Open the project',

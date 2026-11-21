@@ -1,18 +1,23 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Band } from '@/components/ui/Band';
-import { Invite } from '@/components/sections/Invite';
-import { StudioObject } from '@/components/ui/StudioObject';
+import { HallHead } from '@/components/museum/HallHead';
+import { ClosingHall } from '@/components/museum/home/Halls';
+import { ArrowIcon, WhatsAppIcon } from '@/components/museum/Icons';
+import { SERVICE_TYPE, startHref, whatsappHref } from '@/components/museum/links';
 import { getService, services } from '@/lib/content/services';
+import { getPriceList } from '@/lib/prices';
+import { priceFormatter } from '@/lib/price-display';
 import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 import { localizeService } from '@/lib/i18n/services';
 
 /*
- * One service, one object, three answers: what it is, what the client gets, who
- * it is for. The facts are the owner's own; the English is his, made plain.
+ * One service: what it is in the corner, what you get as the room's one
+ * statement, and the price as large as a headline, because it is the number
+ * everyone came to check.
  */
+export const revalidate = 300;
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -26,7 +31,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!found) return {};
   const { lang, t } = await getDictionary();
   const service = localizeService(found, t);
-
   return {
     title: service.title,
     description: service.tagline,
@@ -40,76 +44,60 @@ export default async function ServicePage({ params }: Params) {
   if (!found) notFound();
   const { lang, t } = await getDictionary();
   const service = localizeService(found, t);
+  const [list, price] = await Promise.all([getPriceList(lang), priceFormatter(lang)]);
+  const priced = list.find((row) => row.slug === slug);
+  const figure = price(priced?.price ?? service.budget) ?? t.common.priceOnRequest;
+  const term = priced?.term ?? service.duration;
   const labels = t.services;
 
   return (
     <>
-      <Band tone="ground" innerClassName="pt-36 pb-20 md:pt-44 md:pb-28">
-        <nav className="label mb-10">
-          <Link href={localePath(lang, '/services')} className="transition-colors hover:text-ink">
-            {labels.eyebrow}
-          </Link>
-          <span className="mx-2 text-ink-3">/</span>
-          <span className="text-ink-2">{service.num}</span>
-        </nav>
+      <HallHead
+        title={service.title}
+        size="room"
+        back={{ href: localePath(lang, '/services'), label: labels.eyebrow }}
+        note={service.tagline}
+      >
+        <Link href={startHref(lang, SERVICE_TYPE[slug])} className="btn-bone group">
+          {t.common.getQuote}
+          <ArrowIcon className="transition-transform duration-500 group-hover:translate-x-1" />
+        </Link>
+        <a href={whatsappHref(t)} target="_blank" rel="noopener noreferrer" className="btn-line">
+          <WhatsAppIcon className="size-[1.1rem]" />
+          {t.common.whatsapp}
+        </a>
+      </HallHead>
 
-        <div className="grid gap-12 md:grid-cols-[1fr_20rem] md:items-center md:gap-16">
-          <div>
-            <h1 className="max-w-3xl text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.04em]">
-              {service.title}
-            </h1>
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-2">{service.tagline}</p>
-          </div>
-          <div className="relative aspect-square w-56 justify-self-start md:w-full md:justify-self-end">
-            <StudioObject
-              src={service.object}
-              alt=""
-              priority
-              sizes="(min-width: 768px) 20rem, 14rem"
-            />
+      <section className="bg-wall-2 py-24 md:py-36">
+        <div className="hall grid gap-12 lg:grid-cols-12">
+          <h2 data-rise className="room-title lg:col-span-7">
+            <span className="line-mask">
+              <span>{labels.youGet}</span>
+            </span>
+          </h2>
+          <div className="lg:col-span-4 lg:col-start-9">
+            <p className="wall-note">{service.deliverable}</p>
+            <p className="wall-label mt-8">{labels.forWho}</p>
+            <p className="wall-note mt-3">{service.who}</p>
           </div>
         </div>
-      </Band>
+      </section>
 
-      <Band tone="paper" innerClassName="py-20 md:py-28">
-        <div className="grid gap-12 md:grid-cols-3 md:gap-16">
-          <section>
-            <h2 className="label mb-5">{labels.whatItIs}</h2>
-            <p className="text-base leading-relaxed">{service.tagline}</p>
-          </section>
-          <section>
-            <h2 className="label mb-5">{labels.youGet}</h2>
-            <p className="text-base leading-relaxed">{service.deliverable}</p>
-          </section>
-          <section>
-            <h2 className="label mb-5">{labels.forWho}</h2>
-            <p className="text-base leading-relaxed">{service.who}</p>
-          </section>
+      <section className="py-24 md:py-36" aria-label={labels.budget}>
+        <div className="hall flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+          <p data-rise className="hall-title text-[clamp(3rem,9vw,9rem)]">
+            <span className="line-mask">
+              <span>{figure}</span>
+            </span>
+          </p>
+          <p className="wall-note md:text-right">
+            {term ? `${labels.timeline}: ${term}. ` : ''}
+            {t.prices.lede}
+          </p>
         </div>
+      </section>
 
-        {(service.duration || service.budget) && (
-          <dl className="mt-16 grid gap-8 border-t border-line pt-8 sm:grid-cols-2">
-            {service.duration && (
-              <div>
-                <dt className="label mb-3">{labels.timeline}</dt>
-                <dd className="text-[clamp(1.25rem,2.4vw,1.75rem)] tracking-[-0.02em]">
-                  {service.duration}
-                </dd>
-              </div>
-            )}
-            {service.budget && (
-              <div>
-                <dt className="label mb-3">{labels.budget}</dt>
-                <dd className="text-[clamp(1.25rem,2.4vw,1.75rem)] tracking-[-0.02em]">
-                  {service.budget}
-                </dd>
-              </div>
-            )}
-          </dl>
-        )}
-      </Band>
-
-      <Invite />
+      <ClosingHall lang={lang} t={t} />
     </>
   );
 }

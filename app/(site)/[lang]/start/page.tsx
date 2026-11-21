@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
-import { Band } from '@/components/ui/Band';
-import { PageOpening } from '@/components/ui/PageOpening';
 import { BriefForm } from '@/components/brief/BriefForm';
+import { WhatsAppIcon } from '@/components/museum/Icons';
+import { whatsappHref } from '@/components/museum/links';
+import { projectTypes } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
 import { alternatesFor } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+
+/*
+ * The request. One question per screen, already answered where the visitor
+ * picked a direction on the way in (?type=…). For anyone who would rather
+ * talk than fill a form, WhatsApp and Telegram wait in the corner.
+ */
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
@@ -15,84 +22,38 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/*
- * The brief page.
- *
- * The greeting carries no button: the visitor already pressed the one that
- * brought them here, and a second pointing at the same place is noise. The
- * floating request button sinks out of view on this page for the same reason.
- *
- * Nothing stands beside the form any more. A column of explanation next to a
- * question is a second thing to read while answering the first, and the form
- * now asks one question to a screen precisely so there is only ever one. What
- * that column said still needs saying, so it says it underneath, where a
- * visitor who wants it can go and look and nobody else has to.
- */
-export default async function StartPage() {
+export default async function StartPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
   const { lang, t } = await getDictionary();
+  const { type } = await searchParams;
+  const initialType = (projectTypes as readonly string[]).includes(type ?? '') ? type : undefined;
 
   return (
-    <>
-      <PageOpening
-        eyebrow={t.start.eyebrow}
-        title={t.closing.invite}
-        lede={t.common.replyWithin}
-        stage={false}
+    <section className="form-room relative isolate min-h-[100svh] overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_18%,rgb(255_236_204/0.1),transparent_55%)]"
       />
+      <div className="hall flex min-h-[100svh] flex-col pt-28 pb-16 md:pt-32">
+        <div className="flex-1">
+          <BriefForm lang={lang} copy={t.brief} initialType={initialType} />
+        </div>
 
-      <Band tone="ground" innerClassName="py-14 md:py-20">
-        <BriefForm lang={lang} copy={t.brief} />
-      </Band>
-
-      <Band tone="paper" innerClassName="py-20 md:py-28">
-        <div className="grid gap-14 md:grid-cols-[1fr_1fr] md:gap-20">
-          <div>
-            <p className="label mb-8">{t.start.howItWorks}</p>
-
-            <ol className="space-y-6">
-              {t.start.steps.map((item, index) => (
-                <li key={item.title} className="flex gap-4">
-                  <span className="tabular mt-0.5 shrink-0 text-sm text-ink-3">{index + 1}</span>
-                  <span>
-                    <span className="block text-sm font-semibold">{item.title}</span>
-                    <span className="mt-1 block text-sm leading-relaxed text-ink-2">
-                      {item.body}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div>
-            <p className="text-sm leading-relaxed text-ink-2">{t.start.unsure}</p>
-
-            <div className="mt-10 border-t border-line pt-8">
-              <p className="label mb-4">{t.start.writeDirectly}</p>
-              <ul className="space-y-3 text-sm">
-                <li>
-                  <a
-                    href={`https://t.me/${site.contact.telegram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-8 items-center transition-opacity hover:opacity-60"
-                  >
-                    Telegram @{site.contact.telegram}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`mailto:${site.contact.email}`}
-                    className="inline-flex min-h-8 items-center transition-opacity hover:opacity-60"
-                  >
-                    {site.contact.email}
-                  </a>
-                </li>
-              </ul>
-            </div>
+        <div className="mt-16 flex flex-col gap-6 border-t border-seam pt-8 md:flex-row md:items-end md:justify-between">
+          <p className="wall-note">{t.start.unsure}</p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm md:justify-end">
+            <a href={whatsappHref(t)} target="_blank" rel="noopener noreferrer" className="link-quiet inline-flex items-center gap-2">
+              <WhatsAppIcon className="size-4" />
+              WhatsApp
+            </a>
+            <a href={`https://t.me/${site.contact.telegram}`} target="_blank" rel="noopener noreferrer" className="link-quiet">
+              Telegram @{site.contact.telegram}
+            </a>
+            <a href={`mailto:${site.contact.email}`} className="link-quiet">
+              {site.contact.email}
+            </a>
           </div>
         </div>
-      </Band>
-    </>
+      </div>
+    </section>
   );
 }

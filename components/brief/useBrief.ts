@@ -42,16 +42,24 @@ const EMPTY: BriefValues = {
   budget: '',
 };
 
+function stripEmpty(values?: Partial<BriefValues>): Partial<BriefValues> {
+  if (!values) return {};
+  return Object.fromEntries(Object.entries(values).filter(([, value]) => Boolean(value)));
+}
+
 export function useBrief({
   copy,
   serverWordsOk,
   draftKey,
+  initial,
   onSent,
 }: {
   copy: BriefCopy;
   /** The server words its complaints in Russian; other languages show `check`. */
   serverWordsOk: boolean;
   draftKey: string;
+  /** Answers known before the form opens, such as a direction picked on the home page. */
+  initial?: Partial<BriefValues>;
   onSent: (sent: BriefSent, values: BriefValues) => void;
 }) {
   const [step, setStep] = useState(0);
@@ -69,12 +77,15 @@ export function useBrief({
     try {
       const raw = sessionStorage.getItem(draftKey);
       if (raw) {
-        setValues({ ...EMPTY, ...(JSON.parse(raw) as Partial<BriefValues>) });
+        setValues({ ...EMPTY, ...(JSON.parse(raw) as Partial<BriefValues>), ...stripEmpty(initial) });
         restored.current = true;
+      } else if (initial) {
+        setValues({ ...EMPTY, ...stripEmpty(initial) });
       }
     } catch {
       // Blocked or full storage is not a reason to fail a form.
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- read once, on open
   }, [draftKey]);
 
   useEffect(() => {

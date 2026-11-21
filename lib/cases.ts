@@ -2,6 +2,10 @@ import { prisma, safely } from '@/lib/prisma';
 import type { Gender } from '@/lib/content/review';
 import type { Locale } from '@/lib/i18n';
 import { getCaseTranslations } from '@/lib/case-i18n';
+import { devCases, devTestimonials } from '@/lib/dev/fixtures';
+
+/* A checkout with no database works against copies of the live content. */
+const devContent = process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL;
 
 /*
  * Reading published cases and testimonials.
@@ -53,6 +57,7 @@ const caseSelect = {
 } as const;
 
 export async function getPublishedCases(): Promise<CaseRow[]> {
+  if (devContent) return devCases;
   return safely(
     'getPublishedCases',
     () =>
@@ -66,6 +71,7 @@ export async function getPublishedCases(): Promise<CaseRow[]> {
 }
 
 export async function getFeaturedCases(limit = 6): Promise<CaseRow[]> {
+  if (devContent) return devCases.slice(0, limit);
   return safely(
     'getFeaturedCases',
     () =>
@@ -80,6 +86,7 @@ export async function getFeaturedCases(limit = 6): Promise<CaseRow[]> {
 }
 
 export async function getCase(slug: string): Promise<CaseRow | null> {
+  if (devContent) return devCases.find((row) => row.slug === slug) ?? null;
   return safely(
     'getCase',
     () => prisma.case.findFirst({ where: { slug, published: true }, select: caseSelect }),
@@ -142,6 +149,7 @@ export type TestimonialRow = {
  * testimonial links to its case only when that case is public too.
  */
 export async function getTestimonials(limit?: number): Promise<TestimonialRow[]> {
+  if (devContent) return devTestimonials.slice(0, limit);
   const rows = await safely(
     'getTestimonials',
     () =>
