@@ -1,4 +1,4 @@
-import { Hero, type HeroDoor } from '@/components/site/Hero';
+import { Hero } from '@/components/site/Hero';
 import {
   Bespoke,
   Collections,
@@ -72,13 +72,7 @@ export default async function HomePage() {
       price: price(priceOf.get(item.price)),
     };
   });
-  /* The three small doors on the first screen: three other finished works. */
-  const doors: HeroDoor[] = works.slice(1, 4).map((work) => ({
-    key: work.slug,
-    label: work.title,
-    href: work.href,
-    image: work.image,
-  }));
+
 
   const langOf = (text: string) => (/[а-яё]/i.test(text) ? 'ru' : 'en');
   const stories: Story[] = [...testimonials]
@@ -100,8 +94,8 @@ export default async function HomePage() {
         script={l.heroScript}
         cta={l.heroCta}
         ctaHref={startHref(lang)}
-        alt={l.heroAlt}
-        doors={doors}
+        screen={works[0] ? { image: works[0].image, title: works[0].title, href: works[0].href } : null}
+        devices={l.devices}
       />
       <Philosophy
         title={l.philosophyTitle}

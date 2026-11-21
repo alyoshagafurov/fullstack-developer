@@ -105,6 +105,7 @@ export const ru: Dictionary = {
 
   /** Главная: один большой заголовок на секцию, маленький текст в углу. */
   landing: {
+    devices: ['Телефон', 'Компьютер', 'Телевизор'] as [string, string, string],
     heroTitle: 'Делаю сайты, которые продают',
     heroScript: 'для вашего бизнеса',
     heroCta: 'Обсудить проект',

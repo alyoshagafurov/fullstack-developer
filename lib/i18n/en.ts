@@ -174,6 +174,7 @@ export const en = {
   /** The night museum: one headline per hall, a small label in a corner. */
   /** Home: one huge headline per section, a small line in a corner. */
   landing: {
+    devices: ['Phone', 'Desktop', 'TV'] as [string, string, string],
     heroTitle: 'Websites that sell',
     heroScript: 'for your business',
     heroCta: 'Discuss a project',

@@ -763,3 +763,25 @@ html:has([data-mini]) {
 .museum .font-display {
   font-synthesis: none;
 }
+
+/* A page inside a device screen, slowly scrolled from top to bottom and back. */
+@keyframes screen-drift {
+  0%,
+  12% {
+    object-position: 50% 0%;
+  }
+  88%,
+  100% {
+    object-position: 50% 100%;
+  }
+}
+
+.museum .screen-drift {
+  animation: screen-drift 16s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .museum .screen-drift {
+    animation: none;
+  }
+}
