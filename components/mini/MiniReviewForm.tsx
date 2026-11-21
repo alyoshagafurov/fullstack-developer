@@ -208,13 +208,13 @@ export function MiniReviewForm() {
         footer={
           <>
             {formError && (
-              <p role="alert" className="mb-4 text-sm text-paper/80">
+              <p role="alert" className="mb-4 text-sm text-bone-2">
                 {formError}
               </p>
             )}
             <button type="submit" disabled={sending} className={primary}>
               {last ? (sending ? 'Отправляю…' : 'Отправить отзыв') : 'Дальше'}
-              <span aria-hidden>→</span>
+              
             </button>
             <div className="mt-2 flex items-center justify-center gap-4">
               {current.key === 'company' && (
@@ -316,7 +316,7 @@ export function MiniReviewForm() {
                         setError('');
                       }}
                       className={`size-13 text-[2.25rem] leading-none transition-colors ${
-                        value <= rating ? 'text-paper' : 'text-white/25'
+                        value <= rating ? 'text-[#ff9f0a]' : 'text-wall-3'
                       }`}
                     >
                       ★
@@ -329,7 +329,7 @@ export function MiniReviewForm() {
             {current.key === 'gender' && (
               <fieldset>
                 <legend className="sr-only">Фото рядом с отзывом</legend>
-                <div className="flex flex-wrap justify-center gap-2.5">
+                <div className="grid gap-2">
                   {genders.map((value) => (
                     <button
                       key={value}

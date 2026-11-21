@@ -30,19 +30,22 @@ import type { LeadStatusName } from '@/lib/content/finance';
 export function visitorGreeting(prices: { landing: string | null; sites: string | null }): string {
   const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
   const quoted = [
-    prices.landing ? `Лендинг — ${lower(prices.landing)}` : null,
-    prices.sites ? `сайт под ключ — ${lower(prices.sites)}` : null,
+    prices.landing ? `лендинг ${lower(prices.landing)}` : null,
+    prices.sites ? `сайт под ключ ${lower(prices.sites)}` : null,
   ].filter(Boolean);
 
   return [
-    'Привет! Я бот aly. Проекты сам не делаю — мне пока доверили только кнопки 😄',
+    'Привет! Это aly — бот Алишера Гафурова.',
     '',
-    'Делает их Алишер Гафуров, full-stack разработчик из Душанбе: сайты, интернет-магазины, веб-приложения и Telegram-боты — вот такие, как я. От идеи и дизайна до сервера и запуска, без посредников.',
+    'Сайты, которые работают на бизнес. Сайты, интернет-магазины, Telegram-боты и веб-приложения: дизайн, код и запуск — один человек от первого сообщения до результата.',
     '',
-    `60+ проектов на фрилансе.${quoted.length ? ` ${quoted.join(', ')}.` : ''}`,
+    '50+ проектов · первый набросок за 1–3 дня · 50% оплаты — когда уже увидели набросок.',
+    quoted.length ? `Цены: ${quoted.join(', ')}.` : null,
     '',
-    'Выбирай, куда нажать — или просто спроси, сколько стоит то, что нужно.',
-  ].join('\n');
+    'Нажмите «Оставить заявку» — это пара минут. Или просто напишите сюда, что нужно.',
+  ]
+    .filter((line) => line !== null)
+    .join('\n');
 }
 
 /**
@@ -86,7 +89,7 @@ export const clientButtons = {
 } as const;
 
 /** 14.7 — sent the moment a brief is stored. */
-export const confirmation = 'Получил вашу заявку, скоро свяжусь с вами.';
+export const confirmation = 'Заявка получена. Отвечу в течение дня — первый набросок будет через 1–3 дня после разговора.';
 
 /** 14.3 — the notification, field by field, with his emoji. */
 export const notification = {
@@ -134,15 +137,15 @@ export const ownerCommands = [
 
 /** 14.6 — a status, as the client is allowed to see it. */
 export const clientStatusLine: Record<LeadStatusName, string> = {
-  NEW: '📨 Заявка получена — я получил вашу заявку',
-  CONTACTED: '💬 Обсуждаем проект — уточняем детали и пожелания',
-  DISCOVERY: '🧠 Продумываем решение — определяем структуру, дизайн и функционал',
-  PROPOSAL: '📄 Готовим предложение — согласовываем стоимость и сроки',
-  IN_PROGRESS: '🛠️ Проект в работе — идёт разработка',
-  COMPLETED: '🚀 Готово! — проект завершён и готов к запуску',
-  ON_HOLD: '⏸️ Пауза — работа временно приостановлена',
-  DECLINED: '❌ Проект закрыт — работа по проекту завершена без запуска',
-  CANCELLED: '❌ Проект закрыт — работа по проекту завершена без запуска',
+  NEW: 'Заявка получена. Скоро напишу, чтобы обсудить детали.',
+  CONTACTED: 'Обсуждаем проект: уточняем задачу и пожелания.',
+  DISCOVERY: 'Продумываю решение: структура, дизайн и функции.',
+  PROPOSAL: 'Готовлю предложение: стоимость и сроки.',
+  IN_PROGRESS: 'Проект в работе.',
+  COMPLETED: 'Готово. Проект завершён и готов к запуску.',
+  ON_HOLD: 'Пауза. Работа временно приостановлена.',
+  DECLINED: 'Проект закрыт без запуска.',
+  CANCELLED: 'Проект закрыт без запуска.',
 };
 
 export type BriefStep = {
@@ -186,7 +189,7 @@ export const glue = {
   statusAsk: 'Номер заявки и код:',
   updated: 'Обновлено',
   /** After «спасибо». A connective phrase, so it lives here to be replaced. */
-  welcome: 'Пожалуйста! Если появится вопрос — пишите.',
+  welcome: 'Пожалуйста. Появится вопрос — пишите сюда.',
   forwarded: 'Передал.',
   stopped: 'Уведомления выключены.',
   resumed: 'Уведомления включены.',
