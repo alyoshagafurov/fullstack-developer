@@ -1,6 +1,7 @@
 import { Finale, Hero, Lineup, Manifesto, Specs, Story, Voices, Works, type Capture, type Line, type ShowWork, type Voice } from '@/components/home/Showroom';
 import { startHref, whatsappHref } from '@/components/museum/links';
 import { isAlive } from '@/lib/alive';
+import { blurOf } from '@/lib/blur';
 import { getPublishedCases, getTestimonials, localizeCases } from '@/lib/cases';
 import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
@@ -22,15 +23,15 @@ export const revalidate = 300;
 /* Full-page captures of the live sites, for computer and phone. */
 const CAPTURES: Record<string, { desktop: Capture; phone: Capture | null }> = {
   'arusdomod-shop': {
-    desktop: { src: '/cases/arusdomod-desktop.webp', width: 1440, height: 4500 },
-    phone: { src: '/cases/arusdomod-phone.webp', width: 640, height: 9695 },
+    desktop: { src: '/cases/arusdomod-desktop.webp', width: 1200, height: 3000 },
+    phone: { src: '/cases/arusdomod-phone.webp', width: 420, height: 4200 },
   },
   'autoshine-store': {
-    desktop: { src: '/cases/autoshine-store-desktop.webp', width: 1440, height: 4500 },
-    phone: { src: '/cases/autoshine-store-phone.webp', width: 640, height: 9695 },
+    desktop: { src: '/cases/autoshine-store-desktop.webp', width: 1200, height: 3000 },
+    phone: { src: '/cases/autoshine-store-phone.webp', width: 420, height: 4200 },
   },
   'python-academy': {
-    desktop: { src: '/cases/python-academy-desktop.webp', width: 1440, height: 900 },
+    desktop: { src: '/cases/python-academy-desktop.webp', width: 1200, height: 750 },
     phone: null,
   },
 };
@@ -51,8 +52,15 @@ export default async function HomePage() {
   const cases = (await localizeCases(ordered, lang)).slice(0, 3);
   const works: ShowWork[] = await Promise.all(
     cases.map(async (row) => {
-      const alive = await isAlive(row.liveUrl);
+      const capture = CAPTURES[row.slug];
+      const [alive, blur, phoneBlur] = await Promise.all([
+        isAlive(row.liveUrl),
+        blurOf(capture?.desktop.src),
+        blurOf(capture?.phone?.src),
+      ]);
       return {
+        blur,
+        phoneBlur,
         slug: row.slug,
         title: row.title,
         kind: s.kinds[row.slug] ?? '',

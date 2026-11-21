@@ -14,7 +14,14 @@ const nextConfig = {
   },
 
   images: {
-    formats: ['image/avif', 'image/webp'],
+    /*
+     * WebP only: AVIF is smaller but takes seconds to encode on the first
+     * request, and a visitor waits through that. Optimised images are kept a
+     * month; the sizes are the screens people actually have.
+     */
+    formats: ['image/webp'],
+    minimumCacheTTL: 2678400,
+    deviceSizes: [640, 828, 1080, 1440, 1920, 2560],
     // Case screenshots are uploaded from the admin into Vercel Blob.
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
   },

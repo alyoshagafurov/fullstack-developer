@@ -12,8 +12,35 @@ import { upload } from '@vercel/blob/client';
  * list, for screenshots, and a single slot, for the client's mark.
  */
 
+/*
+ * A screenshot straight from a Mac is a 2–3 MB PNG, and every visitor pays for
+ * it. Before it leaves the browser it is redrawn as WebP, no wider than the
+ * widest screen it will be shown on. Animated GIFs and files that would not
+ * get smaller are sent as they are.
+ */
+const MAX_WIDTH = 2400;
+
+async function compress(file: File): Promise<File> {
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type)) return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_WIDTH / bitmap.width);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d')?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.84));
+    if (!blob || blob.type !== 'image/webp' || blob.size >= file.size) return file;
+    return new File([blob], file.name.replace(/\.\w+$/, '') + '.webp', { type: 'image/webp' });
+  } catch {
+    return file;
+  }
+}
+
 /** One file to Blob, under `cases/`, which is the only prefix the route allows. */
-async function toBlob(file: File) {
+async function toBlob(original: File) {
+  const file = await compress(original);
   const safe = file.name.replace(/[^\w.-]+/g, '-').toLowerCase();
   const blob = await upload(`cases/${safe}`, file, {
     access: 'public',
