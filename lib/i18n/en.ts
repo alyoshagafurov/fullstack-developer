@@ -173,6 +173,23 @@ export const en = {
 
   /** The night museum: one headline per hall, a small label in a corner. */
   /** Home: one huge headline per section, a small line in a corner. */
+  /** Prototype: the first screen and one project; the site takes the work's colour. */
+  stage: {
+    eyebrow: 'Alisher Gafurov — web developer, Dushanbe',
+    title: ['Websites', 'that sell'],
+    script: 'idea to launch — by me',
+    note: '50+ projects for clients in Tajikistan and abroad.',
+    cta: 'Discuss a project',
+    ribbonHint: 'Hover a work — the site takes its colour',
+    scrollHint: 'First project below',
+    project: 'Project',
+    desktop: 'Desktop',
+    phone: 'Phone',
+    inside: 'Scroll inside the screen',
+    openSite: 'Open the site',
+    howMade: 'How it was made',
+  },
+
   landing: {
     devices: ['Phone', 'Desktop', 'TV'] as [string, string, string],
     heroTitle: 'Websites that sell',

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { BBH_Bogle, Nunito_Sans, Pacifico } from 'next/font/google';
+import { BBH_Bogle, Inter_Tight, Nunito_Sans, Pacifico } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
@@ -31,6 +31,7 @@ export const dynamicParams = false;
  */
 const bogle = BBH_Bogle({ subsets: ['latin'], weight: '400', variable: '--font-bogle', display: 'swap', adjustFontFallback: false });
 const nunito = Nunito_Sans({ subsets: ['latin', 'cyrillic'], variable: '--font-nunito', display: 'swap' });
+const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'], variable: '--font-inter-tight', display: 'swap' });
 const pacifico = Pacifico({ subsets: ['latin', 'cyrillic'], weight: '400', variable: '--font-pacifico', display: 'swap' });
 
 export function generateStaticParams() {
@@ -120,7 +121,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable}`}>
+    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable} ${interTight.variable}`}>
       <body className="museum">
         <a
           href="#main"

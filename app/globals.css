@@ -374,7 +374,7 @@ html:has([data-mini]) {
  * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *));
+@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *, [data-stage-dark='1'] [data-tone='stage'], [data-stage-dark='1'] [data-tone='stage'] *));
 
 @theme {
   --color-wall: #ffffff;
@@ -784,4 +784,54 @@ html:has([data-mini]) {
   .museum .screen-drift {
     animation: none;
   }
+}
+
+/* ======================================================================
+ * The colour stage (preview): the page takes the colour of the work in
+ * front of the reader. ColourStage writes --stage-bg / --stage-ink /
+ * --stage-accent on <html>; everything below follows with an easing.
+ * ==================================================================== */
+
+html.has-stage,
+html.has-stage body.museum {
+  background-color: var(--stage-bg, #f2f0eb);
+  transition: background-color 900ms var(--ease-gallery);
+}
+
+.museum [data-tone='stage'] {
+  --color-wall: var(--stage-bg, #f2f0eb);
+  --color-wall-2: color-mix(in srgb, var(--stage-ink, #121212) 6%, var(--stage-bg, #f2f0eb));
+  --color-wall-3: color-mix(in srgb, var(--stage-ink, #121212) 12%, var(--stage-bg, #f2f0eb));
+  --color-bone: var(--stage-ink, #121212);
+  --color-bone-2: color-mix(in srgb, var(--stage-ink, #121212) 66%, transparent);
+  --color-bone-3: color-mix(in srgb, var(--stage-ink, #121212) 52%, transparent);
+  --color-brass: var(--stage-accent, #121212);
+  --color-seam: color-mix(in srgb, var(--stage-ink, #121212) 12%, transparent);
+  --color-seam-2: color-mix(in srgb, var(--stage-ink, #121212) 24%, transparent);
+  color: var(--color-bone);
+  transition: color 900ms var(--ease-gallery);
+}
+
+.museum section[data-tone='stage'] {
+  background-color: transparent;
+}
+
+/* The heading face of the stage: Inter Tight, tight and heavy, with Cyrillic. */
+.stage-title {
+  font-family: var(--font-inter-tight), var(--font-nunito), ui-sans-serif, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+/* A screen that can be scrolled from inside, without the page's smooth scroll. */
+.stage-screen {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.stage-screen::-webkit-scrollbar {
+  display: none;
 }
