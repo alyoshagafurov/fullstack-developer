@@ -46,7 +46,7 @@ export function Header({
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-  const [under, setUnder] = useState<'light' | 'dark' | 'brand'>('light');
+  const [under, setUnder] = useState<'light' | 'dark' | 'brand' | 'stage'>('light');
   const [moved, setMoved] = useState(false);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function Header({
         return box.top <= probe && box.bottom >= probe;
       });
       const tone = hit?.dataset.tone;
-      setUnder(tone === 'dark' || tone === 'brand' ? tone : 'light');
+      setUnder(tone === 'dark' || tone === 'brand' || tone === 'stage' ? tone : 'light');
     };
     check();
     window.addEventListener('scroll', check, { passive: true });

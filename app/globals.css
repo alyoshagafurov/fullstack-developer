@@ -359,7 +359,7 @@ html:has([data-mini]) {
 
 
 /* ======================================================================
- * The public site — white, black, and one cobalt.
+ * The public site — warm neutral paper and ink; colour comes from the work.
  *
  * Luxury minimalism: a white page, huge headlines in black, a few sections
  * flooded with cobalt where the headline turns white. Headlines are only ever
@@ -374,17 +374,17 @@ html:has([data-mini]) {
  * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *));
+@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *, [data-stage-dark='1'] [data-tone='stage'], [data-stage-dark='1'] [data-tone='stage'] *));
 
 @theme {
-  --color-wall: #ffffff;
-  --color-wall-2: #f4f4f2;
-  --color-wall-3: #e9e9e6;
-  --color-bone: #0b0b0c;
+  --color-wall: #f2f0eb;
+  --color-wall-2: #e9e6df;
+  --color-wall-3: #ddd9d0;
+  --color-bone: #121212;
   --color-bone-2: #5b5b60;
   --color-bone-3: #77777c;
-  --color-brass: #2433ff;
-  --color-brass-2: #1a26d9;
+  --color-brass: #121212;
+  --color-brass-2: #000000;
   --color-whatsapp: #25d366;
   --color-seam: rgb(11 11 12 / 0.09);
   --color-seam-2: rgb(11 11 12 / 0.18);
@@ -421,13 +421,13 @@ html:has([data-mini]) {
 }
 
 [data-tone='light'] {
-  --color-wall: #ffffff;
-  --color-wall-2: #f4f4f2;
-  --color-wall-3: #e9e9e6;
-  --color-bone: #0b0b0c;
+  --color-wall: #f2f0eb;
+  --color-wall-2: #e9e6df;
+  --color-wall-3: #ddd9d0;
+  --color-bone: #121212;
   --color-bone-2: #5b5b60;
   --color-bone-3: #77777c;
-  --color-brass: #2433ff;
+  --color-brass: #121212;
   --color-seam: rgb(11 11 12 / 0.09);
   --color-seam-2: rgb(11 11 12 / 0.18);
 }
@@ -451,7 +451,7 @@ html:has([data-mini]) {
   }
 
   .museum ::selection {
-    background: #2433ff;
+    background: #121212;
     color: #fff;
   }
 
@@ -610,8 +610,8 @@ html:has([data-mini]) {
   }
 
   .btn-brand {
-    background: #2433ff;
-    color: #fff;
+    background: var(--color-bone);
+    color: var(--color-wall);
   }
 
   [data-tone='brand'] .btn-brand {
@@ -739,7 +739,7 @@ html:has([data-mini]) {
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
   border-color: var(--color-bone);
-  box-shadow: 0 0 0 4px rgb(36 51 255 / 0.18);
+  box-shadow: 0 0 0 4px rgb(18 18 18 / 0.12);
 }
 
 /* An endless line, paused for anyone who asked for less motion. */
@@ -784,4 +784,54 @@ html:has([data-mini]) {
   .museum .screen-drift {
     animation: none;
   }
+}
+
+/* ======================================================================
+ * The colour stage (preview): the page takes the colour of the work in
+ * front of the reader. ColourStage writes --stage-bg / --stage-ink /
+ * --stage-accent on <html>; everything below follows with an easing.
+ * ==================================================================== */
+
+html.has-stage,
+html.has-stage body.museum {
+  background-color: var(--stage-bg, #f2f0eb);
+  transition: background-color 900ms var(--ease-gallery);
+}
+
+.museum [data-tone='stage'] {
+  --color-wall: var(--stage-bg, #f2f0eb);
+  --color-wall-2: color-mix(in srgb, var(--stage-ink, #121212) 6%, var(--stage-bg, #f2f0eb));
+  --color-wall-3: color-mix(in srgb, var(--stage-ink, #121212) 12%, var(--stage-bg, #f2f0eb));
+  --color-bone: var(--stage-ink, #121212);
+  --color-bone-2: color-mix(in srgb, var(--stage-ink, #121212) 66%, transparent);
+  --color-bone-3: color-mix(in srgb, var(--stage-ink, #121212) 52%, transparent);
+  --color-brass: var(--stage-accent, #121212);
+  --color-seam: color-mix(in srgb, var(--stage-ink, #121212) 12%, transparent);
+  --color-seam-2: color-mix(in srgb, var(--stage-ink, #121212) 24%, transparent);
+  color: var(--color-bone);
+  transition: color 900ms var(--ease-gallery);
+}
+
+.museum section[data-tone='stage'] {
+  background-color: transparent;
+}
+
+/* The heading face of the stage: Inter Tight, tight and heavy, with Cyrillic. */
+.stage-title {
+  font-family: var(--font-inter-tight), var(--font-nunito), ui-sans-serif, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+/* A screen that can be scrolled from inside, without the page's smooth scroll. */
+.stage-screen {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.stage-screen::-webkit-scrollbar {
+  display: none;
 }
