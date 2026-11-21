@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall } from '@/components/museum/home/Halls';
+import { Doorway } from '@/components/home/Spaces';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getCase, getPublishedCases, localizeCases } from '@/lib/cases';
 import { alternatesFor, fill, localePath } from '@/lib/i18n';
@@ -171,7 +171,7 @@ export default async function CasePage({ params }: Params) {
         </section>
       )}
 
-      <ClosingHall lang={lang} t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }

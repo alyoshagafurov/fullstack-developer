@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall } from '@/components/museum/home/Halls';
+import { Doorway } from '@/components/home/Spaces';
 import { site } from '@/lib/content/site';
 import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
@@ -141,7 +141,7 @@ export default async function AboutPage() {
         <p className="hall script mt-16 -rotate-[2deg] text-[clamp(1.375rem,2.2vw,2rem)] md:mt-24">{a.principle}</p>
       </section>
 
-      <ClosingHall lang={lang} t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }

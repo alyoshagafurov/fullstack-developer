@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall } from '@/components/museum/home/Halls';
+import { Doorway } from '@/components/home/Spaces';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { startHref } from '@/components/museum/links';
 import { getPublishedCases, localizeCases } from '@/lib/cases';
@@ -97,7 +97,7 @@ export default async function WorkPage() {
         </section>
       )}
 
-      <ClosingHall lang={lang} t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }

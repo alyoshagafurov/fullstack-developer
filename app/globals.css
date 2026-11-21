@@ -358,7 +358,9 @@ html:has([data-mini]) {
 }
 
 /* ======================================================================
- * The night museum — the public site.
+ * The dark house — the public site. (Class names below still carry the
+ * vocabulary of the first dark build: wall, bone, brass, exhibit. They now
+ * mean matte black, off-white, warm line light and a screen set in a wall.)
  *
  * Every hall is a dark wall with one thing on it under its own light. The
  * headline is the exhibit's name, set huge in BBH Bogle; whatever someone
@@ -369,17 +371,22 @@ html:has([data-mini]) {
  * ==================================================================== */
 
 @theme {
-  --color-wall: #0e0f0e;
-  --color-wall-2: #151715;
-  --color-wall-3: #1d201d;
-  --color-bone: #ece7dd;
-  /* Thin text on the wall. 8.6:1 on --wall, still 7.9:1 on --wall-2. */
-  --color-bone-2: #b3ada2;
-  /* Labels and the quietest text: 5.4:1 on --wall. */
-  --color-bone-3: #8c877e;
-  --color-brass: #c8a46b;
-  --color-seam: rgb(236 231 221 / 0.1);
-  --color-seam-2: rgb(236 231 221 / 0.2);
+  /* Matte black surfaces, three steps: floor, wall, a lit edge. */
+  --color-wall: #070707;
+  --color-wall-2: #0d0d0d;
+  --color-wall-3: #161616;
+  --color-bone: #f3eee7;
+  /* Thin text: 9.6:1 on --wall. */
+  --color-bone-2: #b9b2a8;
+  /* Labels and the quietest text: 5.6:1 on --wall. */
+  --color-bone-3: #8d877e;
+  /* Warm 2700K line light: the house's only accent. Pacifico and markers. */
+  --color-brass: #f2c58a;
+  --color-led: #ffe2b8;
+  /* The rare cool cove light. */
+  --color-cobalt: #2d4dff;
+  --color-seam: rgb(243 238 231 / 0.08);
+  --color-seam-2: rgb(243 238 231 / 0.18);
 
   --font-display: var(--font-bogle), var(--font-nunito), ui-sans-serif, sans-serif;
   --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
@@ -480,6 +487,7 @@ html:has([data-mini]) {
     color: var(--color-brass);
     letter-spacing: 0;
     line-height: 1;
+    text-shadow: 0 0 22px rgb(255 190 120 / 0.35);
   }
 
   .hall {
@@ -520,14 +528,40 @@ html:has([data-mini]) {
   }
 
   /* A frame on the wall: hairline, a little air, a real cast shadow. */
+  /* A screen set into the wall: a hairline edge, a deep shadow, no frame. */
   .exhibit {
     position: relative;
     background: var(--color-wall-2);
+    border: 1px solid rgb(255 255 255 / 0.06);
     box-shadow:
-      0 40px 80px -30px rgb(0 0 0 / 0.75),
-      0 18px 30px -18px rgb(0 0 0 / 0.6);
-    outline: 1px solid var(--color-seam);
-    outline-offset: 10px;
+      0 60px 120px -50px rgb(0 0 0 / 0.95),
+      0 0 0 1px rgb(0 0 0 / 0.6);
+  }
+
+  /* Architectural line light: a strip that glows into the dark around it. */
+  .led {
+    background: var(--color-led);
+    box-shadow:
+      0 0 6px 1px rgb(255 214 160 / 0.9),
+      0 0 22px 4px rgb(255 180 110 / 0.45),
+      0 0 70px 14px rgb(255 160 90 / 0.18);
+  }
+
+  .led-cobalt {
+    background: #8fa3ff;
+    box-shadow:
+      0 0 8px 1px rgb(120 140 255 / 0.9),
+      0 0 30px 6px rgb(45 77 255 / 0.5),
+      0 0 90px 22px rgb(45 77 255 / 0.22);
+  }
+
+  /* Slatted wall: dark battens with gaps, the way the references clad a wall. */
+  .slats {
+    background-image: repeating-linear-gradient(
+      90deg,
+      #101010 0 14px,
+      #050505 14px 22px
+    );
   }
 
   .btn-bone,
@@ -565,7 +599,7 @@ html:has([data-mini]) {
 
   .btn-line:hover {
     border-color: var(--color-bone);
-    background: rgb(236 231 221 / 0.06);
+    background: rgb(243 238 231 / 0.06);
   }
 
   .link-quiet {
@@ -698,6 +732,31 @@ html.lamps .museum [data-lamp].is-lit .lit-image {
 /* A focus ring the dark wall can show. */
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
-  box-shadow: 0 0 0 4px rgb(200 164 107 / 0.28);
+  box-shadow: 0 0 0 4px rgb(242 197 138 / 0.28);
   border-color: var(--color-brass);
+}
+
+/* The house switching its lights on as the first room loads. Decoration only. */
+.museum .ceiling-line {
+  stroke-dasharray: 1;
+  animation: draw-line 1.8s var(--ease-gallery) 0.15s both;
+}
+
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.museum .under-light {
+  animation: light-on 1.4s ease-out 0.8s both;
+}
+
+@keyframes light-on {
+  from {
+    opacity: 0;
+  }
 }

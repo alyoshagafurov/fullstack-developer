@@ -62,6 +62,12 @@ export function HallHead({
           </div>
         )}
       </div>
+      {/* A floor strip along the foot of every room's first wall. */}
+      <div aria-hidden className="led absolute inset-x-0 bottom-0 h-px opacity-70" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -bottom-8 h-16 bg-[radial-gradient(ellipse_55%_100%_at_30%_0%,rgb(255_190_120/0.16),transparent_70%)]"
+      />
     </section>
   );
 }

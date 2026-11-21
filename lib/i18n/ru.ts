@@ -104,6 +104,11 @@ export const ru: Dictionary = {
 
   /** Ночной музей: один заголовок на зал, маленькая этикетка в углу. */
   home: {
+    heroOffer: 'Делаю сайты',
+    heroRole: 'Full-stack разработчик · Душанбе',
+    walkHint: 'Прокручивайте — вы идёте по коридору',
+    roomsTitle: 'Выберите комнату',
+    glassTitle: 'Говорят клиенты',
     heroTitle: ['Делаю', 'сайты'],
     heroScript: 'для вашего бизнеса',
     heroNote:

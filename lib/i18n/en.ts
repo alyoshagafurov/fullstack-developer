@@ -172,6 +172,11 @@ export const en = {
 
   /** The night museum: one headline per hall, a small label in a corner. */
   home: {
+    heroOffer: 'I build websites',
+    heroRole: 'Full-stack developer · Dushanbe',
+    walkHint: 'Scroll — you are walking down the hall',
+    roomsTitle: 'Pick a room',
+    glassTitle: 'Clients say',
     heroTitle: ['I build', 'websites'],
     heroScript: 'for your business',
     heroNote:

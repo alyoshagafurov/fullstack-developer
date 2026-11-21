@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall } from '@/components/museum/home/Halls';
+import { Doorway } from '@/components/home/Spaces';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getTestimonials } from '@/lib/cases';
 import { alternatesFor, localePath } from '@/lib/i18n';
@@ -61,7 +61,7 @@ export default async function ReviewsPage() {
         </section>
       )}
 
-      <ClosingHall lang={lang} t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }

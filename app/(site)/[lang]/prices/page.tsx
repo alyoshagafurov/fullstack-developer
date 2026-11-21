@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall, DraftHall } from '@/components/museum/home/Halls';
+import { Doorway, Draft } from '@/components/home/Spaces';
 import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
 import { alternatesFor, localePath } from '@/lib/i18n';
@@ -55,8 +55,8 @@ export default async function PricesPage() {
         </ul>
       </section>
 
-      <DraftHall t={t} />
-      <ClosingHall lang={lang} t={t} />
+      <Draft t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { ClosingHall } from '@/components/museum/home/Halls';
+import { Doorway } from '@/components/home/Spaces';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { SERVICE_HALLS, SERVICE_TYPE, startHref } from '@/components/museum/links';
 import { getPriceList } from '@/lib/prices';
@@ -88,7 +88,7 @@ export default async function ServicesPage() {
         );
       })}
 
-      <ClosingHall lang={lang} t={t} />
+      <Doorway lang={lang} t={t} />
     </>
   );
 }
