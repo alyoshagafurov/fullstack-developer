@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { BBH_Bogle, Inter_Tight, Nunito_Sans, Pacifico } from 'next/font/google';
+import { Inter, Inter_Tight } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
@@ -25,21 +25,18 @@ import { getDictionary } from '@/lib/i18n/server';
 export const dynamicParams = false;
 
 /*
- * The three faces the owner pinned: BBH Bogle for headlines (Latin only, so
- * Cyrillic headlines fall through to Nunito Sans at its heaviest), Nunito Sans
- * light for every small line, Pacifico as a handwritten accent.
+ * Two faces, as Apple and Porsche do it: Inter Tight, tight and heavy, for
+ * headlines; Inter for everything read. Both carry Cyrillic.
  */
-const bogle = BBH_Bogle({ subsets: ['latin'], weight: '400', variable: '--font-bogle', display: 'swap', adjustFontFallback: false });
-const nunito = Nunito_Sans({ subsets: ['latin', 'cyrillic'], variable: '--font-nunito', display: 'swap' });
 const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'], variable: '--font-inter-tight', display: 'swap' });
-const pacifico = Pacifico({ subsets: ['latin', 'cyrillic'], weight: '400', variable: '--font-pacifico', display: 'swap' });
+const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter', display: 'swap' });
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: '#000000',
   colorScheme: 'light',
 };
 
@@ -121,7 +118,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable} ${interTight.variable}`}>
+    <html lang={lang} className={`${inter.variable} ${interTight.variable}`}>
       <body className="museum">
         <a
           href="#main"

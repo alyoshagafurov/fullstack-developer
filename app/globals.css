@@ -374,62 +374,54 @@ html:has([data-mini]) {
  * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *, [data-stage-dark='1'] [data-tone='stage'], [data-stage-dark='1'] [data-tone='stage'] *));
+@custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *));
 
+/*
+ * Apple's greys and Porsche's restraint: white and near-white surfaces, black
+ * stages, one blue for actions. Headlines in Inter Tight, text in Inter.
+ */
 @theme {
-  --color-wall: #f2f0eb;
-  --color-wall-2: #e9e6df;
-  --color-wall-3: #ddd9d0;
-  --color-bone: #121212;
-  --color-bone-2: #5b5b60;
-  --color-bone-3: #77777c;
-  --color-brass: #121212;
-  --color-brass-2: #000000;
+  --color-wall: #ffffff;
+  --color-wall-2: #f5f5f7;
+  --color-wall-3: #e8e8ed;
+  --color-bone: #1d1d1f;
+  --color-bone-2: #6e6e73;
+  --color-bone-3: #86868b;
+  --color-brass: #0071e3;
+  --color-brass-2: #0077ed;
   --color-whatsapp: #25d366;
-  --color-seam: rgb(11 11 12 / 0.09);
-  --color-seam-2: rgb(11 11 12 / 0.18);
+  --color-seam: rgb(0 0 0 / 0.08);
+  --color-seam-2: rgb(0 0 0 / 0.16);
 
-  /* Bogle has no Cyrillic: Russian headlines fall through to Nunito Sans. */
-  --font-display: var(--font-bogle), var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-hand: var(--font-pacifico), cursive;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-text: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-inter-tight), ui-sans-serif, sans-serif;
 
   --ease-gallery: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-tone='dark'] {
-  --color-wall: #0b0b0c;
-  --color-wall-2: #161618;
-  --color-wall-3: #222225;
-  --color-bone: #ffffff;
-  --color-bone-2: rgb(255 255 255 / 0.68);
-  --color-bone-3: rgb(255 255 255 / 0.55);
+  --color-wall: #000000;
+  --color-wall-2: #161617;
+  --color-wall-3: #1d1d1f;
+  --color-bone: #f5f5f7;
+  --color-bone-2: #a1a1a6;
+  --color-bone-3: #86868b;
+  --color-brass: #2997ff;
   --color-seam: rgb(255 255 255 / 0.12);
-  --color-seam-2: rgb(255 255 255 / 0.26);
-}
-
-[data-tone='brand'] {
-  --color-wall: #2433ff;
-  --color-wall-2: #3542ff;
-  --color-wall-3: #4652ff;
-  --color-bone: #ffffff;
-  --color-bone-2: rgb(255 255 255 / 0.78);
-  --color-bone-3: rgb(255 255 255 / 0.66);
-  --color-brass: #ffffff;
-  --color-seam: rgb(255 255 255 / 0.18);
-  --color-seam-2: rgb(255 255 255 / 0.34);
+  --color-seam-2: rgb(255 255 255 / 0.24);
 }
 
 [data-tone='light'] {
-  --color-wall: #f2f0eb;
-  --color-wall-2: #e9e6df;
-  --color-wall-3: #ddd9d0;
-  --color-bone: #121212;
-  --color-bone-2: #5b5b60;
-  --color-bone-3: #77777c;
-  --color-brass: #121212;
-  --color-seam: rgb(11 11 12 / 0.09);
-  --color-seam-2: rgb(11 11 12 / 0.18);
+  --color-wall: #ffffff;
+  --color-wall-2: #f5f5f7;
+  --color-wall-3: #e8e8ed;
+  --color-bone: #1d1d1f;
+  --color-bone-2: #6e6e73;
+  --color-bone-3: #86868b;
+  --color-brass: #0071e3;
+  --color-seam: rgb(0 0 0 / 0.08);
+  --color-seam-2: rgb(0 0 0 / 0.16);
 }
 
 @layer base {
@@ -451,7 +443,7 @@ html:has([data-mini]) {
   }
 
   .museum ::selection {
-    background: #121212;
+    background: #0071e3;
     color: #fff;
   }
 
@@ -477,9 +469,8 @@ html:has([data-mini]) {
   .room-title,
   .mega {
     font-family: var(--font-display);
-    font-weight: 900;
-    font-synthesis: none;
-    letter-spacing: -0.035em;
+    font-weight: 600;
+    letter-spacing: -0.04em;
     text-wrap: balance;
   }
 
@@ -512,7 +503,7 @@ html:has([data-mini]) {
   /* The one quiet line under a headline — thin. */
   .lead-line {
     font-family: var(--font-text);
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
     line-height: 1.5;
     color: var(--color-bone-2);
@@ -522,7 +513,7 @@ html:has([data-mini]) {
   /* The small text tucked in a corner. */
   .wall-note {
     font-family: var(--font-text);
-    font-weight: 300;
+    font-weight: 400;
     font-size: 0.9375rem;
     line-height: 1.6;
     color: var(--color-bone-2);
@@ -610,8 +601,8 @@ html:has([data-mini]) {
   }
 
   .btn-brand {
-    background: var(--color-bone);
-    color: var(--color-wall);
+    background: var(--color-brass);
+    color: #fff;
   }
 
   [data-tone='brand'] .btn-brand {
@@ -759,10 +750,7 @@ html:has([data-mini]) {
   }
 }
 
-/* Bogle has one cut; never let the browser fake a heavier one. */
-.museum .font-display {
-  font-synthesis: none;
-}
+
 
 /* A page inside a device screen, slowly scrolled from top to bottom and back. */
 @keyframes screen-drift {
@@ -786,52 +774,3 @@ html:has([data-mini]) {
   }
 }
 
-/* ======================================================================
- * The colour stage (preview): the page takes the colour of the work in
- * front of the reader. ColourStage writes --stage-bg / --stage-ink /
- * --stage-accent on <html>; everything below follows with an easing.
- * ==================================================================== */
-
-html.has-stage,
-html.has-stage body.museum {
-  background-color: var(--stage-bg, #f2f0eb);
-  transition: background-color 900ms var(--ease-gallery);
-}
-
-.museum [data-tone='stage'] {
-  --color-wall: var(--stage-bg, #f2f0eb);
-  --color-wall-2: color-mix(in srgb, var(--stage-ink, #121212) 6%, var(--stage-bg, #f2f0eb));
-  --color-wall-3: color-mix(in srgb, var(--stage-ink, #121212) 12%, var(--stage-bg, #f2f0eb));
-  --color-bone: var(--stage-ink, #121212);
-  --color-bone-2: color-mix(in srgb, var(--stage-ink, #121212) 66%, transparent);
-  --color-bone-3: color-mix(in srgb, var(--stage-ink, #121212) 52%, transparent);
-  --color-brass: var(--stage-accent, #121212);
-  --color-seam: color-mix(in srgb, var(--stage-ink, #121212) 12%, transparent);
-  --color-seam-2: color-mix(in srgb, var(--stage-ink, #121212) 24%, transparent);
-  color: var(--color-bone);
-  transition: color 900ms var(--ease-gallery);
-}
-
-.museum section[data-tone='stage'] {
-  background-color: transparent;
-}
-
-/* The heading face of the stage: Inter Tight, tight and heavy, with Cyrillic. */
-.stage-title {
-  font-family: var(--font-inter-tight), var(--font-nunito), ui-sans-serif, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
-  text-wrap: balance;
-}
-
-/* A screen that can be scrolled from inside, without the page's smooth scroll. */
-.stage-screen {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-}
-
-.stage-screen::-webkit-scrollbar {
-  display: none;
-}

@@ -1,11 +1,6 @@
-import { ColourStage } from '@/components/stage/ColourStage';
-import { StageHero, type RibbonWork } from '@/components/stage/StageHero';
-import { CaseChapter, type Capture, type Chapter } from '@/components/stage/CaseChapter';
-import { Directions, Person, type Voice, type Way } from '@/components/stage/Rooms';
-import { Contact } from '@/components/site/Contact';
+import { Finale, Hero, Lineup, Showcase, Specs, Story, Voices, type Capture, type Line, type ShowWork, type Voice } from '@/components/home/Showroom';
 import { startHref, whatsappHref } from '@/components/museum/links';
 import { isAlive } from '@/lib/alive';
-import { caseColour, NEUTRAL } from '@/lib/case-colour';
 import { getPublishedCases, getTestimonials, localizeCases } from '@/lib/cases';
 import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
@@ -14,18 +9,17 @@ import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 
 /*
- * The home page. The site is the frame and the work is the picture: a
- * neutral first screen with the work running past, then every project on a
- * screen of its own colour, inside a computer or a phone the visitor
- * switches; then what you need, who builds it, and the way in. The whole page
- * takes the colour of whatever is in front of the reader (ColourStage).
+ * The home page, in the manner of Apple and Porsche: a black stage where one
+ * of his sites grows to fill the screen, the numbers that matter, the work as
+ * a range you choose from, the four kinds of work side by side, the person,
+ * the clients, and one clear way to start.
  *
  * Revalidated rather than fully static: cases, reviews and prices are
  * published from the admin and must reach the site without a redeploy.
  */
 export const revalidate = 300;
 
-/* Full-page captures of the live sites (desktop and phone), by case slug. */
+/* Full-page captures of the live sites, for computer and phone. */
 const CAPTURES: Record<string, { desktop: Capture; phone: Capture }> = {
   'arusdomod-shop': {
     desktop: { src: '/cases/arusdomod-desktop.webp', width: 1440, height: 4500 },
@@ -45,48 +39,35 @@ export default async function HomePage() {
     getPriceList(lang),
     priceFormatter(lang),
   ]);
-  const s = t.stage;
-  const l = t.landing;
+  const s = t.showroom;
 
-  /* Captured ones lead (they show best), then featured, then the rest. */
   const ordered = [...rawCases].sort(
     (a, b) => Number(!!CAPTURES[b.slug]) - Number(!!CAPTURES[a.slug]) || Number(b.featured) - Number(a.featured),
   );
   const cases = (await localizeCases(ordered, lang)).slice(0, 6);
-
-  const chapters: Chapter[] = await Promise.all(
-    cases.map(async (row, i) => {
-      const capture = CAPTURES[row.slug];
-      const shots = row.screenshots.length > 0 ? row.screenshots : [row.objectImage];
-      const desktop: Capture[] = capture ? [capture.desktop] : shots.map((src) => ({ src, width: 1440, height: 900 }));
-      const [colour, alive] = await Promise.all([caseColour(desktop[0].src), isAlive(row.liveUrl)]);
+  const works: ShowWork[] = await Promise.all(
+    cases.map(async (row) => {
+      const alive = await isAlive(row.liveUrl);
       return {
         slug: row.slug,
-        index: i + 1,
         title: row.title,
+        kind: s.kinds[row.slug] ?? '',
         year: row.year,
         client: row.client,
-        line: row.result.split(/(?<=[.!?])\s/)[0] ?? row.result,
+        result: row.result.split(/(?<=[.!?])\s/)[0] ?? row.result,
+        host: row.liveUrl ? new URL(row.liveUrl).host : null,
         liveUrl: alive ? row.liveUrl : null,
         href: localePath(lang, `/work/${row.slug}`),
-        desktop,
-        phone: capture ? [capture.phone] : null,
-        colour,
+        desktop: CAPTURES[row.slug]?.desktop ?? null,
+        shot: row.screenshots[0] || row.objectImage,
+        phone: CAPTURES[row.slug]?.phone ?? null,
       };
     }),
   );
-
-  const ribbon: RibbonWork[] = chapters.map((c) => ({
-    slug: c.slug,
-    title: c.title,
-    host: c.liveUrl ? new URL(c.liveUrl).host : c.title,
-    image: cases.find((row) => row.slug === c.slug)?.screenshots[0] ?? c.desktop[0].src,
-    href: `#case-${c.slug}`,
-    colour: c.colour,
-  }));
+  const lead = works.find((w) => w.desktop) ?? null;
 
   const priceOf = new Map(prices.map((row) => [row.slug, row.price]));
-  const ways: Way[] = t.home.directions.map((item) => ({
+  const lines: Line[] = t.home.directions.map((item) => ({
     key: item.key,
     word: item.word,
     script: item.script,
@@ -105,60 +86,46 @@ export default async function HomePage() {
       lang: langOf(row.text),
     }));
 
-  const personPhoto = '/me/blue-street.webp';
-  const personColour = await caseColour(personPhoto);
-
   return (
     <>
-      <ColourStage />
-      <StageHero
+      <Hero
         eyebrow={s.eyebrow}
         title={s.title}
-        script={s.script}
-        note={s.note}
+        sub={s.sub}
+        cta={s.cta}
+        ctaHref={startHref(lang)}
+        seeWork={s.seeWork}
+        seeWorkHref="#work"
+        capture={lead?.desktop ?? null}
+        captureTitle={lead?.title ?? ''}
+        captureKind={lead?.kind ?? ''}
+      />
+      <Specs items={s.specs} />
+      <Showcase id="work" title={s.workTitle} sub={s.workSub} labels={s.labels} openSite={s.openSite} details={s.details} works={works} />
+      <Lineup title={s.lineTitle} sub={s.lineSub} from={s.from} choose={s.choose} lines={lines} />
+      <Story
+        eyebrow={s.storyEyebrow}
+        title={s.storyTitle}
+        text={s.storyText}
+        more={s.storyMore}
+        moreHref={localePath(lang, '/about')}
+        photo="/me/blue-street.webp"
+        alt={t.home.personAlt}
+      />
+      <Voices title={s.voicesTitle} voices={voices} prev={s.prev} next={s.next} />
+      <Finale
+        title={s.finalTitle}
+        sub={s.finalSub}
         cta={s.cta}
         ctaHref={startHref(lang)}
         whatsapp={t.common.whatsapp}
         whatsappHref={whatsappHref(t)}
-        hint={s.ribbonHint}
-        scrollHint={s.scrollHint}
-        works={ribbon}
-        neutral={NEUTRAL}
+        links={[
+          { label: `Telegram @${site.contact.telegram}`, href: `https://t.me/${site.contact.telegram}` },
+          { label: `Instagram @${site.contact.instagram}`, href: `https://instagram.com/${site.contact.instagram}` },
+          { label: site.contact.phone, href: `tel:${site.contact.phoneHref}` },
+        ]}
       />
-      {chapters.map((chapter) => (
-        <CaseChapter key={chapter.slug} chapter={chapter} labels={s} />
-      ))}
-      <Directions title={l.collectionsTitle} note={l.collectionsNote} from={l.from} ways={ways} colour={NEUTRAL} />
-      <Person
-        title={l.philosophyTitle}
-        hand={l.philosophyHand}
-        note={l.philosophyNote}
-        count="50+"
-        countLabel={t.home.bento.projects}
-        more={t.home.personMore}
-        moreHref={localePath(lang, '/about')}
-        photo={personPhoto}
-        photoAlt={t.home.personAlt}
-        voices={voices}
-        prev={l.prev}
-        next={l.next}
-        colour={personColour}
-      />
-      <div data-stage data-tone="stage" data-bg={NEUTRAL.bg} data-ink={NEUTRAL.ink} data-accent={NEUTRAL.accent} data-dark="0">
-        <Contact
-          title={l.closeTitle}
-          note={l.closeNote}
-          form={l.closeForm}
-          formHref={startHref(lang)}
-          whatsapp={t.common.whatsapp}
-          whatsappHref={whatsappHref(t)}
-          links={[
-            { label: `Telegram @${site.contact.telegram}`, href: `https://t.me/${site.contact.telegram}` },
-            { label: `Instagram @${site.contact.instagram}`, href: `https://instagram.com/${site.contact.instagram}` },
-            { label: site.contact.phone, href: `tel:${site.contact.phoneHref}` },
-          ]}
-        />
-      </div>
     </>
   );
 }
