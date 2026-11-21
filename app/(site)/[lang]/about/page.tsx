@@ -21,18 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/* The photographs, in the order of their captions in the dictionary. */
-const PHOTOS = [
-  { src: '/gallery/work-desk.webp', w: 1200, h: 1600 },
-  { src: '/gallery/mma.webp', w: 1200, h: 1600 },
-  { src: '/gallery/terrace.webp', w: 1200, h: 1600 },
-  { src: '/gallery/gym.webp', w: 900, h: 1600 },
-  { src: '/gallery/work-phone.webp', w: 1200, h: 1600 },
-  { src: '/gallery/park.webp', w: 1200, h: 1600 },
-  { src: '/gallery/hall.webp', w: 1200, h: 1600 },
-  { src: '/gallery/mountains.webp', w: 960, h: 1280 },
-  { src: '/gallery/mirror.webp', w: 900, h: 1600 },
-];
+/* The five photographs he chose, as they were taken. */
+const PHOTOS = ['/me/blue-street.webp', '/me/evening.webp', '/me/records.webp', '/me/night-code.webp', '/me/leather.webp'];
 
 export default async function AboutPage() {
   const { lang, t } = await getDictionary();
@@ -63,12 +53,12 @@ export default async function AboutPage() {
           />
           <div className="exhibit relative aspect-[4/5] overflow-hidden">
             <Image
-              src="/photo/about.webp"
+              src="/me/leather.webp"
               alt={t.person.photoAlt}
               fill
               priority
               sizes="(min-width: 1024px) 46vw, 92vw"
-              className="object-cover object-[55%_35%]"
+              className="object-cover object-[60%_40%]"
             />
           </div>
         </div>
@@ -83,29 +73,13 @@ export default async function AboutPage() {
       <section data-gallery className="relative overflow-hidden bg-wall-2" aria-label={a.label}>
         <div className="flex min-h-[100svh] flex-col justify-center py-24 lg:py-16">
           <ul data-gallery-track className="flex scroll-px-5 items-end gap-6 px-5 md:scroll-px-10 md:gap-[4vw] md:px-10 xl:px-[4.5rem]">
-            {PHOTOS.map((photo, index) => {
-              const caption = a.spreads[index];
-              return (
-                <li key={photo.src} className="w-[72vw] shrink-0 sm:w-[44vw] lg:w-[min(26vw,44svh)]">
-                  <div className="exhibit overflow-hidden">
-                    <Image
-                      src={photo.src}
-                      alt={caption?.alt ?? ''}
-                      width={photo.w}
-                      height={photo.h}
-                      sizes="(min-width: 1024px) 26vw, 72vw"
-                      className="h-auto w-full"
-                    />
-                  </div>
-                  {caption && (
-                    <p className="mt-5 flex items-baseline justify-between gap-4">
-                      <span className="text-sm text-bone">{caption.title}</span>
-                      <span className="wall-label">{caption.when}</span>
-                    </p>
-                  )}
-                </li>
-              );
-            })}
+            {PHOTOS.map((src) => (
+              <li key={src} className="w-[72vw] shrink-0 sm:w-[44vw] lg:w-[min(26vw,44svh)]">
+                <div className="exhibit relative aspect-[9/16] overflow-hidden">
+                  <Image src={src} alt={t.person.photoAlt} fill sizes="(min-width: 1024px) 26vw, 72vw" className="object-cover" />
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </section>

@@ -55,9 +55,9 @@ export function Philosophy({
         </div>
 
         <div ref={ref} className="md:col-span-5 md:col-start-8">
-          <motion.div style={reduce ? undefined : { clipPath: clip }} className="relative aspect-[3/4] overflow-hidden rounded-[28px]">
+          <motion.div style={reduce ? undefined : { clipPath: clip }} className="relative aspect-[4/5] overflow-hidden rounded-[28px]">
             <motion.div style={reduce ? undefined : { y: imgY }} className="absolute -inset-y-[10%] inset-x-0">
-              <Image src="/gallery/work-desk.webp" alt={alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
+              <Image src="/me/evening.webp" alt={alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
             </motion.div>
           </motion.div>
         </div>
@@ -68,7 +68,7 @@ export function Philosophy({
 
 /* ----------------------------------------------------- 3 · the directions */
 
-export type Collection = { key: string; word: string; script: string; href: string; image: string; price: string | null };
+export type Collection = { key: string; word: string; script: string; href: string; price: string | null };
 
 export function Collections({
   title,
@@ -100,26 +100,27 @@ export function Collections({
               viewport={{ once: true, margin: '0px 0px -8% 0px' }}
               transition={{ duration: 1, ease: EASE, delay: i * 0.08 }}
             >
-                <Link href={item.href} className="group relative flex aspect-[3/4] flex-col overflow-hidden rounded-[24px] bg-wall-2 p-4 md:p-6">
-                  <span className="relative min-h-0 flex-1">
-                    <Image
-                      src={item.image}
-                      alt=""
-                      fill
-                      sizes="(min-width: 768px) 25vw, 50vw"
-                      className="object-contain mix-blend-multiply transition-transform duration-[1200ms] ease-[var(--ease-gallery)] group-hover:-translate-y-3 group-hover:scale-105"
-                    />
-                  </span>
-                  <span className="flex items-end justify-between gap-3">
-                    <span>
-                      <span className="room-title block text-[clamp(1.25rem,5.4vw,2.5rem)] md:text-[clamp(1.5rem,2.6vw,2.5rem)]">{item.word}</span>
-                      <span className="mt-1.5 block text-sm font-light text-bone-2">
-                        {item.price ? `${from} ${item.price.replace(/^(от|from)\s+/i, '')}` : item.script}
-                      </span>
+                <Link
+                  href={item.href}
+                  className="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-[24px] bg-wall-2 p-5 transition-colors duration-700 ease-[var(--ease-gallery)] hover:bg-[#2433ff] hover:text-white md:p-7"
+                >
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="hand -rotate-2 text-lg leading-snug text-brass transition-colors duration-700 group-hover:text-white md:text-xl">
+                      {item.script}
                     </span>
-                    <span className="hidden size-10 shrink-0 place-items-center rounded-full bg-wall text-bone md:grid transition-colors duration-500 group-hover:bg-brass group-hover:text-white">
+                    <span className="hidden size-10 shrink-0 place-items-center rounded-full bg-wall text-bone transition-transform duration-700 group-hover:rotate-45 md:grid">
                       <ArrowIcon className="size-4 -rotate-45" />
                     </span>
+                  </span>
+                  <span>
+                    <span className="room-title block text-[clamp(1.5rem,6.4vw,3.25rem)] transition-transform duration-700 ease-[var(--ease-gallery)] group-hover:-translate-y-1 md:text-[clamp(1.75rem,3.2vw,3.25rem)]">
+                      {item.word}
+                    </span>
+                    {item.price && (
+                      <span className="mt-2 block text-sm font-light text-bone-2 transition-colors duration-700 group-hover:text-white/80">
+                        {from} {item.price.replace(/^(от|from)\s+/i, '')}
+                      </span>
+                    )}
                   </span>
                 </Link>
             </motion.li>
@@ -294,8 +295,8 @@ export function Craft({
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const upA = useTransform(scrollYProgress, [0, 1], ['12%', '-12%']);
-  const upB = useTransform(scrollYProgress, [0, 1], ['24%', '-20%']);
+  const upA = useTransform(scrollYProgress, [0, 1], ['18%', '-14%']);
+  const upB = useTransform(scrollYProgress, [0, 1], ['4%', '-6%']);
 
   return (
     <section ref={ref} data-tone="brand" aria-labelledby="craft-title" className="overflow-hidden py-28 md:py-44">
@@ -312,29 +313,15 @@ export function Craft({
           </Rise>
         </div>
 
-        <div className="mt-16 grid grid-cols-12 items-start gap-3 md:mt-24 md:gap-5">
-          <motion.div style={reduce ? undefined : { y: upA }} className="col-span-6 md:col-span-3 md:mt-24">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[24px]">
-              <Image src="/gallery/work-phone.webp" alt={photoAlt} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" />
+        <div className="mt-16 grid grid-cols-12 items-start gap-3 md:mt-24 md:gap-6">
+          <motion.div style={reduce ? undefined : { y: upA }} className="col-span-5 md:col-span-4 md:col-start-2 md:mt-40">
+            <div className="relative aspect-[9/16] overflow-hidden rounded-[24px]">
+              <Image src="/me/records.webp" alt={photoAlt} fill sizes="(min-width: 768px) 30vw, 42vw" className="object-cover" />
             </div>
           </motion.div>
-          <div className="col-span-6 md:col-span-5">
-            <div className="relative aspect-[9/16] overflow-hidden rounded-[24px] bg-black/20 md:aspect-[4/5]">
-              <video
-                className="absolute inset-0 size-full object-cover"
-                src="/gallery/desk.mp4"
-                poster="/gallery/desk-poster.webp"
-                autoPlay={!reduce}
-                muted
-                loop
-                playsInline
-                aria-label={photoAlt}
-              />
-            </div>
-          </div>
-          <motion.div style={reduce ? undefined : { y: upB }} className="col-span-12 md:col-span-4 md:mt-48">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] md:aspect-[3/4]">
-              <Image src="/gallery/hall.webp" alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
+          <motion.div style={reduce ? undefined : { y: upB }} className="col-span-7 md:col-span-5 md:col-start-7">
+            <div className="relative aspect-[9/16] overflow-hidden rounded-[24px]">
+              <Image src="/me/leather.webp" alt={photoAlt} fill sizes="(min-width: 768px) 40vw, 58vw" className="object-cover" />
             </div>
           </motion.div>
         </div>
@@ -513,7 +500,7 @@ export function Origin({
   return (
     <section ref={ref} data-tone="dark" aria-labelledby="origin-title" className="relative flex min-h-[100svh] overflow-hidden">
       <motion.div style={reduce ? undefined : { y }} className="absolute -inset-y-[14%] inset-x-0">
-        <Image src="/gallery/mountains.webp" alt={alt} fill sizes="100vw" className="object-cover" />
+        <Image src="/me/night-code.webp" alt={alt} fill sizes="100vw" className="object-cover object-[50%_48%]" />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/15 to-black/70" />
       <div className="hall relative flex flex-1 flex-col justify-between py-24 md:py-28">

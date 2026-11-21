@@ -28,4 +28,3 @@ public/**/*.png
 .impeccable/direction-payload.json
 
 # The owner cut out of his own photos (macOS Vision subject lift): transparent, so PNG.
-!public/photo/cut/*.png

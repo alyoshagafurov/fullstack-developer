@@ -31,12 +31,12 @@ import { getDictionary } from '@/lib/i18n/server';
  */
 export const revalidate = 300;
 
-/* Which picture and which service page each direction opens. */
-const DIRECTION = {
-  sites: { image: '/objects/laptop.webp', service: 'sites' },
-  stores: { image: '/objects/tablet-phone.webp', service: 'ecommerce' },
-  bots: { image: '/objects/phone.webp', service: 'telegram-bots' },
-  apps: { image: '/objects/display.webp', service: 'web-apps' },
+/* Which service page each direction opens. */
+const SERVICE_OF = {
+  sites: 'sites',
+  stores: 'ecommerce',
+  bots: 'telegram-bots',
+  apps: 'web-apps',
 } as const;
 
 export default async function HomePage() {
@@ -59,25 +59,25 @@ export default async function HomePage() {
     year: row.year,
     image: row.screenshots[0] || row.objectImage,
   }));
-  const detail = cases.find((row) => row.screenshots[1])?.screenshots[1] ?? works[0]?.image ?? '/photo/hero-wide.webp';
+  const detail = cases.find((row) => row.screenshots[1])?.screenshots[1] ?? works[0]?.image ?? '/me/night-code.webp';
 
   const priceOf = new Map(prices.map((row) => [row.slug, row.price]));
   const collections: Collection[] = t.home.directions.map((item) => {
-    const meta = DIRECTION[item.key as keyof typeof DIRECTION];
+    const service = SERVICE_OF[item.key as keyof typeof SERVICE_OF];
     return {
       key: item.key,
       word: item.word,
       script: item.script,
-      href: localePath(lang, `/services/${meta.service}`),
-      image: meta.image,
+      href: localePath(lang, `/services/${service}`),
       price: price(priceOf.get(item.price)),
     };
   });
-  const doors: HeroDoor[] = collections.slice(1).map((item) => ({
-    key: item.key,
-    label: item.word,
-    href: item.href,
-    image: item.image,
+  /* The three small doors on the first screen: three other finished works. */
+  const doors: HeroDoor[] = works.slice(1, 4).map((work) => ({
+    key: work.slug,
+    label: work.title,
+    href: work.href,
+    image: work.image,
   }));
 
   const langOf = (text: string) => (/[а-яё]/i.test(text) ? 'ru' : 'en');
