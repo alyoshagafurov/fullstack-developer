@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { ArrowIcon, WhatsAppIcon } from '@/components/museum/Icons';
 import { SERVICE_TYPE, startHref, whatsappHref } from '@/components/museum/links';
 import { getService, services } from '@/lib/content/services';
@@ -97,7 +97,7 @@ export default async function ServicePage({ params }: Params) {
         </div>
       </section>
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

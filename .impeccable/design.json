@@ -1,339 +1,346 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-21T09:48:52.714907+00:00",
+  "generatedAt": "2026-11-21T10:13:08+00:00",
   "title": "Design System: aly.lat",
   "extensions": {
-    "scope": "Public site under app/(site)/[lang] (body.museum) only. Admin and Telegram Mini App keep the older studio tokens and are out of scope. Legacy names wall/bone/brass/exhibit/hall/museum are handles only; values are the dark house.",
     "colorMeta": {
       "wall": {
         "role": "neutral",
-        "displayName": "Floor Black",
-        "canonical": "#070707",
+        "displayName": "Paper White",
+        "canonical": "#ffffff",
         "tonalRamp": [
-          "#070707",
-          "#0d0d0d",
-          "#161616",
-          "#262626",
-          "#3d3d3d",
-          "#5c5c5c",
-          "#8f8f8f",
-          "#e6e6e6"
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
         ]
       },
       "wall-2": {
         "role": "neutral",
-        "displayName": "Wall Black",
-        "canonical": "#0d0d0d",
+        "displayName": "Apple Mist",
+        "canonical": "#f5f5f7",
         "tonalRamp": [
-          "#070707",
-          "#0d0d0d",
-          "#161616",
-          "#262626",
-          "#3d3d3d",
-          "#5c5c5c",
-          "#8f8f8f",
-          "#e6e6e6"
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
         ]
       },
       "wall-3": {
         "role": "neutral",
-        "displayName": "Lit Edge",
-        "canonical": "#161616",
+        "displayName": "Silver Well",
+        "canonical": "#e8e8ed",
         "tonalRamp": [
-          "#070707",
-          "#0d0d0d",
-          "#161616",
-          "#262626",
-          "#3d3d3d",
-          "#5c5c5c",
-          "#8f8f8f",
-          "#e6e6e6"
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
         ]
       },
       "bone": {
         "role": "neutral",
-        "displayName": "Off-White",
-        "canonical": "#f3eee7",
+        "displayName": "Ink",
+        "canonical": "#1d1d1f",
         "tonalRamp": [
-          "#2a2420",
-          "#4a423a",
-          "#6b645b",
-          "#8d877e",
-          "#a39d94",
-          "#b9b2a8",
-          "#d6d0c7",
-          "#f3eee7"
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
         ]
       },
       "bone-2": {
         "role": "neutral",
-        "displayName": "Thin Text",
-        "canonical": "#b9b2a8",
+        "displayName": "Slate",
+        "canonical": "#6e6e73",
         "tonalRamp": [
-          "#2a2420",
-          "#4a423a",
-          "#6b645b",
-          "#8d877e",
-          "#a39d94",
-          "#b9b2a8",
-          "#d6d0c7",
-          "#f3eee7"
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
         ]
       },
       "bone-3": {
         "role": "neutral",
-        "displayName": "Quiet Text",
-        "canonical": "#8d877e",
+        "displayName": "Pewter",
+        "canonical": "#86868b",
         "tonalRamp": [
-          "#2a2420",
-          "#4a423a",
-          "#6b645b",
-          "#8d877e",
-          "#a39d94",
-          "#b9b2a8",
-          "#d6d0c7",
-          "#f3eee7"
-        ]
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
+        ],
+        "note": "3.6:1 on white, 3.3:1 on Mist: not for small text in the light theme."
       },
       "brass": {
         "role": "primary",
-        "displayName": "Line Light Brass",
-        "canonical": "#f2c58a",
+        "displayName": "Action Blue (light)",
+        "canonical": "#0071e3",
         "tonalRamp": [
-          "#3a2a14",
-          "#5e4422",
-          "#856032",
-          "#ab7f47",
-          "#cc9f63",
-          "#f2c58a",
-          "#f8dcb5",
-          "#fdf1e0"
-        ]
-      },
-      "led": {
-        "role": "primary",
-        "displayName": "LED Core",
-        "canonical": "#ffe2b8",
-        "tonalRamp": [
-          "#3d2c12",
-          "#64491f",
-          "#8f6a33",
-          "#b98d4f",
-          "#e0b37a",
-          "#ffe2b8",
-          "#fff0da",
-          "#fffaf2"
-        ]
-      },
-      "cobalt": {
-        "role": "secondary",
-        "displayName": "Cobalt Cove",
-        "canonical": "#2d4dff",
-        "tonalRamp": [
-          "#0a1033",
-          "#121e66",
-          "#1b2d99",
-          "#2d4dff",
-          "#5a72ff",
-          "#8fa3ff",
-          "#c2ceff",
-          "#eef1ff"
-        ]
-      },
-      "cobalt-led": {
-        "role": "secondary",
-        "displayName": "Cobalt Line",
-        "canonical": "#8fa3ff",
-        "tonalRamp": [
-          "#0a1033",
-          "#121e66",
-          "#1b2d99",
-          "#2d4dff",
-          "#5a72ff",
-          "#8fa3ff",
-          "#c2ceff",
-          "#eef1ff"
+          "#00254d",
+          "#003a75",
+          "#004f9e",
+          "#0066cc",
+          "#0071e3",
+          "#2997ff",
+          "#6bb6ff",
+          "#cce6ff"
         ]
       },
       "seam": {
         "role": "neutral",
-        "displayName": "Seam",
-        "canonical": "rgb(243 238 231 / 0.08)",
-        "tonalRamp": []
+        "displayName": "Hairline (light)",
+        "canonical": "rgb(0 0 0 / 0.08)",
+        "tonalRamp": [
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
+        ]
       },
       "seam-2": {
         "role": "neutral",
-        "displayName": "Seam Strong",
-        "canonical": "rgb(243 238 231 / 0.18)",
-        "tonalRamp": []
+        "displayName": "Hairline Strong (light)",
+        "canonical": "rgb(0 0 0 / 0.16)",
+        "tonalRamp": [
+          "#1d1d1f",
+          "#424245",
+          "#6e6e73",
+          "#86868b",
+          "#a1a1a6",
+          "#d2d2d7",
+          "#e8e8ed",
+          "#f5f5f7"
+        ]
+      },
+      "dark-wall": {
+        "role": "neutral",
+        "displayName": "Pro Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-wall-2": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#161617",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-wall-3": {
+        "role": "neutral",
+        "displayName": "Deep Graphite",
+        "canonical": "#1d1d1f",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-bone": {
+        "role": "neutral",
+        "displayName": "Frost",
+        "canonical": "#f5f5f7",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-bone-2": {
+        "role": "neutral",
+        "displayName": "Ash",
+        "canonical": "#a1a1a6",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-brass": {
+        "role": "primary",
+        "displayName": "Action Blue (dark)",
+        "canonical": "#2997ff",
+        "tonalRamp": [
+          "#00254d",
+          "#003a75",
+          "#004f9e",
+          "#0066cc",
+          "#0071e3",
+          "#2997ff",
+          "#6bb6ff",
+          "#cce6ff"
+        ],
+        "note": "White text on it measures 3.0:1; open defect on the filled pill."
+      },
+      "dark-seam": {
+        "role": "neutral",
+        "displayName": "Hairline (dark)",
+        "canonical": "rgb(255 255 255 / 0.12)",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
+      },
+      "dark-seam-2": {
+        "role": "neutral",
+        "displayName": "Hairline Strong (dark)",
+        "canonical": "rgb(255 255 255 / 0.24)",
+        "tonalRamp": [
+          "#000000",
+          "#161617",
+          "#1d1d1f",
+          "#2c2c2e",
+          "#424245",
+          "#6e6e73",
+          "#a1a1a6",
+          "#f5f5f7"
+        ]
       }
     },
     "typographyMeta": {
-      "display-name": {
-        "displayName": "Display Name",
-        "purpose": "The owner's name across the living room's back wall, behind his cut-out. One use."
-      },
       "display": {
         "displayName": "Display",
-        "purpose": "The room title, one per section, in line masks."
+        "purpose": "The one headline of a screen or inner page opening. 800, mixed case."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Sub-room titles on inner pages."
+        "purpose": "Tile and choice titles; inner section titles."
       },
-      "title": {
-        "displayName": "Title",
-        "purpose": "Work names, the island offer, direction words and menu words."
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The one quiet line under a headline."
       },
       "body": {
-        "displayName": "Wall Note",
-        "purpose": "The thin corner note; the only reading text."
+        "displayName": "Body",
+        "purpose": "Buttons, links, captions, running text."
       },
-      "quote": {
-        "displayName": "Quote",
-        "purpose": "Review text written on the glass partition."
+      "note": {
+        "displayName": "Note",
+        "purpose": "Small print in Slate, 38ch max."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Captions, roles, the walk hint, field labels. Never above a headline."
+        "purpose": "Mixed-case field names in definition lists and work meta. Never a kicker."
       },
-      "script": {
-        "displayName": "Script",
-        "purpose": "One Pacifico line in warm light near a headline, rotated -2 to -5deg, with a glow."
+      "signature": {
+        "displayName": "Signature",
+        "purpose": "Pacifico, his signature in the Closing only."
       }
     },
     "shadows": [
       {
-        "name": "led-glow",
-        "value": "0 0 6px 1px rgb(255 214 160 / 0.9), 0 0 22px 4px rgb(255 180 110 / 0.45), 0 0 70px 14px rgb(255 160 90 / 0.18)",
-        "purpose": "Every warm line light (.led)."
+        "name": "floating-control",
+        "value": "0 10px 30px -12px rgb(0 0 0 / 0.45)",
+        "purpose": "Only the sticky phone request pill and WhatsApp button."
       },
       {
-        "name": "cobalt-glow",
-        "value": "0 0 8px 1px rgb(120 140 255 / 0.9), 0 0 30px 6px rgb(45 77 255 / 0.5), 0 0 90px 22px rgb(45 77 255 / 0.22)",
-        "purpose": "Every cold line light (.led-cobalt)."
+        "name": "screenshot-hairline",
+        "value": "0 0 0 1px var(--color-seam)",
+        "purpose": "The edge of every screenshot."
       },
       {
-        "name": "svg-light",
-        "value": "filter: drop-shadow(0 0 6px rgb(255 214 160 / 0.9)) drop-shadow(0 0 24px rgb(255 170 100 / 0.45))",
-        "purpose": "Drawn SVG light strokes: ceiling rectangle, corridor lines, draft line."
-      },
-      {
-        "name": "screen-cast",
-        "value": "0 60px 120px -50px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(0 0 0 / 0.6)",
-        "purpose": "Screens set into the wall, with a 1px rgb(255 255 255 / 0.06) edge."
-      },
-      {
-        "name": "floating-door",
-        "value": "0 18px 40px -16px rgb(0 0 0 / 0.8)",
-        "purpose": "Sticky request and WhatsApp doors only."
-      },
-      {
-        "name": "script-glow",
-        "value": "text-shadow: 0 0 22px rgb(255 190 120 / 0.35)",
-        "purpose": "Pacifico script only."
-      },
-      {
-        "name": "figure-rim-warm",
-        "value": "filter: drop-shadow(0 0 40px rgb(255 180 110 / 0.16))",
-        "purpose": "Owner cut-out standing in warm light."
-      },
-      {
-        "name": "figure-rim-cobalt",
-        "value": "filter: drop-shadow(10px 0 30px rgb(45 77 255 / 0.45))",
-        "purpose": "Owner cut-out beside a cold doorway."
-      }
-    ],
-    "lightFalloffs": [
-      {
-        "name": "warm-spill",
-        "value": "radial-gradient(ellipse 55% 100% at 50% 0%, rgb(255 190 120 / 0.28), transparent 70%)",
-        "purpose": "Light spilling onto the floor below an LED strip."
-      },
-      {
-        "name": "cove-warm",
-        "value": "linear-gradient(to top, rgb(255 190 120 / 0.45), rgb(255 190 120 / 0.1) 45%, transparent 80%)",
-        "purpose": "Cove light behind battens in a lit direction room."
-      },
-      {
-        "name": "cove-cobalt",
-        "value": "linear-gradient(to top, rgb(45 77 255 / 0.55), rgb(45 77 255 / 0.12) 45%, transparent 80%)",
-        "purpose": "The one cold direction room."
-      },
-      {
-        "name": "picture-light",
-        "value": "radial-gradient(ellipse 42% 80% at 50% 0%, rgb(255 214 160 / 0.22), transparent 75%)",
-        "purpose": "Cone below the picture light over the portrait."
-      },
-      {
-        "name": "pointer-pool",
-        "value": "radial-gradient(circle at var(--lx) var(--ly), rgb(255 236 204 / 0.12), transparent 50%)",
-        "purpose": "Hall Head pool that follows the pointer (data-lit)."
-      },
-      {
-        "name": "slats",
-        "value": "repeating-linear-gradient(90deg, #101010 0 14px, #050505 14px 22px)",
-        "purpose": "The battened wall surface (.slats)."
-      },
-      {
-        "name": "grain",
-        "value": "url(/texture/grain.webp) 320px, opacity 0.06, mix-blend-mode screen",
-        "purpose": "Matte finish over the whole page."
+        "name": "field-focus",
+        "value": "0 0 0 4px color-mix(in srgb, var(--color-brass) 22%, transparent)",
+        "purpose": "Form field focus inside .form-room."
       }
     ],
     "motion": [
       {
-        "name": "ease-house",
-        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "All transitions (token still named --ease-gallery)."
+        "name": "ease-gallery",
+        "value": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+        "purpose": "Theme fade (400ms), button state (250ms), tile hover lift (700ms)."
       },
       {
-        "name": "ceiling-line-draw",
-        "value": "1.8s ease-house, 0.15s delay, stroke-dashoffset 1 to 0",
-        "purpose": "The living room ceiling light drawing itself on. Decoration over a complete page."
+        "name": "rise",
+        "value": "1.25s expo.out, 90ms stagger",
+        "purpose": "data-rise: headline lines lift into their masks."
       },
       {
-        "name": "light-on",
-        "value": "1.4s ease-out, 0.8s delay, opacity",
-        "purpose": "Island under-light fading up."
+        "name": "fade",
+        "value": "1.3s expo.out, y 48px, blur 6px",
+        "purpose": "data-fade: tiles settle into place."
       },
       {
-        "name": "room-widen",
-        "value": "flex-grow 700ms ease-house",
-        "purpose": "Chosen direction room widens to 2.4x; cove fades up over 700ms."
+        "name": "zoom",
+        "value": "scale 0.84 -> 1, radius 36px -> 0, scrubbed top 95% to top 15%",
+        "purpose": "data-zoom: the Feature screenshot grows to full width."
       },
       {
-        "name": "corridor-walk",
-        "value": "ScrollTrigger pin, scrub 0.6, 1150px between works, perspective 900px",
-        "purpose": "Walking forward through the corridor of work."
-      },
-      {
-        "name": "lamp",
-        "value": "900ms ease-house; dim state brightness(0.55) saturate(0.7), lamp 12%",
-        "purpose": "A screen clearing as it reaches its light."
-      },
-      {
-        "name": "parallax-living-room",
-        "value": "spring stiffness 60 damping 18; name -18/-8px, figure 14/6px",
-        "purpose": "Pointer depth in the first room, mouse only."
-      },
-      {
-        "name": "menu-wipe",
-        "value": "clip-path 700ms ease-house; items stagger 50ms",
-        "purpose": "Mobile menu."
-      },
-      {
-        "name": "sticky-rise",
-        "value": "transform 680ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Sticky doors rising in."
-      },
-      {
-        "name": "smooth-scroll",
-        "value": "Lenis lerp 0.11",
-        "purpose": "Wheel smoothing; off under reduced motion."
+        "name": "highlights-hold",
+        "value": "6000ms",
+        "purpose": "Highlights carousel auto-advance interval."
       }
     ],
     "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
       {
         "name": "md",
         "value": "768px"
@@ -347,194 +354,158 @@
         "value": "1280px"
       }
     ],
-    "imagery": {
-      "ownerCutouts": [
-        {
-          "path": "/photo/cut/hero.png",
-          "size": "1025x851",
-          "room": "Living room, at the island"
-        },
-        {
-          "path": "/photo/cut/stand.png",
-          "size": "403x1060",
-          "room": "Portrait, under the picture light"
-        },
-        {
-          "path": "/photo/cut/doorway.png",
-          "size": "399x1197",
-          "room": "Closing doorway, in profile, cold light"
-        }
-      ],
-      "provenance": "Lifted from the owner's own photographs with macOS Vision subject lifting, then edge-eroded to remove halo fringe and colour-graded to the room's light. New figures follow the same path; never stock or generated people."
-    }
+    "themes": {
+      "attribute": "html[data-theme]",
+      "storageKey": "aly-theme",
+      "fallback": "prefers-color-scheme",
+      "fixedTone": "[data-tone=\"dark\"|\"light\"]",
+      "tailwindVariant": "dark: matches data-theme=dark and data-tone=dark",
+      "pictureSwap": ".only-light / .only-dark",
+      "pictures": {
+        "light": [
+          "public/photo/about.webp",
+          "public/gallery/work-phone.webp"
+        ],
+        "dark": [
+          "public/photo/cut/hero.png",
+          "public/photo/cut/stand.png"
+        ],
+        "provenance": "Dark-theme cut-outs lifted from his own photographs with macOS Vision subject lifting; not generated."
+      }
+    },
+    "scope": "Public site only (body.museum). Admin and Mini App keep the older studio tokens."
   },
   "components": [
     {
-      "name": "Request Door (Bone Pill)",
+      "name": "Primary Pill",
       "kind": "button",
-      "refersTo": "button-bone",
-      "description": "The filled door: the request form (WhatsApp takes it in the closing doorway).",
-      "html": "<a class=\"ds-btn-bone\" href=\"#\">Get a quote <svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
-      "css": ".ds-btn-bone{display:inline-flex;min-height:3.5rem;align-items:center;justify-content:center;gap:0.75rem;border-radius:9999px;padding:0 1.875rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.9375rem;font-weight:500;letter-spacing:0.01em;text-decoration:none;cursor:pointer;transition:background-color 300ms cubic-bezier(0.16,1,0.3,1),color 300ms cubic-bezier(0.16,1,0.3,1),border-color 300ms cubic-bezier(0.16,1,0.3,1);background:var(--color-bone,#f3eee7);color:var(--color-wall,#070707);border:0;} .ds-btn-bone svg{transition:transform 500ms cubic-bezier(0.16,1,0.3,1);} .ds-btn-bone:hover{background:#fff;} .ds-btn-bone:hover svg{transform:translateX(4px);} .ds-btn-bone:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
+      "refersTo": "button-primary",
+      "description": "Filled accent pill: the request. Paired with the outline WhatsApp pill as the two doors.",
+      "html": "<button class=\"ds-btn-primary\">Get a quote</button>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-btn-primary{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);border:none;background:var(--color-brass);color:#fff}.ds-btn-primary:hover{background:color-mix(in srgb,var(--color-brass) 86%,black)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
     },
     {
-      "name": "WhatsApp Door (Line Pill)",
+      "name": "Outline Pill",
       "kind": "button",
-      "refersTo": "button-line",
-      "description": "The outlined door beside the filled one.",
-      "html": "<a class=\"ds-btn-line\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z\" stroke-linejoin=\"round\"/></svg> WhatsApp</a>",
-      "css": ".ds-btn-line{display:inline-flex;min-height:3.5rem;align-items:center;justify-content:center;gap:0.75rem;border-radius:9999px;padding:0 1.875rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.9375rem;font-weight:500;letter-spacing:0.01em;text-decoration:none;cursor:pointer;transition:background-color 300ms cubic-bezier(0.16,1,0.3,1),color 300ms cubic-bezier(0.16,1,0.3,1),border-color 300ms cubic-bezier(0.16,1,0.3,1);background:transparent;color:var(--color-bone,#f3eee7);border:1px solid var(--color-seam-2,rgb(243 238 231 / 0.18));} .ds-btn-line:hover{border-color:var(--color-bone,#f3eee7);background:rgb(243 238 231 / 0.06);} .ds-btn-line:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
+      "refersTo": "button-outline",
+      "description": "Accent-bordered pill; fills on hover. Carries the WhatsApp door.",
+      "html": "<button class=\"ds-btn-line\">WhatsApp</button>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-btn-line{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);background:transparent;border:1px solid var(--color-brass);color:var(--color-brass)}.ds-btn-line:hover{background:var(--color-brass);color:#fff}.ds-btn-line:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
     },
     {
-      "name": "Round Arrow Door",
-      "kind": "button",
-      "refersTo": "door-round",
-      "description": "A seam circle with one arrow; fills with line-light brass on hover.",
-      "html": "<a class=\"ds-door\" href=\"#\" aria-label=\"Open\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M2.5 8h11M9.5 4l4 4-4 4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
-      "css": ".ds-door{display:inline-flex;width:3rem;height:3rem;align-items:center;justify-content:center;border-radius:9999px;border:1px solid var(--color-seam-2,rgb(243 238 231 / 0.18));color:var(--color-bone,#f3eee7);transition:background-color 500ms,border-color 500ms,color 500ms;} .ds-door svg{width:20px;height:20px;} .ds-door:hover{background:var(--color-brass,#f2c58a);border-color:var(--color-brass,#f2c58a);color:var(--color-wall,#070707);} .ds-door:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
-    },
-    {
-      "name": "Quiet Link",
+      "name": "More Link",
       "kind": "custom",
-      "refersTo": "link-quiet",
-      "description": "Thin underlined link in a corner note; underline warms to brass on hover.",
-      "html": "<a class=\"ds-link\" href=\"#\">All work</a>",
-      "css": ".ds-link{font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.875rem;font-weight:300;color:var(--color-bone-2,#b9b2a8);text-decoration:underline;text-decoration-color:var(--color-seam-2,rgb(243 238 231 / 0.18));text-underline-offset:0.3em;transition:color 250ms,text-decoration-color 250ms;} .ds-link:hover{color:var(--color-bone,#f3eee7);text-decoration-color:var(--color-brass,#f2c58a);} .ds-link:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
+      "refersTo": "link-more",
+      "description": "Apple-style text link with a chevron; the default secondary action.",
+      "html": "<a href=\"#\" class=\"ds-link-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-link-more{display:inline-flex;align-items:center;gap:.25rem;color:var(--color-brass);font-family:var(--font-text);font-size:1.0625rem;text-decoration:none}.ds-link-more:hover{text-decoration:underline;text-underline-offset:.2em}.ds-link-more:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;border-radius:6px}"
     },
     {
-      "name": "LED Strip",
+      "name": "Work Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "28px tile: centered headline, caption, More link, screenshot running off the bottom edge.",
+      "html": "<a href=\"#\" class=\"ds-tile\"><h3 class=\"ds-tile-title\">Studio site</h3><p class=\"ds-tile-cap\">A site for a dental clinic</p><span class=\"ds-tile-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><div class=\"ds-tile-shot\"></div></a>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-tile{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:3rem;border-radius:28px;overflow:hidden;background:var(--color-wall-2);color:var(--color-bone);text-decoration:none;font-family:var(--font-text);max-width:420px}.ds-tile-title{margin:0;padding:0 1.5rem;font-weight:800;font-size:2rem;line-height:1.08;letter-spacing:-.02em}.ds-tile-cap{margin:.5rem 0 0;padding:0 1.5rem;font-size:1rem;color:var(--color-bone-2)}.ds-tile-more{display:inline-flex;align-items:center;gap:.25rem;margin-top:.75rem;color:var(--color-brass);font-size:1.0625rem}.ds-tile-shot{margin-top:2.5rem;width:86%;aspect-ratio:16/10;border-radius:18px 18px 0 0;background:var(--color-wall-3);box-shadow:0 0 0 1px var(--color-seam);transition:transform 700ms var(--ease-gallery)}.ds-tile:hover .ds-tile-shot{transform:translateY(-6px)}.ds-tile:hover .ds-tile-more{text-decoration:underline}.ds-tile:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
+    },
+    {
+      "name": "Dark Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "The same tile under data-tone=\"dark\": the checkerboard partner in the Tiles grid.",
+      "html": "<a href=\"#\" class=\"ds-tile-dark\"><h3 class=\"ds-td-title\">Telegram app</h3><p class=\"ds-td-cap\">A Mini App for orders</p><span class=\"ds-td-more\">Open the work <svg viewBox=\"0 0 10 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2.5 2.5 8 8l-5.5 5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></a>",
+      "css": ".ds-tile-dark{display:flex;flex-direction:column;align-items:center;text-align:center;padding:3rem 1.5rem;border-radius:28px;background:#161617;color:#f5f5f7;text-decoration:none;font-family:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;max-width:420px}.ds-td-title{margin:0;font-weight:800;font-size:2rem;line-height:1.08;letter-spacing:-.02em}.ds-td-cap{margin:.5rem 0 0;color:#a1a1a6}.ds-td-more{display:inline-flex;align-items:center;gap:.25rem;margin-top:.75rem;color:#2997ff;font-size:1.0625rem}.ds-tile-dark:hover .ds-td-more{text-decoration:underline}.ds-tile-dark:focus-visible{outline:2px solid #2997ff;outline-offset:3px}"
+    },
+    {
+      "name": "Screen Head",
       "kind": "custom",
-      "refersTo": "led-strip",
-      "description": "Architectural line light, warm and cold, with the glow and the spill on the floor beside it.",
-      "html": "<div class=\"ds-room\"><div class=\"ds-led\"></div><div class=\"ds-spill\"></div><div class=\"ds-led ds-led-cobalt\"></div></div>",
-      "css": ".ds-room{position:relative;height:160px;background:var(--color-wall,#070707);overflow:hidden;} .ds-led{position:absolute;left:6%;right:6%;bottom:40px;height:2px;border-radius:9999px;background:var(--color-led,#ffe2b8);box-shadow:0 0 6px 1px rgb(255 214 160 / 0.9),0 0 22px 4px rgb(255 180 110 / 0.45),0 0 70px 14px rgb(255 160 90 / 0.18);} .ds-spill{position:absolute;left:0;right:0;bottom:-20px;height:60px;background:radial-gradient(ellipse 55% 100% at 50% 0%,rgb(255 190 120 / 0.28),transparent 70%);} .ds-led-cobalt{bottom:auto;top:30px;left:70%;right:8%;height:1px;background:#8fa3ff;box-shadow:0 0 8px 1px rgb(120 140 255 / 0.9),0 0 30px 6px rgb(45 77 255 / 0.5),0 0 90px 22px rgb(45 77 255 / 0.22);opacity:0.8;}"
-    },
-    {
-      "name": "Direction Room (Slatted Panel)",
-      "kind": "card",
       "refersTo": "",
-      "description": "Battened wall panel; the cove light behind the slats comes on when the room is chosen.",
-      "html": "<a class=\"ds-slats\" href=\"#\"><span class=\"ds-cove\"></span><span class=\"ds-cove-led\"></span><span class=\"ds-slats-word\">Websites</span><span class=\"ds-slats-script\">for your business</span></a>",
-      "css": ".ds-slats{position:relative;display:flex;flex-direction:column;justify-content:flex-end;height:320px;width:280px;padding:1.5rem;overflow:hidden;text-decoration:none;background-image:repeating-linear-gradient(90deg,#101010 0 14px,#050505 14px 22px);} .ds-cove{position:absolute;inset:0;opacity:0;transition:opacity 700ms;background:linear-gradient(to top,rgb(255 190 120 / 0.45),rgb(255 190 120 / 0.1) 45%,transparent 80%);} .ds-cove-led{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--color-led,#ffe2b8);box-shadow:0 0 6px 1px rgb(255 214 160 / 0.9),0 0 22px 4px rgb(255 180 110 / 0.45),0 0 70px 14px rgb(255 160 90 / 0.18);opacity:0;transition:opacity 700ms;} .ds-slats:hover .ds-cove,.ds-slats:hover .ds-cove-led,.ds-slats:focus-visible .ds-cove,.ds-slats:focus-visible .ds-cove-led{opacity:1;} .ds-slats-word{position:relative;font-family:var(--font-display,'BBH Bogle','Nunito Sans',sans-serif);font-weight:900;font-synthesis:none;font-size:2.75rem;line-height:0.9;color:var(--color-bone,#f3eee7);} .ds-slats-script{position:relative;margin-top:0.75rem;font-family:var(--font-script,'Pacifico',cursive);font-size:1.375rem;color:var(--color-brass,#f2c58a);text-shadow:0 0 22px rgb(255 190 120 / 0.35);} .ds-slats:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
+      "description": "One Display headline, one Lead line, the two doors. The unit of every screen.",
+      "html": "<section class=\"ds-screen\"><h1 class=\"ds-display\">Aly Latypov</h1><p class=\"ds-lead\">Sites, Telegram apps and AI assistants, made by one person.</p><div class=\"ds-doors\"><button class=\"ds-d1\">Get a quote</button><button class=\"ds-d2\">WhatsApp</button></div></section>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-screen{text-align:center;padding:6rem 1.25rem;background:var(--color-wall-2);color:var(--color-bone);font-family:var(--font-text)}.ds-display{margin:0;font-weight:800;font-size:clamp(2.5rem,6.4vw,5.5rem);line-height:1.04;letter-spacing:-.025em;text-wrap:balance}.ds-lead{margin:.75rem auto 0;max-width:42rem;font-size:clamp(1.125rem,1.9vw,1.5rem);line-height:1.35;letter-spacing:-.01em;text-wrap:balance}.ds-doors{margin-top:1.75rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}.ds-d1,.ds-d2{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;gap:.5rem;border-radius:9999px;padding:0 1.375rem;font-family:var(--font-text);font-size:1.0625rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background-color 250ms var(--ease-gallery),color 250ms var(--ease-gallery);}.ds-d1{border:none;background:var(--color-brass);color:#fff}.ds-d1:hover{background:color-mix(in srgb,var(--color-brass) 86%,black)}.ds-d2{background:transparent;border:1px solid var(--color-brass);color:var(--color-brass)}.ds-d2:hover{background:var(--color-brass);color:#fff}.ds-d1:focus-visible,.ds-d2:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
     },
     {
-      "name": "Screen",
-      "kind": "card",
-      "refersTo": "screen",
-      "description": "A picture of work set flush into the wall: hairline edge, deep cast, no frame.",
-      "html": "<figure class=\"ds-screen-wrap\"><div class=\"ds-screen\"></div><figcaption class=\"ds-screen-cap\"><span class=\"ds-screen-title\">TajShop</span><span class=\"ds-screen-label\">2025</span></figcaption></figure>",
-      "css": ".ds-screen-wrap{margin:0;width:320px;} .ds-screen{aspect-ratio:16/10;background:var(--color-wall-2,#0d0d0d);border:1px solid rgb(255 255 255 / 0.06);box-shadow:0 60px 120px -50px rgb(0 0 0 / 0.95),0 0 0 1px rgb(0 0 0 / 0.6);} .ds-screen-cap{margin-top:1.25rem;display:flex;align-items:baseline;gap:0.75rem;} .ds-screen-title{font-family:var(--font-display,'BBH Bogle','Nunito Sans',sans-serif);font-weight:900;font-synthesis:none;font-size:1.5rem;line-height:1;color:var(--color-bone,#f3eee7);} .ds-screen-label{font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-bone-3,#8d877e);}"
-    },
-    {
-      "name": "Glass Pane",
-      "kind": "card",
-      "refersTo": "",
-      "description": "A review written on black-framed glass in front of a cobalt-lit wall.",
-      "html": "<div class=\"ds-glass-wall\"><div class=\"ds-glass\"><p class=\"ds-glass-q\">He did the whole thing himself and it shipped in two weeks.</p><p class=\"ds-glass-name\">Maftuna</p></div></div>",
-      "css": ".ds-glass-wall{padding:2rem;background:var(--color-wall,#070707) radial-gradient(ellipse 60% 70% at 70% 60%,rgb(45 77 255 / 0.28),transparent 70%);} .ds-glass{width:280px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between;gap:2.5rem;padding:1.75rem;border:6px solid #000;background:linear-gradient(115deg,rgb(255 255 255 / 0.07),rgb(255 255 255 / 0.015) 38%,rgb(255 255 255 / 0.05) 62%,rgb(255 255 255 / 0.01));box-shadow:inset 0 0 0 1px rgb(255 255 255 / 0.08);backdrop-filter:blur(3px);} .ds-glass-q{margin:0;font-family:var(--font-text,'Nunito Sans',sans-serif);font-weight:300;font-size:1.0625rem;line-height:1.625;color:var(--color-bone,#f3eee7);} .ds-glass-name{margin:0;font-family:var(--font-script,'Pacifico',cursive);font-size:1.875rem;color:var(--color-brass,#f2c58a);transform:rotate(-2deg);text-shadow:0 0 22px rgb(255 190 120 / 0.35);}"
-    },
-    {
-      "name": "Form Room Field",
-      "kind": "input",
-      "refersTo": "field",
-      "description": "Studio form markup re-pointed at the house: wall-black field, brass caret and focus border.",
-      "html": "<label class=\"ds-field\"><span>Your name</span><input placeholder=\"Alisher\" /></label>",
-      "css": ".ds-field{display:flex;flex-direction:column;gap:0.5rem;width:300px;} .ds-field span{font-family:var(--font-display,'BBH Bogle','Nunito Sans',sans-serif);font-weight:900;font-synthesis:none;font-size:0.9375rem;color:var(--color-bone,#f3eee7);} .ds-field input{background:var(--color-wall-2,#0d0d0d);color:var(--color-bone,#f3eee7);border:1px solid var(--color-seam-2,rgb(243 238 231 / 0.18));border-radius:1rem;padding:1rem 1.25rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-weight:300;font-size:1rem;caret-color:var(--color-brass,#f2c58a);outline:none;transition:border-color 250ms;} .ds-field input::placeholder{color:var(--color-bone-3,#8d877e);} .ds-field input:focus{border-color:var(--color-brass,#f2c58a);}"
-    },
-    {
-      "name": "Header Nav",
+      "name": "Header Bar",
       "kind": "nav",
+      "refersTo": "header-bar",
+      "description": "Fixed translucent bar: wordmark, 13px links, theme switch, language, small request pill.",
+      "html": "<header class=\"ds-nav\"><span class=\"ds-nav-mark\">aly</span><nav class=\"ds-nav-links\"><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">Services</a><a href=\"#\">Prices</a><a href=\"#\">About</a></nav><div class=\"ds-nav-end\"><button class=\"ds-nav-theme\" aria-label=\"Dark theme\"><svg viewBox=\"0 0 20 20\" width=\"17\" height=\"17\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7Z\" stroke-linejoin=\"round\"/></svg></button><a href=\"#\" class=\"ds-nav-cta\">Get a quote</a></div></header>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:3.5rem;padding:0 1.25rem;background:rgb(255 255 255 / .75);backdrop-filter:blur(24px) saturate(1.5);border-bottom:1px solid var(--color-seam);font-family:var(--font-text);color:var(--color-bone)}.ds-nav-mark{font-weight:800;font-size:1.25rem}.ds-nav-links{display:flex;gap:.25rem}.ds-nav-links a{padding:0 .75rem;font-size:.8125rem;color:rgb(29 29 31 / .8);text-decoration:none;transition:color 200ms}.ds-nav-links a:hover,.ds-nav-links a[aria-current=page]{color:var(--color-bone)}.ds-nav-end{display:flex;align-items:center;gap:.375rem}.ds-nav-theme{display:inline-flex;width:2.25rem;height:2.25rem;align-items:center;justify-content:center;border:none;border-radius:9999px;background:transparent;color:rgb(29 29 31 / .8);cursor:pointer}.ds-nav-theme:hover{background:rgb(29 29 31 / .1);color:var(--color-bone)}.ds-nav-cta{display:inline-flex;min-height:2rem;align-items:center;border-radius:9999px;padding:0 .875rem;background:var(--color-brass);color:#fff;font-size:.8125rem;font-weight:500;text-decoration:none}.ds-nav-cta:hover{opacity:.9}.ds-nav a:focus-visible,.ds-nav button:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;border-radius:6px}"
+    },
+    {
+      "name": "Highlights Controls",
+      "kind": "custom",
       "refersTo": "",
-      "description": "Thin nav on the black; current page in off-white with a 1px brass underline; small filled request pill.",
-      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">Services</a><a href=\"#\">Prices</a><a href=\"#\" class=\"ds-nav-cta\">Get a quote</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;gap:0.25rem;height:96px;padding:0 2.5rem;background:var(--color-wall,#070707);} .ds-nav a{position:relative;display:inline-flex;min-height:2.75rem;align-items:center;padding:0 0.875rem;font-family:var(--font-text,'Nunito Sans',sans-serif);font-size:0.875rem;color:var(--color-bone-2,#b9b2a8);text-decoration:none;transition:color 250ms;} .ds-nav a:hover,.ds-nav a[aria-current=page]{color:var(--color-bone,#f3eee7);} .ds-nav a[aria-current=page]::after{content:'';position:absolute;left:0.875rem;right:0.875rem;bottom:0.5rem;height:1px;background:var(--color-brass,#f2c58a);} .ds-nav a.ds-nav-cta{margin-left:auto;border-radius:9999px;background:var(--color-bone,#f3eee7);color:var(--color-wall,#070707);padding:0 1.25rem;font-weight:500;} .ds-nav a.ds-nav-cta:hover{background:#fff;} .ds-nav a:focus-visible{outline:2px solid var(--color-brass,#f2c58a);outline-offset:4px;border-radius:2px;}"
+      "description": "Carousel dot pill and play/pause under the review highlights.",
+      "html": "<div class=\"ds-hl\"><div class=\"ds-hl-dots\" role=\"tablist\"><button class=\"ds-dot on\" aria-label=\"1\"></button><button class=\"ds-dot\" aria-label=\"2\"></button><button class=\"ds-dot\" aria-label=\"3\"></button></div><button class=\"ds-hl-play\" aria-label=\"Pause\"><svg viewBox=\"0 0 12 12\" width=\"12\" height=\"12\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"2\" y=\"1.5\" width=\"2.6\" height=\"9\" rx=\".8\"/><rect x=\"7.4\" y=\"1.5\" width=\"2.6\" height=\"9\" rx=\".8\"/></svg></button></div>",
+      "css": ":host{--color-wall:#fff;--color-wall-2:#f5f5f7;--color-wall-3:#e8e8ed;--color-bone:#1d1d1f;--color-bone-2:#6e6e73;--color-bone-3:#86868b;--color-brass:#0071e3;--color-seam:rgb(0 0 0 / .08);--font-text:\"Nunito Sans\",ui-sans-serif,system-ui,sans-serif;--ease-gallery:cubic-bezier(.25,.1,.25,1)} .ds-hl{display:flex;gap:.75rem;align-items:center;justify-content:center}.ds-hl-dots{display:flex;align-items:center;gap:.625rem;height:3rem;padding:0 1.25rem;border-radius:9999px;background:var(--color-wall-3)}.ds-dot{width:.5rem;height:.5rem;border:none;padding:0;border-radius:9999px;background:rgb(134 134 139 / .7);cursor:pointer;transition:all 500ms}.ds-dot:hover{background:var(--color-bone-2)}.ds-dot.on{width:2rem;background:var(--color-bone)}.ds-hl-play{display:inline-flex;width:3rem;height:3rem;align-items:center;justify-content:center;border:none;border-radius:9999px;background:var(--color-wall-3);color:var(--color-bone);cursor:pointer}.ds-dot:focus-visible,.ds-hl-play:focus-visible{outline:2px solid var(--color-brass);outline-offset:3px;}"
     }
   ],
   "narrative": {
-    "northStar": "The Dark House at Night",
-    "overview": "**Creative North Star: \"The Dark House at Night\"**\n\nThe site is a dark modern home at night, and he lives in it. Every section is a different room. The room is built from matte black surfaces and lit only by architectural light: LED line strips, a cove glowing behind battens, a picture light over a portrait, a lit island, and once in a while a cold cobalt doorway. The owner appears in the rooms himself. Cut-out photographs of him stand at the island, under the picture light and in the doorway, because visitors have to recognise him straight away. There are no cards, no panels and no UI chrome standing in for depth. Light defines every edge.\n\nThe owner fixed the character himself. Every section gets one huge headline and one small thin note in a corner. There are no enumerated lists. Headings are BBH Bogle only, small text is thin Nunito Sans, and Pacifico appears as warm-light handwriting. The pages are clean, with lots of air. Content is fully visible at first paint. The lights switching on (a ceiling line drawing itself, the under-light fading up) are decoration over a page that is already complete.\n\nDensity is low. Each room holds one statement, one lit thing and one quiet note. The black does the rest.",
+    "northStar": "The Product Page",
+    "overview": "Each screen of the site works like a screen on apple.com. It has one big heavy headline in mixed case, one quiet line under it, at most two pill buttons or a chevron link, and then the picture: his photograph or a screenshot of the work. Everything else is air. The page gets its rhythm from alternating bands: white and #f5f5f7 in the light theme, black and #161617 in the dark one, with some bands that are dark in either theme. The owner chose this world. It replaced the earlier \"dark house\" world, and nothing from that world (room lighting, lamps, BBH Bogle) carries over.\n\nThe site has two equal themes. The light theme uses Apple's white and very light grey with a near-black text and the #0071e3 blue. The dark theme uses Apple's Pro-page black with an off-white text and the #2997ff blue. Both themes share every class and only the variables change. Where a theme needs a different picture, the picture is swapped rather than tinted.\n\nDensity is low on purpose. The owner's rules are: one big headline and one small line per screen, a lot of air, no enumerated text lists, and a clean page.",
     "keyCharacteristics": [
-      "Matte black in three close steps, off-white ink, and warm line light used as light, never as paint.",
-      "One huge Bogle headline per room, plus one thin Nunito note away from it.",
-      "Light lines with real glow (stacked box-shadows) instead of borders. Glowing hairlines replace dividers.",
-      "The owner cut out of his own photographs, standing inside the room's light.",
-      "Cobalt is rare. A cool doorway or cove appears at most once per room, and in most rooms not at all.",
-      "Two doors everywhere: the request and WhatsApp."
+      "Two full themes on `<html data-theme>`, plus fixed-tone sections (`data-tone=\"dark\"` / `\"light\"`).",
+      "One type family, Nunito Sans: 800 for headlines, 400 for the lead line, 300 for small print.",
+      "Centered composition: headline, line, actions, picture.",
+      "Pill buttons, chevron text links, 28px tiles and 18px screenshots.",
+      "Flat surfaces. Depth comes from tone changes and a hairline, not from shadows."
     ],
     "rules": [
       {
-        "name": "The Light Is Not Paint Rule",
-        "body": "Warm and cold colour enter the page as light: a glowing line, a radial or linear falloff to transparent, or a text glow. Brass and cobalt never fill a surface, a card or a block of type. The only solid accent areas allowed are a 2-3px LED line and a round door on hover.",
+        "name": "The Variable Swap Rule",
+        "body": "A theme only redefines the `--color-*` variables, on `html[data-theme='dark']` and on `[data-tone]` sections. Components never hard-code a theme's hex. The one exception is white text on a filled blue pill. Tailwind's `dark:` variant matches both the dark theme and any `data-tone=\"dark\"` section.",
         "section": "colors"
       },
       {
-        "name": "The Rare Cobalt Rule",
-        "body": "Warm is the house. Cobalt is the cold doorway you glimpse. Use it once in a room at most, keep it as a cove, doorway or single line, and keep most rooms entirely warm.",
+        "name": "The Fixed Tone Rule",
+        "body": "`data-tone=\"dark\"` makes a section dark in both themes (the Feature, the Closing, and tiles 2 and 3 of every four in the Tiles grid). `data-tone=\"light\"` keeps a section light in both. Use fixed tones to create the black-and-white rhythm, not to style a single element.",
         "section": "colors"
       },
       {
-        "name": "The Falloff Rule",
-        "body": "Every gradient is light falling off into black: warm `rgb(255 190 120)` to `rgb(255 236 204)` family, or cobalt, at low alpha, fading to transparent by about 70%. There are no colour-to-colour gradients and no gradient text.",
+        "name": "The Small Text Contrast Rule",
+        "body": "Text under 18px must reach 4.5:1 against the surface it sits on. In the light theme, Pewter `#86868b` measures 3.6:1 on white and 3.3:1 on Mist, so small labels in that theme belong in Slate. Pewter is safe for small text only on dark surfaces.",
         "section": "colors"
       },
       {
-        "name": "The One Voice Per Role Rule",
-        "body": "Bogle is used only for headings and heading-scale words. Nunito is used only for small text. Pacifico is used only as the warm-light accent. Bogle never sets body text, Nunito never sets an English headline, and Pacifico never carries content someone must read to act.",
+        "name": "The One Headline Rule",
+        "body": "Each screen has one Display headline and one Lead line. A second headline-sized element on the same screen starts a new screen.",
         "section": "typography"
       },
       {
-        "name": "The Russian Headline Rule",
-        "body": "Bogle draws only Latin capitals, so Cyrillic falls through to Nunito Sans Black. Under `:lang(ru)`, every room title, `.font-display` word and form-room heading is set at `font-stretch: 75%`, `text-transform: uppercase` and letter-spacing -0.005em, so the Russian site keeps the same condensed-caps mass. Every Bogle stack asks for weight 900 with `font-synthesis: none`.",
+        "name": "The One Family Rule",
+        "body": "All text is Nunito Sans. Pacifico appears only in the signature.",
         "section": "typography"
       },
       {
-        "name": "The Corner Note Rule",
-        "body": "Each room has one huge headline and one small thin note, and the note sits away from the headline, in the opposite corner or at the end of the row. A room never gets a paragraph block under its headline.",
-        "section": "typography"
-      },
-      {
-        "name": "The Different Room Rule",
-        "body": "No two consecutive sections share a lighting setup. Each room picks its own light source (ceiling line, cove behind slats, picture light, floor strip, cold doorway, single drawn line) and its own surface step. A new section that reuses the previous room's light is a repeated room.",
+        "name": "The Air Rule",
+        "body": "When in doubt, add vertical space. Never add a second idea to a screen.",
         "section": "layout"
       },
       {
-        "name": "The Look Don't Read Rule",
-        "body": "Each room holds one statement. A choice between options is a set of large words or lit panels, never a numbered sequence of steps.",
-        "section": "layout"
-      },
-      {
-        "name": "The Light Defines The Edge Rule",
-        "body": "If something needs an edge, give it a light line, a light falloff or a 1px hairline. Never use a card, a filled panel or a border box.",
-        "section": "elevation"
-      },
-      {
-        "name": "The Lit Figure Rule",
-        "body": "The owner's cut-outs always stand inside a light source in their room and take that light's rim colour. A cut-out never floats on bare black.",
+        "name": "The Flat Surface Rule",
+        "body": "Tiles, bands and screenshots have no drop shadows. Only something that floats above the page while it scrolls gets a shadow.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do give every section one display headline and one thin corner note, and nothing else competing.",
-      "Do make every section a different room, with its own light source and no repeat of the previous room's setup.",
-      "Do light edges with LED strips (with LED Glow) or falloffs to black rather than borders or cards.",
-      "Do put the owner in rooms as a Vision-lifted, edge-eroded, graded cut-out from his own photographs, standing in that room's light.",
-      "Do set every heading in Bogle 900 with `font-synthesis: none`, and let `:lang(ru)` carry it into Nunito Sans Black at 75% width in uppercase.",
-      "Do keep content visible at first paint. Lights may switch on and reveals may run only on elements below the fold, and only once the script is running.",
-      "Do switch every motion (corridor walk, parallax, magnetic doors, glass drag, Lenis smooth scroll, light-on animations) off under `prefers-reduced-motion`, leaving a complete static room.",
-      "Do keep text at Quiet Text or brighter. Quiet Text is the contrast floor.",
-      "Do put the two doors, request and WhatsApp, in every room that asks for action, and mark it `data-doors`."
+      "**Do** give each screen one Display headline (800, mixed case), one Lead line and at most one set of actions: the two doors or one or two More links.",
+      "**Do** build every new surface from the `--color-*` variables so it works in both themes, and check it in both themes before shipping.",
+      "**Do** use `data-tone=\"dark\"` on whole sections or whole tiles to create the black-and-white rhythm.",
+      "**Do** keep small text at 4.5:1 or better. In the light theme, use Slate (`#6e6e73`) rather than Pewter for any text under 18px.",
+      "**Do** frame every screenshot in an 18px radius with a Hairline ring, and every tile in a 28px radius.",
+      "**Do** swap pictures with `.only-light` / `.only-dark` when a theme needs a different image. Dark-theme cut-outs must come from his real photographs, made with subject lifting.",
+      "**Do** leave a lot of air: 6–9rem between screens and centered stacks."
     ],
     "donts": [
-      "Don't build numbered or enumerated step lists (\"01 Request / 02 Consultation / ...\"), or bullet-heavy feature lists.",
-      "Don't use Nunito for an English headline, Bogle for body text, or Pacifico for anything a visitor must read to act.",
-      "Don't fill surfaces with brass or cobalt, or use either for body text.",
-      "Don't use cobalt in more than one place per room, or in most rooms.",
-      "Don't return to the museum metaphor (halls, frames, curator's labels, gallery lamps as the organising idea). The owner rejected it.",
-      "Don't put light or white cards on the black. Raised surfaces are Wall Black or Lit Edge.",
-      "Don't hide content with initial opacity 0 in CSS or in server markup.",
-      "Don't use stock or generated people. The figure in the house is always the owner, from his own photographs.",
-      "Don't add small uppercase labels above headlines. The room's name stands alone, with the script line near it.",
-      "Don't add a third door or a competing call to action."
+      "**Don't** list things as enumerated text (numbered steps, bullet lists of features). Say it once in a headline and a line, or give each item its own tile.",
+      "**Don't** put a small uppercase label or kicker above a headline. Labels are mixed-case field names, not section announcers.",
+      "**Don't** set headlines in uppercase, and don't use a second display family. BBH Bogle and the old studio fonts are retired from the public site.",
+      "**Don't** use Pacifico anywhere except his signature.",
+      "**Don't** add drop shadows to tiles, bands or screenshots. Only floating phone controls get a shadow.",
+      "**Don't** color anything Action Blue that is not an action or a focus state.",
+      "**Don't** bring the dark-house devices back (room lighting, lamps, pointer-following light). The `data-lit`, `data-magnetic`, `data-draw` and `data-parallax` hooks still exist in the motion script, but they are not part of this world.",
+      "**Don't** use the admin or Mini App tokens (`paper`, `ground`, `ink`, Onest) on the public site, except through the `.form-room` mapping."
     ]
   }
 }

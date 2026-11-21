@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getCase, getPublishedCases, localizeCases } from '@/lib/cases';
 import { alternatesFor, fill, localePath } from '@/lib/i18n';
@@ -159,7 +159,7 @@ export default async function CasePage({ params }: Params) {
         <section className="border-t border-seam">
           <Link href={localePath(lang, `/work/${next.slug}`)} className="group hall flex items-end justify-between gap-8 py-24 md:py-32">
             <span>
-              <span className="script block text-[clamp(1.5rem,2.6vw,2.25rem)]">{t.vitrine.next}</span>
+              <span className="block text-lg text-bone-2">{t.vitrine.next}</span>
               <span className="hall-title mt-4 block text-[clamp(2.75rem,8vw,8rem)] transition-colors duration-500 group-hover:text-brass">
                 {next.title}
               </span>
@@ -171,7 +171,7 @@ export default async function CasePage({ params }: Params) {
         </section>
       )}
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

@@ -1,299 +1,261 @@
 ---
 name: aly.lat
-description: A dark modern home at night, and he lives in it. Every section is a different room, lit only by its architectural light.
+description: A clean personal studio site in the manner of apple.com, in two themes. One headline, one quiet line and the picture, then a lot of air.
 colors:
-  wall: "#070707"
-  wall-2: "#0d0d0d"
-  wall-3: "#161616"
-  bone: "#f3eee7"
-  bone-2: "#b9b2a8"
-  bone-3: "#8d877e"
-  brass: "#f2c58a"
-  led: "#ffe2b8"
-  cobalt: "#2d4dff"
-  cobalt-led: "#8fa3ff"
-  seam: "rgb(243 238 231 / 0.08)"
-  seam-2: "rgb(243 238 231 / 0.18)"
+  wall: "#ffffff"
+  wall-2: "#f5f5f7"
+  wall-3: "#e8e8ed"
+  bone: "#1d1d1f"
+  bone-2: "#6e6e73"
+  bone-3: "#86868b"
+  brass: "#0071e3"
+  seam: "rgb(0 0 0 / 0.08)"
+  seam-2: "rgb(0 0 0 / 0.16)"
+  dark-wall: "#000000"
+  dark-wall-2: "#161617"
+  dark-wall-3: "#1d1d1f"
+  dark-bone: "#f5f5f7"
+  dark-bone-2: "#a1a1a6"
+  dark-brass: "#2997ff"
+  dark-seam: "rgb(255 255 255 / 0.12)"
+  dark-seam-2: "rgb(255 255 255 / 0.24)"
 typography:
-  display-name:
-    fontFamily: "BBH Bogle, Nunito Sans, ui-sans-serif, sans-serif"
-    fontSize: "clamp(4.25rem, 19.5vw, 22rem)"
-    fontWeight: 900
-    lineHeight: 0.82
-    letterSpacing: "-0.015em"
   display:
-    fontFamily: "BBH Bogle, Nunito Sans, ui-sans-serif, sans-serif"
-    fontSize: "clamp(3.25rem, 10.5vw, 10.5rem)"
-    fontWeight: 900
-    lineHeight: 0.88
-    letterSpacing: "-0.015em"
+    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 6.4vw, 5.5rem)"
+    fontWeight: 800
+    lineHeight: 1.04
+    letterSpacing: "-0.025em"
   headline:
-    fontFamily: "BBH Bogle, Nunito Sans, ui-sans-serif, sans-serif"
-    fontSize: "clamp(2.25rem, 5.6vw, 5.25rem)"
-    fontWeight: 900
-    lineHeight: 0.92
+    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.75rem, 3.6vw, 3rem)"
+    fontWeight: 800
+    lineHeight: 1.08
+    letterSpacing: "-0.02em"
+  lead:
+    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.125rem, 1.9vw, 1.5rem)"
+    fontWeight: 400
+    lineHeight: 1.35
     letterSpacing: "-0.01em"
-  title:
-    fontFamily: "BBH Bogle, Nunito Sans, ui-sans-serif, sans-serif"
-    fontSize: "clamp(1.375rem, 2.2vw, 2.25rem)"
-    fontWeight: 900
-    lineHeight: 1
   body:
     fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 300
-    lineHeight: 1.65
-  quote:
-    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.0625rem"
+    fontWeight: 400
+    lineHeight: 1.47
+    letterSpacing: "-0.005em"
+  note:
+    fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 300
-    lineHeight: 1.625
+    lineHeight: 1.6
   label:
     fontFamily: "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.75rem"
-    fontWeight: 400
+    fontWeight: 600
     lineHeight: 1.3
-    letterSpacing: "0.14em"
-  script:
+    letterSpacing: "0.02em"
+  signature:
     fontFamily: "Pacifico, cursive"
-    fontSize: "clamp(1.375rem, 2.4vw, 2.25rem)"
+    fontSize: "2rem"
     fontWeight: 400
     lineHeight: 1
-    letterSpacing: "0"
 rounded:
-  focus: "2px"
-  field: "1rem"
+  focus: "6px"
+  screenshot: "18px"
+  tile: "28px"
+  portrait-top: "32px"
   pill: "9999px"
 spacing:
-  hall-gutter-sm: "1.25rem"
-  hall-gutter-md: "2.5rem"
-  hall-gutter-lg: "4.5rem"
-  hall-max: "1680px"
-  room-y: "7rem"
-  room-y-md: "10rem"
-  inner-y: "6rem"
-  inner-y-md: "9rem"
+  gutter: "1.25rem"
+  gutter-md: "2rem"
+  tile-gap: "0.75rem"
+  screen: "6rem"
+  screen-md: "9rem"
 components:
-  button-bone:
-    backgroundColor: "{colors.bone}"
-    textColor: "{colors.wall}"
-    rounded: "{rounded.pill}"
-    padding: "0 1.875rem"
-    height: "3.5rem"
-  button-bone-hover:
-    backgroundColor: "#ffffff"
-    textColor: "{colors.wall}"
-  button-line:
-    backgroundColor: "transparent"
-    textColor: "{colors.bone}"
-    rounded: "{rounded.pill}"
-    padding: "0 1.875rem"
-    height: "3.5rem"
-  door-round:
-    backgroundColor: "transparent"
-    textColor: "{colors.bone}"
-    rounded: "{rounded.pill}"
-    size: "3rem"
-  door-round-hover:
+  button-primary:
     backgroundColor: "{colors.brass}"
-    textColor: "{colors.wall}"
-  screen:
-    backgroundColor: "{colors.wall-2}"
-    rounded: "0"
-  led-strip:
-    backgroundColor: "{colors.led}"
+    textColor: "#ffffff"
+    typography: "{typography.body}"
     rounded: "{rounded.pill}"
-    height: "2px"
-  link-quiet:
-    textColor: "{colors.bone-2}"
-  link-quiet-hover:
-    textColor: "{colors.bone}"
-  field:
+    padding: "0 1.375rem"
+    height: "2.75rem"
+  button-outline:
+    backgroundColor: "transparent"
+    textColor: "{colors.brass}"
+    typography: "{typography.body}"
+    rounded: "{rounded.pill}"
+    padding: "0 1.375rem"
+    height: "2.75rem"
+  button-outline-hover:
+    backgroundColor: "{colors.brass}"
+    textColor: "#ffffff"
+  link-more:
+    textColor: "{colors.brass}"
+    typography: "{typography.body}"
+  tile:
     backgroundColor: "{colors.wall-2}"
     textColor: "{colors.bone}"
-    rounded: "{rounded.field}"
-    padding: "1rem 1.25rem"
+    rounded: "{rounded.tile}"
+    padding: "3rem 1.5rem 0"
+  screenshot:
+    backgroundColor: "{colors.wall-3}"
+    rounded: "{rounded.screenshot}"
+  header-bar:
+    backgroundColor: "{colors.wall}"
+    textColor: "{colors.bone}"
+    height: "3.5rem"
+  header-request:
+    backgroundColor: "{colors.brass}"
+    textColor: "#ffffff"
+    rounded: "{rounded.pill}"
+    padding: "0 0.875rem"
+    height: "2rem"
 ---
 
 # Design System: aly.lat
 
-Scope: this file describes the public site under `app/(site)/[lang]` only, everything that renders under `body.museum`. The admin (`/admin`) and the Telegram Mini App (`app/(mini)`) keep the older light studio tokens at the top of `app/globals.css` (paper, ground, ink, Onest) and are out of scope. Don't apply house rules there, and don't pull studio tokens into the public site. The one sanctioned bridge is the form room remap (see Components).
-
-A note on names. The class and token names `wall`, `bone`, `brass`, `exhibit`, `hall`, `museum` and `ease-gallery` survive from the previous build, but their values have changed. `wall` is now matte black, `bone` is off-white, `brass` is warm 2700K line light, an `exhibit` is a screen set flush into a wall, and a `hall` is just the page container. Read the names as legacy handles. The museum metaphor itself was rejected by the owner and is no longer part of the system.
+Scope: the public site only (`app/(site)/[lang]/**`, `body.museum`). The admin and the Telegram Mini App keep the older studio tokens at the top of `app/globals.css` and are not described here. The site's class names come from an earlier look (wall, bone, brass, hall, exhibit). They now mean background, text, accent, page column and screenshot.
 
 ## Overview
 
-**Creative North Star: "The Dark House at Night"**
+**Creative North Star: "The Product Page"**
 
-The site is a dark modern home at night, and he lives in it. Every section is a different room. The room is built from matte black surfaces and lit only by architectural light: LED line strips, a cove glowing behind battens, a picture light over a portrait, a lit island, and once in a while a cold cobalt doorway. The owner appears in the rooms himself. Cut-out photographs of him stand at the island, under the picture light and in the doorway, because visitors have to recognise him straight away. There are no cards, no panels and no UI chrome standing in for depth. Light defines every edge.
+Each screen of the site works like a screen on apple.com. It has one big heavy headline in mixed case, one quiet line under it, at most two pill buttons or a chevron link, and then the picture: his photograph or a screenshot of the work. Everything else is air. The page gets its rhythm from alternating bands: white and #f5f5f7 in the light theme, black and #161617 in the dark one, with some bands that are dark in either theme. The owner chose this world. It replaced the earlier "dark house" world, and nothing from that world (room lighting, lamps, BBH Bogle) carries over.
 
-The owner fixed the character himself. Every section gets one huge headline and one small thin note in a corner. There are no enumerated lists. Headings are BBH Bogle only, small text is thin Nunito Sans, and Pacifico appears as warm-light handwriting. The pages are clean, with lots of air. Content is fully visible at first paint. The lights switching on (a ceiling line drawing itself, the under-light fading up) are decoration over a page that is already complete.
+The site has two equal themes. The light theme uses Apple's white and very light grey with a near-black text and the #0071e3 blue. The dark theme uses Apple's Pro-page black with an off-white text and the #2997ff blue. Both themes share every class and only the variables change. Where a theme needs a different picture, the picture is swapped rather than tinted.
 
-Density is low. Each room holds one statement, one lit thing and one quiet note. The black does the rest.
+Density is low on purpose. The owner's rules are: one big headline and one small line per screen, a lot of air, no enumerated text lists, and a clean page.
 
 **Key Characteristics:**
-- Matte black in three close steps, off-white ink, and warm line light used as light, never as paint.
-- One huge Bogle headline per room, plus one thin Nunito note away from it.
-- Light lines with real glow (stacked box-shadows) instead of borders. Glowing hairlines replace dividers.
-- The owner cut out of his own photographs, standing inside the room's light.
-- Cobalt is rare. A cool doorway or cove appears at most once per room, and in most rooms not at all.
-- Two doors everywhere: the request and WhatsApp.
+- Two full themes on `<html data-theme>`, plus fixed-tone sections (`data-tone="dark"` / `"light"`).
+- One type family, Nunito Sans: 800 for headlines, 400 for the lead line, 300 for small print.
+- Centered composition: headline, line, actions, picture.
+- Pill buttons, chevron text links, 28px tiles and 18px screenshots.
+- Flat surfaces. Depth comes from tone changes and a hairline, not from shadows.
 
 ## Colors
 
-The palette is a house at night: near-neutral matte blacks, warm off-white ink, one warm line light and a rare cold one.
+The palette is neutral with one accent. Greys sit close to Apple's own values, and a single blue (a different blue in each theme) carries every action.
 
 ### Primary
-- **Line Light Brass** (`brass`): the warm 2700K light as a colour. Used for Pacifico script (with its own glow), the 1px active-nav underline, hover ink and fill on round doors, the hover underline on quiet links, text selection, the focus outline and the input caret. It never fills an area larger than a round door, and it is never used for body text or headlines.
-- **LED Core** (`led`): the hot core of a strip light. It is used only as the fill of a glowing line (`.led`: floor strips, the island under-light, the picture light, room cove edges) and as the stroke of drawn SVG light (the ceiling rectangle, the corridor lines, the draft line). It is always paired with its glow and is never used as text.
-
-### Secondary
-- **Cobalt Cove** (`cobalt`): the house's cold light. It appears as low-alpha gradients in doorways and coves (the hero doorway, the glass wall, the closing doorway, the bots direction room) and as the cool rim on the doorway cut-out.
-- **Cobalt Line** (`cobalt-led`): the core of a cold light line (`.led-cobalt`), the doorway's jambs and the glass wall's floor line.
+- **Action Blue** (`brass` light / `dark-brass` dark): filled pill buttons, outlined pill borders, chevron text links, the header's request pill, the selection highlight, the focus ring and the form caret. Nothing decorative is blue.
 
 ### Neutral
-- **Floor Black** (`wall`): the page itself, the default room and the scrollbar track.
-- **Wall Black** (`wall-2`): alternate rooms (the portrait room, the "what you get" rooms on inner pages), screen backgrounds and form fields.
-- **Lit Edge** (`wall-3`): the deepest raised surface. Used for the floating WhatsApp door and the scrollbar thumb.
-- **Off-White** (`bone`): headlines, primary ink and the filled door. The hero name sits at 90% of it.
-- **Thin Text** (`bone-2`): wall notes, quiet links, nav at rest, and the island role line (9.6:1 on Floor Black).
-- **Quiet Text** (`bone-3`): labels, captions and footer small print (5.6:1 on Floor Black). This is the floor for text.
-- **Seam** (`seam`) / **Seam Strong** (`seam-2`): the few real hairlines that remain: the scrolled header's bottom edge and the footer top rule (Seam), and outlined button and round door borders (Seam Strong). Island tops and the closing room's base use a white 10% hairline.
+- **Paper White / Pro Black** (`wall` / `dark-wall`): the default page band, and the inside of Choices tiles.
+- **Apple Mist / Graphite** (`wall-2` / `dark-wall-2`): alternate bands (Hero, Choices, Draft, inner page openings, footer) and the default tile fill.
+- **Silver Well / Deep Graphite** (`wall-3` / `dark-wall-3`): the background behind a screenshot while it loads, and the carousel's dot pill and play button.
+- **Ink / Frost** (`bone` / `dark-bone`): headlines, lead lines and primary text.
+- **Slate / Ash** (`bone-2` / `dark-bone-2`): secondary lines under headlines, small print and quiet links.
+- **Pewter** (`bone-3`, the same in both themes): small labels and carousel dots at rest. See the contrast rule below.
+- **Hairline** (`seam` / `dark-seam`, `seam-2` / `dark-seam-2`): the 1px ring around screenshots, the header's bottom edge, price-list dividers and input borders.
 
 ### Named Rules
-**The Light Is Not Paint Rule.** Warm and cold colour enter the page as light: a glowing line, a radial or linear falloff to transparent, or a text glow. Brass and cobalt never fill a surface, a card or a block of type. The only solid accent areas allowed are a 2-3px LED line and a round door on hover.
+**The Variable Swap Rule.** A theme only redefines the `--color-*` variables, on `html[data-theme='dark']` and on `[data-tone]` sections. Components never hard-code a theme's hex. The one exception is white text on a filled blue pill. Tailwind's `dark:` variant matches both the dark theme and any `data-tone="dark"` section.
 
-**The Rare Cobalt Rule.** Warm is the house. Cobalt is the cold doorway you glimpse. Use it once in a room at most, keep it as a cove, doorway or single line, and keep most rooms entirely warm.
+**The Fixed Tone Rule.** `data-tone="dark"` makes a section dark in both themes (the Feature, the Closing, and tiles 2 and 3 of every four in the Tiles grid). `data-tone="light"` keeps a section light in both. Use fixed tones to create the black-and-white rhythm, not to style a single element.
 
-**The Falloff Rule.** Every gradient is light falling off into black: warm `rgb(255 190 120)` to `rgb(255 236 204)` family, or cobalt, at low alpha, fading to transparent by about 70%. There are no colour-to-colour gradients and no gradient text.
+**The Small Text Contrast Rule.** Text under 18px must reach 4.5:1 against the surface it sits on. In the light theme, Pewter `#86868b` measures 3.6:1 on white and 3.3:1 on Mist, so small labels in that theme belong in Slate. Pewter is safe for small text only on dark surfaces.
 
 ## Typography
 
-**Display Font:** BBH Bogle (fallback Nunito Sans, ui-sans-serif)
-**Body Font:** Nunito Sans with the `wdth` axis loaded (fallback ui-sans-serif, system-ui)
-**Accent Font:** Pacifico (cursive)
+**Display Font:** Nunito Sans, loaded with `next/font` and the `wdth` axis (falls back to ui-sans-serif, system-ui)
+**Body Font:** Nunito Sans
+**Signature:** Pacifico, used only for his signature in the Closing
 
-**Character:** A heavy caps grotesk names the room. A thin humanist sans speaks quietly in the corner. A warm brush script glows like a neon sign written by hand.
+**Character:** The headlines are heavy and tight, and Nunito Sans's rounded terminals give them some warmth. The rest of the text is light and plain. The site uses one family, the way Apple does.
 
 ### Hierarchy
-- **Display Name** (900, `clamp(4.25rem, 19.5vw, 22rem)`, 0.82, centred): the owner's name across the living room's back wall, behind him. One use, the first room only.
-- **Display** (900, `clamp(3.25rem, 10.5vw, 10.5rem)`, 0.88): the room title, one per section. Rooms tune it between about `clamp(3rem, 8vw, 8.5rem)` and `clamp(3rem, 10vw, 11rem)`. It is set in line masks with balanced wrap.
-- **Headline** (900, `clamp(2.25rem, 5.6vw, 5.25rem)`, 0.92): sub-room titles on inner pages.
-- **Title** (900, `clamp(1.375rem, 2.2vw, 2.25rem)`, 1): work names under screens and the island offer line. Large Bogle words also serve as navigation: direction words (up to 5.5rem lit, set vertically like a door sign when the room is dark) and the mobile menu (up to 4.5rem).
-- **Body / Wall Note** (300, 0.875rem, 1.65, max 34ch, Thin Text): the only reading text. It sits in a corner, right-aligned on desktop.
-- **Quote** (300, 1.0625rem to 1.125rem, relaxed, Off-White): review text written on the glass.
-- **Label** (400, 0.75rem, 0.14em, uppercase, Quiet Text): captions beside work names, client roles, the corridor's walk hint and field labels.
-- **Script** (Pacifico 400, about `clamp(1.375rem, 2.4vw, 2.25rem)`, up to 4rem in the portrait room, Line Light Brass with a 22px warm glow): one handwritten line near a headline, rotated -2 to -5deg.
-
-Buttons and nav use Nunito Sans 500 at 0.875 to 0.9375rem. Sizes are set by role. There is no ratio scale.
+- **Display** (800, `clamp(2.5rem, 6.4vw, 5.5rem)`, 1.04): the one headline of each screen and of each inner page opening. It is always mixed case. Single statement screens (Draft, the service price figure) push it larger, up to `clamp(3rem, 9vw, 9rem)`.
+- **Headline** (800, `clamp(1.75rem, 3.6vw, 3rem)`, 1.08): tile and choice titles, and section titles on inner pages.
+- **Lead** (400, `clamp(1.125rem, 1.9vw, 1.5rem)`, 1.35): the one quiet line under a headline. It is balanced, centered and limited to about `max-w-2xl`.
+- **Body** (400, 17px): button and link text, tile captions (16px) and review quotes (600, `clamp(1.25rem, 2.2vw, 1.875rem)`).
+- **Note** (300, 15px, 1.6, max 38ch): small print for readers who want it, in Slate.
+- **Label** (600, 12px, +0.02em, mixed case): field names in definition lists (contacts, thanks page, a service's "for whom") and work meta (client, year). It is never uppercase and never placed above a headline.
+- **Signature** (Pacifico 400, 2rem): his name at the end of the Closing, and nowhere else.
 
 ### Named Rules
-**The One Voice Per Role Rule.** Bogle is used only for headings and heading-scale words. Nunito is used only for small text. Pacifico is used only as the warm-light accent. Bogle never sets body text, Nunito never sets an English headline, and Pacifico never carries content someone must read to act.
+**The One Headline Rule.** Each screen has one Display headline and one Lead line. A second headline-sized element on the same screen starts a new screen.
 
-**The Russian Headline Rule.** Bogle draws only Latin capitals, so Cyrillic falls through to Nunito Sans Black. Under `:lang(ru)`, every room title, `.font-display` word and form-room heading is set at `font-stretch: 75%`, `text-transform: uppercase` and letter-spacing -0.005em, so the Russian site keeps the same condensed-caps mass. Every Bogle stack asks for weight 900 with `font-synthesis: none`.
-
-**The Corner Note Rule.** Each room has one huge headline and one small thin note, and the note sits away from the headline, in the opposite corner or at the end of the row. A room never gets a paragraph block under its headline.
+**The One Family Rule.** All text is Nunito Sans. Pacifico appears only in the signature.
 
 ## Layout
 
-The container is the hall: full width up to 1680px, centred, with gutters of 1.25rem, 2.5rem from 768px and 4.5rem from 1280px. Large-screen compositions use a 12-column grid. Text takes columns 1 to 7, and the owner's figure takes 8 to 12.
+Two columns frame everything. The **hall** column is 1100px wide, with 1.25rem gutters that grow to 2rem from 768px. It holds headlines and text. The **hall-wide** column is 1440px wide, with 0.75rem gutters that grow to 1.25rem. It holds the header bar and the tile grid. Screens are centered stacks: the headline, the Lead line 12px below it, the actions 24–32px below that, and the picture 56–80px further down.
 
-Home rooms breathe at 7rem top and bottom on phones and 10rem from 768px (`py-28 md:py-40`). The draft room goes to 8rem/12rem. Inner-page rooms use 6rem/9rem. Rooms with the owner in them (living room, portrait, doorway) fill 100svh, and the figure stands on the room's floor line. Inner-page openings (Hall Head) fill 62svh on phones and 70svh on desktop, with the headline at the bottom and an LED floor strip at the foot.
+Section padding sets the air: 5–6rem of vertical space on phones and 7–9rem from `md` upward. Tiles sit two to a row from `md` with a 12px gap (the Tiles grid), or one to four per row (Choices: 1 / 2 at `sm` / 4 at `lg`). Inner pages open with a Mist band (7rem top on phones, 9rem from `md`) that holds the page title, its line and its actions. The fixed header is 48px tall on phones and 56px from `md`, and its links fold into a full-screen menu below 1024px. On phones a sticky request pill sits at the bottom of the screen.
 
-On phones everything stacks in a single column. Direction rooms become 42svh slatted panels, and the one crossing the middle of the screen is lit. The glass partition becomes a horizontal drag of 82vw panes. The corridor is a plain column until its script can run.
-
-**The Different Room Rule.** No two consecutive sections share a lighting setup. Each room picks its own light source (ceiling line, cove behind slats, picture light, floor strip, cold doorway, single drawn line) and its own surface step. A new section that reuses the previous room's light is a repeated room.
-
-**The Look Don't Read Rule.** Each room holds one statement. A choice between options is a set of large words or lit panels, never a numbered sequence of steps.
+**The Air Rule.** When in doubt, add vertical space. Never add a second idea to a screen.
 
 ## Elevation & Depth
 
-Depth comes from light falling into black and from real perspective, never from UI layering. Surfaces are flat and matte. Three things carry shadow. Light lines glow, with three stacked box-shadows from a tight core to a wide halo. Screens (pictures of work) sit deep in the wall with a long dark cast. Floating doors carry one soft drop so they read above content on scroll. The owner's cut-outs take a faint warm rim (`drop-shadow` 40px) and, near a doorway, a cobalt rim, so he is lit by the room he stands in. The corridor adds true 3D: works hang along a 900px perspective and come out of the dark as the scroll walks forward. A fine grain over the whole page (6% opacity, screen blend) keeps the black matte rather than glossy. Once the page scrolls, the header becomes a 95% Floor Black bar with a light blur and a seam bottom edge.
+The page is flat. Depth comes from changes in tone between bands and tiles, and from a 1px Hairline ring (`box-shadow: 0 0 0 1px seam`) around every screenshot. The only translucent layer is the header: a 75% background over `backdrop-blur-xl` and `saturate(150%)`. The sticky phone controls carry the site's only real shadow.
 
 ### Shadow Vocabulary
-- **LED Glow** (`box-shadow: 0 0 6px 1px rgb(255 214 160 / 0.9), 0 0 22px 4px rgb(255 180 110 / 0.45), 0 0 70px 14px rgb(255 160 90 / 0.18)`): every warm line light.
-- **Cobalt Glow** (`box-shadow: 0 0 8px 1px rgb(120 140 255 / 0.9), 0 0 30px 6px rgb(45 77 255 / 0.5), 0 0 90px 22px rgb(45 77 255 / 0.22)`): every cold line light.
-- **SVG Light** (`filter: drop-shadow(0 0 6px rgb(255 214 160 / 0.9)) drop-shadow(0 0 24px rgb(255 170 100 / 0.45))`): drawn light strokes (ceiling, corridor, draft line).
-- **Screen Cast** (`box-shadow: 0 60px 120px -50px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(0 0 0 / 0.6)`, with a `rgb(255 255 255 / 0.06)` 1px edge): every screen.
-- **Floating Door** (`box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.8)`): the sticky doors only.
-- **Script Glow** (`text-shadow: 0 0 22px rgb(255 190 120 / 0.35)`): Pacifico only.
+- **Floating control** (`box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45)`): only on the sticky request pill and the WhatsApp button fixed to the bottom of a phone screen.
+- **Screenshot hairline** (`box-shadow: 0 0 0 1px var(--color-seam)`): the edge of every screenshot.
 
 ### Named Rules
-**The Light Defines The Edge Rule.** If something needs an edge, give it a light line, a light falloff or a 1px hairline. Never use a card, a filled panel or a border box.
-
-**The Lit Figure Rule.** The owner's cut-outs always stand inside a light source in their room and take that light's rim colour. A cut-out never floats on bare black.
+**The Flat Surface Rule.** Tiles, bands and screenshots have no drop shadows. Only something that floats above the page while it scrolls gets a shadow.
 
 ## Shapes
 
-The geometry is architectural: hard rectangles and lines, with pills only for what you press. Screens, slatted panels, glass panes, islands and doorways are hard-cornered. Light lines are 1 to 3px with fully rounded ends. The slatted wall is a repeating vertical batten (14px batten, 8px gap) in two near-blacks. Glass panes have a 6px black frame, an inset 1px white 8% edge, a faint diagonal sheen and a 3px backdrop blur. Everything you press is a full pill or a circle (9999px): filled and outlined doors, round arrow doors (48 to 80px), the language switch and the menu button. Form fields are softly rounded (1rem), inherited from the form markup. Focus rings have a 2px radius.
+Corners follow a small fixed scale: 9999px pills for every button, the header request and the carousel controls; 28px tiles; 18px screenshots; and a 32px top-only rounding on the light-theme photographs, which sit on the band below them like a framed print. A screenshot inside a tile drops its bottom corners so it runs off the tile's lower edge. The Feature screenshot starts at a 36px radius and 84% scale, then grows to full width with square corners as it scrolls in. Cut-out photographs in the dark theme have no frame or radius: the figure stands directly on black.
 
 ## Components
 
 ### Buttons
-Two doors, quietly confident.
-- **Shape:** full pill, at least 3.5rem tall (4rem in the closing doorway), 1.875rem horizontal padding, 0.75rem gap to the icon.
-- **Bone:** filled Off-White with Floor Black ink, Nunito 500 at 0.9375rem. It goes to white on hover, and the arrow nudges right.
-- **Line:** transparent with a Seam Strong border and Off-White ink. On hover the border turns Off-White and a faint 6% wash appears.
-- **Order:** in the living room and inner pages the request is filled and WhatsApp is outlined. In the closing doorway WhatsApp is filled, since that is the room you leave by.
-- **Motion:** 300ms colour transitions. On fine pointers the doors are magnetic.
-- **Focus:** 2px Line Light Brass outline, offset 4px.
+Light and confident, like Apple's own buttons.
+- **Shape:** full pill (9999px), at least 44px tall, 22px side padding, 17px weight 500.
+- **Primary (filled):** Action Blue background with white text. On hover it darkens to 86% blue mixed with black.
+- **Outline:** a 1px Action Blue border with blue text. On hover it fills blue with white text.
+- **Pairing:** a primary action and a WhatsApp outline (with its icon) appear together as one unit, called "the two doors". They are centered, 12px apart, and appear in the Hero, the Closing and the menu.
+- **Focus:** a 2px Action Blue outline, offset 3px, with a 6px radius.
 
-### Round Doors
-A circle with a Seam Strong border and a single arrow, 48 to 80px. On hover it fills Line Light Brass with Floor Black ink. Round doors end direction rooms, work rows, contacts and next-case links.
+### Text Links
+- **More link:** Action Blue, 17px, followed by a 12px stroked chevron with a 4px gap. It is underlined on hover. It is the default secondary action: open a work, see all works, read more. The Back link uses the same style with the chevron turned 180 degrees.
+- **Quiet link:** Slate text that turns to Ink and gains an underline on hover. It is used for contact lines and footer links.
 
-### LED Strip (signature)
-A 1 to 3px line of LED Core with LED Glow, or of Cobalt Line with Cobalt Glow. It runs along floors (the island, the portrait room, every Hall Head), above a portrait as a picture light, and along the base of a lit direction room. Every strip has a soft radial falloff spilling onto the surface next to it.
+### Cards / Containers
+- **Tile:** 28px corners with a Mist fill (Paper White in Choices), a centered headline, a caption and a More link, with no border and no shadow. In the Tiles grid, tiles 2 and 3 of every four are fixed dark, which makes a checkerboard of two light and two dark tiles. Hovering a tile raises its screenshot by 6px over 700ms.
+- **Screenshot (exhibit):** 18px corners, a Silver Well fill and a Hairline ring. The image is set to `object-cover object-top`.
 
-### The Living Room (signature)
-The first room. A ceiling light rectangle seen from below draws itself on (1.8s). The owner's name is set huge across the back wall. He stands in front of it (the `hero.png` cut-out), and a black island sits in front of him with an under-light that fades up (1.4s, 0.8s delay). A slatted wall on the left is grazed from the floor, and a cold doorway glows at the right. The pointer separates name and figure slightly for parallax. The island's face carries the role line, the Bogle offer with its script, both doors and the corner note. Every element is present at first paint.
-
-### Corridor (signature)
-The work room. A long hall drawn only by light lines (floor strips, faint ceiling edges, a warm door at the vanishing point). Works hang one behind another, alternating left and right on wide screens. They are pinned and scrubbed through a 900px perspective, light up as you approach (`is-lit`), and pass beside you. Without the script or under reduced motion they form a plain two-column grid.
-
-### Direction Rooms
-Four slatted panels side by side. The one you point at (or the one at mid-screen on a phone) widens to 2.4x over 700ms, and its cove light comes up behind the battens with an LED edge at the base. It then shows its Bogle word, script line, "from" price and round door. Dark panels show the word vertically at 40% Off-White, like a sign on a door. The bots room is lit cobalt, and the rest are warm.
-
-### Screen
-A picture of work set into the wall: a Wall Black rectangle with Screen Cast and a 6% white hairline edge, cropped to the top of the page. Where a lamp is present (`data-lamp`), a warm elliptical falloff sits above it. With the script running the screen waits dim and clears as it reaches the light. Without the script it is simply lit.
-
-### Glass Partition
-Reviews written on black-framed glass panes standing in front of a cobalt-lit wall with a single cold floor line. The quote is set in thin Nunito on the glass, and the name in Pacifico underneath. Drag or swipe sideways to read on.
-
-### Hall Head
-The opening of an inner page. A bottom-aligned display headline in line masks, an optional script line, the doors at the bottom left, the wall note and a quiet back link at the bottom right, a warm pool that follows the pointer, and an LED floor strip at the foot.
-
-### Inputs / Fields (form room)
-The request and review forms keep their studio markup. Inside `.form-room`, the studio tokens are re-pointed at the house's: paper becomes Wall Black, ink becomes Off-White, and line becomes Seam. Fields are softly rounded (1rem) with Nunito 300 text and a Line Light Brass caret. On focus the border turns brass and a 4px halo appears. Headings and field labels switch to Bogle 900, with the condensed caps treatment on the Russian site.
+### Inputs / Fields
+The request and review forms keep their own markup. Inside `.form-room` the older studio tokens are mapped to the site's variables, so the forms follow the theme. Labels and form headings use Nunito Sans 800. On focus a field's border turns Action Blue and gains a `0 0 0 4px` ring of 22% blue.
 
 ### Navigation
-- **Header:** fixed, 80/96px tall, with no bar until the page scrolls. The wordmark is inverted to Off-White. Nav items are Nunito 0.875rem in Thin Text, turning Off-White on hover and on the current page, and the current page gets a 1px brass underline. A small filled request pill shows from 768px up.
-- **Mobile menu:** a full Floor Black sheet that wipes down (clip-path, 700ms). Pages are listed as large Bogle words, which turn brass on hover. The current page drops to 40%. Both doors and a wall note sit at the foot.
-- **Sticky doors:** these appear after 60% of a viewport has scrolled past. On phones they are a pair (filled request pill and round WhatsApp). On desktop only the WhatsApp circle on Lit Edge shows. They hide on form pages, while the menu is open, and whenever a room marked `data-doors` is in view. They rise in over 680ms.
+- **Header bar:** fixed, with a translucent background, a Hairline bottom edge and background blur. It holds the wordmark on the left (inverted in dark), 13px links in the center (Ink at 80%, full Ink on hover or on the current page), and on the right the theme switch, the language switch and a small 32px blue request pill (`md` and up).
+- **Theme switch:** a 36px round icon button: a moon in the light theme and a sun in the dark. Clicking it writes `aly-theme` to localStorage. Before the first paint, an inline script in the site layout sets `data-theme` from `aly-theme`, or from `prefers-color-scheme` if nothing is stored.
+- **Mobile menu:** a full-screen panel with links in 28px weight 700, the two doors and a small note. It fades in with a 12px drop.
 
-### Owner Cut-outs (imagery)
-`public/photo/cut/hero.png` (1025x851, at the island), `stand.png` (403x1060, under the picture light) and `doorway.png` (399x1197, in profile at the cold doorway). They were lifted from his own photographs with macOS Vision subject lifting, then edge-eroded to remove halo fringe and graded to sit in the room's light. New figures follow the same path. Use his real photographs only, lift them, erode the edge, grade them to the room's light, and add the matching rim drop-shadow.
+### Highlights Carousel (signature)
+Reviews are shown the way Apple's "Get the highlights" carousel works. One tile sits in the center (52–84vw wide, at least 22–26rem tall) and its neighbors show at the edges. It snaps on a native horizontal scroll and advances every 6s. Under it sit a pill of dots (Silver Well background; the active dot is a 32px Ink bar, the others are 8px Pewter dots) and a round 48px play/pause button. Swiping, tapping a dot or reduced motion pauses it.
+
+### Themed Pictures
+`.only-light` and `.only-dark` swap images by theme, and a fixed-dark section shows the dark version.
+- **Light theme:** his photographs as taken: `public/photo/about.webp` (Hero) and `public/gallery/work-phone.webp` (Person). Both have rounded tops.
+- **Dark theme:** cut-outs of the same moments, `public/photo/cut/hero.png` and `public/photo/cut/stand.png`. They are transparent PNGs set directly on black. **Provenance:** both were made from his own photographs with macOS Vision subject lifting (foreground subject extraction). They are not generated or illustrated. A new cut-out must be made the same way, from a real photograph of him.
+
+### Motion
+One script (`GalleryMotion`) reads attributes from the markup. `data-rise` lifts headline lines into their masks (1.25s expo-out, 90ms stagger). `data-fade` settles a tile up 48px out of a 6px blur. `data-zoom` scrubs the Feature screenshot from 0.84 scale and a 36px radius to full width. Wheels get smooth scrolling through Lenis, while touch scrolling stays native. Nothing above the fold is ever hidden before the script runs, and reduced motion turns every reveal off. Theme changes fade the background and text over 400ms (`cubic-bezier(0.25, 0.1, 0.25, 1)`).
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** give every section one display headline and one thin corner note, and nothing else competing.
-- **Do** make every section a different room, with its own light source and no repeat of the previous room's setup.
-- **Do** light edges with LED strips (with LED Glow) or falloffs to black rather than borders or cards.
-- **Do** put the owner in rooms as a Vision-lifted, edge-eroded, graded cut-out from his own photographs, standing in that room's light.
-- **Do** set every heading in Bogle 900 with `font-synthesis: none`, and let `:lang(ru)` carry it into Nunito Sans Black at 75% width in uppercase.
-- **Do** keep content visible at first paint. Lights may switch on and reveals may run only on elements below the fold, and only once the script is running.
-- **Do** switch every motion (corridor walk, parallax, magnetic doors, glass drag, Lenis smooth scroll, light-on animations) off under `prefers-reduced-motion`, leaving a complete static room.
-- **Do** keep text at Quiet Text or brighter. Quiet Text is the contrast floor.
-- **Do** put the two doors, request and WhatsApp, in every room that asks for action, and mark it `data-doors`.
+- **Do** give each screen one Display headline (800, mixed case), one Lead line and at most one set of actions: the two doors or one or two More links.
+- **Do** build every new surface from the `--color-*` variables so it works in both themes, and check it in both themes before shipping.
+- **Do** use `data-tone="dark"` on whole sections or whole tiles to create the black-and-white rhythm.
+- **Do** keep small text at 4.5:1 or better. In the light theme, use Slate (`#6e6e73`) rather than Pewter for any text under 18px.
+- **Do** frame every screenshot in an 18px radius with a Hairline ring, and every tile in a 28px radius.
+- **Do** swap pictures with `.only-light` / `.only-dark` when a theme needs a different image. Dark-theme cut-outs must come from his real photographs, made with subject lifting.
+- **Do** leave a lot of air: 6–9rem between screens and centered stacks.
 
 ### Don't:
-- **Don't** build numbered or enumerated step lists ("01 Request / 02 Consultation / ..."), or bullet-heavy feature lists.
-- **Don't** use Nunito for an English headline, Bogle for body text, or Pacifico for anything a visitor must read to act.
-- **Don't** fill surfaces with brass or cobalt, or use either for body text.
-- **Don't** use cobalt in more than one place per room, or in most rooms.
-- **Don't** return to the museum metaphor (halls, frames, curator's labels, gallery lamps as the organising idea). The owner rejected it.
-- **Don't** put light or white cards on the black. Raised surfaces are Wall Black or Lit Edge.
-- **Don't** hide content with initial opacity 0 in CSS or in server markup.
-- **Don't** use stock or generated people. The figure in the house is always the owner, from his own photographs.
-- **Don't** add small uppercase labels above headlines. The room's name stands alone, with the script line near it.
-- **Don't** add a third door or a competing call to action.
+- **Don't** list things as enumerated text (numbered steps, bullet lists of features). Say it once in a headline and a line, or give each item its own tile.
+- **Don't** put a small uppercase label or kicker above a headline. Labels are mixed-case field names, not section announcers.
+- **Don't** set headlines in uppercase, and don't use a second display family. BBH Bogle and the old studio fonts are retired from the public site.
+- **Don't** use Pacifico anywhere except his signature.
+- **Don't** add drop shadows to tiles, bands or screenshots. Only floating phone controls get a shadow.
+- **Don't** color anything Action Blue that is not an action or a focus state.
+- **Don't** bring the dark-house devices back (room lighting, lamps, pointer-following light). The `data-lit`, `data-magnetic`, `data-draw` and `data-parallax` hooks still exist in the motion script, but they are not part of this world.
+- **Don't** use the admin or Mini App tokens (`paper`, `ground`, `ink`, Onest) on the public site, except through the `.form-room` mapping.

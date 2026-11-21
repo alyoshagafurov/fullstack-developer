@@ -15,7 +15,7 @@ export default async function NotFound() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_70%_30%,rgb(255_236_204/0.1),transparent_50%)]"
       />
       <div className="hall flex min-h-[100svh] flex-col justify-end pt-32 pb-16 md:pb-24">
-        <p className="script text-[clamp(2rem,4vw,3.5rem)]">404</p>
+        <p className="lead-line text-bone-2">404</p>
         <h1 className="hall-title mt-4 text-[clamp(3rem,9vw,9rem)]">
           <Lines lines={[t.notFound.title]} />
         </h1>

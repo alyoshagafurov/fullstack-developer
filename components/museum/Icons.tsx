@@ -18,3 +18,12 @@ export function WhatsAppIcon({ className = '' }: { className?: string }) {
     </svg>
   );
 }
+
+/* Apple's text-link chevron. */
+export function ChevronIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 10 16" className={sized(className, 'size-3')} fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <path d="M2.5 2.5 8 8l-5.5 5.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

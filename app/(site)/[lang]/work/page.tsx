@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { startHref } from '@/components/museum/links';
 import { getPublishedCases, localizeCases } from '@/lib/cases';
@@ -54,20 +54,16 @@ export default async function WorkPage() {
         <section className="hall pb-32 md:pb-48" aria-label={t.work.metaTitle}>
           <ul className="grid gap-x-10 gap-y-24 md:gap-y-32 lg:grid-cols-12">
             {cases.map((row, index) => (
-              <li key={row.id} data-fade data-lamp className={HANG[index % HANG.length]}>
+              <li key={row.id} data-fade className={HANG[index % HANG.length]}>
                 <Link href={localePath(lang, `/work/${row.slug}`)} className="group block">
                   <div className="relative pt-10">
-                    <div
-                      aria-hidden
-                      className="lamp pointer-events-none absolute -inset-x-[4%] top-0 bottom-[30%] bg-[radial-gradient(ellipse_34%_75%_at_50%_0%,rgb(255_236_204/0.22),transparent_72%)]"
-                    />
                     <div className="exhibit aspect-[16/10] overflow-hidden">
                       <Image
                         src={row.screenshots[0] || row.objectImage}
                         alt={row.title}
                         fill
                         sizes="(min-width: 1024px) 58vw, 92vw"
-                        className="lit-image object-cover object-top transition-transform duration-[1.4s] ease-[var(--ease-gallery)] group-hover:scale-[1.04]"
+                        className="object-cover object-top transition-transform duration-[1.4s] ease-[var(--ease-gallery)] group-hover:scale-[1.04]"
                       />
                     </div>
                   </div>
@@ -75,7 +71,7 @@ export default async function WorkPage() {
                     <div>
                       <h2
                         lang={row.fallback.title ? 'ru' : undefined}
-                        className="font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none font-black [font-synthesis:none]"
+                        className="font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none font-extrabold"
                       >
                         {row.title}
                       </h2>
@@ -97,7 +93,7 @@ export default async function WorkPage() {
         </section>
       )}
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

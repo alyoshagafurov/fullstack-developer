@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getTestimonials } from '@/lib/cases';
 import { alternatesFor, localePath } from '@/lib/i18n';
@@ -47,7 +47,7 @@ export default async function ReviewsPage() {
                   <blockquote lang={textLang} className="text-[1.0625rem] leading-relaxed font-light text-bone md:text-lg">
                     {voice.text}
                   </blockquote>
-                  <p className="script mt-6 -rotate-[2deg] text-[1.75rem]">{voice.name}</p>
+                  <p className="mt-6 text-base font-semibold">{voice.name}</p>
                   {who && <p className="wall-label mt-2">{who}</p>}
                   {voice.caseSlug && (
                     <Link href={localePath(lang, `/work/${voice.caseSlug}`)} className="link-quiet mt-3 inline-block text-sm">
@@ -61,7 +61,7 @@ export default async function ReviewsPage() {
         </section>
       )}
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

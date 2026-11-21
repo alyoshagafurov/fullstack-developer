@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { SERVICE_HALLS, SERVICE_TYPE, startHref } from '@/components/museum/links';
 import { getPriceList } from '@/lib/prices';
@@ -55,7 +55,7 @@ export default async function ServicesPage() {
                     <span>{word.word}</span>
                   </span>
                 </h2>
-                <p className="script mt-2 ml-1 -rotate-[3deg] text-[clamp(1.5rem,2.8vw,2.5rem)]">{word.script}</p>
+                <p className="lead-line mt-2 ml-1 text-bone-2">{word.script}</p>
               </div>
 
               <div className="lg:col-span-4 lg:text-right">
@@ -88,7 +88,7 @@ export default async function ServicesPage() {
         );
       })}
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

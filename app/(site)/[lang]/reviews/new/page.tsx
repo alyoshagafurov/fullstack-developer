@@ -24,7 +24,7 @@ export default async function NewReviewPage() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_18%,rgb(255_236_204/0.1),transparent_55%)]"
       />
       <div className="hall flex min-h-[100svh] flex-col justify-center pt-28 pb-16 md:pt-32">
-        <p className="script mb-6 text-center text-[clamp(1.5rem,2.6vw,2.25rem)]">{t.reviewsPage.newTitle}</p>
+        <p className="lead-line mb-6 text-center text-bone-2">{t.reviewsPage.newTitle}</p>
         <ReviewForm lang={lang} copy={t.reviewForm} />
       </div>
     </section>

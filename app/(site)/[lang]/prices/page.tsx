@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway, Draft } from '@/components/home/Spaces';
+import { Closing, Draft } from '@/components/apple/Sections';
 import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
 import { alternatesFor, localePath } from '@/lib/i18n';
@@ -30,7 +30,7 @@ export default async function PricesPage() {
 
   return (
     <>
-      <HallHead title={t.prices.title} script={t.home.draftScript} note={t.prices.lede} />
+      <HallHead title={t.prices.title} script={t.prices.lede} />
 
       <section className="hall pb-28 md:pb-40" aria-label={t.prices.metaTitle}>
         <ul className="border-t border-seam">
@@ -40,7 +40,7 @@ export default async function PricesPage() {
                 href={localePath(lang, `/services/${service.slug}`)}
                 className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-6 md:grid-cols-[1fr_14rem_12rem] md:py-7"
               >
-                <span className="font-display text-[clamp(1.25rem,2.2vw,1.875rem)] leading-tight font-black transition-colors duration-500 [font-synthesis:none] group-hover:text-brass">
+                <span className="font-display text-[clamp(1.25rem,2.2vw,1.875rem)] leading-tight font-extrabold transition-colors duration-500 group-hover:text-brass">
                   {service.title}
                 </span>
                 <span className="order-last col-span-2 text-sm text-bone-3 md:order-none md:col-span-1">
@@ -56,7 +56,7 @@ export default async function PricesPage() {
       </section>
 
       <Draft t={t} />
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

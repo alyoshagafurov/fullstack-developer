@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { BBH_Bogle, Nunito_Sans, Pacifico } from 'next/font/google';
+import { Nunito_Sans, Pacifico } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '../../globals.css';
 import { SiteChrome } from '@/components/chrome/SiteChrome';
@@ -25,11 +25,10 @@ import { getDictionary } from '@/lib/i18n/server';
 export const dynamicParams = false;
 
 /*
- * The three faces the owner chose. Bogle is the headline and nothing else;
- * Nunito Sans carries the small thin text and, at Black, every Cyrillic
- * headline Bogle cannot draw; Pacifico is the curator's handwriting.
+ * One family for everything, the way apple.com uses one: Nunito Sans, heavy
+ * for headlines and light for small print. Pacifico is kept for his signature
+ * only.
  */
-const bogle = BBH_Bogle({ weight: '400', subsets: ['latin'], variable: '--font-bogle', display: 'swap' });
 const nunito = Nunito_Sans({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-nunito',
@@ -43,8 +42,11 @@ export function generateStaticParams() {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#070707',
-  colorScheme: 'dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f5f5f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+  colorScheme: 'light dark',
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -125,7 +127,18 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} className={`${bogle.variable} ${nunito.variable} ${pacifico.variable}`}>
+    <html lang={lang} className={`${nunito.variable} ${pacifico.variable}`}
+      suppressHydrationWarning>
+      <head>
+        {/* The theme is set before the first paint: the visitor's own choice,
+            else their system's. Without this the page would flash light. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('aly-theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}",
+          }}
+        />
+      </head>
       <body className="museum">
         <a
           href="#main"
@@ -145,12 +158,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         />
         <main id="main">{children}</main>
         <Footer />
-        {/* Plaster, barely: the walls are painted, not rendered. */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-0 z-[55] opacity-[0.06] mix-blend-screen"
-          style={{ backgroundImage: 'url(/texture/grain.webp)', backgroundSize: '320px 320px' }}
-        />
         <GalleryMotion />
         <Analytics />
         <script

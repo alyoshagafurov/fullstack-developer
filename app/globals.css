@@ -358,73 +358,100 @@ html:has([data-mini]) {
 }
 
 /* ======================================================================
- * The dark house — the public site. (Class names below still carry the
- * vocabulary of the first dark build: wall, bone, brass, exhibit. They now
- * mean matte black, off-white, warm line light and a screen set in a wall.)
+ * The public site — clean, in the manner of apple.com.
  *
- * Every hall is a dark wall with one thing on it under its own light. The
- * headline is the exhibit's name, set huge in BBH Bogle; whatever someone
- * may want to read sits small and thin in a corner, like the label beside a
- * painting. Brass is the curator's pencil: Pacifico notes and tiny markers,
- * nothing else. The admin and the Mini App keep the tokens above; everything
- * below applies only under `body.museum`.
+ * One idea per screen: a short heavy headline, one quiet line, at most two
+ * pill buttons, and the picture. Two themes share every class: light (the
+ * #f5f5f7 and white of apple.com) and dark (the black of Apple's Pro pages).
+ * The theme lives on <html data-theme>; a section marked data-tone="dark" is
+ * dark in both, which is how the page gets its black-and-white rhythm.
+ *
+ * The class names are older than this look (wall, bone, brass, hall, …) and
+ * now simply mean background, text, accent and the page column.
+ * The admin and the Mini App keep the tokens at the top of this file.
  * ==================================================================== */
 
-@theme {
-  /* Matte black surfaces, three steps: floor, wall, a lit edge. */
-  --color-wall: #070707;
-  --color-wall-2: #0d0d0d;
-  --color-wall-3: #161616;
-  --color-bone: #f3eee7;
-  /* Thin text: 9.6:1 on --wall. */
-  --color-bone-2: #b9b2a8;
-  /* Labels and the quietest text: 5.6:1 on --wall. */
-  --color-bone-3: #8d877e;
-  /* Warm 2700K line light: the house's only accent. Pacifico and markers. */
-  --color-brass: #f2c58a;
-  --color-led: #ffe2b8;
-  /* The rare cool cove light. */
-  --color-cobalt: #2d4dff;
-  --color-seam: rgb(243 238 231 / 0.08);
-  --color-seam-2: rgb(243 238 231 / 0.18);
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *, [data-tone='dark'], [data-tone='dark'] *));
 
-  --font-display: var(--font-bogle), var(--font-nunito), ui-sans-serif, sans-serif;
+@theme {
+  --color-wall: #ffffff;
+  --color-wall-2: #f5f5f7;
+  --color-wall-3: #e8e8ed;
+  --color-bone: #1d1d1f;
+  --color-bone-2: #6e6e73;
+  --color-bone-3: #86868b;
+  --color-brass: #0071e3;
+  --color-seam: rgb(0 0 0 / 0.08);
+  --color-seam-2: rgb(0 0 0 / 0.16);
+
+  --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-text: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-script: var(--font-pacifico), cursive;
 
-  --ease-gallery: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-gallery: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* The dark theme, and any section that is dark whatever the theme. */
+html[data-theme='dark'],
+[data-tone='dark'] {
+  --color-wall: #000000;
+  --color-wall-2: #161617;
+  --color-wall-3: #1d1d1f;
+  --color-bone: #f5f5f7;
+  --color-bone-2: #a1a1a6;
+  --color-bone-3: #86868b;
+  --color-brass: #2997ff;
+  --color-seam: rgb(255 255 255 / 0.12);
+  --color-seam-2: rgb(255 255 255 / 0.24);
+}
+
+/* A section that stays light in the dark theme too. */
+[data-tone='light'] {
+  --color-wall: #ffffff;
+  --color-wall-2: #f5f5f7;
+  --color-wall-3: #e8e8ed;
+  --color-bone: #1d1d1f;
+  --color-bone-2: #6e6e73;
+  --color-bone-3: #86868b;
+  --color-brass: #0071e3;
+  --color-seam: rgb(0 0 0 / 0.08);
+  --color-seam-2: rgb(0 0 0 / 0.16);
 }
 
 @layer base {
+  html:has(body.museum) {
+    background: var(--color-wall);
+    color-scheme: light;
+  }
+
+  html[data-theme='dark']:has(body.museum) {
+    color-scheme: dark;
+  }
+
   body.museum {
     background: var(--color-wall);
     color: var(--color-bone);
     font-family: var(--font-text);
-    font-weight: 300;
-    color-scheme: dark;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    transition:
+      background-color 400ms var(--ease-gallery),
+      color 400ms var(--ease-gallery);
+  }
+
+  .museum [data-tone] {
+    color: var(--color-bone);
   }
 
   .museum ::selection {
     background: var(--color-brass);
-    color: var(--color-wall);
+    color: #fff;
   }
 
   .museum :focus-visible {
     outline: 2px solid var(--color-brass);
-    outline-offset: 4px;
-    border-radius: 2px;
-  }
-
-  .museum h1,
-  .museum h2,
-  .museum h3 {
-    letter-spacing: -0.01em;
-  }
-
-  /* The scrollbar is part of the room, not the browser's. */
-  html:has(body.museum) {
-    scrollbar-color: var(--color-wall-3) var(--color-wall);
-    background: var(--color-wall);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 
   .museum input,
@@ -434,205 +461,202 @@ html:has([data-mini]) {
 }
 
 @layer components {
-  /*
-   * The headline of a hall. BBH Bogle ships one weight and Latin only, so the
-   * stack asks for 900: Bogle answers at its own weight (synthesis is off) and
-   * Russian falls through to Nunito Sans Black, which holds the same mass.
-   */
+  /* The headline of a screen: heavy, tight, mixed case — never shouted. */
   .hall-title {
     font-family: var(--font-display);
-    font-weight: 900;
-    font-synthesis: none;
-    font-size: clamp(3.25rem, 10.5vw, 10.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.015em;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
     text-wrap: balance;
   }
 
   .room-title {
     font-family: var(--font-display);
-    font-weight: 900;
-    font-synthesis: none;
-    font-size: clamp(2.25rem, 5.6vw, 5.25rem);
-    line-height: 0.92;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3.6vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
-  /* The wall label: small, thin, for whoever leans in. */
+  /* The one quiet line under a headline. */
+  .lead-line {
+    font-family: var(--font-text);
+    font-weight: 400;
+    font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--color-bone);
+    text-wrap: balance;
+  }
+
+  /* Small print for whoever wants it. */
   .wall-note {
     font-family: var(--font-text);
     font-weight: 300;
-    font-size: 0.875rem;
-    line-height: 1.65;
+    font-size: 0.9375rem;
+    line-height: 1.6;
     color: var(--color-bone-2);
-    max-width: 34ch;
+    max-width: 38ch;
     text-wrap: pretty;
   }
 
   .wall-label {
     font-family: var(--font-text);
-    font-weight: 400;
+    font-weight: 600;
     font-size: 0.75rem;
     line-height: 1.3;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-bone-3);
+    letter-spacing: 0.02em;
+    color: var(--color-bone-2);
   }
 
-  /* The curator's pencil. */
+  /* Pacifico survives in one place only: his signature. */
   .script {
     font-family: var(--font-script);
     font-weight: 400;
-    color: var(--color-brass);
-    letter-spacing: 0;
+    color: var(--color-bone-2);
     line-height: 1;
-    text-shadow: 0 0 22px rgb(255 190 120 / 0.35);
   }
 
   .hall {
     position: relative;
     width: 100%;
-    max-width: 1680px;
+    max-width: 1100px;
     margin-inline: auto;
     padding-inline: 1.25rem;
   }
 
   @media (min-width: 768px) {
     .hall {
-      padding-inline: 2.5rem;
+      padding-inline: 2rem;
     }
   }
 
-  @media (min-width: 1280px) {
-    .hall {
-      padding-inline: 4.5rem;
+  .hall-wide {
+    position: relative;
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .hall-wide {
+      padding-inline: 1.25rem;
     }
   }
 
-  /*
-   * A pool of light on the wall. Positioned by --lx / --ly, which the
-   * spotlight script moves with the pointer; without the script it stays where
-   * the stylesheet put it, so the room is lit either way.
-   */
-  .spotlight {
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at var(--lx, 70%) var(--ly, 30%),
-      rgb(255 236 204 / 0.16) 0%,
-      rgb(255 236 204 / 0.06) 22%,
-      transparent 52%
-    );
-  }
-
-  /* A frame on the wall: hairline, a little air, a real cast shadow. */
-  /* A screen set into the wall: a hairline edge, a deep shadow, no frame. */
+  /* A screenshot: rounded, a hairline, nothing else. */
   .exhibit {
     position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--color-wall-3);
+    box-shadow: 0 0 0 1px var(--color-seam);
+  }
+
+  /* A tile, the unit of apple.com's home page. */
+  .tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
     background: var(--color-wall-2);
-    border: 1px solid rgb(255 255 255 / 0.06);
-    box-shadow:
-      0 60px 120px -50px rgb(0 0 0 / 0.95),
-      0 0 0 1px rgb(0 0 0 / 0.6);
-  }
-
-  /* Architectural line light: a strip that glows into the dark around it. */
-  .led {
-    background: var(--color-led);
-    box-shadow:
-      0 0 6px 1px rgb(255 214 160 / 0.9),
-      0 0 22px 4px rgb(255 180 110 / 0.45),
-      0 0 70px 14px rgb(255 160 90 / 0.18);
-  }
-
-  .led-cobalt {
-    background: #8fa3ff;
-    box-shadow:
-      0 0 8px 1px rgb(120 140 255 / 0.9),
-      0 0 30px 6px rgb(45 77 255 / 0.5),
-      0 0 90px 22px rgb(45 77 255 / 0.22);
-  }
-
-  /* Slatted wall: dark battens with gaps, the way the references clad a wall. */
-  .slats {
-    background-image: repeating-linear-gradient(
-      90deg,
-      #101010 0 14px,
-      #050505 14px 22px
-    );
+    color: var(--color-bone);
   }
 
   .btn-bone,
   .btn-line {
     display: inline-flex;
-    min-height: 3.5rem;
+    min-height: 2.75rem;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     border-radius: 9999px;
-    padding-inline: 1.875rem;
+    padding-inline: 1.375rem;
     font-family: var(--font-text);
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     transition:
-      background-color 300ms var(--ease-gallery),
-      color 300ms var(--ease-gallery),
-      border-color 300ms var(--ease-gallery);
+      background-color 250ms var(--ease-gallery),
+      color 250ms var(--ease-gallery),
+      border-color 250ms var(--ease-gallery);
   }
 
+  /* Apple fills its buttons with the deeper blue in both themes: white on it reads 4.6:1. */
   .btn-bone {
-    background: var(--color-bone);
-    color: var(--color-wall);
+    background: #0071e3;
+    color: #fff;
   }
 
   .btn-bone:hover {
-    background: #fff;
+    background: #0077ed;
   }
 
   .btn-line {
-    border: 1px solid var(--color-seam-2);
-    color: var(--color-bone);
+    border: 1px solid var(--color-brass);
+    color: var(--color-brass);
   }
 
   .btn-line:hover {
-    border-color: var(--color-bone);
-    background: rgb(243 238 231 / 0.06);
+    background: var(--color-brass);
+    color: #fff;
+  }
+
+  /* Apple's text link: accent colour, a chevron, underline on hover. */
+  .link-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-brass);
+    font-size: 1.0625rem;
+  }
+
+  .link-more:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   .link-quiet {
     color: var(--color-bone-2);
-    text-decoration: underline;
-    text-decoration-color: var(--color-seam-2);
-    text-underline-offset: 0.3em;
-    transition: color 250ms, text-decoration-color 250ms;
+    transition: color 200ms;
   }
 
   .link-quiet:hover {
     color: var(--color-bone);
-    text-decoration-color: var(--color-brass);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
   }
 }
 
-/*
- * Reveals start from a visible state. The script below the fold is what moves
- * them; nothing here hides content before JavaScript has run.
- */
+/* The theme swaps a picture where the two need different ones. */
+html[data-theme='dark'] .museum .only-light,
+.museum [data-tone='dark'] .only-light {
+  display: none;
+}
+
+html:not([data-theme='dark']) .museum .only-dark {
+  display: none;
+}
+
+html:not([data-theme='dark']) .museum [data-tone='dark'] .only-dark {
+  display: block;
+}
+
+/* Reveals start from a visible state; the motion script moves them. */
 .museum .line-mask {
   display: block;
   overflow: hidden;
-  /* Room above and below for accents (Й, Ё) and descenders the mask would clip. */
-  padding-block: 0.14em 0.08em;
-  margin-block: -0.14em -0.08em;
+  padding-block: 0.12em 0.08em;
+  margin-block: -0.12em -0.08em;
 }
 
 .museum .line-mask > span {
   display: block;
 }
 
-/* The work hall's track: a native swipe until the script pins the hall. */
+/* Horizontal tracks: a native swipe until a script takes over. */
 .museum [data-gallery-track] {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -645,7 +669,7 @@ html:has([data-mini]) {
 }
 
 .museum [data-gallery-track] > * {
-  scroll-snap-align: start;
+  scroll-snap-align: center;
 }
 
 .museum [data-pinned] [data-gallery-track] {
@@ -654,29 +678,13 @@ html:has([data-mini]) {
 }
 
 /*
- * Bogle draws only Latin, and only capitals: lowercase letters come out as
- * small caps. Cyrillic falls back to Nunito Sans, which on its own is wide
- * and mixed-case — a different voice. Narrowed to its condensed width and set
- * in capitals, Nunito Sans Black stands close to Bogle, so the Russian site
- * keeps the same headline.
- */
-.museum:lang(ru) .hall-title,
-.museum:lang(ru) .room-title,
-.museum:lang(ru) .font-display {
-  font-stretch: 75%;
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
-}
-
-/*
- * The request and review forms were drawn with the old studio tokens. Inside
- * a form room those tokens are re-pointed at the museum's, so the forms keep
- * their logic and markup and simply take on the dark wall: fields on the
- * raised wall, bone ink, the filled button in bone.
+ * The request and review forms were drawn with the old studio tokens. Inside a
+ * form room those tokens are re-pointed at the site's, so the forms keep their
+ * logic and markup and follow the theme.
  */
 .museum .form-room {
-  --color-paper: var(--color-wall-2);
-  --color-ground: var(--color-wall);
+  --color-paper: var(--color-wall);
+  --color-ground: var(--color-wall-2);
   --color-shelf: var(--color-wall-3);
   --color-ink: var(--color-bone);
   --color-ink-2: var(--color-bone-2);
@@ -688,75 +696,14 @@ html:has([data-mini]) {
 .museum .form-room h2,
 .museum .form-room label > span:first-child:not(.sr-only) {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-synthesis: none;
-  letter-spacing: -0.005em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.museum:lang(ru) .form-room h2,
-.museum:lang(ru) .form-room label > span:first-child:not(.sr-only) {
-  font-stretch: 75%;
-  text-transform: uppercase;
-}
-
-.museum .form-room input,
-.museum .form-room textarea {
-  font-weight: 300;
-}
-
-/*
- * The lamp. With the motion script running, an exhibit waits in the dark and
- * its pool of light comes up when it reaches the middle of the hall. Without
- * the script (or with reduced motion) every lamp is simply on.
- */
-html.lamps .museum [data-lamp] .lamp {
-  opacity: 0.12;
-  transition: opacity 900ms var(--ease-gallery);
-}
-
-html.lamps .museum [data-lamp] .lit-image {
-  filter: brightness(0.55) saturate(0.7);
-  transition:
-    filter 900ms var(--ease-gallery),
-    transform 1.4s var(--ease-gallery);
-}
-
-html.lamps .museum [data-lamp].is-lit .lamp {
-  opacity: 1;
-}
-
-html.lamps .museum [data-lamp].is-lit .lit-image {
-  filter: none;
-}
-
-/* A focus ring the dark wall can show. */
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
-  box-shadow: 0 0 0 4px rgb(242 197 138 / 0.28);
   border-color: var(--color-brass);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brass) 22%, transparent);
 }
 
-/* The house switching its lights on as the first room loads. Decoration only. */
-.museum .ceiling-line {
-  stroke-dasharray: 1;
-  animation: draw-line 1.8s var(--ease-gallery) 0.15s both;
-}
-
-@keyframes draw-line {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.museum .under-light {
-  animation: light-on 1.4s ease-out 0.8s both;
-}
-
-@keyframes light-on {
-  from {
-    opacity: 0;
-  }
-}
+/* Lamps belonged to the dark house; in this look every picture is simply shown. */

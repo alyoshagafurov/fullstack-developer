@@ -41,7 +41,7 @@ export default async function ThanksPage({
         <h1 className="hall-title text-[clamp(3rem,9vw,9rem)]">
           <Lines lines={[done.title]} />
         </h1>
-        <p className="script mt-4 -rotate-[3deg] text-[clamp(1.5rem,2.6vw,2.5rem)]">{t.common.responseTime}</p>
+        <p className="lead-line mt-4 text-bone-2">{t.common.responseTime}</p>
 
         <div className="mt-14 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-wrap gap-3">

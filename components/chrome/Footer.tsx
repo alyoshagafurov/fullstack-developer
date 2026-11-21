@@ -32,11 +32,11 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="border-t border-seam">
-      <div className="hall pt-20 pb-32 md:pt-24 md:pb-16">
+    <footer className="bg-wall-2 text-[0.8125rem]">
+      <div className="hall pt-14 pb-32 md:pb-12">
         <div className="flex flex-col gap-14 md:flex-row md:justify-between">
           <div className="max-w-xs">
-            <Logo className="h-8 w-auto invert" />
+            <Logo className="h-6 w-auto dark:invert" />
             <p className="wall-note mt-6">{t.footer.statement}</p>
           </div>
 

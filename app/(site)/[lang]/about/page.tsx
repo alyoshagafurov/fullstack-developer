@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { HallHead } from '@/components/museum/HallHead';
-import { Doorway } from '@/components/home/Spaces';
+import { Closing } from '@/components/apple/Sections';
 import { site } from '@/lib/content/site';
 import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
@@ -75,7 +75,7 @@ export default async function AboutPage() {
         <div className="lg:col-span-5 lg:col-start-8">
           <p className="wall-note max-w-[40ch]">{a.origin}</p>
           <p className="wall-note mt-6 max-w-[40ch]">{a.bio}</p>
-          <p className="script mt-10 -rotate-[3deg] text-[clamp(1.5rem,2.4vw,2.25rem)]">{a.offDuty}</p>
+          <p className="lead-line mt-10 text-bone-2">{a.offDuty}</p>
         </div>
       </section>
 
@@ -138,10 +138,10 @@ export default async function AboutPage() {
             </span>
           </h2>
         </div>
-        <p className="hall script mt-16 -rotate-[2deg] text-[clamp(1.375rem,2.2vw,2rem)] md:mt-24">{a.principle}</p>
+        <p className="hall lead-line mt-16 text-bone-2 md:mt-24">{a.principle}</p>
       </section>
 
-      <Doorway lang={lang} t={t} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

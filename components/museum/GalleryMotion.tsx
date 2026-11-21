@@ -17,8 +17,7 @@ import Lenis from 'lenis';
  *   data-draw           an SVG path drawn by the scroll
  *   data-magnetic       a button that leans toward the pointer
  *   data-parallax="n"   drifts n% against the scroll
- *   data-lamp           an exhibit whose lamp switches on as it reaches the middle
- *                       of the hall — the one authored moment of the site
+ *   data-zoom           a picture that grows to full width as it scrolls in
  *
  * The rule that matters most: nothing is hidden before this runs. Reveals are
  * set only on elements that start below the fold, and only once the script is
@@ -94,6 +93,20 @@ export function GalleryMotion() {
               yPercent: amount / 2,
               ease: 'none',
               scrollTrigger: { trigger: el.parentElement ?? el, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          );
+        });
+
+        // A picture that grows to fill the screen as it scrolls in, the way Apple shows a product.
+        document.querySelectorAll<HTMLElement>('[data-zoom]').forEach((el) => {
+          gsap.fromTo(
+            el,
+            { scale: 0.84, borderRadius: '36px' },
+            {
+              scale: 1,
+              borderRadius: '0px',
+              ease: 'none',
+              scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 15%', scrub: 0.5 },
             },
           );
         });

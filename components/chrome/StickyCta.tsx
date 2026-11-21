@@ -73,7 +73,7 @@ export function StickyCta({
     >
       <Link
         href={localePath(lang, '/start')}
-        className="pointer-events-auto flex min-h-14 flex-1 items-center justify-center gap-3 rounded-full bg-bone px-6 text-[0.9375rem] font-medium text-wall shadow-[0_18px_40px_-16px_rgb(0_0_0/0.8)] md:hidden"
+        className="pointer-events-auto flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#0071e3] px-6 text-base font-medium text-white shadow-[0_10px_30px_-12px_rgb(0_0_0/0.45)] md:hidden"
       >
         {label}
         <ArrowIcon />
@@ -83,7 +83,7 @@ export function StickyCta({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={whatsappLabel}
-        className="pointer-events-auto flex size-14 shrink-0 items-center justify-center rounded-full border border-seam-2 bg-wall-3 text-bone shadow-[0_18px_40px_-16px_rgb(0_0_0/0.8)] transition-colors hover:border-brass hover:text-brass md:size-16"
+        className="pointer-events-auto flex size-12 shrink-0 items-center justify-center rounded-full border border-seam bg-wall/80 text-bone shadow-[0_10px_30px_-12px_rgb(0_0_0/0.45)] backdrop-blur-xl transition-colors hover:text-brass md:size-14"
       >
         <WhatsAppIcon className="size-6" />
       </a>
