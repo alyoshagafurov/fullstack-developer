@@ -27,18 +27,23 @@ export function Words({
   return (
     <Tag id={id} className={className} aria-label={text}>
       {words.map((word, i) => (
-        <span key={i} aria-hidden className="inline-block overflow-hidden pb-[0.08em] align-top">
+        <motion.span
+          key={i}
+          aria-hidden
+          className="inline-block overflow-hidden pb-[0.08em] align-top"
+          initial={reduce ? false : 'hidden'}
+          whileInView="shown"
+          viewport={{ once, margin: '0px 0px -10% 0px' }}
+        >
           <motion.span
             className="inline-block"
-            initial={reduce ? false : { y: '105%' }}
-            whileInView={{ y: '0%' }}
-            viewport={{ once, margin: '0px 0px -10% 0px' }}
+            variants={{ hidden: { y: '105%' }, shown: { y: '0%' } }}
             transition={{ duration: 1, ease: EASE, delay: delay + i * 0.07 }}
           >
             {word}
-            {i < words.length - 1 ? ' ' : ''}
+            {i < words.length - 1 ? '\u00a0' : ''}
           </motion.span>
-        </span>
+        </motion.span>
       ))}
     </Tag>
   );

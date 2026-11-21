@@ -19,7 +19,10 @@ export function caseColour(src: string | null | undefined): Promise<CaseColour> 
   if (!src) return Promise.resolve(NEUTRAL);
   let hit = cache.get(src);
   if (!hit) {
-    hit = compute(src).catch(() => NEUTRAL);
+    hit = compute(src).catch(() => {
+      cache.delete(src);
+      return NEUTRAL;
+    });
     cache.set(src, hit);
   }
   return hit;
@@ -27,7 +30,7 @@ export function caseColour(src: string | null | undefined): Promise<CaseColour> 
 
 async function load(src: string): Promise<Buffer> {
   if (src.startsWith('/')) return readFile(path.join(process.cwd(), 'public', src));
-  const res = await fetch(src, { signal: AbortSignal.timeout(8000) });
+  const res = await fetch(src, { signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(String(res.status));
   return Buffer.from(await res.arrayBuffer());
 }

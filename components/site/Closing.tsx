@@ -1,4 +1,4 @@
-import { Contact } from '@/components/site/Sections';
+import { Contact } from '@/components/site/Contact';
 import { startHref, whatsappHref } from '@/components/museum/links';
 import { site } from '@/lib/content/site';
 import type { Locale } from '@/lib/i18n';

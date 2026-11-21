@@ -359,7 +359,7 @@ html:has([data-mini]) {
 
 
 /* ======================================================================
- * The public site — white, black, and one cobalt.
+ * The public site — warm neutral paper and ink; colour comes from the work.
  *
  * Luxury minimalism: a white page, huge headlines in black, a few sections
  * flooded with cobalt where the headline turns white. Headlines are only ever
@@ -377,14 +377,14 @@ html:has([data-mini]) {
 @custom-variant dark (&:where([data-tone='dark'], [data-tone='dark'] *, [data-tone='brand'], [data-tone='brand'] *, [data-stage-dark='1'] [data-tone='stage'], [data-stage-dark='1'] [data-tone='stage'] *));
 
 @theme {
-  --color-wall: #ffffff;
-  --color-wall-2: #f4f4f2;
-  --color-wall-3: #e9e9e6;
-  --color-bone: #0b0b0c;
+  --color-wall: #f2f0eb;
+  --color-wall-2: #e9e6df;
+  --color-wall-3: #ddd9d0;
+  --color-bone: #121212;
   --color-bone-2: #5b5b60;
   --color-bone-3: #77777c;
-  --color-brass: #2433ff;
-  --color-brass-2: #1a26d9;
+  --color-brass: #121212;
+  --color-brass-2: #000000;
   --color-whatsapp: #25d366;
   --color-seam: rgb(11 11 12 / 0.09);
   --color-seam-2: rgb(11 11 12 / 0.18);
@@ -421,13 +421,13 @@ html:has([data-mini]) {
 }
 
 [data-tone='light'] {
-  --color-wall: #ffffff;
-  --color-wall-2: #f4f4f2;
-  --color-wall-3: #e9e9e6;
-  --color-bone: #0b0b0c;
+  --color-wall: #f2f0eb;
+  --color-wall-2: #e9e6df;
+  --color-wall-3: #ddd9d0;
+  --color-bone: #121212;
   --color-bone-2: #5b5b60;
   --color-bone-3: #77777c;
-  --color-brass: #2433ff;
+  --color-brass: #121212;
   --color-seam: rgb(11 11 12 / 0.09);
   --color-seam-2: rgb(11 11 12 / 0.18);
 }
@@ -451,7 +451,7 @@ html:has([data-mini]) {
   }
 
   .museum ::selection {
-    background: #2433ff;
+    background: #121212;
     color: #fff;
   }
 
@@ -610,8 +610,8 @@ html:has([data-mini]) {
   }
 
   .btn-brand {
-    background: #2433ff;
-    color: #fff;
+    background: var(--color-bone);
+    color: var(--color-wall);
   }
 
   [data-tone='brand'] .btn-brand {
@@ -739,7 +739,7 @@ html:has([data-mini]) {
 .museum .form-room input:focus,
 .museum .form-room textarea:focus {
   border-color: var(--color-bone);
-  box-shadow: 0 0 0 4px rgb(36 51 255 / 0.18);
+  box-shadow: 0 0 0 4px rgb(18 18 18 / 0.12);
 }
 
 /* An endless line, paused for anyone who asked for less motion. */

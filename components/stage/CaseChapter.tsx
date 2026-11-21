@@ -8,7 +8,7 @@ import { ArrowIcon } from '@/components/museum/Icons';
 import { Rise, Words } from '@/components/site/Reveal';
 import type { StageColours } from '@/components/stage/ColourStage';
 
-type Capture = { src: string; width: number; height: number };
+export type Capture = { src: string; width: number; height: number };
 
 export type Chapter = {
   slug: string;
@@ -19,8 +19,10 @@ export type Chapter = {
   line: string;
   liveUrl: string | null;
   href: string;
-  desktop: Capture;
-  phone: Capture;
+  /** The page for a computer: one full-page capture, or the case's screenshots stacked. */
+  desktop: Capture[];
+  /** The page for a phone, when one was captured; without it there is no switch. */
+  phone: Capture[] | null;
   colour: StageColours;
 };
 
@@ -44,7 +46,7 @@ export function CaseChapter({
   const c = chapter.colour;
 
   useEffect(() => {
-    if (window.matchMedia('(max-width: 767px)').matches) setMode('phone');
+    if (chapter.phone && window.matchMedia('(max-width: 767px)').matches) setMode('phone');
   }, []);
 
   return (
@@ -68,7 +70,7 @@ export function CaseChapter({
               {labels.project} · {chapter.year}
             </p>
           </Rise>
-          <Words id={`case-${chapter.slug}-title`} text={chapter.title} className="stage-title mt-5 text-[clamp(2.75rem,5vw,5.25rem)] break-words" />
+          <Words id={`case-${chapter.slug}-title`} text={chapter.title} className="stage-title mt-5 text-[clamp(2.5rem,4.6vw,4.75rem)] [overflow-wrap:anywhere]" />
           <Rise delay={0.15}>
             <p className="wall-note mt-6">{chapter.line}</p>
             {chapter.client && <p className="mt-3 text-xs font-light text-bone-3">{chapter.client}</p>}
@@ -89,7 +91,7 @@ export function CaseChapter({
 
         <div className="md:col-span-8">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <DeviceSwitch mode={mode} setMode={setMode} labels={labels} />
+            {chapter.phone ? <DeviceSwitch mode={mode} setMode={setMode} labels={labels} /> : <span />}
             <span className="hidden text-xs font-light text-bone-2 sm:block">{labels.inside}</span>
           </div>
           <Device chapter={chapter} mode={mode} reduce={!!reduce} />
@@ -160,7 +162,7 @@ function Device({ chapter, mode, reduce }: { chapter: Chapter; mode: Mode; reduc
       fw = Math.min(fh * 0.49, box.w);
     }
   }
-  const capture = mode === 'desktop' ? chapter.desktop : chapter.phone;
+  const capture = mode === 'phone' && chapter.phone ? chapter.phone : chapter.desktop;
 
   return (
     <div ref={stage} className="relative flex h-[min(68svh,620px)] items-center justify-center md:h-[min(66svh,600px)]">
@@ -207,7 +209,7 @@ function Device({ chapter, mode, reduce }: { chapter: Chapter; mode: Mode; reduc
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.45, delay: 0.1 }}
               >
-                <Screen capture={capture} title={chapter.title} reduce={reduce} />
+                <Screen captures={capture} title={chapter.title} reduce={reduce} />
               </motion.div>
             </AnimatePresence>
             {mode === 'phone' && <span className="absolute top-2.5 left-1/2 z-10 h-[22px] w-[30%] -translate-x-1/2 rounded-full bg-black" />}
@@ -219,7 +221,7 @@ function Device({ chapter, mode, reduce }: { chapter: Chapter; mode: Mode; reduc
 }
 
 /* The page inside: scrollable by hand, drifting by itself until touched. */
-function Screen({ capture, title, reduce }: { capture: Capture; title: string; reduce: boolean }) {
+function Screen({ captures, title, reduce }: { captures: Capture[]; title: string; reduce: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -263,11 +265,21 @@ function Screen({ capture, title, reduce }: { capture: Capture; title: string; r
       el.removeEventListener('pointerdown', stop);
       el.removeEventListener('touchstart', stop);
     };
-  }, [reduce, capture.src]);
+  }, [reduce, captures]);
 
   return (
     <div ref={ref} data-lenis-prevent className="stage-screen absolute inset-0">
-      <Image src={capture.src} alt={title} width={capture.width} height={capture.height} sizes="(min-width: 768px) 60vw, 90vw" className="block h-auto w-full" />
+      {captures.map((capture, i) => (
+        <Image
+          key={capture.src}
+          src={capture.src}
+          alt={i === 0 ? title : ''}
+          width={capture.width}
+          height={capture.height}
+          sizes="(min-width: 768px) 60vw, 90vw"
+          className="block h-auto w-full"
+        />
+      ))}
     </div>
   );
 }
