@@ -1,5 +1,4 @@
 import { briefCopyRu, contactMethods, projectTypes } from '@/lib/content/brief';
-import type { LeadStatusName } from '@/lib/content/finance';
 
 /*
  * Everything the bot says, in the owner's words.
@@ -131,8 +130,6 @@ export const notificationButtons = {
  */
 export const clientCommands = [
   { command: 'start', description: 'Работы, цены и заявка' },
-  { command: 'status', description: 'Узнать, на каком этапе мой проект' },
-  { command: 'stop', description: 'Отключить уведомления' },
 ] as const;
 
 export const ownerCommands = [
@@ -140,19 +137,6 @@ export const ownerCommands = [
   { command: 'panel', description: 'Открыть админку' },
   { command: 'id', description: 'Мой Telegram id' },
 ] as const;
-
-/** 14.6 — a status, as the client is allowed to see it. */
-export const clientStatusLine: Record<LeadStatusName, string> = {
-  NEW: 'Заявка получена. Скоро напишу, чтобы обсудить детали.',
-  CONTACTED: 'Обсуждаем проект: уточняем задачу и пожелания.',
-  DISCOVERY: 'Продумываю решение: структура, дизайн и функции.',
-  PROPOSAL: 'Готовлю предложение: стоимость и сроки.',
-  IN_PROGRESS: 'Проект в работе.',
-  COMPLETED: 'Готово. Проект завершён и готов к запуску.',
-  ON_HOLD: 'Пауза. Работа временно приостановлена.',
-  DECLINED: 'Проект закрыт без запуска.',
-  CANCELLED: 'Проект закрыт без запуска.',
-};
 
 export type BriefStep = {
   key: 'name' | 'contactMethod' | 'contact' | 'projectType' | 'details' | 'questions' | 'budget';
@@ -190,19 +174,13 @@ export const glue = {
   useUsername: (username: string) => `Использовать @${username}`,
   stepOf: (n: number, total: number) => `${n} из ${total}`,
   ref: 'Номер заявки',
-  statusHere: 'Как только статус проекта изменится, я напишу сюда. Узнать его в любой момент — /status.',
-  statusHow: 'Чтобы узнать статус проекта, пришлите номер заявки и код одной строкой.',
-  statusAsk: 'Номер заявки и код:',
-  updated: 'Обновлено',
   /** After «спасибо». A connective phrase, so it lives here to be replaced. */
   welcome: 'Пожалуйста. Появится вопрос — пишите сюда.',
   forwarded: 'Передал.',
-  stopped: 'Уведомления выключены.',
   resumed: 'Уведомления включены.',
   tooMany: 'Слишком много заявок за сегодня.',
   failed: 'Не получилось. Попробуйте ещё раз.',
   noAccess: 'Эта команда недоступна.',
-  notFound: 'Заявка не найдена.',
   yourId: 'Ваш Telegram ID:',
   from: 'Сообщение от',
   status: 'Статус',

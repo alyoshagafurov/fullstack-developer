@@ -6,7 +6,7 @@ import { briefSchema, checkContact, contactMessages } from '@/lib/content/brief'
 import { site } from '@/lib/content/site';
 import { featuredServices } from '@/lib/content/services';
 import { getPublishedCases } from '@/lib/cases';
-import { money, type LeadStatusName } from '@/lib/content/finance';
+import { money } from '@/lib/content/finance';
 import { getBriefing } from '@/lib/admin/queries';
 import { getPriceList } from '@/lib/prices';
 import { answerFor } from '@/lib/telegram/answers';
@@ -21,13 +21,12 @@ import {
   sendWithRetry,
   setMenuButton,
 } from '@/lib/telegram/api';
-import { createLead, tokenMatches } from '@/lib/telegram/leads';
+import { createLead } from '@/lib/telegram/leads';
 import { briefReceipt, notifyNewLead } from '@/lib/telegram/notify';
 import {
   type BriefStep,
   briefSteps,
   clientButtons,
-  clientStatusLine,
   glue,
   ownerGreeting,
   visitorGreeting,
@@ -58,12 +57,11 @@ type BriefState = {
   step: number;
   data: Partial<Record<BriefStep['key'], string>>;
 };
-type WaitState = { mode: 'lead' | 'note-ref' | 'status' | 'status-ref' };
+type WaitState = { mode: 'lead' | 'note-ref' };
 type NoteState = { mode: 'note'; leadId: string };
 type State = BriefState | WaitState | NoteState;
 
 const STATE_TTL_MS = 60 * 60 * 1000;
-const STATUS_ATTEMPTS_PER_HOUR = 5;
 const BRIEFS_PER_DAY = 3;
 
 async function readState(chatId: string): Promise<State | null> {
@@ -100,20 +98,10 @@ const REF = /^ALY-\d{4}-\d{3}$/i;
 
 const html = { parse_mode: 'HTML' as const };
 
-const when = (date: Date) =>
-  date.toLocaleString('ru-RU', {
-    timeZone: 'Asia/Dushanbe',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
 /*
  * The visitor's menu: a brief inside Telegram, the owner's chat and the website.
  * The brief opens as a Mini App with signed `initData`, so its submission can
- * be attached to the client's Telegram chat for status notifications.
+ * be attached to the client's Telegram chat.
  *
  * `web_app` buttons work only in private chats, which is the only place this
  * bot talks to anyone.
@@ -361,77 +349,8 @@ async function briefSubmit(
   await setNotify(chatId, true);
 
   // The same receipt the Mini App's briefs get, from the one place it is worded.
-  await ctx.reply(briefReceipt(lead.ref), html);
+  await ctx.reply(briefReceipt(), html);
   await notifyNewLead(lead.id);
-}
-
-async function statusCheck(ctx: Context, chatId: string, text: string): Promise<void> {
-  const chat = await prisma.botChat.findUnique({ where: { chatId } });
-  const hourAgo = Date.now() - 60 * 60 * 1000;
-  const fresh = !chat?.tokenAttemptsAt || chat.tokenAttemptsAt.getTime() < hourAgo;
-  const attempts = fresh ? 0 : chat?.tokenAttempts ?? 0;
-
-  // Past the limit the bot says nothing at all — not even that there is a limit.
-  if (attempts >= STATUS_ATTEMPTS_PER_HOUR) return;
-
-  await prisma.botChat.upsert({
-    where: { chatId },
-    create: { chatId, tokenAttempts: 1, tokenAttemptsAt: new Date() },
-    update: { tokenAttempts: attempts + 1, tokenAttemptsAt: fresh ? new Date() : undefined },
-  });
-
-  const match = text.trim().match(/^(ALY-\d{4}-\d{3})\s+([a-f0-9]{32})$/i);
-  const lead = match
-    ? await prisma.lead.findUnique({
-        where: { ref: match[1].toUpperCase() },
-        select: { id: true, status: true, trackingToken: true, telegramChatId: true, events: { orderBy: { createdAt: 'desc' }, take: 1 }, createdAt: true },
-      })
-    : null;
-
-  if (!match || !lead || !tokenMatches(match[2], lead.trackingToken)) {
-    await ctx.reply(glue.notFound);
-    return;
-  }
-
-  // Holding the code proves the chat belongs to the client: attach it once so
-  // status changes reach them here from now on.
-  if (!lead.telegramChatId) {
-    await prisma.lead.update({ where: { id: lead.id }, data: { telegramChatId: chatId } });
-  }
-
-  const changed = lead.events[0]?.createdAt ?? lead.createdAt;
-  await ctx.reply(
-    `${escapeHtml(clientStatusLine[lead.status as LeadStatusName])}\n${glue.updated}: ${when(changed)}`,
-  );
-}
-
-/**
- * "What stage is my project at?" from a chat that already owns a request.
- *
- * A request sent from the Mini App, or checked once with its code, is tied to
- * the chat it came from — that chat has proved who it is, so it is answered
- * straight away, with no number or code to type. Only a chat with nothing tied
- * to it is asked for them: someone who left the request on the website.
- */
-async function askStatus(ctx: Context, chatId: string): Promise<void> {
-  const own = await prisma.lead
-    .findMany({
-      where: { telegramChatId: chatId },
-      orderBy: { createdAt: 'desc' },
-      take: 3,
-      select: { ref: true, status: true, createdAt: true, events: { orderBy: { createdAt: 'desc' }, take: 1 } },
-    })
-    .catch(() => []);
-  if (own.length > 0) {
-    const lines = own.map((lead) => {
-      const changed = lead.events[0]?.createdAt ?? lead.createdAt;
-      return `<b>${escapeHtml(lead.ref)}</b>\n${escapeHtml(clientStatusLine[lead.status as LeadStatusName])}\n${glue.updated}: ${when(changed)}`;
-    });
-    await ctx.reply(lines.join('\n\n'), html);
-    return;
-  }
-  await writeState(chatId, { mode: 'status' });
-  await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
 }
 
 async function visitorText(ctx: Context, chatId: string, text: string): Promise<void> {
@@ -442,12 +361,6 @@ async function visitorText(ctx: Context, chatId: string, text: string): Promise<
     return;
   }
 
-  if (state?.mode === 'status') {
-    await writeState(chatId, null);
-    await statusCheck(ctx, chatId, text);
-    return;
-  }
-
   /*
    * Work out what was asked. Most messages are one of a dozen questions whose
    * answers the owner has already written down — see intents.ts for how, and
@@ -455,14 +368,6 @@ async function visitorText(ctx: Context, chatId: string, text: string): Promise<
    */
   const intent = classify(text);
 
-  if (intent.kind === 'status-code') {
-    await statusCheck(ctx, chatId, text);
-    return;
-  }
-  if (intent.kind === 'status') {
-    await askStatus(ctx, chatId);
-    return;
-  }
   if (intent.kind === 'greeting') {
     await visitorStart(ctx);
     return;
@@ -546,11 +451,6 @@ async function visitorCallback(ctx: Context, chatId: string, data: string): Prom
           ...html,
           reply_markup: new InlineKeyboard().url(clientButtons.about, `${site.url}/ru/about`),
         });
-        return true;
-      }
-      if (a === 'status') {
-        await ctx.answerCallbackQuery();
-        await askStatus(ctx, chatId);
         return true;
       }
       return false;
@@ -648,32 +548,13 @@ function register(bot: Bot): void {
       await ownerStart(ctx);
       return;
     }
-    // The confirmation page links here with ?start=status.
-    if (String(ctx.match ?? '').trim() === 'status') {
-      await askStatus(ctx, chatId);
-      return;
-    }
     await visitorStart(ctx);
-  });
-
-  bot.command('stop', async (ctx) => {
-    if (!ctx.chat) return;
-    await setNotify(String(ctx.chat.id), false);
-    await ctx.reply(glue.stopped);
   });
 
   bot.command('cancel', async (ctx) => {
     if (!ctx.chat) return;
     await writeState(String(ctx.chat.id), null);
     await ctx.reply(glue.cancelled);
-  });
-
-  bot.command('status', async (ctx) => {
-    if (!ctx.chat) return;
-    const chatId = String(ctx.chat.id);
-    const rest = String(ctx.match ?? '').trim();
-    if (rest) await statusCheck(ctx, chatId, rest);
-    else await askStatus(ctx, chatId);
   });
 
   const ownerOnly =

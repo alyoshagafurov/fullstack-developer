@@ -575,9 +575,6 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
             </button>
           ))}
         </div>
-        <p className="mt-3 text-xs text-paper/40">
-          Клиент получит сообщение об этом, если не отключал уведомления.
-        </p>
       </section>
 
       <section className={card}>

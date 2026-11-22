@@ -2,10 +2,8 @@ import 'server-only';
 import { InlineKeyboard } from 'grammy';
 import { prisma } from '@/lib/prisma';
 import { site } from '@/lib/content/site';
-import type { LeadStatusName } from '@/lib/content/finance';
 import { adminIds, botToken, escapeHtml, sendWithRetry } from '@/lib/telegram/api';
 import {
-  clientStatusLine,
   confirmation,
   glue,
   notification,
@@ -31,24 +29,9 @@ const when = (date: Date) =>
 
 const sourceLabel: Record<string, string> = { site: 'сайт', telegram: 'Telegram' };
 
-/**
- * What a client is told the moment their brief is stored: its number, and that
- * news of it will arrive in this same chat. No code: the chat is already tied
- * to the request, so asking /status here is enough.
- *
- * One wording, two senders. The in-bot dialogue replies with it in the chat the
- * questions were answered in; the Mini App has no chat to reply into, so the
- * server sends it to the chat Telegram named in the signature. A client who
- * closes that window should still have the number afterwards.
- */
-export function briefReceipt(ref: string): string {
-  return [
-    escapeHtml(confirmation),
-    '',
-    `${glue.ref}: <code>${escapeHtml(ref)}</code>`,
-    '',
-    escapeHtml(glue.statusHere),
-  ].join('\n');
+/** What a client is told the moment their brief is stored: that it arrived, and when to expect an answer. */
+export function briefReceipt(): string {
+  return escapeHtml(confirmation);
 }
 
 /**
@@ -58,30 +41,15 @@ export function briefReceipt(ref: string): string {
  * Called after the response has gone out: a client should not wait on Telegram
  * to learn that their brief is in.
  */
-export async function notifyClientBrief(chatId: string, ref: string): Promise<void> {
+export async function notifyClientBrief(chatId: string): Promise<void> {
   if (!botToken()) return;
   try {
-    await enableNotifications(chatId);
-    await sendWithRetry(chatId, briefReceipt(ref));
+    await sendWithRetry(chatId, briefReceipt());
   } catch (error) {
     console.error(
       `[bot] notifyClientBrief failed: ${(error as Error)?.constructor?.name ?? 'Error'}`,
     );
   }
-}
-
-/**
- * Let a chat hear about its own project.
- *
- * `/stop` is the client's own decision and is recorded in this same column, so
- * this is only ever called where they have just asked to be contacted.
- */
-export async function enableNotifications(chatId: string): Promise<void> {
-  await prisma.botChat.upsert({
-    where: { chatId },
-    create: { chatId, notify: true },
-    update: { notify: true },
-  });
 }
 
 /** A t.me link for a contact that is a handle or a phone; nothing otherwise. */
@@ -185,29 +153,6 @@ export async function notifyNewLead(leadId: string): Promise<void> {
     await Promise.all([...admins].map((id) => sendWithRetry(id, text, { reply_markup: keyboard })));
   } catch (error) {
     console.error(`[bot] notifyNewLead failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
-  }
-}
-
-/**
- * 14.7 — the client hears that their project moved, in the words of 14.6,
- * while their chat has not said /stop.
- */
-export async function notifyClientStatus(leadId: string, to: LeadStatusName): Promise<void> {
-  if (!botToken()) return;
-  try {
-    const lead = await prisma.lead.findUnique({
-      where: { id: leadId },
-      select: { ref: true, telegramChatId: true },
-    });
-    if (!lead?.telegramChatId) return;
-    const chat = await prisma.botChat.findUnique({ where: { chatId: lead.telegramChatId } });
-    if (chat && !chat.notify) return;
-    await sendWithRetry(
-      lead.telegramChatId,
-      `<code>${escapeHtml(lead.ref)}</code>\n${escapeHtml(clientStatusLine[to])}`,
-    );
-  } catch (error) {
-    console.error(`[bot] notifyClientStatus failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);
   }
 }
 

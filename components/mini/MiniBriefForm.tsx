@@ -108,18 +108,6 @@ export function MiniBriefForm() {
             {copy.done.title}
           </p>
           <p className={`${hint} mx-auto max-w-sm`}>{copy.done.message}</p>
-
-          {sent.ref && (
-            <dl className="mx-auto mt-8 grid max-w-sm gap-2 text-left">
-              <div className="rounded-[14px] bg-wall-2 px-5 py-3.5">
-                <dt className="text-sm text-bone-3">
-                  {copy.done.refLabel}
-                </dt>
-                <dd className="tabular mt-1 font-semibold">{sent.ref}</dd>
-              </div>
-            </dl>
-          )}
-          {inside && <p className="mt-4 text-xs text-bone-3">{copy.done.trackChat}</p>}
         </div>
       </MiniStage>
     );
