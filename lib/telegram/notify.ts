@@ -62,10 +62,6 @@ export function contactUrl(contact: string | null | undefined): string | undefin
   return undefined;
 }
 
-export function adminLeadUrl(leadId: string): string {
-  return `${site.url}/admin/applications/${leadId}`;
-}
-
 type LeadForCard = {
   id: string;
   ref: string;
@@ -176,12 +172,8 @@ export async function notifyNewReview(id: string): Promise<void> {
       '',
       escapeHtml(excerpt),
     ].join('\n');
-    /*
-     * To the web admin, where reviews are approved. The Mini App panel had a
-     * section for this and the owner asked for it to go; a button that opened
-     * a panel with nowhere to approve the review would be worse than none.
-     */
-    const keyboard = new InlineKeyboard().url('Открыть отзыв', `${site.url}/admin/testimonials/${id}`);
+    // Straight into the panel's Reviews tab, where it is published with one switch.
+    const keyboard = new InlineKeyboard().webApp('Открыть отзыв', `${site.url}/mini/admin?tab=reviews`);
     await Promise.all([...admins].map((chat) => sendWithRetry(chat, text, { reply_markup: keyboard })));
   } catch (error) {
     console.error(`[bot] notifyNewReview failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);

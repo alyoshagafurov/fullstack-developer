@@ -41,14 +41,14 @@ type OpLike = { status: string; message?: string };
 
 /* ------------------------------------------------------------- styles -- */
 
-const card = 'rounded-2xl border border-white/12 bg-white/[0.03] p-4';
-const label = 'text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase';
+const card = 'rounded-[18px] bg-[#1c1c1e] p-4';
+const label = 'text-[13px] font-medium text-[#8e8e93]';
 const action =
   'inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm font-medium transition-opacity disabled:opacity-40';
-const solid = `${action} bg-paper text-ink hover:opacity-90`;
-const outline = `${action} border border-white/20 text-paper hover:border-paper`;
+const solid = `${action} bg-[#0a84ff] text-white hover:opacity-90`;
+const outline = `${action} bg-[#2c2c2e] text-white`;
 const field =
-  'w-full rounded-xl border border-white/20 bg-[#121212] px-4 py-3 text-base text-paper outline-none placeholder:text-paper/45 focus:border-paper';
+  'w-full rounded-[12px] border border-transparent bg-[#2c2c2e] px-4 py-3 text-base text-paper outline-none placeholder:text-paper/45 focus:border-[#0a84ff]';
 
 /* Same five-step ramp as Money.tsx's Days() heatmap, for the same reason: one
    monochrome vocabulary for "how much is here" across the whole admin. */
@@ -530,7 +530,7 @@ function DayScreen({
         {nowMinute !== null && (
           <div
             aria-hidden
-            className="pointer-events-none absolute right-0 left-11 h-px bg-paper"
+            className="pointer-events-none absolute right-0 left-11 h-px bg-[#ff453a]"
             style={{ top: (nowMinute / 60) * ROW }}
           />
         )}
@@ -754,7 +754,7 @@ function TaskForm({
                 type="button"
                 onClick={() => chooseDay(today)}
                 className={`min-h-8 rounded-full border px-3 text-xs transition-colors ${
-                  dayFrom === today ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/60'
+                  dayFrom === today ? 'border-paper bg-[#0a84ff] text-white' : 'border-white/15 text-paper/60'
                 }`}
               >
                 Сегодня
@@ -763,7 +763,7 @@ function TaskForm({
                 type="button"
                 onClick={() => chooseDay(addDays(today, 1))}
                 className={`min-h-8 rounded-full border px-3 text-xs transition-colors ${
-                  dayFrom === addDays(today, 1) ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/60'
+                  dayFrom === addDays(today, 1) ? 'border-paper bg-[#0a84ff] text-white' : 'border-white/15 text-paper/60'
                 }`}
               >
                 Завтра
@@ -857,7 +857,7 @@ function TaskForm({
                       setLeadMinutes(m);
                     }}
                     className={`min-h-9 rounded-full border px-3 text-sm transition-colors ${
-                      leadMinutes === m ? 'border-paper bg-paper text-ink' : 'border-white/15 text-paper/70'
+                      leadMinutes === m ? 'border-paper bg-[#0a84ff] text-white' : 'border-white/15 text-paper/70'
                     }`}
                   >
                     {reminderLabel[m]}
@@ -884,7 +884,7 @@ function TaskForm({
                 type="button"
                 disabled={busy}
                 onClick={() => void remove()}
-                className="min-h-11 rounded-full bg-paper px-4 text-sm font-semibold text-ink disabled:opacity-40"
+                className="min-h-11 rounded-[14px] bg-[#0a84ff] px-4 text-sm font-semibold text-white disabled:opacity-40"
               >
                 Удалить
               </button>

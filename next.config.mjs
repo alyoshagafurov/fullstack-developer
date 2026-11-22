@@ -171,11 +171,6 @@ const nextConfig = {
         source: '/mini/:path*',
         headers: mini,
       },
-      {
-        // The admin surface never belongs in a search index.
-        source: '/admin/:path*',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
-      },
     ];
   },
 };

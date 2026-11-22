@@ -285,6 +285,11 @@ body:has([data-mini='welcome']) {
   background: #000000;
 }
 
+body:has([data-mini='admin']) {
+  background: #000000;
+}
+
+[data-mini='admin'],
 [data-mini='welcome'] {
   color-scheme: dark;
   font-family: var(--font-inter);

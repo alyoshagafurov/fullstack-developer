@@ -456,7 +456,7 @@ function Ledger({
                   aria-checked={periodId === p.id}
                   onClick={() => choosePeriod(p.id)}
                   className={`min-h-9 shrink-0 rounded-full px-3.5 text-sm transition-colors ${
-                    periodId === p.id ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
+                    periodId === p.id ? 'bg-[#0a84ff] font-semibold text-white' : 'bg-[#1c1c1e] text-[#c7c7cc]'
                   }`}
                 >
                   {p.label}
@@ -510,7 +510,7 @@ function Ledger({
               disabled={!rates}
               onClick={() => onPick(c)}
               className={`min-h-10 flex-1 rounded-full text-sm transition-colors disabled:opacity-40 ${
-                view === c ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
+                view === c ? 'bg-[#0a84ff] font-semibold text-white' : 'bg-[#1c1c1e] text-[#c7c7cc]'
               }`}
             >
               {NAMES[c]}
@@ -522,7 +522,7 @@ function Ledger({
       {/* The hero: one number, for the period picked above. Proportional
           figures at this size — tabular-nums is for columns, not a headline. */}
       <section>
-        <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">{period.heroLabel}</p>
+        <p className="text-[13px] font-medium text-[#8e8e93]">{period.heroLabel}</p>
         {view ? (
           <p className="mt-2 text-[clamp(2.75rem,15vw,4rem)] leading-none font-bold tracking-[-0.04em]">
             {Math.round(heroSum.total).toLocaleString('ru-RU')}
@@ -560,7 +560,7 @@ function Ledger({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-paper text-[0.9375rem] font-semibold text-ink active:scale-[0.98]"
+          className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-[14px] bg-[#0a84ff] text-[0.9375rem] font-semibold text-white active:scale-[0.98]"
         >
           <span aria-hidden className="text-xl leading-none">
             +
@@ -628,11 +628,11 @@ function AddForm({
   const [problem, setProblem] = useState('');
 
   const field =
-    'w-full rounded-xl border border-white/20 bg-[#121212] px-4 py-3 text-base text-paper outline-none placeholder:text-paper/45 focus:border-paper';
+    'w-full rounded-[12px] border border-transparent bg-[#2c2c2e] px-4 py-3 text-base text-paper outline-none placeholder:text-paper/45 focus:border-[#0a84ff]';
   const yesterday = addDays(today, -1);
   const pill = (on: boolean) =>
     `min-h-10 rounded-full text-sm transition-colors ${
-      on ? 'bg-paper font-semibold text-ink' : 'border border-white/15 text-paper/70'
+      on ? 'bg-[#0a84ff] font-semibold text-white' : 'bg-[#1c1c1e] text-[#c7c7cc]'
     }`;
 
   const save = async () => {
@@ -662,14 +662,14 @@ function AddForm({
 
   return (
     <form
-      className="space-y-4 rounded-2xl border border-white/15 p-4"
+      className="space-y-4 rounded-[18px] bg-[#1c1c1e] p-4"
       onSubmit={(event) => {
         event.preventDefault();
         void save();
       }}
     >
       <label className="block">
-        <span className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">Сколько</span>
+        <span className="text-[13px] font-medium text-[#8e8e93]">Сколько</span>
         <input
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
@@ -696,7 +696,7 @@ function AddForm({
       </div>
 
       <div>
-        <span className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">Когда</span>
+        <span className="text-[13px] font-medium text-[#8e8e93]">Когда</span>
         <div className="mt-2 flex gap-1.5">
           <button type="button" onClick={() => setDay(today)} className={`${pill(day === today)} px-4`}>
             Сегодня
@@ -717,7 +717,7 @@ function AddForm({
       </div>
 
       <label className="block">
-        <span className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">Откуда</span>
+        <span className="text-[13px] font-medium text-[#8e8e93]">Откуда</span>
         <input
           value={note}
           onChange={(event) => setNote(event.target.value)}
@@ -737,7 +737,7 @@ function AddForm({
         <button
           type="submit"
           disabled={busy || !amount.trim()}
-          className="min-h-12 flex-1 rounded-full bg-paper text-[0.9375rem] font-semibold text-ink disabled:opacity-40"
+          className="min-h-12 flex-1 rounded-[14px] bg-[#0a84ff] text-[0.9375rem] font-semibold text-white disabled:opacity-40"
         >
           {busy ? 'Сохраняю…' : 'Сохранить'}
         </button>
@@ -1066,7 +1066,7 @@ function Entries({ rows, api, onChange }: { rows: Row[]; api: Api; onChange: () 
 
   return (
     <section>
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">Записи</p>
+      <p className="text-[13px] font-medium text-[#8e8e93]">Записи</p>
 
       {rows.length === 0 ? (
         <p className="py-6 text-center text-sm text-paper/55">В этот период записей нет.</p>
@@ -1087,7 +1087,7 @@ function Entries({ rows, api, onChange }: { rows: Row[]; api: Api; onChange: () 
                       type="button"
                       disabled={busy}
                       onClick={() => void remove(r.id)}
-                      className="min-h-9 rounded-full bg-paper px-3 text-xs font-semibold text-ink disabled:opacity-40"
+                      className="min-h-9 rounded-[14px] bg-[#0a84ff] px-3 text-xs font-semibold text-white disabled:opacity-40"
                     >
                       Удалить
                     </button>
@@ -1142,7 +1142,7 @@ function Entries({ rows, api, onChange }: { rows: Row[]; api: Api; onChange: () 
 function ChartHead({ title, readout }: { title: string; readout: string }) {
   return (
     <div>
-      <p className="text-[0.6875rem] tracking-[0.18em] text-paper/60 uppercase">{title}</p>
+      <p className="text-[13px] font-medium text-[#8e8e93]">{title}</p>
       <p aria-live="polite" className="mt-1 text-right text-sm font-semibold">
         {readout}
       </p>
