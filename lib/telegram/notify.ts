@@ -32,22 +32,22 @@ const when = (date: Date) =>
 const sourceLabel: Record<string, string> = { site: 'сайт', telegram: 'Telegram' };
 
 /**
- * What a client is told the moment their brief is stored: the number, the code
- * that goes with it, and what the two are for.
+ * What a client is told the moment their brief is stored: its number, and that
+ * news of it will arrive in this same chat. No code: the chat is already tied
+ * to the request, so asking /status here is enough.
  *
  * One wording, two senders. The in-bot dialogue replies with it in the chat the
  * questions were answered in; the Mini App has no chat to reply into, so the
  * server sends it to the chat Telegram named in the signature. A client who
  * closes that window should still have the number afterwards.
  */
-export function briefReceipt(ref: string, code: string): string {
+export function briefReceipt(ref: string): string {
   return [
     escapeHtml(confirmation),
     '',
     `${glue.ref}: <code>${escapeHtml(ref)}</code>`,
-    `${glue.code}: <code>${escapeHtml(code)}</code>`,
     '',
-    escapeHtml(glue.statusHow),
+    escapeHtml(glue.statusHere),
   ].join('\n');
 }
 
@@ -58,11 +58,11 @@ export function briefReceipt(ref: string, code: string): string {
  * Called after the response has gone out: a client should not wait on Telegram
  * to learn that their brief is in.
  */
-export async function notifyClientBrief(chatId: string, ref: string, code: string): Promise<void> {
+export async function notifyClientBrief(chatId: string, ref: string): Promise<void> {
   if (!botToken()) return;
   try {
     await enableNotifications(chatId);
-    await sendWithRetry(chatId, briefReceipt(ref, code));
+    await sendWithRetry(chatId, briefReceipt(ref));
   } catch (error) {
     console.error(
       `[bot] notifyClientBrief failed: ${(error as Error)?.constructor?.name ?? 'Error'}`,

@@ -83,7 +83,7 @@ const briefEn: BriefCopy = {
     refLabel: 'Request number',
     codeLabel: 'Code for the bot',
     track: 'You can check the status with my Telegram bot',
-    trackChat: 'I sent the number and code to your chat.',
+    trackChat: 'The number is in your chat with the bot — news about the project will arrive there too.',
   },
 };
 

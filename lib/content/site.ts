@@ -57,7 +57,7 @@ export const site = {
   /** 10.1–10.3 */
   contact: {
     email: 'gafurovalyosha@gmail.com',
-    telegram: 'alishergafurovv',
+    telegram: 'alishergafurov',
     instagram: 'alygafurov',
     phone: '+992 918 79 32 31',
     phoneHref: '+992918793231',
