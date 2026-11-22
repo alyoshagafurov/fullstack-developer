@@ -1,24 +1,5 @@
-import { getLead, getOverview, listLeads, listTestimonials } from '@/lib/admin/queries';
-import { prisma } from '@/lib/prisma';
-import { syncCommands } from '@/lib/telegram/api';
-import { addIncome, deleteIncome, listIncome, todayInDushanbe } from '@/lib/admin/income';
-import {
-  addTask,
-  deleteTask,
-  listTasks,
-  toggleTask,
-  updateTask,
-  type TaskInput,
-} from '@/lib/admin/tasks';
-import { getRates } from '@/lib/rates';
-import { flagReplied, moveLead, togglePublishedTestimonial, writeNote, type OpResult } from '@/lib/admin/ops';
-import { periods, type PeriodId } from '@/lib/content/finance';
-import {
-  callerKey,
-  refuseMini,
-  requireMiniAdmin,
-  type MiniAdminPass,
-} from '@/lib/telegram/mini-admin';
+import { commands, str } from '@/lib/admin/commands';
+import { callerKey, refuseMini, requireMiniAdmin } from '@/lib/telegram/mini-admin';
 
 /*
  * The owner's admin, as Telegram reaches it.
@@ -44,183 +25,10 @@ import {
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-type Command = (pass: MiniAdminPass, payload: Record<string, unknown>) => Promise<unknown>;
-
-const str = (value: unknown, limit = 200): string =>
-  typeof value === 'string' ? value.slice(0, limit) : '';
-
-const period = (value: unknown): PeriodId => {
-  const id = str(value, 20);
-  return (periods as readonly { id: string }[]).some((p) => p.id === id)
-    ? (id as PeriodId)
-    : 'month';
-};
-
-/** Prisma returns money as Decimal, which JSON renders as an object. */
-const amount = (value: { toString(): string } | null | undefined): number | null =>
-  value === null || value === undefined ? null : Number(value.toString());
-
 /*
- * What a command may do, named one by one.
- *
- * `Object.create(null)` rather than a literal: a plain object inherits
- * `constructor`, `toString` and the rest, so `commands['constructor']` would
- * sail past a truthiness check and be called as though it were one of these.
+ * What a command may do lives in lib/admin/commands.ts, shared with ALY OS's
+ * door; this file is only the Telegram door in front of it.
  */
-const commands: Record<string, Command> = Object.create(null);
-
-/* ------------------------------------------------------------- reading -- */
-
-commands.overview = async (_pass, payload) => {
-  const [{ weekly: _weekly, ...rest }, reviews] = await Promise.all([
-    getOverview(period(payload.period)),
-    prisma.testimonial.count({ where: { published: false } }),
-  ]);
-  // The twelve-week chart stays on the desktop: twelve bars at 375px are not a
-  // chart, they are a texture.
-  return { ...rest, reviews };
-};
-
-/**
- * The register.
- *
- * Deliberately narrower than the web admin's table: no email, no company. This
- * is the one call that returns many people at once, so it returns the least it
- * can, and contact details wait for `lead` — one client at a time.
- */
-commands.leads = async (_pass, payload) => {
-  const result = await listLeads({
-    q: str(payload.q, 80),
-    status: str(payload.status, 20),
-    page: Number(payload.page) || 1,
-  });
-
-  return {
-    total: result.total,
-    page: result.page,
-    pages: result.pages,
-    rows: result.rows.map((row) => ({
-      id: row.id,
-      ref: row.ref,
-      name: row.name,
-      projectType: row.projectType,
-      budget: row.budget,
-      status: row.status,
-      createdAt: row.createdAt,
-      firstRepliedAt: row.firstRepliedAt,
-    })),
-  };
-};
-
-commands.lead = async (_pass, payload) => {
-  const lead = await getLead(str(payload.id, 40));
-  if (!lead) return null;
-
-  return {
-    ...lead,
-    dealAmount: amount(lead.dealAmount),
-    payments: lead.payments.map((p) => ({ ...p, amount: amount(p.amount) })),
-  };
-};
-
-/**
- * Everything the money screen draws from: every entry he has made, and today's
- * rates to convert them with.
- *
- * Sent whole rather than pre-summed, because the screen switches the currency
- * it totals in on a tap, and a round trip per tap would make the one control he
- * asked for the slowest thing on the screen. A freelancer's ledger is a few
- * hundred rows at most; the cap in listIncome is two thousand.
- *
- * `rates` is null when the source is down, and the screen then totals each
- * currency on its own rather than inventing a conversion.
- */
-commands.money = async (pass) => {
-  const [rows, rates] = await Promise.all([listIncome(pass.grant), getRates()]);
-  return {
-    rows,
-    rates: rates ? { perUsd: rates.perUsd, updatedAt: rates.updatedAt } : null,
-    today: todayInDushanbe(),
-  };
-};
-
-/** Every review, the ones waiting for him first. */
-commands.reviews = async () => {
-  const rows = await listTestimonials();
-  return rows
-    .map((r) => ({
-      id: r.id,
-      name: r.name,
-      company: r.company,
-      role: r.role,
-      text: r.text,
-      rating: r.rating,
-      published: r.published,
-      createdAt: r.createdAt,
-    }))
-    .sort((a, b) => Number(a.published) - Number(b.published));
-};
-
-/* ------------------------------------------------------------ changing -- */
-
-commands['review:toggle'] = async (pass, payload): Promise<OpResult> =>
-  togglePublishedTestimonial(pass.grant, str(payload.id, 40));
-
-/** The bot's menu, commands and description, set again from the phone. */
-commands['bot:sync'] = async (): Promise<OpResult> => {
-  await syncCommands();
-  return { status: 'ok' };
-};
-
-
-commands['lead:status'] = async (pass, payload): Promise<OpResult> =>
-  moveLead(pass.grant, str(payload.id, 40), str(payload.to, 20));
-
-commands['lead:note'] = async (pass, payload): Promise<OpResult> =>
-  writeNote(pass.grant, str(payload.id, 40), str(payload.body, 5000));
-
-commands['lead:replied'] = async (pass, payload): Promise<OpResult> =>
-  flagReplied(pass.grant, str(payload.id, 40));
-
-commands['income:add'] = async (pass, payload): Promise<OpResult> =>
-  addIncome(pass.grant, {
-    amount: payload.amount,
-    currency: payload.currency,
-    day: payload.day,
-    note: payload.note,
-  });
-
-commands['income:delete'] = async (pass, payload): Promise<OpResult> =>
-  deleteIncome(pass.grant, str(payload.id, 40));
-
-/**
- * Everything the calendar screen draws from: every task he has written, done
- * or not. Sent whole, like `money` above — the same reasoning applies at the
- * same scale, a to-do list being if anything shorter than a ledger.
- */
-commands.tasks = async (pass) => ({ rows: await listTasks(pass.grant), today: todayInDushanbe() });
-
-const taskInput = (payload: Record<string, unknown>): TaskInput => ({
-  title: payload.title,
-  note: payload.note,
-  dayFrom: payload.dayFrom,
-  dayTo: payload.dayTo,
-  startHour: payload.startHour,
-  endHour: payload.endHour,
-  leadMinutes: payload.leadMinutes,
-});
-
-commands['task:add'] = async (pass, payload): Promise<OpResult> =>
-  addTask(pass.grant, taskInput(payload));
-
-commands['task:update'] = async (pass, payload): Promise<OpResult> =>
-  updateTask(pass.grant, str(payload.id, 40), taskInput(payload));
-
-commands['task:delete'] = async (pass, payload): Promise<OpResult> =>
-  deleteTask(pass.grant, str(payload.id, 40));
-
-commands['task:toggle'] = async (pass, payload): Promise<OpResult> =>
-  toggleTask(pass.grant, str(payload.id, 40), payload.active);
 
 /* ---------------------------------------------------------------- door -- */
 
@@ -236,7 +44,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const data = await commands[name](pass, (body?.payload ?? {}) as Record<string, unknown>);
+    const data = await commands[name](pass.grant, (body?.payload ?? {}) as Record<string, unknown>);
     /*
      * `expiresAt` rides along on every answer so the panel can warn before the
      * launch goes stale rather than meeting a 401 mid-sentence. The signature

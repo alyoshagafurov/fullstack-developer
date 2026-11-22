@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
 import { currencies, type Currency } from '@/lib/content/finance';
 import type { OpResult } from '@/lib/admin/ops';
+import { createOnce, operationId } from '@/lib/admin/once';
 
 /*
  * The owner's own record of what he earned.
@@ -127,8 +128,10 @@ export async function listIncome(_: AdminGrant): Promise<IncomeRow[]> {
 
 export async function addIncome(
   _: AdminGrant,
-  input: { amount: unknown; currency: unknown; day: unknown; note: unknown },
+  input: { amount: unknown; currency: unknown; day: unknown; note: unknown; operationID?: unknown },
 ): Promise<OpResult> {
+  const id = operationId(input.operationID);
+  if (id === null) return { status: 'error', message: 'Некорректный идентификатор операции' };
   const amount = parseAmount(input.amount);
   if (amount === null) {
     return { status: 'error', message: 'Сумма — число больше нуля, например 1500 или 1500,50' };
@@ -149,10 +152,12 @@ export async function addIncome(
   const note = typeof input.note === 'string' ? input.note.trim().slice(0, 300) : '';
 
   await ensureTable();
-  await prisma.income.create({
-    data: { amount: amount.toFixed(2), currency, receivedAt, note: note || null },
-  });
-  return { status: 'ok' };
+  const data = { amount: amount.toFixed(2), currency, receivedAt, note: note || null };
+  return createOnce(
+    () => prisma.income.create({ data: id ? { id, ...data } : data }),
+    () => (id ? prisma.income.findUnique({ where: { id } }) : Promise.resolve(null)),
+    (row) => row.amount.toFixed(2) === data.amount && row.currency === currency && row.receivedAt.getTime() === receivedAt.getTime(),
+  );
 }
 
 export async function deleteIncome(_: AdminGrant, id: unknown): Promise<OpResult> {

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
+import { neonConfig } from '@neondatabase/serverless';
 
 /*
  * One client per process, talking to Neon through a driver adapter.
@@ -24,8 +25,22 @@ function getClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL is not set');
 
+  /*
+   * A local test database for development only: ALY_LOCAL_DB_WS names a
+   * WebSocket bridge to a Postgres on this machine, so the same Neon driver the
+   * site uses in production can be exercised against throwaway data. Ignored
+   * in production builds, where the variable must never be set.
+   */
+  const local = process.env.NODE_ENV !== 'production' ? process.env.ALY_LOCAL_DB_WS : undefined;
+  if (local) {
+    neonConfig.wsProxy = () => local;
+    neonConfig.useSecureWebSocket = false;
+    neonConfig.pipelineTLS = false;
+    neonConfig.pipelineConnect = false;
+  }
+
   client = new PrismaClient({
-    adapter: new PrismaNeon({ connectionString }),
+    adapter: new PrismaNeon(local ? { connectionString, max: 1, idleTimeoutMillis: 500 } : { connectionString }),
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   });
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;

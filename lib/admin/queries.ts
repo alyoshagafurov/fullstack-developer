@@ -197,6 +197,7 @@ export async function listLeads(filters: LeadFilters) {
         status: true,
         createdAt: true,
         firstRepliedAt: true,
+        telegramChatId: true,
       },
     }),
     prisma.lead.count({ where }),

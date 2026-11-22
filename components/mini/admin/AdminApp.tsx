@@ -852,10 +852,10 @@ function ReviewsScreen({ api }: { api: Api }) {
   const haptics = useHaptics();
   const [working, setWorking] = useState('');
 
-  const toggle = async (id: string) => {
+  const toggle = async (id: string, published: boolean) => {
     setWorking(id);
     try {
-      await api.call('review:toggle', { id });
+      await api.call('review:published', { id, published });
       haptics.ok();
       reload();
     } catch {
@@ -892,7 +892,7 @@ function ReviewsScreen({ api }: { api: Api }) {
                 aria-checked={r.published}
                 aria-label="Показывать на сайте"
                 disabled={working === r.id}
-                onClick={() => void toggle(r.id)}
+                onClick={() => void toggle(r.id, !r.published)}
                 className={`relative h-[31px] w-[51px] shrink-0 rounded-full transition-colors duration-200 disabled:opacity-50 ${r.published ? 'bg-[#30d158]' : 'bg-[#39393d]'}`}
               >
                 <span className={`absolute top-[2px] left-[2px] size-[27px] rounded-full bg-white shadow transition-transform duration-200 ${r.published ? 'translate-x-5' : ''}`} />
