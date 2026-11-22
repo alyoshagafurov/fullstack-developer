@@ -227,6 +227,6 @@ export const briefCopyRu: BriefCopy = {
     refLabel: 'Номер заявки',
     codeLabel: 'Код для бота',
     track: 'Статус можно узнать у бота в Telegram',
-    trackChat: 'Номер и код я отправил вам в чат.',
+    trackChat: 'Номер заявки пришёл вам в чат с ботом — туда же придут новости о проекте.',
   },
 };

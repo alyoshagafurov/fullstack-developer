@@ -190,7 +190,7 @@ export const glue = {
   useUsername: (username: string) => `Использовать @${username}`,
   stepOf: (n: number, total: number) => `${n} из ${total}`,
   ref: 'Номер заявки',
-  code: 'Код для проверки статуса',
+  statusHere: 'Как только статус проекта изменится, я напишу сюда. Узнать его в любой момент — /status.',
   statusHow: 'Чтобы узнать статус проекта, пришлите номер заявки и код одной строкой.',
   statusAsk: 'Номер заявки и код:',
   updated: 'Обновлено',

@@ -117,14 +117,6 @@ export function MiniBriefForm() {
                 </dt>
                 <dd className="tabular mt-1 font-semibold">{sent.ref}</dd>
               </div>
-              {sent.code && (
-                <div className="rounded-[14px] bg-wall-2 px-5 py-3.5">
-                  <dt className="text-sm text-bone-3">
-                    {copy.done.codeLabel}
-                  </dt>
-                  <dd className="tabular mt-1 text-xs break-all text-bone-2">{sent.code}</dd>
-                </div>
-              )}
             </dl>
           )}
           {inside && <p className="mt-4 text-xs text-bone-3">{copy.done.trackChat}</p>}

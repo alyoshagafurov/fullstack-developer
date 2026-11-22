@@ -142,7 +142,7 @@ export async function POST(request: Request) {
      * Telegram is also sent it in the chat, where it keeps.
      */
     if (telegram) {
-      after(() => notifyClientBrief(String(telegram.id), lead.ref, lead.trackingToken));
+      after(() => notifyClientBrief(String(telegram.id), lead.ref));
     }
 
     return NextResponse.json({ ref: lead.ref, code: lead.trackingToken }, { status: 201 });

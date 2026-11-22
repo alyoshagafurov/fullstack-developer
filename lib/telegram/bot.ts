@@ -361,7 +361,7 @@ async function briefSubmit(
   await setNotify(chatId, true);
 
   // The same receipt the Mini App's briefs get, from the one place it is worded.
-  await ctx.reply(briefReceipt(lead.ref, lead.trackingToken), html);
+  await ctx.reply(briefReceipt(lead.ref), html);
   await notifyNewLead(lead.id);
 }
 
@@ -405,6 +405,35 @@ async function statusCheck(ctx: Context, chatId: string, text: string): Promise<
   );
 }
 
+/**
+ * "What stage is my project at?" from a chat that already owns a request.
+ *
+ * A request sent from the Mini App, or checked once with its code, is tied to
+ * the chat it came from — that chat has proved who it is, so it is answered
+ * straight away, with no number or code to type. Only a chat with nothing tied
+ * to it is asked for them: someone who left the request on the website.
+ */
+async function askStatus(ctx: Context, chatId: string): Promise<void> {
+  const own = await prisma.lead
+    .findMany({
+      where: { telegramChatId: chatId },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+      select: { ref: true, status: true, createdAt: true, events: { orderBy: { createdAt: 'desc' }, take: 1 } },
+    })
+    .catch(() => []);
+  if (own.length > 0) {
+    const lines = own.map((lead) => {
+      const changed = lead.events[0]?.createdAt ?? lead.createdAt;
+      return `<b>${escapeHtml(lead.ref)}</b>\n${escapeHtml(clientStatusLine[lead.status as LeadStatusName])}\n${glue.updated}: ${when(changed)}`;
+    });
+    await ctx.reply(lines.join('\n\n'), html);
+    return;
+  }
+  await writeState(chatId, { mode: 'status' });
+  await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
+}
+
 async function visitorText(ctx: Context, chatId: string, text: string): Promise<void> {
   const state = await readState(chatId);
 
@@ -431,8 +460,7 @@ async function visitorText(ctx: Context, chatId: string, text: string): Promise<
     return;
   }
   if (intent.kind === 'status') {
-    await writeState(chatId, { mode: 'status' });
-    await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
+    await askStatus(ctx, chatId);
     return;
   }
   if (intent.kind === 'greeting') {
@@ -521,9 +549,8 @@ async function visitorCallback(ctx: Context, chatId: string, data: string): Prom
         return true;
       }
       if (a === 'status') {
-        await writeState(chatId, { mode: 'status' });
         await ctx.answerCallbackQuery();
-        await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
+        await askStatus(ctx, chatId);
         return true;
       }
       return false;
@@ -623,8 +650,7 @@ function register(bot: Bot): void {
     }
     // The confirmation page links here with ?start=status.
     if (String(ctx.match ?? '').trim() === 'status') {
-      await writeState(chatId, { mode: 'status' });
-      await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
+      await askStatus(ctx, chatId);
       return;
     }
     await visitorStart(ctx);
@@ -647,10 +673,7 @@ function register(bot: Bot): void {
     const chatId = String(ctx.chat.id);
     const rest = String(ctx.match ?? '').trim();
     if (rest) await statusCheck(ctx, chatId, rest);
-    else {
-      await writeState(chatId, { mode: 'status' });
-      await ctx.reply(`${glue.statusHow}\n${glue.statusAsk}`);
-    }
+    else await askStatus(ctx, chatId);
   });
 
   const ownerOnly =
