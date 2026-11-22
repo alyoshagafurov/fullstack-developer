@@ -86,7 +86,27 @@ export const activePipeline: LeadStatusName[] = [
 ];
 
 /** Statuses that mean work is happening right now. */
-export const workingStatuses: LeadStatusName[] = ['IN_PROGRESS'];
+export const workingStatuses: LeadStatusName[] = ['CONTACTED', 'DISCOVERY', 'PROPOSAL', 'IN_PROGRESS', 'ON_HOLD'];
+
+/*
+ * The owner works with three stages and one way out. The database keeps its
+ * nine values (older rows carry them, and the mobile app reads them), so the
+ * nine fold into four here and every screen speaks only the four.
+ */
+export const stages = ['new', 'work', 'done', 'lost'] as const;
+export type Stage = (typeof stages)[number];
+export const stageLabel: Record<Stage, string> = { new: 'Новая', work: 'В работе', done: 'Готово', lost: 'Отказ' };
+export const stageStatuses: Record<Stage, LeadStatusName[]> = {
+  new: ['NEW'],
+  work: workingStatuses,
+  done: ['COMPLETED'],
+  lost: ['DECLINED', 'CANCELLED'],
+};
+/** The status a press on a stage writes. */
+export const stageTarget: Record<Stage, LeadStatusName> = { new: 'NEW', work: 'IN_PROGRESS', done: 'COMPLETED', lost: 'DECLINED' };
+export function stageOf(status: LeadStatusName): Stage {
+  return (stages.find((s) => stageStatuses[s].includes(status)) ?? 'new') as Stage;
+}
 
 /** Statuses that closed without a project. */
 export const lostStatuses: LeadStatusName[] = ['DECLINED', 'CANCELLED'];

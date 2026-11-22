@@ -1,4 +1,6 @@
-import { getLead, getOverview, listLeads } from '@/lib/admin/queries';
+import { getLead, getOverview, listLeads, listTestimonials } from '@/lib/admin/queries';
+import { prisma } from '@/lib/prisma';
+import { syncCommands } from '@/lib/telegram/api';
 import { addIncome, deleteIncome, listIncome, todayInDushanbe } from '@/lib/admin/income';
 import {
   addTask,
@@ -9,7 +11,7 @@ import {
   type TaskInput,
 } from '@/lib/admin/tasks';
 import { getRates } from '@/lib/rates';
-import { flagReplied, moveLead, writeNote, type OpResult } from '@/lib/admin/ops';
+import { flagReplied, moveLead, togglePublishedTestimonial, writeNote, type OpResult } from '@/lib/admin/ops';
 import { periods, type PeriodId } from '@/lib/content/finance';
 import {
   callerKey,
@@ -70,10 +72,13 @@ const commands: Record<string, Command> = Object.create(null);
 /* ------------------------------------------------------------- reading -- */
 
 commands.overview = async (_pass, payload) => {
-  const { weekly: _weekly, ...rest } = await getOverview(period(payload.period));
+  const [{ weekly: _weekly, ...rest }, reviews] = await Promise.all([
+    getOverview(period(payload.period)),
+    prisma.testimonial.count({ where: { published: false } }),
+  ]);
   // The twelve-week chart stays on the desktop: twelve bars at 375px are not a
   // chart, they are a texture.
-  return rest;
+  return { ...rest, reviews };
 };
 
 /**
@@ -139,7 +144,34 @@ commands.money = async (pass) => {
   };
 };
 
+/** Every review, the ones waiting for him first. */
+commands.reviews = async () => {
+  const rows = await listTestimonials();
+  return rows
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      company: r.company,
+      role: r.role,
+      text: r.text,
+      rating: r.rating,
+      published: r.published,
+      createdAt: r.createdAt,
+    }))
+    .sort((a, b) => Number(a.published) - Number(b.published));
+};
+
 /* ------------------------------------------------------------ changing -- */
+
+commands['review:toggle'] = async (pass, payload): Promise<OpResult> =>
+  togglePublishedTestimonial(pass.grant, str(payload.id, 40));
+
+/** The bot's menu, commands and description, set again from the phone. */
+commands['bot:sync'] = async (): Promise<OpResult> => {
+  await syncCommands();
+  return { status: 'ok' };
+};
+
 
 commands['lead:status'] = async (pass, payload): Promise<OpResult> =>
   moveLead(pass.grant, str(payload.id, 40), str(payload.to, 20));

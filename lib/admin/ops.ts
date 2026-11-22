@@ -1,5 +1,4 @@
 import 'server-only';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
 import { revalidateSite } from '@/lib/i18n/revalidate';
@@ -41,9 +40,6 @@ export async function moveLead(_: AdminGrant, leadId: string, to: string): Promi
   if (result.status === 'invalid') return { status: 'error', message: 'Неизвестный статус' };
   if (result.status === 'missing') return { status: 'error', message: 'Заявка не найдена' };
 
-  revalidatePath('/admin');
-  revalidatePath('/admin/applications');
-  revalidatePath(`/admin/applications/${leadId}`);
   return { status: 'ok' };
 }
 
@@ -57,15 +53,12 @@ export async function writeNote(_: AdminGrant, leadId: string, body: string): Pr
   if (!lead) return { status: 'error', message: 'Заявка не найдена' };
 
   await prisma.note.create({ data: { leadId, body: text } });
-  revalidatePath(`/admin/applications/${leadId}`);
   return { status: 'ok' };
 }
 
 /** Marks the lead answered without moving it — the bot's old «Ответил». */
 export async function flagReplied(_: AdminGrant, leadId: string): Promise<OpResult> {
   const changed = await markReplied(leadId);
-  revalidatePath('/admin');
-  revalidatePath(`/admin/applications/${leadId}`);
   return changed ? { status: 'ok' } : { status: 'error', message: 'Уже отмечено' };
 }
 
@@ -86,7 +79,6 @@ export async function togglePublishedCase(_: AdminGrant, id: string): Promise<Op
   await prisma.case.update({ where: { id }, data: { published: !row.published } });
 
   revalidateSite('/', '/work', `/work/${row.slug}`);
-  revalidatePath('/admin/projects');
   return { status: 'ok' };
 }
 
@@ -98,6 +90,5 @@ export async function togglePublishedTestimonial(_: AdminGrant, id: string): Pro
   await prisma.testimonial.update({ where: { id }, data: { published: !row.published } });
 
   revalidateSite('/', '/reviews');
-  revalidatePath('/admin/testimonials');
   return { status: 'ok' };
 }

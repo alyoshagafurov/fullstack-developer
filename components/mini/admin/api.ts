@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTelegram } from '@/components/mini/telegram';
 
 /*
@@ -22,6 +22,10 @@ import { useTelegram } from '@/components/mini/telegram';
 
 export type AdminError = { message: string; expired: boolean };
 
+/** A developer's look at the panel: development builds only, with ?demo in the address. */
+const demoAsked = () =>
+  process.env.NODE_ENV === 'development' && new URLSearchParams(window.location.search).has('demo');
+
 export function useAdminApi() {
   const { app, inside } = useTelegram();
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
@@ -29,10 +33,16 @@ export function useAdminApi() {
 
   /* Read through a ref inside `call`, so the signature never goes stale. */
   const initData = useRef('');
+  // Decided after the first paint, so the server's HTML and the browser's agree.
+  const [demo, setDemo] = useState(false);
+  useEffect(() => setDemo(demoAsked()), []);
+  const demoRef = useRef(false);
+  demoRef.current = demo;
   initData.current = app?.initData ?? '';
 
   const call = useCallback(
     async <T,>(command: string, payload: Record<string, unknown> = {}): Promise<T> => {
+      if (demoRef.current) return (await import('@/components/mini/admin/demo')).demoCall(command, payload) as Promise<T>;
       const response = await fetch('/api/mini/admin', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -59,7 +69,7 @@ export function useAdminApi() {
     [],
   );
 
-  return { call, expired, expiresAt, inside, app };
+  return { call, expired, expiresAt, inside: inside || demo, app };
 }
 
 export function errorText(error: unknown): string {

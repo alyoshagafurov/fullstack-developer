@@ -6,6 +6,8 @@ import {
   type LeadStatusName,
   type PeriodId,
   periodStart,
+  stageStatuses,
+  type Stage,
 } from '@/lib/content/finance';
 import { todaysTaskCount } from '@/lib/admin/tasks';
 
@@ -54,9 +56,9 @@ export async function getOverview(period: PeriodId): Promise<Overview> {
 
   const [waiting, fresh, active, completed, lost, statusGroups, recent] = await Promise.all([
     // The one number that means "act now": a lead nobody has answered yet.
-    prisma.lead.count({ where: { firstRepliedAt: null, status: 'NEW' } }),
+    prisma.lead.count({ where: { status: 'NEW' } }),
     prisma.lead.count({ where: window ? { createdAt: window } : {} }),
-    prisma.lead.count({ where: { status: 'IN_PROGRESS' } }),
+    prisma.lead.count({ where: { status: { in: stageStatuses.work } } }),
     prisma.lead.count({ where: { status: 'COMPLETED' } }),
     prisma.lead.count({ where: { status: { in: lostStatuses } } }),
     prisma.lead.groupBy({ by: ['status'], _count: { _all: true } }),
@@ -157,9 +159,11 @@ export async function listLeads(filters: LeadFilters) {
   const q = filters.q?.trim();
 
   const where = {
-    ...(filters.status && filters.status !== 'all'
-      ? { status: filters.status as LeadStatusName }
-      : {}),
+    ...(filters.status && filters.status in stageStatuses
+      ? { status: { in: stageStatuses[filters.status as Stage] } }
+      : filters.status && filters.status !== 'all'
+        ? { status: filters.status as LeadStatusName }
+        : {}),
     ...(filters.type && filters.type !== 'all' ? { projectType: filters.type } : {}),
     ...(q
       ? {

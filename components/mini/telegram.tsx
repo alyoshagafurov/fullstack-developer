@@ -85,9 +85,6 @@ declare global {
 /** Telegram's own loader. The suffix is theirs; a cache-buster, not a pin. */
 const SDK_URL = 'https://telegram.org/js/telegram-web-app.js?63';
 
-/** The site's black, so Telegram's chrome stops where the page starts. */
-const VOID = '#050505';
-
 /**
  * Fetch the global once per document, however many components ask for it.
  *
@@ -185,7 +182,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
            * window reads as one surface.
            */
           const path = window.location.pathname.replace(/\/$/, '');
-          const surface = path.startsWith('/mini/admin') ? VOID : path === '/mini' ? '#000000' : '#ffffff';
+          const surface = path.startsWith('/mini/admin') || path === '/mini' ? '#000000' : '#ffffff';
           if (app.isVersionAtLeast('6.1')) {
             app.setBackgroundColor(surface);
             // An arbitrary hex only lands from 6.9; before that the two
