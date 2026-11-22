@@ -1,7 +1,7 @@
 import 'server-only';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { site } from '@/lib/content/site';
-import { clientCommands, ownerCommands } from '@/lib/telegram/texts';
+import { botDescription, botShortDescription, clientCommands, ownerCommands } from '@/lib/telegram/texts';
 import { Api } from 'grammy';
 
 /*
@@ -61,6 +61,9 @@ export async function getBotUsername(): Promise<string | null> {
 export async function syncCommands(): Promise<number> {
   const api = getApi();
   await api.setMyCommands([...clientCommands], { scope: { type: 'all_private_chats' } });
+  // The words in an empty chat and on the profile, in step with the greeting.
+  await api.setMyDescription(botDescription).catch(() => undefined);
+  await api.setMyShortDescription(botShortDescription).catch(() => undefined);
 
   let scopes = 1;
   for (const id of adminIds()) {

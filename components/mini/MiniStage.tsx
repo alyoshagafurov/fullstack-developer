@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 /* The screen both Mini App forms stand on: the site's light surface, the steps on top, the action at the bottom. */
 
@@ -60,6 +61,7 @@ export function MiniStage({
   footer?: React.ReactNode;
 }) {
   const at = step ?? total - 1;
+  const reduce = useReducedMotion();
   return (
     <div
       data-mini="client"
@@ -86,9 +88,29 @@ export function MiniStage({
         </div>
       </header>
 
-      <div className="flex flex-1 flex-col justify-center px-5 py-8">{children}</div>
+      {/* each question slides in from the right, the way a native flow moves forward */}
+      <div className="relative flex flex-1 flex-col px-5 pt-[9svh] pb-8">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={step ?? 'done'}
+            initial={reduce ? false : { opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduce ? undefined : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      {footer && <div className="shrink-0 px-5">{footer}</div>}
+      {footer && (
+        <div
+          className="sticky bottom-0 z-10 shrink-0 border-t border-black/5 bg-white/80 px-5 pt-3 backdrop-blur-xl"
+          style={{ paddingBottom: '0.25rem' }}
+        >
+          {footer}
+        </div>
+      )}
     </div>
   );
 }
