@@ -20,7 +20,7 @@ import { site } from '@/lib/content/site';
 const WORKS = [
   { title: 'ArusDomod', kind: 'Магазин свадебных нарядов', image: '/cases/arusdomod-desktop.webp' },
   { title: 'AutoShine', kind: 'Магазин автокосметики', image: '/cases/autoshine-store-desktop.webp' },
-  { title: 'python-academy', kind: 'Платформа для изучения Python', image: '/cases/python-academy-desktop.webp' },
+  { title: 'mimi', kind: 'Маркетинговое агентство', image: '/cases/mimi-desktop.webp' },
 ];
 
 /** Telegram's own way out to a browser or a chat when inside it; a plain link otherwise. */
