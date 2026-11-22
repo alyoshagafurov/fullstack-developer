@@ -142,10 +142,10 @@ export async function POST(request: Request) {
      * Telegram is also sent it in the chat, where it keeps.
      */
     if (telegram) {
-      after(() => notifyClientBrief(String(telegram.id), lead.ref));
+      after(() => notifyClientBrief(String(telegram.id)));
     }
 
-    return NextResponse.json({ ref: lead.ref, code: lead.trackingToken }, { status: 201 });
+    return NextResponse.json({ ref: lead.ref }, { status: 201 });
   } catch (error) {
     // Class only. The body of this request must never reach a log line.
     console.error(`[lead] create failed: ${(error as Error)?.constructor?.name ?? 'Error'}`);

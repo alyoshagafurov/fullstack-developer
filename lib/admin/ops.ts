@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
 import { revalidateSite } from '@/lib/i18n/revalidate';
 import { markReplied, transitionLead } from '@/lib/telegram/leads';
-import { notifyClientStatus } from '@/lib/telegram/notify';
 
 /*
  * What the owner can change, once a door has let him in.
@@ -41,12 +40,6 @@ export async function moveLead(_: AdminGrant, leadId: string, to: string): Promi
   const result = await transitionLead(leadId, to);
   if (result.status === 'invalid') return { status: 'error', message: 'Неизвестный статус' };
   if (result.status === 'missing') return { status: 'error', message: 'Заявка не найдена' };
-
-  if (result.status === 'ok') {
-    // 14.7 — the client hears that their project moved. Not awaited: the owner
-    // should not watch a spinner while Telegram is slow.
-    void notifyClientStatus(leadId, result.to);
-  }
 
   revalidatePath('/admin');
   revalidatePath('/admin/applications');

@@ -48,13 +48,7 @@ export function BriefForm({
     serverWordsOk: lang === 'ru',
     draftKey: 'aly-brief-v2',
     initial: initialType ? { projectType: initialType } : undefined,
-    onSent: ({ ref, code }) => {
-      // The code is shown once, on the next page. Only the number and code go
-      // in the address — nothing the visitor typed about themselves.
-      router.push(
-        `${localePath(lang, '/start/thanks')}?ref=${encodeURIComponent(ref)}&code=${encodeURIComponent(code)}`,
-      );
-    },
+    onSent: () => router.push(localePath(lang, '/start/thanks')),
   });
   const { step, last, values, set, errors } = brief;
 

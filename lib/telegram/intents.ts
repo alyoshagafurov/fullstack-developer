@@ -47,8 +47,6 @@ export type ServiceSlug =
   | 'telegram-mini-apps';
 
 export type Intent =
-  | { kind: 'status-code' }
-  | { kind: 'status' }
   | { kind: 'bot-self' }
   | { kind: 'forward' }
   | { kind: 'discount' }
@@ -231,24 +229,11 @@ const ELSEWHERE = [
 ];
 
 export function classify(text: string): Intent {
-  // Number and code together: answer at once, no questions asked.
-  if (/ALY-\d{4}-\d{3}\s+[a-f0-9]{32}/i.test(text)) return { kind: 'status-code' };
-
   const w = read(text);
   if (w.list.length === 0) return { kind: 'unknown' };
 
   const services = servicesIn(w);
   const asking = w.raw.includes('?');
-
-  /* ------------------------------------------ about a project already */
-  if (/ALY-\d{4}-\d{3}/i.test(text)) return { kind: 'status' };
-  if (
-    (w.has('статус') && (w.starts('заявк', 'проект') || w.has('мой', 'моей', 'моя', 'мою', 'моего'))) ||
-    w.phrase('на', 'каком', 'этапе') ||
-    w.phrase('номер', 'заявки')
-  ) {
-    return { kind: 'status' };
-  }
 
   /* -------------------------------------------------- about the bot */
   const you = w.list.findIndex((word) => word === 'ты' || word === 'вы' || word === 'это');
