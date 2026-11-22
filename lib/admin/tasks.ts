@@ -2,6 +2,7 @@ import 'server-only';
 import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
 import type { OpResult } from '@/lib/admin/ops';
+import { createOnce, operationId } from '@/lib/admin/once';
 import { todayInDushanbe } from '@/lib/admin/income';
 import { reminderPresets } from '@/lib/content/schedule';
 
@@ -217,13 +218,19 @@ function validate(input: TaskInput): { value: Parsed } | { error: string } {
   return { value: { title, note: note || null, dayFrom, dayTo, startHour, endHour, leadMinutes } };
 }
 
-export async function addTask(_: AdminGrant, input: TaskInput): Promise<OpResult> {
+export async function addTask(_: AdminGrant, input: TaskInput & { operationID?: unknown }): Promise<OpResult> {
+  const id = operationId(input.operationID);
+  if (id === null) return { status: 'error', message: 'Некорректный идентификатор операции' };
   const parsed = validate(input);
   if ('error' in parsed) return { status: 'error', message: parsed.error };
 
   await ensureTable();
-  await prisma.task.create({ data: parsed.value });
-  return { status: 'ok' };
+  const data = parsed.value;
+  return createOnce(
+    () => prisma.task.create({ data: id ? { id, ...data } : data }),
+    () => (id ? prisma.task.findUnique({ where: { id } }) : Promise.resolve(null)),
+    (row) => row.title === data.title && row.dayFrom.getTime() === data.dayFrom.getTime() && row.startHour === data.startHour,
+  );
 }
 
 export async function updateTask(_: AdminGrant, id: unknown, input: TaskInput): Promise<OpResult> {
