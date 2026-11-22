@@ -166,7 +166,8 @@ export type ShowWork = {
   result: string;
   host: string | null;
   liveUrl: string | null;
-  href: string;
+  /** The case page; null for a site shown here without one. */
+  href: string | null;
   desktop: Capture | null;
   shot: string;
   phone: Capture | null;
@@ -284,10 +285,12 @@ export function Works({
                       {openSite}
                     </a>
                   )}
-                  <Link href={work.href} className="group inline-flex items-center gap-1 text-[0.9375rem] text-brass hover:underline">
+                  {work.href && (
+                    <Link href={work.href} className="group inline-flex items-center gap-1 text-[0.9375rem] text-brass hover:underline">
                     {details}
                     <ChevronIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
                   </Link>
+                  )}
                 </div>
               </Reveal>
             </article>
@@ -300,74 +303,6 @@ export function Works({
             <ChevronIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================== lineup */
-
-export type Line = { key: string; word: string; script: string; price: string | null; href: string };
-
-const GLYPHS: Record<string, React.ReactNode> = {
-  sites: (
-    <>
-      <rect x="6" y="9" width="36" height="26" rx="3" />
-      <path d="M6 15h36M16 41h16M24 35v6" />
-    </>
-  ),
-  stores: (
-    <>
-      <path d="M10 16h28l-2.5 24h-23z" />
-      <path d="M18 20v-5a6 6 0 0 1 12 0v5" />
-    </>
-  ),
-  bots: (
-    <>
-      <path d="M42 8 6 22l12 4 4 12 6-8 9 7z" />
-      <path d="m18 26 24-18" />
-    </>
-  ),
-  apps: (
-    <>
-      <rect x="6" y="8" width="36" height="32" rx="3" />
-      <path d="M14 30v-6M22 30V18M30 30v-9M38 30v-4" />
-    </>
-  ),
-};
-
-export function Lineup({ title, sub, from, choose, lines }: { title: string; sub: string; from: string; choose: string; lines: Line[] }) {
-  return (
-    <section aria-labelledby="line-title" className="bg-wall py-28 md:py-40">
-      <div className="hall">
-        <Reveal className="text-center">
-          <h2 id="line-title" className={`${display} mx-auto max-w-3xl text-[clamp(2.5rem,5.4vw,5rem)] leading-[1.02]`}>
-            {title}
-          </h2>
-          <p className="mx-auto mt-5 max-w-md text-[clamp(1.0625rem,1.4vw,1.25rem)] text-bone-2">{sub}</p>
-        </Reveal>
-        <div className="mt-16 grid grid-cols-1 border-t border-seam sm:grid-cols-2 md:mt-24 lg:grid-cols-4 lg:border-t-0">
-          {lines.map((line, i) => (
-            <Reveal key={line.key} delay={i * 0.08} className="border-b border-seam lg:border-b-0 lg:border-l lg:first:border-l-0">
-              <Link href={line.href} className="group flex h-full flex-col items-start px-2 py-10 transition-colors hover:bg-wall-2/60 lg:items-center lg:px-8 lg:text-center">
-                <svg viewBox="0 0 48 48" className="size-12 text-bone" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
-                  {GLYPHS[line.key]}
-                </svg>
-                <p className={`${display} mt-7 text-[2rem] leading-none`}>{line.word}</p>
-                <p className="mt-3 text-[0.9375rem] text-bone-2">{line.script}</p>
-                {line.price && (
-                  <p className="mt-6 text-[1.0625rem] font-medium">
-                    {from} {line.price.replace(/^(от|from)\s+/i, '')}
-                  </p>
-                )}
-                <span className="mt-6 inline-flex items-center gap-1 text-[0.9375rem] text-brass group-hover:underline">
-                  {choose}
-                  <ChevronIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
       </div>
     </section>
   );

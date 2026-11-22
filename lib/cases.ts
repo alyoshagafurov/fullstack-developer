@@ -8,6 +8,14 @@ import { devCases, devTestimonials } from '@/lib/dev/fixtures';
 const devContent = process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL;
 
 /*
+ * Cases the owner has taken off the site, whatever the admin says: their live
+ * sites are gone, and a case that cannot be opened costs more trust than it earns.
+ */
+const RETIRED = new Set(['parfumeria', 'python-academy', 'tajshop']);
+const shown = <T extends { slug: string }>(rows: T[]) => rows.filter((row) => !RETIRED.has(row.slug));
+const live = { published: true, slug: { notIn: [...RETIRED] } };
+
+/*
  * Reading published cases and testimonials.
  *
  * This database is shared with the previous version of the site and the new
@@ -57,12 +65,12 @@ const caseSelect = {
 } as const;
 
 export async function getPublishedCases(): Promise<CaseRow[]> {
-  if (devContent) return devCases;
+  if (devContent) return shown(devCases);
   return safely(
     'getPublishedCases',
     () =>
       prisma.case.findMany({
-        where: { published: true },
+        where: live,
         orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
         select: caseSelect,
       }),
@@ -71,12 +79,12 @@ export async function getPublishedCases(): Promise<CaseRow[]> {
 }
 
 export async function getFeaturedCases(limit = 6): Promise<CaseRow[]> {
-  if (devContent) return devCases.slice(0, limit);
+  if (devContent) return shown(devCases).slice(0, limit);
   return safely(
     'getFeaturedCases',
     () =>
       prisma.case.findMany({
-        where: { published: true, featured: true },
+        where: { ...live, featured: true },
         orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
         take: limit,
         select: caseSelect,
@@ -86,6 +94,7 @@ export async function getFeaturedCases(limit = 6): Promise<CaseRow[]> {
 }
 
 export async function getCase(slug: string): Promise<CaseRow | null> {
+  if (RETIRED.has(slug)) return null;
   if (devContent) return devCases.find((row) => row.slug === slug) ?? null;
   return safely(
     'getCase',
