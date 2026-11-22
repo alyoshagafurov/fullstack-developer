@@ -281,6 +281,15 @@ body:has([data-mini='client']) {
   background: #ffffff;
 }
 
+body:has([data-mini='welcome']) {
+  background: #000000;
+}
+
+[data-mini='welcome'] {
+  color-scheme: dark;
+  font-family: var(--font-inter);
+}
+
 html:has([data-mini]) {
   scroll-behavior: auto;
   overscroll-behavior-y: contain;
@@ -777,12 +786,14 @@ html:has([data-mini]) {
  * The computer and the phone of one project share this exact timing, so the
  * two screens travel down the same page together, like one site on two devices.
  */
-.museum .screen-drift {
+.museum .screen-drift,
+[data-mini] .screen-drift {
   animation: screen-drift 9s ease-in-out infinite alternate;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .museum .screen-drift {
+  .museum .screen-drift,
+  [data-mini] .screen-drift {
     animation: none;
   }
 }

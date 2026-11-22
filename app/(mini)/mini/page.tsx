@@ -1,4 +1,5 @@
-import { Welcome } from '@/components/mini/Welcome';
+import { Welcome, type MiniWork } from '@/components/mini/Welcome';
+import { blurOf } from '@/lib/blur';
 import { getPriceList } from '@/lib/prices';
 
 /*
@@ -32,6 +33,19 @@ async function lowestPrice(): Promise<string | null> {
   }
 }
 
+/* The three projects on the site's home page, captured on a computer and a phone. */
+const WORKS = [
+  { title: 'ArusDomod', kind: 'Магазин свадебных нарядов', host: 'arusdomod.shop', desktop: '/cases/arusdomod-desktop.webp', phone: '/cases/arusdomod-phone.webp' },
+  { title: 'AutoShine', kind: 'Магазин автокосметики', host: 'autoshine-production.up.railway.app', desktop: '/cases/autoshine-store-desktop.webp', phone: '/cases/autoshine-store-phone.webp' },
+  { title: 'mimi', kind: 'Маркетинговое агентство', host: 'mimitj.agency', desktop: '/cases/mimi-desktop.webp', phone: '/cases/mimi-phone.webp' },
+];
+
 export default async function MiniWelcomePage() {
-  return <Welcome from={await lowestPrice()} />;
+  const [from, works] = await Promise.all([
+    lowestPrice(),
+    Promise.all(
+      WORKS.map(async (w): Promise<MiniWork> => ({ ...w, blur: await blurOf(w.desktop), phoneBlur: await blurOf(w.phone) })),
+    ),
+  ]);
+  return <Welcome from={from} works={works} />;
 }

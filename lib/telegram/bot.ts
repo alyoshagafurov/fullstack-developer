@@ -31,6 +31,7 @@ import {
   glue,
   ownerGreeting,
   visitorGreeting,
+  welcomeCard,
 } from '@/lib/telegram/texts';
 
 /*
@@ -250,7 +251,17 @@ async function visitorStart(ctx: Context): Promise<void> {
   } catch {
     /* greeting without prices */
   }
-  await ctx.reply(visitorGreeting(prices), { reply_markup: clientKeyboard() });
+  /*
+   * The greeting stands on a card — the site's first screen, its headline and
+   * two of his sites — so the chat opens the way the site does. Should Telegram
+   * fail to fetch the picture, the same words go out as plain text.
+   */
+  const caption = visitorGreeting(prices);
+  try {
+    await ctx.replyWithPhoto(`${site.url}${welcomeCard}`, { caption, ...html, reply_markup: clientKeyboard() });
+  } catch {
+    await ctx.reply(caption, { ...html, reply_markup: clientKeyboard() });
+  }
 }
 
 function stepKeyboard(step: BriefStep, index: number, username?: string): InlineKeyboard {

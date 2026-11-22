@@ -34,19 +34,25 @@ export function visitorGreeting(prices: { landing: string | null; sites: string 
     prices.sites ? `сайт под ключ ${lower(prices.sites)}` : null,
   ].filter(Boolean);
 
+  // A photo caption, in HTML: the card above it already carries the numbers.
   return [
-    'Привет! Это aly — бот Алишера Гафурова.',
+    '<b>Сайты, которые работают на бизнес.</b>',
+    'Сайты, интернет-магазины, Telegram-боты и веб-приложения. Дизайн, код и запуск — один человек от первого сообщения до результата.',
+    quoted.length ? `\nЦены: ${quoted.join(', ').replace(/&/g, '&amp;').replace(/</g, '&lt;')}.` : null,
     '',
-    'Сайты, которые работают на бизнес. Сайты, интернет-магазины, Telegram-боты и веб-приложения: дизайн, код и запуск — один человек от первого сообщения до результата.',
-    '',
-    '50+ проектов · первый набросок за 1–3 дня · 50% оплаты — когда уже увидели набросок.',
-    quoted.length ? `Цены: ${quoted.join(', ')}.` : null,
-    '',
-    'Нажмите «Оставить заявку» — это пара минут. Или просто напишите сюда, что нужно.',
+    'Оставьте заявку — это пара минут. Или просто напишите сюда, что нужно.',
   ]
     .filter((line) => line !== null)
     .join('\n');
 }
+
+/* The picture the greeting stands on: the site's first screen, as a card. */
+export const welcomeCard = '/bot/welcome.jpg';
+
+/* What Telegram shows in an empty chat before /start, and on the bot's profile. */
+export const botDescription =
+  'Алишер Гафуров — сайты, интернет-магазины, Telegram-боты и веб-приложения. 50+ проектов. Первый набросок за 1–3 дня, 50% оплаты — когда уже его увидели. Нажмите «Старт», чтобы оставить заявку или посмотреть работы.';
+export const botShortDescription = 'Сайты, которые работают на бизнес. Заявка — пара минут, ответ в течение дня.';
 
 /**
  * What the owner sees on /start.
@@ -124,7 +130,7 @@ export const notificationButtons = {
  * visitor never sees it.
  */
 export const clientCommands = [
-  { command: 'start', description: 'Начать' },
+  { command: 'start', description: 'Работы, цены и заявка' },
   { command: 'status', description: 'Узнать, на каком этапе мой проект' },
   { command: 'stop', description: 'Отключить уведомления' },
 ] as const;
