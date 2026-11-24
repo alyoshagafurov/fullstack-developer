@@ -177,12 +177,12 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           }
 
           /*
-           * The welcome screen is black like the site's first screen, the forms
-           * are light like its forms, and the owner's admin keeps its own black. Telegram's own bars take the same colour so the
-           * window reads as one surface.
+           * Every screen is black now — the welcome, the request and review
+           * forms that follow it, and the owner's admin — so Telegram's own
+           * bars take the same black and the window reads as one surface, with
+           * no white flash between the welcome and the form.
            */
-          const path = window.location.pathname.replace(/\/$/, '');
-          const surface = path.startsWith('/mini/admin') || path === '/mini' ? '#000000' : '#ffffff';
+          const surface = '#000000';
           if (app.isVersionAtLeast('6.1')) {
             app.setBackgroundColor(surface);
             // An arbitrary hex only lands from 6.9; before that the two

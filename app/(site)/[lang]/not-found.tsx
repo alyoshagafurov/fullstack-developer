@@ -21,7 +21,7 @@ export default async function NotFound() {
         </h1>
         <div className="mt-14 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-wrap gap-3">
-            <Link href={localePath(lang, '/')} className="btn-bone group">
+            <Link href={localePath(lang, '/')} className="btn-line group">
               {t.common.backHome}
               <ArrowIcon className="transition-transform duration-500 group-hover:translate-x-1" />
             </Link>

@@ -1,6 +1,7 @@
 import 'server-only';
 import { InlineKeyboard } from 'grammy';
 import { prisma } from '@/lib/prisma';
+import { isPriority } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
 import { adminIds, botToken, escapeHtml, sendWithRetry } from '@/lib/telegram/api';
 import {
@@ -97,7 +98,8 @@ export function leadCard(lead: LeadForCard, title: string = notification.title):
     line(notification.company, lead.company),
     line(notification.projectType, lead.projectType),
     line(notification.description, lead.description),
-    line(notification.goal, lead.goal),
+    // The form's priority lives on `goal`; an older lead's goal is free text and keeps its old label.
+    line(isPriority(lead.goal) ? notification.priority : notification.goal, lead.goal),
     line(notification.features, lead.features),
     line(notification.budget, lead.budget),
     line(notification.timeline, lead.timeline),

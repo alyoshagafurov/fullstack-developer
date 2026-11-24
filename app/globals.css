@@ -278,7 +278,7 @@ body:has([data-mini]) {
 }
 
 body:has([data-mini='client']) {
-  background: #ffffff;
+  background: #000000;
 }
 
 body:has([data-mini='welcome']) {
@@ -290,7 +290,8 @@ body:has([data-mini='admin']) {
 }
 
 [data-mini='admin'],
-[data-mini='welcome'] {
+[data-mini='welcome'],
+[data-mini='client'] {
   color-scheme: dark;
   font-family: var(--font-inter);
 }
@@ -397,6 +398,12 @@ html:has([data-mini]) {
 /*
  * Apple's greys and Porsche's restraint: white and near-white surfaces, black
  * stages, one blue for actions. Headlines in Inter Tight, text in Inter.
+ *
+ * Blue means one thing on this site: "start a project". It lives in `action`
+ * and is spent only on that button (and the form's submit). `brass` — the old
+ * accent that links, underlines, hovers and focus rings were drawn with — now
+ * follows the text colour of its band, so a secondary link reads as white on
+ * black and ink on white, and never competes with the one blue button.
  */
 @theme {
   --color-wall: #ffffff;
@@ -405,9 +412,11 @@ html:has([data-mini]) {
   --color-bone: #1d1d1f;
   --color-bone-2: #6e6e73;
   --color-bone-3: #86868b;
-  --color-brass: #0071e3;
-  --color-brass-2: #0077ed;
-  --color-whatsapp: #25d366;
+  --color-brass: #1d1d1f;
+  --color-brass-2: #000000;
+  --color-action: #0071e3;
+  --color-action-2: #0077ed;
+  --color-action-3: #0062c4;
   --color-seam: rgb(0 0 0 / 0.08);
   --color-seam-2: rgb(0 0 0 / 0.16);
 
@@ -425,7 +434,8 @@ html:has([data-mini]) {
   --color-bone: #f5f5f7;
   --color-bone-2: #a1a1a6;
   --color-bone-3: #86868b;
-  --color-brass: #2997ff;
+  --color-brass: #f5f5f7;
+  --color-brass-2: #ffffff;
   --color-seam: rgb(255 255 255 / 0.12);
   --color-seam-2: rgb(255 255 255 / 0.24);
 }
@@ -437,7 +447,8 @@ html:has([data-mini]) {
   --color-bone: #1d1d1f;
   --color-bone-2: #6e6e73;
   --color-bone-3: #86868b;
-  --color-brass: #0071e3;
+  --color-brass: #1d1d1f;
+  --color-brass-2: #000000;
   --color-seam: rgb(0 0 0 / 0.08);
   --color-seam-2: rgb(0 0 0 / 0.16);
 }
@@ -461,10 +472,15 @@ html:has([data-mini]) {
   }
 
   .museum ::selection {
-    background: #0071e3;
-    color: #fff;
+    background: var(--color-bone);
+    color: var(--color-wall);
   }
 
+  /*
+   * The focus ring takes the band's text colour: white on black, ink on white.
+   * Both are the strongest contrast the band has (over 15:1), and it stays
+   * visible around the blue button too, since the ring sits outside it.
+   */
   .museum :focus-visible {
     outline: 2px solid var(--color-brass);
     outline-offset: 3px;
@@ -613,19 +629,16 @@ html:has([data-mini]) {
       transform 300ms var(--ease-gallery);
   }
 
-  /* The primary action, Apple's way: one blue, everywhere. */
-  .btn-bone {
-    background: #0071e3;
-    color: #fff;
-  }
-
-  .btn-bone:hover {
-    background: #0077ed;
-  }
-
+  /* The primary action, Apple's way: one blue, and only for "start a project". */
+  .btn-bone,
   .btn-brand {
-    background: var(--color-brass);
+    background: var(--color-action);
     color: #fff;
+  }
+
+  .btn-bone:hover,
+  .btn-brand:hover {
+    background: var(--color-action-2);
   }
 
   [data-tone='brand'] .btn-brand {
@@ -638,6 +651,13 @@ html:has([data-mini]) {
     transform: translateY(-2px);
   }
 
+  .btn-bone:active,
+  .btn-brand:active {
+    background: var(--color-action-3);
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Everything else is a quiet outline in the band's own colours. */
   .btn-line {
     border: 1.5px solid var(--color-seam-2);
     color: var(--color-bone);
@@ -645,6 +665,10 @@ html:has([data-mini]) {
 
   .btn-line:hover {
     border-color: var(--color-bone);
+  }
+
+  .btn-line:active {
+    transform: scale(0.98);
   }
 
   .link-more {
@@ -801,11 +825,4 @@ html:has([data-mini]) {
   [data-mini] .screen-drift {
     animation: none;
   }
-}
-
-
-/* The client screens of the Mini App are light, in the site's type; the admin keeps its own dark look. */
-[data-mini='client'] {
-  color-scheme: light;
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }

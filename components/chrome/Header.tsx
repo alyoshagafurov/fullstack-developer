@@ -143,7 +143,7 @@ export function Header({
             <LangSwitch lang={lang} label={copy.header.language} />
             <Link
               href={href('/start')}
-              className="ml-1 hidden min-h-10 items-center rounded-full bg-[#0071e3] px-5 text-sm font-medium text-white transition-colors hover:bg-[#0077ed] md:inline-flex"
+              className="ml-1 hidden min-h-11 items-center rounded-full bg-action px-5 text-sm font-medium text-white transition-[background-color,scale] duration-200 hover:bg-action-2 active:scale-[0.97] active:bg-action-3 md:inline-flex"
             >
               {copy.getQuote}
             </Link>
@@ -244,9 +244,12 @@ function LangSwitch({ lang, label }: { lang: Locale; label: string }) {
         onClick={() => {
           document.cookie = `${LANG_COOKIE}=${other}; path=/; max-age=31536000; samesite=lax`;
         }}
-        className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-[0.75rem] font-semibold text-bone/80 transition-colors hover:bg-bone/10 hover:text-bone"
+        // a 44px target for a thumb; the visible circle stays the small 36px one
+        className="group inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-[0.75rem] font-semibold text-bone/80 transition-colors hover:text-bone"
       >
-        {other.toUpperCase()}
+        <span className="inline-flex size-9 items-center justify-center rounded-full transition-colors group-hover:bg-bone/10">
+          {other.toUpperCase()}
+        </span>
       </a>
     </nav>
   );

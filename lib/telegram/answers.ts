@@ -1,6 +1,6 @@
 import 'server-only';
 import { InlineKeyboard } from 'grammy';
-import { site } from '@/lib/content/site';
+import { PROMISE, site } from '@/lib/content/site';
 import { process as stages, kickoff, terms } from '@/lib/content/process';
 import { getPriceList, type PricedService } from '@/lib/prices';
 import { getPublishedCases } from '@/lib/cases';
@@ -74,6 +74,12 @@ async function pick(slugs: ServiceSlug[]): Promise<{ all: PricedService[]; asked
 const EXACT =
   'Точную стоимость определяем на этапе «План и предложение» — после того как разберём задачу.';
 
+/*
+ * The main advantage, from site.ts. Said wherever money or the start comes up:
+ * a price reads differently next to "you pay only if you like the draft".
+ */
+const PROMISED = html(PROMISE.full);
+
 /* -------------------------------------------------------------- answer -- */
 
 /**
@@ -90,7 +96,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
       const lines = (asked.length > 0 ? asked : all).map(priceLine);
       const head = asked.length > 0 ? '' : 'Цены на старт:\n';
       return {
-        text: `${head}${lines.join('\n')}\n\n${EXACT}`,
+        text: `${head}${lines.join('\n')}\n\n${PROMISED}\n${EXACT}`,
         keyboard: apply().row().url(clientButtons.prices, `${site.url}/ru/prices`),
         relay: true,
       };
@@ -121,7 +127,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
       const { asked } = await pick(intent.services);
       if (asked.length === 0) return null;
       return {
-        text: `Да, это делаю.\n\n${asked.map(priceLine).join('\n')}\n\nЧтобы начать — оставьте заявку, это пара минут. ${html(kickoff.outro)}`,
+        text: `Да, это делаю.\n\n${asked.map(priceLine).join('\n')}\n\n${PROMISED}\n\nЧтобы начать — оставьте заявку, это меньше минуты. ${html(kickoff.outro)}`,
         keyboard: apply(),
         relay: true,
       };
@@ -139,7 +145,12 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
     }
 
     case 'payment':
-      return { text: html(terms[0].value), keyboard: writeTo(new InlineKeyboard()), relay: true };
+      // The promise first, then the terms behind it in his words.
+      return {
+        text: `<b>${PROMISED}</b>\n\n${html(terms[0].value)}`,
+        keyboard: writeTo(apply().row()),
+        relay: true,
+      };
 
     case 'revisions':
       return { text: `${html(terms[1].value)} ${html(terms[2].value)}`, relay: false };
@@ -159,7 +170,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
 
     case 'process':
       return {
-        text: `${stages
+        text: `<b>${PROMISED}</b>\n\n${stages
           .map((s) => `${Number(s.num)}. ${html(s.title)} — ${html(s.duration)}`)
           .join('\n')}\n\n${html(terms[0].value)}`,
         keyboard: apply(),

@@ -31,14 +31,15 @@ export default async function ThanksPage() {
       />
       <div className="hall flex min-h-[100svh] flex-col justify-end pt-32 pb-16 md:pb-24">
         <h1 className="hall-title text-[clamp(3rem,9vw,9rem)]">
-          <Lines lines={[done.title]} />
+          <Lines lines={[done.ready]} />
         </h1>
-        <p className="lead-line mt-4 text-bone-2">{t.common.responseTime}</p>
+        <p className="lead-line mt-4 text-bone-2">{done.personal}</p>
 
         <div className="mt-14 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-wrap gap-3">
-            <Link href={localePath(lang, '/work')} className="btn-bone group">
-              {done.work}
+            {/* The request is sent: nothing here is the main action any more, so nothing is blue. */}
+            <Link href={`${localePath(lang, '/')}#work`} className="btn-line group">
+              {done.latest}
               <ArrowIcon className="transition-transform duration-500 group-hover:translate-x-1" />
             </Link>
             <Link href={localePath(lang, '/prices')} className="btn-line">
@@ -46,9 +47,6 @@ export default async function ThanksPage() {
             </Link>
           </div>
 
-          <div className="md:text-right">
-            <p className="wall-note md:ml-auto">{done.message}</p>
-          </div>
         </div>
       </div>
     </section>

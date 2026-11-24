@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   genderLabel,
   genders,
@@ -8,7 +8,17 @@ import {
   type Gender,
   type ReviewQuestionKey,
 } from '@/lib/content/review';
-import { box, chip, hint, MiniStage, primary, question, quiet } from '@/components/mini/MiniStage';
+import {
+  box,
+  Choice,
+  hint,
+  MiniStage,
+  primary,
+  problem,
+  question,
+  quiet,
+  secondary,
+} from '@/components/mini/MiniStage';
 import {
   useBackButton,
   useClosingGuard,
@@ -35,9 +45,6 @@ import {
 
 const STEPS = reviewQuestions;
 
-/** The three that open a keyboard. The other two are things you tap. */
-const TYPED: ReviewQuestionKey[] = ['name', 'company', 'text'];
-
 export function MiniReviewForm() {
   const { app, inside } = useTelegram();
   const telegramUser = useMiniAppUser();
@@ -57,12 +64,10 @@ export function MiniReviewForm() {
 
   const startedAt = useRef(Date.now());
   const website = useRef<HTMLInputElement>(null);
-  const answer = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const prefilled = useRef(false);
 
   const current = STEPS[step];
   const last = step === STEPS.length - 1;
-  const isTyped = TYPED.includes(current.key);
 
   useEffect(() => {
     if (!telegramUser || prefilled.current) return;
@@ -75,10 +80,14 @@ export function MiniReviewForm() {
    * Focus follows the question, so a client can type the moment the next one
    * appears — but only where there is typing to do. On the stars and the two
    * photographs an opening keyboard would cover the thing being chosen.
+   *
+   * It happens in the field's own ref, as it mounts. An effect on `step` would
+   * run while the old question is still sliding away (MiniStage waits for it),
+   * focus the field that is leaving, and lose the focus when it unmounts.
    */
-  useEffect(() => {
-    if (isTyped) answer.current?.focus({ preventScroll: true });
-  }, [step, isTyped]);
+  const focusTyped = useCallback((el: HTMLInputElement | HTMLTextAreaElement | null) => {
+    el?.focus({ preventScroll: true });
+  }, []);
 
   function back() {
     setError('');
@@ -177,7 +186,7 @@ export function MiniReviewForm() {
         shape="points"
         footer={
           inside && app ? (
-            <button type="button" onClick={() => app.close()} className={primary}>
+            <button type="button" onClick={() => app.close()} className={secondary}>
               Закрыть
             </button>
           ) : null
@@ -208,13 +217,12 @@ export function MiniReviewForm() {
         footer={
           <>
             {formError && (
-              <p role="alert" className="mb-4 text-sm text-bone-2">
+              <p role="alert" className="mb-3 text-sm text-[#ff6961]">
                 {formError}
               </p>
             )}
             <button type="submit" disabled={sending} className={primary}>
               {last ? (sending ? 'Отправляю…' : 'Отправить отзыв') : 'Дальше'}
-              
             </button>
             <div className="mt-2 flex items-center justify-center gap-4">
               {current.key === 'company' && (
@@ -249,7 +257,7 @@ export function MiniReviewForm() {
             {current.key === 'name' && (
               <input
                 id="mini-review-name"
-                ref={answer as React.RefObject<HTMLInputElement>}
+                ref={focusTyped}
                 value={name}
                 onChange={(event) => {
                   setName(event.target.value);
@@ -265,7 +273,7 @@ export function MiniReviewForm() {
             {current.key === 'company' && (
               <input
                 id="mini-review-company"
-                ref={answer as React.RefObject<HTMLInputElement>}
+                ref={focusTyped}
                 value={company}
                 onChange={(event) => {
                   setCompany(event.target.value);
@@ -281,7 +289,7 @@ export function MiniReviewForm() {
             {current.key === 'text' && (
               <textarea
                 id="mini-review-text"
-                ref={answer as React.RefObject<HTMLTextAreaElement>}
+                ref={focusTyped}
                 value={text}
                 onChange={(event) => {
                   setText(event.target.value);
@@ -315,8 +323,8 @@ export function MiniReviewForm() {
                         setRating(value);
                         setError('');
                       }}
-                      className={`size-13 text-[2.25rem] leading-none transition-colors ${
-                        value <= rating ? 'text-[#ff9f0a]' : 'text-wall-3'
+                      className={`size-13 rounded-lg text-[2.25rem] leading-none transition-[color,transform] duration-150 active:scale-90 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-white ${
+                        value <= rating ? 'text-[#ff9f0a]' : 'text-white/20'
                       }`}
                     >
                       ★
@@ -331,19 +339,16 @@ export function MiniReviewForm() {
                 <legend className="sr-only">Фото рядом с отзывом</legend>
                 <div className="grid gap-2">
                   {genders.map((value) => (
-                    <button
+                    <Choice
                       key={value}
-                      type="button"
-                      aria-pressed={gender === value}
-                      onClick={() => {
+                      selected={gender === value}
+                      label={genderLabel[value]}
+                      onPick={() => {
                         haptics.tap();
                         setGender(value);
                         setError('');
                       }}
-                      className={chip(gender === value)}
-                    >
-                      {genderLabel[value]}
-                    </button>
+                    />
                   ))}
                 </div>
               </fieldset>
@@ -351,7 +356,7 @@ export function MiniReviewForm() {
           </div>
 
           {error && (
-            <p role="alert" className="mt-5 text-[0.9375rem]">
+            <p role="alert" className={problem}>
               {error}
             </p>
           )}

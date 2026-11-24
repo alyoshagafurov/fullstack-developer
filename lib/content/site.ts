@@ -8,6 +8,28 @@
  * not built. It is never filled with something plausible.
  */
 
+/*
+ * The two facts every surface repeats — site, bot, Mini App, the bot's card.
+ * One place each, so the site can never say one number and Instagram another.
+ * The owner set the count to 60+ (2026-11-24) to match his Instagram.
+ */
+export const PROJECTS = '60+';
+
+/** The main advantage, put first everywhere: a draft fast, and no payment unless it is liked. */
+export const PROMISE = {
+  /** The whole promise in one line. */
+  full: 'Первый набросок за 1–3 дня, оплата 50% — только если нравится.',
+  /** Under the main button. */
+  draft: 'Первый набросок за 1–3 дня',
+  /** The payment half, on its own. */
+  payment: 'Оплата — только если нравится',
+  en: {
+    full: 'A first draft in 1–3 days, and you pay 50% only if you like it.',
+    draft: 'First draft in 1–3 days',
+    payment: 'You pay only if you like it',
+  },
+} as const;
+
 export const site = {
   /** 1.1 */
   name: 'Алишер Гафуров',
@@ -50,7 +72,7 @@ export const site = {
 
   /** 8.1 — real figures only */
   stats: [
-    { value: '50+', label: 'проектов на фрилансе' },
+    { value: PROJECTS, label: 'проектов на фрилансе' },
     { value: '10+', label: 'технологий' },
   ],
 

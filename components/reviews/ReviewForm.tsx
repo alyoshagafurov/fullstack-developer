@@ -145,7 +145,7 @@ export function ReviewForm({ lang, copy }: { lang: Locale; copy: ReviewCopy }) {
   if (done) {
     return (
       <div className="flex min-h-[70svh] flex-col items-center justify-center text-center">
-        <span className="grid size-16 place-items-center rounded-full bg-[#0071e3] text-white">
+        <span className="grid size-16 place-items-center rounded-full bg-bone text-wall">
           <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M5 12.5 10 17l9-10" />
           </svg>
