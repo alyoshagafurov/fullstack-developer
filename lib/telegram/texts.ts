@@ -1,4 +1,5 @@
-import { briefCopyRu, contactMethods, projectTypes } from '@/lib/content/brief';
+import { briefCopyRu, briefTypes, budgetRanges, contactMethods, priorities } from '@/lib/content/brief';
+import { PROJECTS, PROMISE } from '@/lib/content/site';
 
 /*
  * Everything the bot says, in the owner's words.
@@ -10,48 +11,55 @@ import { briefCopyRu, contactMethods, projectTypes } from '@/lib/content/brief';
  */
 
 /**
- * What a visitor reads first.
+ * What a visitor reads on /start — the owner's own text, word for word
+ * (2026-11-24 brief, section 3).
  *
- * It opens on the owner's own joke and keeps it, emoji included — that line is
- * the voice of the whole bot, and his design notes rule out emoji as
- * navigation, not in a sentence. What changed is everything after it. The old
- * text listed what the bot could do and asked the visitor to pick; a stranger
- * deciding whether to trust a developer needs, in order, who he is, what he
- * makes, that he has done it before, and roughly what it costs. All four are
- * his own words or his own figures: the description and the difference from
- * site.ts, the project count from its stats, the prices from the price list.
+ * It does one job: get the visitor to press the button under it. So it says
+ * who is talking, why this chat beats any other way in, what the button costs
+ * them in time, and the promise that takes the risk out of trying. No prices:
+ * the brief puts them after the work and the reviews, and the owner's text has
+ * none.
  *
- * The prices are passed in rather than written here, because he edits them in
- * the admin; a greeting quoting last month's landing price would be the bot
- * contradicting the site. When a price is missing — hidden, or the database
- * unreachable — its clause is simply left out.
+ * A photo caption, sent as HTML. Nothing in it needs escaping, and nothing is
+ * set bold: he sent it as plain text, so it goes out as plain text.
  */
-export function visitorGreeting(prices: { landing: string | null; sites: string | null }): string {
-  const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
-  const quoted = [
-    prices.landing ? `лендинг ${lower(prices.landing)}` : null,
-    prices.sites ? `сайт под ключ ${lower(prices.sites)}` : null,
-  ].filter(Boolean);
+export const visitorGreeting = [
+  'Привет! Я Алишер 👋',
+  '',
+  'Этот бот — самый быстрый способ со мной связаться.',
+  'Нажмите «Оставить заявку» — это 4 коротких вопроса, меньше минуты.',
+  '',
+  'Отвечаю лично, в течение дня.',
+  'Первый набросок — через 1–3 дня, оплата — только если понравится.',
+].join('\n');
 
-  // A photo caption, in HTML: the card above it already carries the numbers.
-  return [
-    '<b>Сайты, которые работают на бизнес.</b>',
-    'Сайты, интернет-магазины, Telegram-боты и веб-приложения. Дизайн, код и запуск — один человек от первого сообщения до результата.',
-    quoted.length ? `\nЦены: ${quoted.join(', ').replace(/&/g, '&amp;').replace(/</g, '&lt;')}.` : null,
-    '',
-    'Оставьте заявку — это пара минут. Или просто напишите сюда, что нужно.',
-  ]
-    .filter((line) => line !== null)
-    .join('\n');
-}
+/*
+ * The picture the greeting stands on: the site's first screen, as a card —
+ * its headline, two of his sites, and the site's figures (ru.showroom.specs:
+ * «1–3 дня до первого наброска», PROJECTS, «50% · оплата — только если
+ * нравится»).
+ *
+ * Those words are baked into the image, so nothing keeps them in step with
+ * site.ts: when the headline, PROJECTS or PROMISE change, the card is redrawn
+ * and saved under a new name. A new name, not the same file overwritten —
+ * Telegram caches a photo by its URL and would go on sending the old one.
+ */
+export const welcomeCard = '/bot/welcome-v2.jpg';
 
-/* The picture the greeting stands on: the site's first screen, as a card. */
-export const welcomeCard = '/bot/welcome.jpg';
-
-/* What Telegram shows in an empty chat before /start, and on the bot's profile. */
-export const botDescription =
-  'Алишер Гафуров — сайты, интернет-магазины, Telegram-боты и веб-приложения. 50+ проектов. Первый набросок за 1–3 дня, 50% оплаты — когда уже его увидели. Нажмите «Старт», чтобы оставить заявку или посмотреть работы.';
-export const botShortDescription = 'Сайты, которые работают на бизнес. Заявка — пара минут, ответ в течение дня.';
+/*
+ * What Telegram shows in an empty chat before /start (up to 512 characters),
+ * and on the bot's profile and in shared links (up to 120). The promise comes
+ * first in both — it is the first thing a stranger should learn — and the
+ * count is the site's, so the two can never disagree.
+ */
+export const botDescription = [
+  PROMISE.full,
+  '',
+  `Алишер Гафуров — сайты, интернет-магазины и Telegram-боты. ${PROJECTS} проектов. Отвечаю лично, в течение дня.`,
+  '',
+  'Нажмите «Старт», чтобы оставить заявку или посмотреть работы.',
+].join('\n');
+export const botShortDescription = `${PROMISE.full} Сайты, магазины, боты · ${PROJECTS} проектов.`;
 
 /**
  * What the owner sees on /start.
@@ -93,8 +101,16 @@ export const clientButtons = {
   prices: 'Все цены',
 } as const;
 
-/** 14.7 — sent the moment a brief is stored. */
-export const confirmation = 'Заявка получена. Отвечу в течение дня — первый набросок будет через 1–3 дня после разговора.';
+/**
+ * 14.7 — sent the moment a brief is stored. His answer, with the greeting's
+ * promise finished on the end: the moment they have just committed is when
+ * "you pay only if you like it" matters most.
+ *
+ * The middle sentence is the Mini App's «Готово!» screen, read from the same
+ * field: this message lands while that screen is still open, and two different
+ * promises of when he will write, side by side, would make both less sure.
+ */
+export const confirmation = `Заявка получена. ${briefCopyRu.done.personal} Первый набросок — через 1–3 дня после разговора, оплата — только если понравится.`;
 
 /** 14.3 — the notification, field by field, with his emoji. */
 export const notification = {
@@ -106,6 +122,8 @@ export const notification = {
   goal: '🎯 Цель проекта',
   features: '⚙️ Основные функции',
   budget: '💰 Бюджет',
+  /** The form's «Что для вас сейчас важнее?» — Скорость / Качество / Цена. */
+  priority: '⚖️ Что важнее',
   timeline: '📅 Желаемый срок',
   contact: '📞 Контакт клиента',
   extra: '💬 Вопросы и пожелания',
@@ -129,7 +147,7 @@ export const notificationButtons = {
  * visitor never sees it.
  */
 export const clientCommands = [
-  { command: 'start', description: 'Работы, цены и заявка' },
+  { command: 'start', description: 'Заявка, работы и цены' },
 ] as const;
 
 export const ownerCommands = [
@@ -139,27 +157,39 @@ export const ownerCommands = [
 ] as const;
 
 export type BriefStep = {
-  key: 'name' | 'contactMethod' | 'contact' | 'projectType' | 'details' | 'questions' | 'budget';
+  key: 'projectType' | 'details' | 'questions' | 'priority' | 'budget' | 'name' | 'contactMethod' | 'contact';
   label: string;
   hint: string;
   optional?: boolean;
+  /** What is stored, and sent back in the button's callback. */
   choices?: readonly string[];
+  /** What the buttons say, when it differs from what is stored («Email» is shown as «Почта»). */
+  labels?: readonly string[];
   consent?: boolean;
 };
 
 /**
  * The request, one question per message — the same short form as the site and
- * the Mini App, in the same words (lib/content/brief.ts).
+ * the Mini App, in the same words and the same order (lib/content/brief.ts):
+ * what, a few words about it, what matters most, the budget, and only then
+ * who they are and where to answer.
  */
 const c = briefCopyRu;
 export const briefSteps: BriefStep[] = [
-  { key: 'name', label: c.name.question, hint: c.name.hint },
-  { key: 'contactMethod', label: c.contact.question, hint: c.contact.hint, choices: contactMethods },
-  { key: 'contact', label: 'Ваш контакт', hint: 'Ник, номер или почта — куда вам написать.' },
-  { key: 'projectType', label: c.projectType.question, hint: c.projectType.hint, choices: projectTypes },
-  { key: 'details', label: c.fields.details.label, hint: c.details.hint },
+  { key: 'projectType', label: c.projectType.question, hint: c.projectType.hint, choices: briefTypes },
+  { key: 'details', label: c.details.question, hint: c.details.hint, optional: true },
   { key: 'questions', label: c.fields.questions.label, hint: c.fields.questions.placeholder, optional: true },
-  { key: 'budget', label: c.fields.budget.label, hint: c.fields.budget.placeholder, optional: true },
+  { key: 'priority', label: c.priority.question, hint: c.priority.hint, choices: priorities },
+  { key: 'budget', label: c.budget.question, hint: c.budget.hint, choices: budgetRanges },
+  { key: 'name', label: c.name.question, hint: c.name.hint },
+  {
+    key: 'contactMethod',
+    label: c.contact.question,
+    hint: c.contact.hint,
+    choices: contactMethods,
+    labels: contactMethods.map((m) => c.methods[m].label),
+  },
+  { key: 'contact', label: 'Ваш контакт', hint: 'Ник, номер или почта — куда вам написать.' },
 ];
 
 /**

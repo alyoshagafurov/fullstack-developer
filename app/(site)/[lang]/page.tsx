@@ -1,16 +1,33 @@
-import { Finale, Hero, Manifesto, Specs, Story, Voices, Works, type Capture, type ShowWork, type Voice } from '@/components/home/Showroom';
-import { startHref, whatsappHref } from '@/components/museum/links';
+import {
+  Hero,
+  NotFor,
+  Prices,
+  Specs,
+  Steps,
+  Voices,
+  Works,
+  type Capture,
+  type PriceRow,
+  type ShowWork,
+  type Voice,
+} from '@/components/home/Showroom';
+import { startHref } from '@/components/museum/links';
+import { Closing } from '@/components/site/Closing';
 import { isAlive } from '@/lib/alive';
 import { blurOf } from '@/lib/blur';
 import { getPublishedCases, getTestimonials, localizeCases } from '@/lib/cases';
-import { site } from '@/lib/content/site';
+import { REVIEW_BUSINESS_MISSING, beforeAfter } from '@/lib/content/placeholders';
+import { reviewShot } from '@/lib/content/review-shots';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { priceFormatter } from '@/lib/price-display';
+import { getPriceList } from '@/lib/prices';
 
 /*
- * The home page, in the manner of Apple and Porsche: a black stage where one
- * of his sites grows to fill the screen, the numbers that matter, three of his sites one after another, the person,
- * the clients, and one clear way to start.
+ * The home page, in the order a careful client decides: what he does and the
+ * promise (a draft in 1–3 days, pay only if you like it), the numbers, how a
+ * project starts without risk, the work as «было → стало», who he is not for,
+ * what clients say, and only then the prices — ending on one clear way in.
  *
  * Revalidated rather than fully static: cases, reviews and prices are
  * published from the admin and must reach the site without a redeploy.
@@ -41,9 +58,20 @@ const MIMI = {
   en: { kind: 'Marketing agency', result: 'The agency’s site: services, cases, pricing and an audit request — in three languages.' },
 } as const;
 
+/* The first screen shows two real sites: a store on the laptop, the agency on the phone. */
+const HERO_SCREENS = { desktop: CAPTURES['arusdomod-shop'].desktop, phone: MIMI.phone };
+
+/* The few prices shown on the home; the full list lives on /prices. */
+const PRICE_PICKS = ['landing', 'sites', 'ecommerce', 'telegram-bots'];
+
 export default async function HomePage() {
   const { lang, t } = await getDictionary();
-  const [rawCases, testimonials] = await Promise.all([getPublishedCases(), getTestimonials()]);
+  const [rawCases, testimonials, priceList, price] = await Promise.all([
+    getPublishedCases(),
+    getTestimonials(),
+    getPriceList(lang),
+    priceFormatter(lang),
+  ]);
   const s = t.showroom;
 
   const ordered = [...rawCases].sort(
@@ -65,8 +93,8 @@ export default async function HomePage() {
         title: row.title,
         kind: s.kinds[row.slug] ?? '',
         year: row.year,
-        client: row.client,
         result: row.result.split(/(?<=[.!?])\s/)[0] ?? row.result,
+        ...beforeAfter(row.slug, lang, row.title),
         host: row.liveUrl ? new URL(row.liveUrl).host : null,
         liveUrl: alive ? row.liveUrl : null,
         href: localePath(lang, `/work/${row.slug}`),
@@ -78,14 +106,19 @@ export default async function HomePage() {
   );
 
   const mimi = MIMI[lang === 'ru' ? 'ru' : 'en'];
-  const [mimiAlive, mimiBlur, mimiPhoneBlur] = await Promise.all([isAlive(MIMI.url), blurOf(MIMI.desktop.src), blurOf(MIMI.phone.src)]);
+  const [mimiAlive, mimiBlur, mimiPhoneBlur, heroBlur] = await Promise.all([
+    isAlive(MIMI.url),
+    blurOf(MIMI.desktop.src),
+    blurOf(MIMI.phone.src),
+    blurOf(HERO_SCREENS.desktop.src),
+  ]);
   works.push({
     slug: 'mimi',
     title: 'mimi',
     kind: mimi.kind,
     year: '',
-    client: null,
     result: mimi.result,
+    ...beforeAfter('mimi', lang),
     host: 'mimitj.agency',
     liveUrl: mimiAlive ? MIMI.url : null,
     href: null,
@@ -101,11 +134,29 @@ export default async function HomePage() {
     .filter((row) => row.text.length <= 260)
     .sort((a, b) => Number(langOf(a.text) !== lang) - Number(langOf(b.text) !== lang))
     .map((row) => ({
+      id: row.id,
       text: row.text,
       name: row.name,
-      role: [row.role, row.company].filter(Boolean).join(', ') || null,
+      // the business first, then the person's role in it: "mimi agency · SEO";
+      // a visible placeholder when the admin has neither, never a blank under the name
+      business: [row.company, row.role].filter(Boolean).join(' · ') || REVIEW_BUSINESS_MISSING[lang],
       lang: langOf(row.text),
+      shot: reviewShot(row),
     }));
+
+  const prices: PriceRow[] = PRICE_PICKS.flatMap((slug) => {
+    const row = priceList.find((item) => item.slug === slug);
+    if (!row) return [];
+    return [
+      {
+        slug,
+        title: row.title,
+        term: row.term,
+        price: price(row.price) ?? t.common.priceOnRequest,
+        href: localePath(lang, `/services/${slug}`),
+      },
+    ];
+  });
 
   return (
     <>
@@ -115,11 +166,11 @@ export default async function HomePage() {
         sub={s.sub}
         cta={s.cta}
         ctaHref={startHref(lang)}
-        seeWork={s.seeWork}
-        seeWorkHref="#work"
+        ctaNote={s.ctaNote}
+        screens={{ ...HERO_SCREENS, label: s.screens, desktopBlur: heroBlur, phoneBlur: mimiPhoneBlur }}
       />
-      <Manifesto text={s.manifesto} accent={s.manifestoAccent} />
-      <Specs items={s.specs} />
+      <Specs label={s.specsLabel} items={s.specs} />
+      <Steps title={s.stepsTitle} steps={s.steps} cta={s.cta} ctaHref={startHref(lang)} />
       <Works
         id="work"
         title={s.workTitle}
@@ -131,29 +182,29 @@ export default async function HomePage() {
         details={s.details}
         works={works}
       />
-      <Story
-        eyebrow={s.storyEyebrow}
-        title={s.storyTitle}
-        text={s.storyText}
-        more={s.storyMore}
-        moreHref={localePath(lang, '/about')}
-        photo="/me/blue-street.webp"
-        alt={t.home.personAlt}
-      />
-      <Voices title={s.voicesTitle} voices={voices} prev={s.prev} next={s.next} />
-      <Finale
-        title={s.finalTitle}
-        sub={s.finalSub}
+      <NotFor
+        eyebrow={s.notForEyebrow}
+        title={s.notForTitle}
+        line={s.notForLine}
+        accent={s.notForAccent}
         cta={s.cta}
         ctaHref={startHref(lang)}
-        whatsapp={t.common.whatsapp}
-        whatsappHref={whatsappHref(t)}
-        links={[
-          { label: `Telegram @${site.contact.telegram}`, href: `https://t.me/${site.contact.telegram}` },
-          { label: `Instagram @${site.contact.instagram}`, href: `https://instagram.com/${site.contact.instagram}` },
-          { label: site.contact.phone, href: `tel:${site.contact.phoneHref}` },
-        ]}
+        more={s.notForMore}
+        moreHref={localePath(lang, '/about')}
+        photo="/me/blue-street.webp"
+        alt={s.notForAlt}
       />
+      <Voices
+        title={s.voicesTitle}
+        voices={voices}
+        prev={s.prev}
+        next={s.next}
+        all={s.voicesAll}
+        allHref={localePath(lang, '/reviews')}
+        shotCaption={s.shotCaption}
+      />
+      <Prices title={s.pricesTitle} sub={t.prices.lede} rows={prices} all={s.pricesAll} allHref={localePath(lang, '/prices')} />
+      <Closing lang={lang} t={t} />
     </>
   );
 }

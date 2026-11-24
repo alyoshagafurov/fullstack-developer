@@ -8,7 +8,7 @@ import { errorText, useAdminApi } from '@/components/mini/admin/api';
 import { Money } from '@/components/mini/admin/Money';
 import { Calendar } from '@/components/mini/admin/Calendar';
 import { AlySplash } from '@/components/mini/AlySplash';
-import { contactHref, parseContact } from '@/lib/content/brief';
+import { contactHref, parseContact, priorities } from '@/lib/content/brief';
 
 /*
  * The owner's panel, inside Telegram — the only admin there is.
@@ -705,7 +705,8 @@ function LeadScreen({ id, api, onBack }: { id: string; api: Api; onBack: () => v
   const mail = data.email && contact?.method !== 'Email';
 
   const brief: [string, string | null][] = [
-    ['Цель', data.goal],
+    // New requests keep «what matters most» (Скорость / Качество / Цена) in this column.
+    [(priorities as readonly string[]).includes(data.goal) ? 'Что важнее' : 'Цель', data.goal],
     ['Что нужно', data.description],
     ['Аудитория', data.audience],
     ['Функции', data.features],

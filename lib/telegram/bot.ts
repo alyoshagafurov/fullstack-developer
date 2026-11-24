@@ -8,7 +8,6 @@ import { featuredServices } from '@/lib/content/services';
 import { getPublishedCases } from '@/lib/cases';
 import { money } from '@/lib/content/finance';
 import { getBriefing } from '@/lib/admin/queries';
-import { getPriceList } from '@/lib/prices';
 import { answerFor } from '@/lib/telegram/answers';
 import { classify } from '@/lib/telegram/intents';
 import {
@@ -52,8 +51,17 @@ import {
 
 /* ------------------------------------------------------------- state -- */
 
+/*
+ * `step` is an index into briefSteps, so it means something else whenever those
+ * are reordered. `v` names the order a saved dialogue was started under; one
+ * from an older order is dropped and the visitor simply starts over, rather
+ * than being asked the wrong question and ending on a request that cannot be
+ * stored. Raise it whenever briefSteps changes order.
+ */
+const BRIEF_VERSION = 2;
 type BriefState = {
   mode: 'brief';
+  v: typeof BRIEF_VERSION;
   step: number;
   data: Partial<Record<BriefStep['key'], string>>;
 };
@@ -69,7 +77,9 @@ async function readState(chatId: string): Promise<State | null> {
   if (!chat?.state || !chat.stateUpdatedAt) return null;
   if (Date.now() - chat.stateUpdatedAt.getTime() > STATE_TTL_MS) return null;
   try {
-    return JSON.parse(chat.state) as State;
+    const state = JSON.parse(chat.state) as State;
+    if (state.mode === 'brief' && state.v !== BRIEF_VERSION) return null;
+    return state;
   } catch {
     return null;
   }
@@ -110,14 +120,22 @@ const html = { parse_mode: 'HTML' as const };
  * but nothing here opens it; treat it as dormant rather than live.
  */
 function clientKeyboard(): InlineKeyboard {
-  // One wide first action, then what people look at before deciding, then the rest.
+  /*
+   * One wide first action — the button the greeting names, «Оставить заявку» —
+   * then what people look at before deciding, then a person. Two rows under it
+   * at most: every extra button is one more thing to read before pressing.
+   *
+   * «Оставить отзыв» is not here. It is for people he has already worked
+   * with, and to a stranger it is one more button beside the one that matters;
+   * past clients find it in the Mini App's «Ещё» list, behind the blue button
+   * at the bottom of the chat.
+   */
   return new InlineKeyboard()
     .webApp(clientButtons.brief, `${site.url}/mini/start`)
     .row()
     .url(clientButtons.work, `${site.url}/ru/work`)
     .url(clientButtons.prices, `${site.url}/ru/prices`)
     .row()
-    .webApp(clientButtons.review, `${site.url}/mini/review`)
     .url(clientButtons.dm, `https://t.me/${site.contact.telegram}`);
 }
 
@@ -225,30 +243,21 @@ async function ownerText(ctx: Context, text: string): Promise<boolean> {
 
 async function visitorStart(ctx: Context): Promise<void> {
   /*
-   * Prices from the list he edits in the admin, never from this file. If the
-   * database is unreachable the greeting still goes out, just without figures:
-   * /start must always answer.
-   */
-  let prices = { landing: null as string | null, sites: null as string | null };
-  try {
-    const list = await getPriceList();
-    prices = {
-      landing: list.find((s) => s.slug === 'landing')?.price ?? null,
-      sites: list.find((s) => s.slug === 'sites')?.price ?? null,
-    };
-  } catch {
-    /* greeting without prices */
-  }
-  /*
    * The greeting stands on a card — the site's first screen, its headline and
    * two of his sites — so the chat opens the way the site does. Should Telegram
    * fail to fetch the picture, the same words go out as plain text.
+   *
+   * It no longer reads the price list: the owner's greeting quotes no prices,
+   * so /start needs nothing from the database and cannot be slowed by it.
    */
-  const caption = visitorGreeting(prices);
   try {
-    await ctx.replyWithPhoto(`${site.url}${welcomeCard}`, { caption, ...html, reply_markup: clientKeyboard() });
+    await ctx.replyWithPhoto(`${site.url}${welcomeCard}`, {
+      caption: visitorGreeting,
+      ...html,
+      reply_markup: clientKeyboard(),
+    });
   } catch {
-    await ctx.reply(caption, { ...html, reply_markup: clientKeyboard() });
+    await ctx.reply(visitorGreeting, { ...html, reply_markup: clientKeyboard() });
   }
 }
 
@@ -256,7 +265,7 @@ function stepKeyboard(step: BriefStep, index: number, username?: string): Inline
   const keyboard = new InlineKeyboard();
   if (step.choices) {
     step.choices.forEach((choice, i) => {
-      keyboard.text(choice, `pick:${index}:${i}`);
+      keyboard.text(step.labels?.[i] ?? choice, `pick:${index}:${i}`);
       if (i % 2 === 1) keyboard.row();
     });
     keyboard.row();
@@ -319,7 +328,7 @@ async function briefAdvance(
     return;
   }
 
-  const next: BriefState = { mode: 'brief', step: nextIndex, data };
+  const next: BriefState = { mode: 'brief', v: BRIEF_VERSION, step: nextIndex, data };
   await writeState(chatId, next);
   await briefPrompt(ctx, next);
 }
@@ -416,7 +425,7 @@ async function visitorCallback(ctx: Context, chatId: string, data: string): Prom
   switch (kind) {
     case 'c': {
       if (a === 'idea') {
-        const state: BriefState = { mode: 'brief', step: 0, data: {} };
+        const state: BriefState = { mode: 'brief', v: BRIEF_VERSION, step: 0, data: {} };
         await writeState(chatId, state);
         await ctx.answerCallbackQuery();
         await briefPrompt(ctx, state);

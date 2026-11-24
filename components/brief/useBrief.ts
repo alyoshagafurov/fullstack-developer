@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   BRIEF_SCREENS,
   briefStepOf,
+  briefTypes,
   checkContact,
   type BriefCopy,
 } from '@/lib/content/brief';
@@ -12,34 +13,37 @@ import {
  * Everything the request form does, without how it looks.
  *
  * The site and the Telegram Mini App draw the form differently but must ask
- * the same four things in the same order and check them the same way, so the
+ * the same five things in the same order and check them the same way, so the
  * steps, the checks, the draft and the sending live here once.
  *
- * Screens: 0 name · 1 where to reply · 2 what they need · 3 a few lines about
- * it, their questions, budget if they want.
+ * Screens (BRIEF_SCREENS): 0 what they need · 1 a few lines and their
+ * questions, both optional · 2 what matters most · 3 budget · 4 name and
+ * where to reply. The contact comes last on purpose — see lib/content/brief.ts.
  */
 
 export type BriefValues = {
-  name: string;
-  contactMethod: string;
-  contact: string;
   projectType: string;
   details: string;
   questions: string;
+  priority: string;
   budget: string;
+  name: string;
+  contactMethod: string;
+  contact: string;
 };
 
 export type BriefField = keyof BriefValues;
 export type BriefSent = { ref: string; code: string };
 
 const EMPTY: BriefValues = {
-  name: '',
-  contactMethod: '',
-  contact: '',
   projectType: '',
   details: '',
   questions: '',
+  priority: '',
   budget: '',
+  name: '',
+  contactMethod: '',
+  contact: '',
 };
 
 function stripEmpty(values?: Partial<BriefValues>): Partial<BriefValues> {
@@ -63,7 +67,8 @@ export function useBrief({
   onSent: (sent: BriefSent, values: BriefValues) => void;
 }) {
   const [step, setStep] = useState(0);
-  const [values, setValues] = useState<BriefValues>(EMPTY);
+  // Answers known before opening are there from the first paint; the server renders the same props.
+  const [values, setValues] = useState<BriefValues>(() => ({ ...EMPTY, ...stripEmpty(initial) }));
   const [errors, setErrors] = useState<Partial<Record<BriefField, string>>>({});
   const [formError, setFormError] = useState('');
   const [sending, setSending] = useState(false);
@@ -72,6 +77,25 @@ export function useBrief({
 
   const last = step === BRIEF_SCREENS - 1;
 
+  /*
+   * The first screen offers seven types, but older links (?type=…) can preset
+   * any of the full list. Such a preset stays on screen, picked, above the
+   * seven — and stays there if they pick another, so the list never jumps.
+   * A preset from the link is known on the first paint; one from a restored
+   * draft arrives with the effect below.
+   */
+  const [presetType, setPresetType] = useState<string | null>(() =>
+    initial?.projectType && !(briefTypes as readonly string[]).includes(initial.projectType)
+      ? initial.projectType
+      : null,
+  );
+  useEffect(() => {
+    if (values.projectType && !(briefTypes as readonly string[]).includes(values.projectType)) {
+      setPresetType(values.projectType);
+    }
+  }, [values.projectType]);
+  const types: readonly string[] = presetType ? [presetType, ...briefTypes] : briefTypes;
+
   // A reload should not cost anyone their typing; the draft never leaves the browser.
   useEffect(() => {
     try {
@@ -79,8 +103,6 @@ export function useBrief({
       if (raw) {
         setValues({ ...EMPTY, ...(JSON.parse(raw) as Partial<BriefValues>), ...stripEmpty(initial) });
         restored.current = true;
-      } else if (initial) {
-        setValues({ ...EMPTY, ...stripEmpty(initial) });
       }
     } catch {
       // Blocked or full storage is not a reason to fail a form.
@@ -114,18 +136,20 @@ export function useBrief({
     });
   };
 
+  /** Screen 1 asks nothing it insists on: a request without a paragraph is still a request. */
   function problems(at: number): Partial<Record<BriefField, string>> {
     const found: Partial<Record<BriefField, string>> = {};
-    if (at === 0 && values.name.trim().length < 2) found.name = copy.errors.name;
-    if (at === 1) {
+    if (at === 0 && !values.projectType) found.projectType = copy.errors.type;
+    if (at === 2 && !values.priority) found.priority = copy.errors.priority;
+    if (at === 3 && !values.budget) found.budget = copy.errors.budget;
+    if (at === 4) {
+      if (values.name.trim().length < 2) found.name = copy.errors.name;
       if (!values.contactMethod) found.contactMethod = copy.errors.method;
       else {
         const problem = checkContact(values.contactMethod, values.contact);
         if (problem) found.contact = copy.errors[problem];
       }
     }
-    if (at === 2 && !values.projectType) found.projectType = copy.errors.type;
-    if (at === 3 && values.details.trim().length < 5) found.details = copy.errors.details;
     return found;
   }
 
@@ -195,5 +219,5 @@ export function useBrief({
 
   const dirty = Object.values(values).some(Boolean);
 
-  return { step, last, values, set, prefill, errors, formError, sending, advance, back, dirty };
+  return { step, last, values, types, set, prefill, errors, formError, sending, advance, back, dirty };
 }

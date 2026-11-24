@@ -11,24 +11,13 @@
  */
 
 import type { BriefCopy } from '@/lib/content/brief';
+import { PROJECTS, PROMISE } from '@/lib/content/site';
 
 /** The request form in English. Values sent stay the Russian ones in lib/content/brief.ts. */
 const briefEn: BriefCopy = {
-  name: { question: 'What’s your name?', hint: 'Just your first name is fine.', placeholder: 'Alex' },
-  contact: {
-    question: 'Where should I reply?',
-    hint: 'Pick what’s easiest for you and leave your contact.',
-  },
-  methods: {
-    Telegram: { label: 'Telegram', placeholder: '@username' },
-    WhatsApp: { label: 'WhatsApp', placeholder: '+1 555 000 0000' },
-    Instagram: { label: 'Instagram', placeholder: '@username' },
-    Email: { label: 'Email', placeholder: 'name@gmail.com' },
-    Телефон: { label: 'Phone', placeholder: '+1 555 000 0000' },
-  },
   projectType: {
     question: 'What do you need?',
-    hint: 'Pick the closest one. Not sure? Pick something similar — we’ll sort it out.',
+    hint: 'Pick the closest one. Not sure? Tap “Not sure” and I’ll help.',
   },
   options: {
     Сайт: { label: 'Website' },
@@ -45,16 +34,63 @@ const briefEn: BriefCopy = {
     'Telegram-бот': { label: 'Telegram bot' },
     'Telegram Mini App': { label: 'Telegram Mini App' },
     'Поддержка и развитие': { label: 'Support and updates' },
+    'Не знаю': { label: 'Not sure' },
   },
-  details: { question: 'Tell me what you need', hint: 'In your own words. Short is fine.' },
+  details: {
+    question: 'Tell me what you need',
+    hint: 'In your own words, short is fine. Or skip it — we’ll talk it through.',
+  },
   fields: {
     details: {
       label: 'What you need',
       placeholder: 'For example: a website for my coffee shop so people can order online',
     },
     questions: { label: 'Your questions', placeholder: 'Anything you’d like to ask' },
-    budget: { label: 'Budget', placeholder: 'For example: $500' },
   },
+  priority: {
+    question: 'What matters most right now?',
+    hint: 'Just one. It tells me where to start.',
+  },
+  priorities: {
+    Скорость: { label: 'Speed', note: 'Launch as soon as possible' },
+    Качество: { label: 'Quality', note: 'Something you’re proud to show' },
+    Цена: { label: 'Price', note: 'Stay within budget' },
+  },
+  budget: {
+    question: 'What’s your budget?',
+    hint: 'Roughly — so I can suggest something that fits.',
+  },
+  budgets: {
+    'до 3 000 сомони': { label: 'Under 3,000 somoni' },
+    '3 000–7 000 сомони': { label: '3,000–7,000 somoni' },
+    '7 000–15 000 сомони': { label: '7,000–15,000 somoni' },
+    'Пока не знаю': { label: 'Not sure yet' },
+  },
+  reply: {
+    question: 'Where should I reply?',
+    hint: 'I reply personally, within a day.',
+  },
+  name: {
+    question: 'What’s your name?',
+    label: 'Your name',
+    hint: 'Just your first name is fine.',
+    placeholder: 'Alex',
+  },
+  contact: {
+    question: 'Where should I reply?',
+    label: 'Where to reply',
+    hint: 'Pick what’s easiest for you and leave your contact.',
+  },
+  methods: {
+    Telegram: { label: 'Telegram', placeholder: '@username' },
+    WhatsApp: { label: 'WhatsApp', placeholder: '+1 555 000 0000' },
+    Instagram: { label: 'Instagram', placeholder: '@username' },
+    Email: { label: 'Email', placeholder: 'name@gmail.com' },
+    Телефон: { label: 'Phone', placeholder: '+1 555 000 0000' },
+  },
+  lastProject: 'Latest project',
+  promise: PROMISE.en.full,
+  of: 'of',
   optional: 'optional',
   note: 'By sending this, you agree that I can contact you about your project.',
   errors: {
@@ -65,7 +101,8 @@ const briefEn: BriefCopy = {
     phone: 'Check the number — it’s too short',
     short: 'That’s too short for a username',
     type: 'Pick what you need',
-    details: 'Write at least a few words about what you need',
+    priority: 'Pick what matters most',
+    budget: 'Pick a budget — “Not sure yet” is fine',
     check: 'Please check this answer',
     failed: 'Couldn’t send it. Please try again.',
     offline: 'Looks like you’re offline. Check your connection and try again.',
@@ -84,14 +121,19 @@ const briefEn: BriefCopy = {
     codeLabel: 'Code for the bot',
     track: 'You can check the status with my Telegram bot',
     trackChat: 'The number is in your chat with the bot — news about the project will arrive there too.',
+    ready: 'Done!',
+    personal: 'I’ll read your request myself and write back today.',
+    latest: 'Meanwhile, see my 3 latest projects',
+    close: 'Close',
   },
 };
 
 export const en = {
   meta: {
     siteTitle: 'Alisher Gafurov — I build websites, online stores and apps',
+    // the promise first: it is what a link preview in Telegram or WhatsApp shows
     siteDescription:
-      'I’m Alisher Gafurov (aly), a web developer from Dushanbe, Tajikistan. I build websites, online stores, apps and Telegram bots for businesses — from idea to launch, on my own, with no middlemen.',
+      `${PROMISE.en.full} I’m Alisher Gafurov (aly), a web developer from Dushanbe, Tajikistan. I build websites, online stores, apps and Telegram bots for businesses — from idea to launch, on my own, with no middlemen.`,
     titleTemplate: '%s — Alisher Gafurov (aly)',
     ogLocale: 'en_US',
     keywords: [
@@ -118,7 +160,7 @@ export const en = {
     whatsapp: 'WhatsApp',
     whatsappText: 'Hello! I would like to discuss a project.',
     skipToContent: 'Skip to content',
-    getQuote: 'Get a quote',
+    getQuote: 'Send a request',
     seeWork: 'See my work',
     learnMore: 'Learn more',
     seeServices: 'See services',
@@ -141,7 +183,7 @@ export const en = {
     about: 'About me',
     contacts: 'Contact',
     process: 'How it works',
-    start: 'Get a quote',
+    start: 'Send a request',
   },
 
   header: {
@@ -171,31 +213,36 @@ export const en = {
     photoAlt: 'Alisher Gafurov, web developer',
   },
 
-  /** The night museum: one headline per hall, a small label in a corner. */
-  /** Home: one huge headline per section, a small line in a corner. */
-  /** The home in the manner of Apple and Porsche: the work presented as a product. */
+  /**
+   * The home, in the order a careful client decides: the promise, the numbers,
+   * three steps without risk, the work as before → after, who it is not for,
+   * the reviews, and only then the prices.
+   */
   showroom: {
-    manifesto: 'I build websites, online stores and Telegram bots for businesses. Myself — from the idea and design to code and launch. So your clients find you, trust you from the first screen, and write.',
-    manifestoAccent: 'trust write',
-    workAll: 'All projects',
     eyebrow: 'Alisher Gafurov · web developer',
-    title: ['Websites that', 'work for business.'],
-    sub: 'Design, code and launch. One person, from the first message to the result.',
+    title: ['Clients are looking for you online.', 'What do they find?'],
+    sub: 'I build websites, online stores and Telegram bots that get people writing to you. On my own — from idea to launch.',
     cta: 'Discuss a project',
-    seeWork: 'See the work',
+    /** Beside the main button: the promise, put first — the draft, then the payment. */
+    ctaNote: [PROMISE.en.draft, PROMISE.en.payment] as string[],
+    /** Read out in place of the laptop and the phone on the first screen. */
+    screens: 'Live client sites: ArusDomod on a laptop, mimi on a phone',
+    specsLabel: 'At a glance',
     specs: [
-      { value: '50+', label: 'projects launched' },
       { value: '1–3', label: 'days to a first draft' },
-      { value: '50%', label: 'paid after the draft' },
+      { value: PROJECTS, label: 'projects' },
       { value: '3', label: 'languages: RU · EN · TJ' },
+      // its own words: "50% / you pay only if…" would not read as English
+      { value: '50%', label: 'paid only if you like the draft' },
     ],
-    workTitle: 'The work.',
-    workSub: 'Real projects. Running right now.',
-    labels: { kind: 'Type', year: 'Year', client: 'Client', result: 'Result' },
+    stepsTitle: 'How I work — 3 steps, no risk.',
+    steps: ['You tell me what you need', 'In 1–3 days I show you a draft', 'You pay 50% only if you like it'],
+    workTitle: 'Case studies.',
+    workSub: 'Real projects, running right now: what there was before, and what there is now.',
+    workAll: 'All projects',
+    labels: { year: 'Year', before: 'Before', after: 'After' },
     openSite: 'Open the site',
     details: 'Details',
-    desktop: 'Desktop',
-    phone: 'Phone',
     kinds: {
       'arusdomod-shop': 'Wedding outfits store',
       'autoshine-store': 'Car care store',
@@ -203,19 +250,22 @@ export const en = {
       'python-academy': 'Platform for learning Python',
       tajshop: 'Clothing store',
     } as Record<string, string>,
-    lineTitle: 'What does your business need?',
-    lineSub: 'Pick a direction — the request opens with it chosen.',
-    from: 'from',
-    choose: 'Discuss',
-    storyEyebrow: 'Who builds it',
-    storyTitle: ['One person.', 'The whole project.'],
-    storyText: 'Idea, design, code, server and launch. Nothing is handed to “another guy” — you talk to the one who builds it.',
-    storyMore: 'About me',
+    notForEyebrow: 'Who I’m not for',
+    notForTitle: 'I’m not the cheapest.',
+    notForLine: 'If you need a website for 300 somoni by tonight, I’m not for you.',
+    notForAccent: 'If you need a website you won’t be embarrassed by — let’s talk.',
+    notForMore: 'About me',
+    notForAlt: 'Alisher Gafurov at his laptop in a café',
     voicesTitle: 'Clients say.',
-    finalTitle: 'Shall we start?',
-    finalSub: 'A first draft in 1–3 days. You pay 50% once you have seen it.',
-    prev: 'Previous',
-    next: 'Next',
+    voicesAll: 'All reviews',
+    shotCaption: 'Chat screenshot',
+    pricesTitle: 'Prices.',
+    pricesAll: 'All prices',
+    finalTitle: 'Not sure what you need — a website, a bot or a store?',
+    finalSub: 'Describe the task in your own words — I’ll point you the right way, for free.',
+    finalOr: 'Or write to me directly',
+    prev: 'Previous review',
+    next: 'Next review',
   },
 
   /** Prototype: the first screen and one project; the site takes the work's colour. */
@@ -223,7 +273,7 @@ export const en = {
     eyebrow: 'Alisher Gafurov — web developer, Dushanbe',
     title: ['Websites', 'that sell'],
     script: 'idea to launch — by me',
-    note: '50+ projects for clients in Tajikistan and abroad.',
+    note: `${PROJECTS} projects for clients in Tajikistan and abroad.`,
     cta: 'Discuss a project',
     ribbonHint: 'Hover a work — the site takes its colour',
     scrollHint: 'First project below',
@@ -257,7 +307,7 @@ export const en = {
     craftNote: 'From the first message to the launch. I write every line of code myself.',
     bespokeTitle: 'Made to measure',
     bespokeHand: 'not a template',
-    bespokeNote: 'A first draft in 1–3 days. You pay 50% once you have seen it, the rest when everything is done.',
+    bespokeNote: `${PROMISE.en.full} The rest when everything is done.`,
     bespokeDays: 'days to a first draft',
     bespokeCta: 'Get a price',
     storiesTitle: 'Clients say',
@@ -322,13 +372,12 @@ export const en = {
     personTitle: ['One person.', 'The whole project.'],
     personScript: 'Alisher',
     personNote:
-      'Idea, design, code, server and launch. Nothing is handed to “another guy”. 50+ projects for clients in Tajikistan and abroad, 3–4 years in the work.',
+      `Idea, design, code, server and launch. Nothing is handed to “another guy”. ${PROJECTS} projects for clients in Tajikistan and abroad, 3–4 years in the work.`,
     personMore: 'More about me',
-    personAlt: 'Alisher Gafurov at work',
     draftTitle: ['First draft', 'in 1–3 days'],
     draftScript: 'then we decide',
     draftNote:
-      'You pay 50% after you have seen the first draft, the rest when everything is done. Three rounds of changes in the month after launch are included.',
+      'You pay 50% only if you like the draft, the rest when everything is done. Three rounds of changes in the month after launch are included.',
     closeTitle: ['Got an idea?', 'Let’s build it.'],
     closeNote: 'A request takes two minutes and commits you to nothing. I reply within a day, Mon–Sat, Dushanbe time (UTC+5).',
   },
@@ -345,7 +394,7 @@ export const en = {
     statement:
       'You tell me what your business needs. I build it — a website, an online store, an app or a bot. It looks good, works on every phone, and your clients get it right away.',
     stats: [
-      { value: '50+', label: 'projects done' },
+      { value: PROJECTS, label: 'projects done' },
       { value: '10+', label: 'technologies I work with' },
     ],
   },
@@ -470,8 +519,7 @@ export const en = {
     terms: [
       {
         label: 'Payment',
-        value:
-          '50/50. I show you a first draft in 1–3 days. You pay 50% upfront and the rest when it’s done.',
+        value: `${PROMISE.en.full} The rest when it’s done.`,
       },
       { label: 'Support', value: 'Three rounds of changes within a month after launch — included.' },
       {
@@ -740,13 +788,13 @@ export const en = {
   },
 
   start: {
-    metaTitle: 'Get a quote',
-    eyebrow: 'Get a quote',
+    metaTitle: 'Send a request',
+    eyebrow: 'Request',
     howItWorks: 'How it works',
     steps: [
       {
         title: 'You fill in the form',
-        body: 'Four short steps, about a minute. No tech words needed.',
+        body: 'Five short steps, about a minute. No tech words needed.',
       },
       {
         title: 'I read it and reply',

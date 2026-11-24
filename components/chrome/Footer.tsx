@@ -5,9 +5,14 @@ import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 import { whatsappHref } from '@/components/museum/links';
 
+/* Quiet until pointed at: grey, then white and underlined. Each row is a full 44px tap target. */
+const footerLink =
+  'inline-flex min-h-11 items-center text-sm text-bone-2 underline-offset-4 transition-colors hover:text-bone hover:underline';
+
 /*
  * The museum's back wall: the wordmark, the halls, the ways to reach him, and
- * the colophon spelled both ways people search for his name.
+ * the colophon spelled both ways people search for his name. Graphite, so every
+ * page ends dark after the black last screen, the way the home does.
  */
 export async function Footer() {
   const { lang, t } = await getDictionary();
@@ -32,7 +37,7 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="bg-wall-2 text-[0.8125rem]">
+    <footer data-tone="dark" className="bg-wall-2 text-[0.8125rem] text-bone">
       <div className="hall pt-14 pb-32 md:pb-12">
         <div className="flex flex-col gap-14 md:flex-row md:justify-between">
           <div className="max-w-xs">
@@ -42,24 +47,24 @@ export async function Footer() {
 
           <div className="flex gap-16 md:gap-24">
             <nav aria-label={t.footer.work}>
-              <ul className="space-y-2.5">
+              <ul>
                 {halls.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-sm text-bone-2 transition-colors hover:text-bone">
+                    <Link href={link.href} className={footerLink}>
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
             </nav>
-            <ul className="space-y-2.5" aria-label={t.footer.contact}>
+            <ul aria-label={t.footer.contact}>
               {ways.map((way) => (
                 <li key={way.label}>
                   <a
                     href={way.href}
                     target={way.href.startsWith('http') ? '_blank' : undefined}
                     rel={way.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="text-sm break-all text-bone-2 transition-colors hover:text-bone"
+                    className={`${footerLink} break-all`}
                   >
                     {way.label}
                   </a>

@@ -59,7 +59,10 @@ export async function createLead(
           /*
            * The short form's answers on the table's original columns, which
            * stay as they were (the database is shared and never pushed to).
-           * Columns the form no longer asks about are written empty.
+           * «Что для вас сейчас важнее?» has no column of its own, so it is
+           * written to `goal` — the nearest meaning, and empty since the long
+           * form went. Columns the form no longer asks about are written
+           * empty; required ones get '' rather than null.
            */
           name: data.name,
           email: data.contactMethod === 'Email' ? data.contact.trim().toLowerCase() : '',
@@ -68,8 +71,8 @@ export async function createLead(
           projectType: data.projectType,
           budget: data.budget || '',
           timeline: '',
-          goal: '',
-          description: data.details,
+          goal: data.priority || '',
+          description: data.details || '',
           extra: data.questions || null,
           source,
           trackingToken,
