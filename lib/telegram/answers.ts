@@ -63,7 +63,7 @@ function termLine(s: PricedService): string {
 
 /** The services asked about that the owner still offers, in the order asked. */
 async function pick(slugs: ServiceSlug[]): Promise<{ all: PricedService[]; asked: PricedService[] }> {
-  const all = await getPriceList();
+  const all = await getPriceList('ru');
   const asked = slugs
     .map((slug) => all.find((s) => s.slug === slug))
     .filter((s): s is PricedService => Boolean(s));
@@ -205,7 +205,7 @@ export async function answerFor(intent: Intent): Promise<Answer | null> {
       };
 
     case 'services': {
-      const all = await getPriceList();
+      const all = await getPriceList('ru');
       return {
         text: `${all.map((s) => html(s.title)).join('\n')}\n\nСпросите про любое — цену и срок скажу сразу.`,
         keyboard: apply().row().url(clientButtons.prices, `${site.url}/ru/prices`),

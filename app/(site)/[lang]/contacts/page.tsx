@@ -4,8 +4,11 @@ import { HallHead } from '@/components/museum/HallHead';
 import { ArrowIcon, WhatsAppIcon } from '@/components/museum/Icons';
 import { startHref, whatsappHref } from '@/components/museum/links';
 import { site } from '@/lib/content/site';
-import { alternatesFor, fill } from '@/lib/i18n';
+import { fill } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { absoluteUrl, pageMetadata } from '@/lib/seo/metadata';
+import { breadcrumbs, graph, ids } from '@/lib/seo/schema';
 
 /*
  * The ways to reach him. WhatsApp and Telegram are the two big doors, set as
@@ -15,14 +18,17 @@ import { getDictionary } from '@/lib/i18n/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
+  return pageMetadata({
+    lang,
+    t,
+    path: '/contacts',
     title: t.contacts.metaTitle,
     description: fill(t.contacts.metaDescription, {
       email: site.contact.email,
       telegram: site.contact.telegram,
+      phone: site.contact.phone,
     }),
-    alternates: alternatesFor(lang, '/contacts'),
-  };
+  });
 }
 
 export default async function ContactsPage() {
@@ -44,6 +50,20 @@ export default async function ContactsPage() {
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          {
+            '@type': 'ContactPage',
+            '@id': `${absoluteUrl(lang, '/contacts')}#contact`,
+            url: absoluteUrl(lang, '/contacts'),
+            name: t.contacts.title,
+            inLanguage: lang,
+            isPartOf: { '@id': ids.website },
+            mainEntity: { '@id': ids.business },
+          },
+          breadcrumbs(lang, t, [{ name: t.nav.contacts, path: '/contacts' }]),
+        )}
+      />
       <HallHead title={t.contacts.title} script={t.common.responseTime} note={`${t.common.replyWithin} ${t.common.hours}`}>
         <Link href={startHref(lang)} className="btn-bone group">
           {t.common.getQuote}

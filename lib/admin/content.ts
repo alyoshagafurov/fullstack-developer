@@ -1,4 +1,5 @@
 import 'server-only';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import type { AdminGrant } from '@/lib/auth';
@@ -6,6 +7,7 @@ import type { OpResult } from '@/lib/admin/ops';
 import { createOnce, operationId } from '@/lib/admin/once';
 import { deleteCaseTranslations, getCaseTranslations, saveCaseTranslation } from '@/lib/case-i18n';
 import { revalidateSite } from '@/lib/i18n/revalidate';
+import { RELATED_CASES } from '@/lib/content/service-pages';
 import { services } from '@/lib/content/services';
 import { getPriceRows } from '@/lib/prices';
 
@@ -32,6 +34,14 @@ const url = z
   .refine((v) => v === '' || v.startsWith('/') || /^https:\/\/[^\s]+$/.test(v), 'Адрес должен начинаться с https:// или /');
 
 /* ---------------------------------------------------------------- cases -- */
+
+/*
+ * Pages outside /work that list published projects: /dushanbe, and the
+ * service pages that show their own (RELATED_CASES — today, the online
+ * stores). A project hidden or deleted must leave them too, not linger there
+ * as a link to a 404 until the next revalidation.
+ */
+const CASE_LISTS = ['/dushanbe', ...Object.keys(RELATED_CASES).map((slug) => `/services/${slug}`)];
 
 const caseInput = z.object({
   id: z.string().max(40).optional(),
@@ -154,7 +164,13 @@ export async function saveCase(_: AdminGrant, raw: unknown): Promise<Result<{ id
     });
   }
 
-  revalidateSite('/', '/work', `/work/${slug}`, ...(previousSlug && previousSlug !== slug ? [`/work/${previousSlug}`] : []));
+  revalidateSite(
+    '/',
+    '/work',
+    `/work/${slug}`,
+    ...(previousSlug && previousSlug !== slug ? [`/work/${previousSlug}`] : []),
+    ...CASE_LISTS,
+  );
   return { status: 'ok', id };
 }
 
@@ -163,7 +179,7 @@ export async function setCasePublished(_: AdminGrant, id: string, published: unk
   const row = await prisma.case.findUnique({ where: { id }, select: { slug: true } });
   if (!row) return { status: 'error', message: 'Кейс не найден' };
   await prisma.case.update({ where: { id }, data: { published } });
-  revalidateSite('/', '/work', `/work/${row.slug}`);
+  revalidateSite('/', '/work', `/work/${row.slug}`, ...CASE_LISTS);
   return { status: 'ok' };
 }
 
@@ -174,7 +190,7 @@ export async function orderCases(_: AdminGrant, ids: unknown): Promise<OpResult>
   const known = await prisma.case.count({ where: { id: { in: parsed.data } } });
   if (known !== parsed.data.length) return { status: 'error', message: 'Список кейсов изменился. Обновите его' };
   await prisma.$transaction(parsed.data.map((id, order) => prisma.case.update({ where: { id }, data: { order } })));
-  revalidateSite('/', '/work');
+  revalidateSite('/', '/work', ...CASE_LISTS);
   return { status: 'ok' };
 }
 
@@ -184,7 +200,7 @@ export async function deleteCase(_: AdminGrant, id: string): Promise<OpResult> {
   if (!row) return { status: 'ok' };
   await prisma.case.delete({ where: { id } });
   await deleteCaseTranslations(id).catch(() => undefined);
-  revalidateSite('/', '/work', `/work/${row.slug}`);
+  revalidateSite('/', '/work', `/work/${row.slug}`, ...CASE_LISTS);
   return { status: 'ok' };
 }
 
@@ -295,6 +311,13 @@ export async function savePrices(_: AdminGrant, raw: unknown): Promise<OpResult>
       return prisma.servicePrice.upsert({ where: { slug: r.slug }, create: row, update: row });
     }),
   ]);
-  revalidateSite('/', '/prices', '/services', ...services.map((s) => `/services/${s.slug}`));
+  /*
+   * Every page of the public site, not only the price list and the services:
+   * the layout's JSON-LD carries the business's priceRange, and /dushanbe and
+   * the home quote prices too. The route group has to be in the path — the
+   * tag Next gives the layout is `_N_T_/(site)/[lang]/layout`, so
+   * '/[lang]' would name a layout no page carries and refresh nothing.
+   */
+  revalidatePath('/(site)/[lang]', 'layout');
   return { status: 'ok' };
 }

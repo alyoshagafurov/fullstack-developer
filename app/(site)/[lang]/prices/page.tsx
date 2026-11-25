@@ -2,10 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { HallHead } from '@/components/museum/HallHead';
 import { Closing } from '@/components/site/Closing';
-import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
-import { alternatesFor, localePath } from '@/lib/i18n';
+import { fill, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { localizeService } from '@/lib/i18n/services';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { absoluteUrl, pageMetadata } from '@/lib/seo/metadata';
+import { lowerFirst, parsePrice } from '@/lib/seo/price';
+import { breadcrumbs, graph, offerCatalog } from '@/lib/seo/schema';
+import { cachedPriceList } from '@/lib/seo/services';
 
 /*
  * The price catalogue. This is the one page where the detail is the point, so
@@ -17,22 +22,46 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
+  const [list, shown] = await Promise.all([cachedPriceList(lang), priceFormatter(lang)]);
+  // «лендинг — от 1 500 сомони, сайт — от 3 000 сомони, …», the four most asked about, as the page shows them:
+  // somoni in Russian, dollars in English
+  const named = Object.entries(t.meta.priceNames).flatMap(([slug, name]) => {
+    const price = list.find((row) => row.slug === slug)?.price;
+    const said = price ? (shown(price) ?? price) : null;
+    return said ? [`${name} — ${lowerFirst(said.trim())}`] : [];
+  });
+  return pageMetadata({
+    lang,
+    t,
+    path: '/prices',
     title: t.prices.metaTitle,
-    description: t.prices.metaDescription,
-    alternates: alternatesFor(lang, '/prices'),
-  };
+    description: named.length > 0 ? fill(t.prices.metaDescription, { list: named.join(', ') }) : t.prices.lede,
+  });
 }
 
 export default async function PricesPage() {
   const { lang, t } = await getDictionary();
-  const [items, price] = await Promise.all([getPriceList(lang), priceFormatter(lang)]);
+  const [items, price] = await Promise.all([cachedPriceList(lang), priceFormatter(lang)]);
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          offerCatalog(
+            absoluteUrl(lang, '/prices'),
+            t.prices.metaTitle,
+            items.map((row) => ({
+              name: localizeService(row, t).title,
+              url: absoluteUrl(lang, `/services/${row.slug}`),
+              figure: parsePrice(row.price),
+            })),
+          ),
+          breadcrumbs(lang, t, [{ name: t.nav.prices, path: '/prices' }]),
+        )}
+      />
       <HallHead title={t.prices.title} script={t.prices.lede} />
 
-      <section className="hall pb-28 md:pb-40" aria-label={t.prices.metaTitle}>
+      <section className="hall pb-28 md:pb-40" aria-label={t.prices.title}>
         <ul className="border-t border-seam">
           {items.map((service) => (
             <li key={service.slug} className="border-b border-seam">

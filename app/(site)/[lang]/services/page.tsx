@@ -4,11 +4,14 @@ import { HallHead } from '@/components/museum/HallHead';
 import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { SERVICE_HALLS, SERVICE_TYPE, startHref } from '@/components/museum/links';
-import { getPriceList } from '@/lib/prices';
 import { priceFormatter } from '@/lib/price-display';
-import { alternatesFor, localePath } from '@/lib/i18n';
+import { fill, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 import { localizeService } from '@/lib/i18n/services';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { absoluteUrl, pageMetadata } from '@/lib/seo/metadata';
+import { breadcrumbs, graph, itemList } from '@/lib/seo/schema';
+import { cachedPriceList, startingPrice } from '@/lib/seo/services';
 
 /*
  * The services as four halls rather than fourteen rows. Each hall is one word
@@ -19,21 +22,38 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
+  const [list, shown] = await Promise.all([cachedPriceList(lang), priceFormatter(lang)]);
+  // in the currency the page shows its prices in: somoni in Russian, dollars in English
+  const lowest = startingPrice(lang, t, list);
+  const from = lowest ? (shown(lowest) ?? lowest) : null;
+  return pageMetadata({
+    lang,
+    t,
+    path: '/services',
     title: t.services.metaTitle,
-    description: t.services.metaDescription,
-    alternates: alternatesFor(lang, '/services'),
-  };
+    // «— от 1 500 сомони» only when the list has a figure to say it with
+    description: from ? fill(t.services.metaDescription, { from }) : t.services.metaDescription.replace(/ — \{from\}/, ''),
+  });
 }
 
 export default async function ServicesPage() {
   const { lang, t } = await getDictionary();
-  const [list, price] = await Promise.all([getPriceList(lang), priceFormatter(lang)]);
+  const [list, price] = await Promise.all([cachedPriceList(lang), priceFormatter(lang)]);
   const bySlug = new Map(list.map((row) => [row.slug, row]));
   const words = new Map(t.home.directions.map((d) => [d.key, d]));
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          itemList(
+            absoluteUrl(lang, '/services'),
+            t.services.metaTitle,
+            list.map((row) => ({ name: localizeService(row, t).title, url: absoluteUrl(lang, `/services/${row.slug}`) })),
+          ),
+          breadcrumbs(lang, t, [{ name: t.nav.services, path: '/services' }]),
+        )}
+      />
       <HallHead title={t.services.title} script={t.home.directionsTitle} note={t.about.difference} />
 
       {SERVICE_HALLS.map((hall, index) => {

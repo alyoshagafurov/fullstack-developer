@@ -6,8 +6,12 @@ import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { startHref } from '@/components/museum/links';
 import { getPublishedCases, localizeCases } from '@/lib/cases';
-import { alternatesFor, localePath } from '@/lib/i18n';
+import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { isUntranslated } from '@/lib/seo/dates';
+import { absoluteUrl, pageMetadata } from '@/lib/seo/metadata';
+import { breadcrumbs, graph, itemList } from '@/lib/seo/schema';
 
 /*
  * Every published work, hung salon-style: large and small frames alternate
@@ -18,11 +22,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
-    title: t.work.metaTitle,
-    description: t.work.metaDescription,
-    alternates: alternatesFor(lang, '/work'),
-  };
+  return pageMetadata({ lang, t, path: '/work', title: t.work.metaTitle, description: t.work.metaDescription });
 }
 
 /* Where each frame hangs on a twelve-column wall, repeating every four works. */
@@ -39,6 +39,21 @@ export default async function WorkPage() {
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          cases.length > 0 &&
+            itemList(
+              absoluteUrl(lang, '/work'),
+              t.work.metaTitle,
+              // a case with no English yet is indexed at its Russian address, so the list names that one
+              cases.map((row) => ({
+                name: row.title,
+                url: absoluteUrl(lang === 'en' && isUntranslated(row) ? 'ru' : lang, `/work/${row.slug}`),
+              })),
+            ),
+          breadcrumbs(lang, t, [{ name: t.nav.work, path: '/work' }]),
+        )}
+      />
       <HallHead title={t.home.workTitle} script={t.home.workScript} note={t.work.metaDescription} />
 
       {cases.length === 0 ? (
@@ -51,7 +66,7 @@ export default async function WorkPage() {
           </Link>
         </section>
       ) : (
-        <section className="hall pb-32 md:pb-48" aria-label={t.work.metaTitle}>
+        <section className="hall pb-32 md:pb-48" aria-label={t.home.workTitle}>
           <ul className="grid gap-x-10 gap-y-24 md:gap-y-32 lg:grid-cols-12">
             {cases.map((row, index) => (
               <li key={row.id} data-fade className={HANG[index % HANG.length]}>

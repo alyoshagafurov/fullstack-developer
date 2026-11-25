@@ -1,10 +1,14 @@
 /*
  * Every gap on the public site that only the owner can fill, in one file.
  *
- * Each bracketed value is rendered on the site exactly as written, on purpose:
- * a visible "[КЕЙС …]" is honest, a plausible result nobody measured is not.
- * Replace the bracketed text with the real words — Russian and English — and
- * the dashed placeholder frame disappears with the brackets.
+ * While the site runs locally (`next dev`) each bracketed value is shown
+ * exactly as written, in a dashed frame, so the owner sees what is left to
+ * fill. On the live site a block that is still a placeholder is not rendered
+ * at all: a visitor never reads "[КЕЙС …]", and never a plausible result
+ * nobody measured. A server page filters with visibleText before it hands a
+ * value to a client component: props cross into the page's HTML as data, so a
+ * placeholder hidden only at render would still be read in the source. Replace the bracketed text with the real words — Russian
+ * and English — and it shows everywhere, in dev and on the live site.
  *
  * Nothing here is ever filled in by a model.
  */
@@ -54,4 +58,21 @@ export const REVIEW_BUSINESS_MISSING = {
 /** True for text that is still a placeholder, so the page can frame it and nobody mistakes it for a claim. */
 export function isPlaceholder(text: string): boolean {
   return /^\[[\s\S]*\]$/.test(text.trim());
+}
+
+/*
+ * Placeholders are shown while the site runs in development and never in a
+ * production build. NODE_ENV is inlined at build time, so this holds in the
+ * browser bundle as well as on the server.
+ */
+export const SHOW_PLACEHOLDERS = process.env.NODE_ENV !== 'production';
+
+/**
+ * The text as it should reach the page: a real value always; a placeholder
+ * only in development; null when there is nothing to show, so the caller
+ * renders nothing for that block.
+ */
+export function visibleText(text: string | null | undefined): string | null {
+  if (!text?.trim()) return null;
+  return isPlaceholder(text) && !SHOW_PLACEHOLDERS ? null : text;
 }

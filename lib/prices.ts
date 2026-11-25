@@ -2,6 +2,7 @@ import { prisma, safely } from '@/lib/prisma';
 import { services, type Service } from '@/lib/content/services';
 import type { Locale } from '@/lib/i18n';
 import { en } from '@/lib/i18n/en';
+import { ru } from '@/lib/i18n/ru';
 
 /*
  * What each service costs.
@@ -64,16 +65,25 @@ export function englishFigure(value: string): string {
     .replace(/(^|\s)1 (weeks|days|months)/g, (_, space: string, unit: string) => `${space}1 ${unit.slice(0, -1)}`);
 }
 
-/** Every service the owner has not hidden, with the price that applies. */
-export async function getPriceList(lang: Locale = 'ru'): Promise<PricedService[]> {
+/**
+ * Every service the owner has not hidden, with the price that applies.
+ *
+ * With a language, each service is named the way that site names it: «Лендинги»,
+ * «Telegram-боты», «Android-приложения» on /ru, as its pages and their JSON-LD
+ * already call them. Without one — the bot, the Mini App — the names stay the
+ * owner's own from lib/content/services.ts. The figures are Russian either way
+ * unless the language is English.
+ */
+export async function getPriceList(lang?: Locale): Promise<PricedService[]> {
   const overrides = await getOverrides();
   const english = lang === 'en' ? en.services.items : null;
+  const names = lang ? (lang === 'en' ? en : ru).services.items : null;
 
   return services
     .filter((service) => !overrides.get(service.slug)?.hidden)
     .map((service) => {
       const row = overrides.get(service.slug);
-      const copy = english?.[service.slug as keyof typeof en.services.items];
+      const copy = english?.[service.slug];
       const typedPrice = row?.price?.trim();
       const typedTerm = row?.duration?.trim();
       const price = english
@@ -84,7 +94,7 @@ export async function getPriceList(lang: Locale = 'ru'): Promise<PricedService[]
         : typedTerm || service.duration || null;
       return {
         ...service,
-        title: copy?.title ?? service.title,
+        title: names?.[service.slug]?.title ?? service.title,
         price,
         term,
         note: row?.note?.trim() || null,

@@ -4,8 +4,8 @@ import { WhatsAppIcon } from '@/components/museum/Icons';
 import { whatsappHref } from '@/components/museum/links';
 import { projectTypes } from '@/lib/content/brief';
 import { site } from '@/lib/content/site';
-import { alternatesFor } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { pageMetadata } from '@/lib/seo/metadata';
 
 /*
  * The request. One question per screen, already answered where the visitor
@@ -15,11 +15,8 @@ import { getDictionary } from '@/lib/i18n/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
-    title: t.start.metaTitle,
-    description: `${t.closing.invite} ${t.closing.hint}`,
-    alternates: alternatesFor(lang, '/start'),
-  };
+  // ?type=… variants are the same form pre-answered: they all canonicalise to /start
+  return pageMetadata({ lang, t, path: '/start', title: t.start.metaTitle, description: t.start.metaDescription });
 }
 
 export default async function StartPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
@@ -30,7 +27,14 @@ export default async function StartPage({ searchParams }: { searchParams: Promis
   return (
     <section className="relative min-h-[100svh] bg-wall">
       <div className="hall flex min-h-[100svh] flex-col pt-28 pb-16 md:pt-32">
-        <div className="flex-1">
+        {/*
+         * The heading and the form centred as one block. The form's own
+         * min-height (it centres itself when it stands alone) is lifted here,
+         * or on a tall screen the heading would float far above the question.
+         */}
+        <div className="flex flex-1 flex-col justify-center [&>form]:min-h-0">
+          {/* the page's one heading, quiet over the form: each screen of the form asks its question in an h2 */}
+          <h1 className="mb-8 text-center text-[1.0625rem] font-medium text-bone-2">{t.start.title}</h1>
           <BriefForm lang={lang} copy={t.brief} initialType={initialType} />
         </div>
 

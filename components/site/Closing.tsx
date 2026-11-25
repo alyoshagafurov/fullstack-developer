@@ -22,6 +22,7 @@ export function Closing({ lang, t }: { lang: Locale; t: Dictionary }) {
         { label: `Instagram @${site.contact.instagram}`, href: `https://instagram.com/${site.contact.instagram}` },
         { label: site.contact.phone, href: `tel:${site.contact.phoneHref}` },
       ]}
+      avatar={{ src: '/me/avatar.webp', alt: s.avatarAlt }}
     />
   );
 }

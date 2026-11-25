@@ -7,8 +7,12 @@ import { Footer } from '@/components/chrome/Footer';
 import { GalleryMotion } from '@/components/museum/GalleryMotion';
 import { whatsappHref } from '@/components/museum/links';
 import { site } from '@/lib/content/site';
-import { alternatesFor, locales, localePath } from '@/lib/i18n';
+import { locales } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { siteVerification } from '@/lib/seo/metadata';
+import { siteGraph } from '@/lib/seo/schema';
+import { cachedPriceList, startingPrice } from '@/lib/seo/services';
 
 /*
  * The public site's document — its own root layout now.
@@ -40,33 +44,37 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
+/*
+ * What every page starts from: the title template, the robots rules and the
+ * verification tags. Nothing here names an address.
+ *
+ * It used to carry the home page's whole head — canonical, language links,
+ * share card — which any page without one of its own inherited: a 404 (when
+ * Next builds its head from the layouts and not-found.tsx), a retired case, the
+ * thanks page. Each of them then told a search engine it was the home page.
+ * The home page sets its head in its own page.tsx now, and every other page
+ * builds its own with lib/seo/metadata.ts.
+ *
+ * The default title is only ever seen on such a page, so it is his name: true
+ * for every page, and never a copy of the home page's title.
+ */
 export async function generateMetadata(): Promise<Metadata> {
-  const { lang, t } = await getDictionary();
+  const { t } = await getDictionary();
   return {
     metadataBase: new URL(site.url),
-    title: { default: t.meta.siteTitle, template: t.meta.titleTemplate },
-    description: t.meta.siteDescription,
+    title: { default: t.person.name, template: t.meta.titleTemplate },
     keywords: t.meta.keywords,
     applicationName: site.brand,
-    authors: [{ name: t.person.name }],
-    alternates: alternatesFor(lang, '/'),
-    openGraph: {
-      type: 'website',
-      locale: t.meta.ogLocale,
-      alternateLocale: lang === 'en' ? ['ru_RU'] : ['en_US'],
-      url: `${site.url}${localePath(lang, '/')}`,
-      siteName: site.brand,
-      title: t.meta.siteTitle,
-      description: t.meta.siteDescription,
-      images: [{ url: '/og.png', width: 1200, height: 630, alt: t.meta.siteTitle }],
+    authors: [{ name: t.person.name, url: site.url }],
+    creator: t.person.name,
+    robots: {
+      index: true,
+      follow: true,
+      // let Google show the case screenshots large and the whole description
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
     },
-    twitter: {
-      card: 'summary_large_image',
-      title: t.meta.siteTitle,
-      description: t.meta.siteDescription,
-      images: ['/og.png'],
-    },
-    robots: { index: true, follow: true },
+    // Search Console / Yandex Webmaster meta tags, from env; see lib/seo/metadata.ts
+    verification: siteVerification(),
   };
 }
 
@@ -74,48 +82,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const { lang, t } = await getDictionary();
 
   /*
-   * What a search engine is told about the person behind the site, in the
-   * page's own language. Every value is one he gave.
+   * What a search engine is told about the person, his business and the site,
+   * in the page's own language: lib/seo/schema.ts. Every value is one he gave;
+   * the price range is the lowest starting price on his live price list.
    */
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'Person',
-        '@id': `${site.url}/#person`,
-        name: t.person.name,
-        alternateName: [...site.alsoKnownAs, site.name],
-        jobTitle: t.person.role,
-        description: t.meta.siteDescription,
-        url: site.url,
-        email: site.contact.email,
-        telephone: site.contact.phoneHref,
-        contactPoint: {
-          '@type': 'ContactPoint',
-          contactType: 'sales',
-          url: `https://wa.me/${site.contact.whatsapp}`,
-          availableLanguage: ['Russian', 'English', 'Tajik'],
-        },
-        knowsLanguage: ['ru', 'en', 'tg'],
-        knowsAbout: ['Web development', 'Next.js', 'React', 'TypeScript', 'Node.js', 'Python', 'Telegram bots', 'Online stores'],
-        address: { '@type': 'PostalAddress', addressLocality: 'Dushanbe', addressCountry: 'TJ' },
-        sameAs: [
-          `https://t.me/${site.contact.telegram}`,
-          `https://instagram.com/${site.contact.instagram}`,
-          site.contact.github,
-        ],
-      },
-      {
-        '@type': 'WebSite',
-        '@id': `${site.url}/#website`,
-        url: site.url,
-        name: site.brand,
-        description: t.meta.siteDescription,
-        inLanguage: lang,
-        publisher: { '@id': `${site.url}/#person` },
-      },
-    ],
-  };
+  const structuredData = siteGraph({ t, priceRange: startingPrice(lang, t, await cachedPriceList(lang)) });
 
   return (
     <html lang={lang} className={`${inter.variable} ${interTight.variable}`}>
@@ -140,10 +111,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <Footer />
         <GalleryMotion />
         <Analytics />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
+        <JsonLd data={structuredData} />
       </body>
     </html>
   );

@@ -3,8 +3,10 @@ import Image from 'next/image';
 import { HallHead } from '@/components/museum/HallHead';
 import { Closing } from '@/components/site/Closing';
 import { site } from '@/lib/content/site';
-import { alternatesFor, localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { absoluteUrl, pageMetadata } from '@/lib/seo/metadata';
+import { breadcrumbs, graph, ids } from '@/lib/seo/schema';
 
 /*
  * About him, as a small retrospective: the name over the door, the portrait
@@ -14,33 +16,43 @@ import { getDictionary } from '@/lib/i18n/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
+  return pageMetadata({
+    lang,
+    t,
+    path: '/about',
     title: t.aboutPage.metaTitle,
     description: t.aboutPage.metaDescription,
-    alternates: alternatesFor(lang, '/about'),
-  };
+    // with its size, so a preview can lay the card out before the picture arrives
+    image: { url: '/me/leather.webp', width: 1400, height: 2489, alt: t.person.photoAlt },
+  });
 }
 
-/* The five photographs he chose, as they were taken. */
-const PHOTOS = ['/me/blue-street.webp', '/me/evening.webp', '/me/records.webp', '/me/night-code.webp', '/me/leather.webp'];
+/*
+ * The five photographs he chose, as they were taken, by their file in
+ * public/me. Each has its own alt under the same name in t.about.photoAlts, so
+ * reordering them here can never put one picture's words on another.
+ */
+const PHOTOS = ['blue-street', 'evening', 'records', 'night-code', 'leather'] as const;
 
 export default async function AboutPage() {
   const { lang, t } = await getDictionary();
   const a = t.about;
 
+  /* The page about the person the layout already describes: it points at him, it does not describe him twice. */
   const profile = {
-    '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    '@id': `${site.url}${localePath(lang, '/about')}#profile`,
-    url: `${site.url}${localePath(lang, '/about')}`,
-    name: `${t.person.name} — ${t.person.role}`,
+    '@id': `${absoluteUrl(lang, '/about')}#profile`,
+    url: absoluteUrl(lang, '/about'),
+    name: `${t.person.name} — ${t.meta.jobTitles.join(', ').toLowerCase()}`,
     inLanguage: lang,
-    mainEntity: { '@id': `${site.url}/#person` },
+    isPartOf: { '@id': ids.website },
+    mainEntity: { '@id': ids.person },
+    primaryImageOfPage: `${site.url}/me/leather.webp`,
   };
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profile) }} />
+      <JsonLd data={graph(profile, breadcrumbs(lang, t, [{ name: t.nav.about, path: '/about' }]))} />
 
       <HallHead title={t.person.name.split(' ')} script={t.person.role} note={a.difference} />
 
@@ -73,10 +85,10 @@ export default async function AboutPage() {
       <section data-gallery className="relative overflow-hidden bg-wall-2" aria-label={a.label}>
         <div className="flex min-h-[100svh] flex-col justify-center py-24 lg:py-16">
           <ul data-gallery-track className="flex scroll-px-5 items-end gap-6 px-5 md:scroll-px-10 md:gap-[4vw] md:px-10 xl:px-[4.5rem]">
-            {PHOTOS.map((src) => (
-              <li key={src} className="w-[72vw] shrink-0 sm:w-[44vw] lg:w-[min(26vw,44svh)]">
+            {PHOTOS.map((name) => (
+              <li key={name} className="w-[72vw] shrink-0 sm:w-[44vw] lg:w-[min(26vw,44svh)]">
                 <div className="exhibit relative aspect-[9/16] overflow-hidden">
-                  <Image src={src} alt={t.person.photoAlt} fill sizes="(min-width: 1024px) 26vw, 72vw" className="object-cover" />
+                  <Image src={`/me/${name}.webp`} alt={a.photoAlts[name]} fill sizes="(min-width: 1024px) 26vw, 72vw" className="object-cover" />
                 </div>
               </li>
             ))}

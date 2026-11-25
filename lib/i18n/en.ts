@@ -129,24 +129,115 @@ const briefEn: BriefCopy = {
 };
 
 export const en = {
+  /**
+   * What search engines and link previews read. The role and the city lead
+   * the home page's title, because that is how people search — "web developer
+   * Dushanbe"; the name closes it. "Website development in Dushanbe" is the
+   * title of /dushanbe (lib/content/dushanbe.ts). Other pages say what they
+   * are and leave those words alone: two pages after one query only take it
+   * from each other. Descriptions stay under ~160 characters so
+   * the snippet is not cut, and the promise comes first: it is what a link
+   * preview in Telegram or WhatsApp shows.
+   */
   meta: {
-    siteTitle: 'Alisher Gafurov — I build websites, online stores and apps',
-    // the promise first: it is what a link preview in Telegram or WhatsApp shows
-    siteDescription:
-      `${PROMISE.en.full} I’m Alisher Gafurov (aly), a web developer from Dushanbe, Tajikistan. I build websites, online stores, apps and Telegram bots for businesses — from idea to launch, on my own, with no middlemen.`,
-    titleTemplate: '%s — Alisher Gafurov (aly)',
+    siteTitle: 'Web developer in Dushanbe, Tajikistan | Alisher Gafurov',
+    siteDescription: `${PROMISE.en.full} I’m Alisher Gafurov, a web developer in Dushanbe: websites, online stores and Telegram bots.`,
+    titleTemplate: '%s | Alisher Gafurov',
     ogLocale: 'en_US',
     keywords: [
       'Alisher Gafurov',
       'aly gafurov',
       'web developer Dushanbe',
       'web developer Tajikistan',
+      'website development Tajikistan',
       'freelance web developer',
-      'website for business',
       'online store development',
       'Telegram bot developer',
       'Алишер Гафуров',
     ],
+
+    /** For the structured data: who he is, what the business is called, where he is. */
+    jobTitles: ['Web developer', 'Programmer'] as string[],
+    personDescription:
+      'Web developer and programmer in Dushanbe, Tajikistan. I build websites, online stores, web apps and Telegram bots — on my own, from idea to launch.',
+    businessName: 'aly — Alisher Gafurov',
+    place: { city: 'Dushanbe', country: 'Tajikistan' },
+
+    /** The start of a price, in a title or a snippet: "from 1,500 TJS". */
+    priceFrom: 'from {amount} TJS',
+    /** A service's title in search results. English titles carry no price: TJS means little abroad. */
+    serviceTitle: '{title}',
+    termLabel: 'Timeline',
+    /** The four prices the /prices snippet names, as "landing page — from 1,500 TJS". */
+    priceNames: {
+      landing: 'landing page',
+      sites: 'website',
+      ecommerce: 'online store',
+      'telegram-bots': 'Telegram bot',
+    } as Record<string, string>,
+    /**
+     * Each service as a search result shows it: what it is and where, then a
+     * one-line summary of what you get, taken from the service's own list.
+     */
+    services: {
+      // "Website development in Dushanbe" is the query /dushanbe answers; this page is the service itself
+      sites: {
+        title: 'Custom website development',
+        summary: 'A website built from scratch: design, phone version, forms and launch.',
+      },
+      landing: {
+        title: 'Landing page development in Dushanbe',
+        summary: 'One page that leads people to contact you: design, forms and analytics.',
+      },
+      corporate: {
+        title: 'Company website development in Dushanbe',
+        summary: 'Services, team, projects, contacts and an admin panel to edit it all yourself.',
+      },
+      ecommerce: {
+        title: 'Online store development in Dushanbe',
+        summary: 'Catalog, search, cart, checkout and an admin panel for your products.',
+      },
+      'web-apps': {
+        title: 'Web app development in Dushanbe',
+        summary: 'An online service with user accounts, roles and a database.',
+      },
+      crm: {
+        title: 'Custom CRM development in Dushanbe',
+        summary: 'Clients, requests, deals and tasks in one place — built around your business.',
+      },
+      automation: {
+        title: 'Business automation in Dushanbe',
+        summary: 'I take repeat manual work off your team and connect your tools.',
+      },
+      redesign: {
+        title: 'Website redesign in Dushanbe',
+        summary: 'A new design, a clearer structure and a phone version.',
+      },
+      mvp: {
+        title: 'Startup MVP development',
+        summary: 'A first working version of your product, to test the idea on real people.',
+      },
+      support: {
+        title: 'Website support and updates',
+        summary: 'Fixes, updates and new features after launch.',
+      },
+      android: {
+        title: 'Android app development',
+        summary: 'An Android app built from scratch, ready to publish.',
+      },
+      ios: {
+        title: 'iPhone app development',
+        summary: 'An app for iPhone and iPad, ready for the App Store.',
+      },
+      'telegram-bots': {
+        title: 'Telegram bot development in Dushanbe',
+        summary: 'A bot with menus, requests, notifications and a database.',
+      },
+      'telegram-mini-apps': {
+        title: 'Telegram Mini App development in Dushanbe',
+        summary: 'An app that opens right inside Telegram — nothing to download.',
+      },
+    } as Record<string, { title: string; summary: string }>,
   },
 
   person: {
@@ -219,7 +310,7 @@ export const en = {
    * the reviews, and only then the prices.
    */
   showroom: {
-    eyebrow: 'Alisher Gafurov · web developer',
+    eyebrow: 'Alisher Gafurov · developer in Dushanbe',
     title: ['Clients are looking for you online.', 'What do they find?'],
     sub: 'I build websites, online stores and Telegram bots that get people writing to you. On my own — from idea to launch.',
     cta: 'Discuss a project',
@@ -239,6 +330,8 @@ export const en = {
     steps: ['You tell me what you need', 'In 1–3 days I show you a draft', 'You pay 50% only if you like it'],
     workTitle: 'Case studies.',
     workSub: 'Real projects, running right now: what there was before, and what there is now.',
+    /** While no project on the home has its «before → after» yet: the line promises only what the page shows. */
+    workSubPlain: 'Real projects, running right now.',
     workAll: 'All projects',
     labels: { year: 'Year', before: 'Before', after: 'After' },
     openSite: 'Open the site',
@@ -255,7 +348,10 @@ export const en = {
     notForLine: 'If you need a website for 300 somoni by tonight, I’m not for you.',
     notForAccent: 'If you need a website you won’t be embarrassed by — let’s talk.',
     notForMore: 'About me',
-    notForAlt: 'Alisher Gafurov at his laptop in a café',
+    notForAlt: 'Alisher Gafurov in black, a mirror selfie',
+    stepsAlt: 'Alisher Gafurov on a phone call',
+    /** The portrait at the end of nearly every page: who is in it, no keywords — the headings carry those. */
+    avatarAlt: 'Alisher Gafurov',
     voicesTitle: 'Clients say.',
     voicesAll: 'All reviews',
     shotCaption: 'Chat screenshot',
@@ -469,6 +565,14 @@ export const en = {
       { title: 'Mountains', when: '', alt: 'In the mountains above a green valley' },
       { title: 'Reflection', when: 'May 2026', alt: 'Reflection in a mirror' },
     ],
+    /** The five photographs on the About page, keyed by their file in public/me, so the page's order cannot mislabel one. */
+    photoAlts: {
+      'blue-street': 'Alisher Gafurov at a laptop at an outdoor café table, a blue building and string lights behind him',
+      evening: 'Alisher Gafurov in glasses at a café table with an open laptop, phones and a notebook of notes',
+      records: 'Two people at a table in a dim café, vinyl records on the wall',
+      'night-code': 'A laptop showing code on an outdoor café table at night, beside a notebook of handwritten notes and a phone',
+      leather: 'Alisher Gafurov in a leather jacket and glasses looking at his phone, a laptop on the table beside him',
+    },
   },
 
   reviews: {
@@ -539,9 +643,10 @@ export const en = {
   },
 
   services: {
-    metaTitle: 'Services',
+    metaTitle: 'Services: websites, online stores and Telegram bots',
+    /** `{from}` is the lowest starting price on the list, read at render time. */
     metaDescription:
-      'What I do: websites, landing pages, company websites, online stores, web apps, Telegram bots and more. Built to order by a web developer in Dushanbe, Tajikistan.',
+      'Websites, landing pages, online stores, web apps, CRM and Telegram bots built to order — {from}. I do it all myself, from idea to launch: you deal with one person.',
     eyebrow: 'Services',
     title: 'What I do',
     count: '{n} services',
@@ -687,16 +792,17 @@ export const en = {
   },
 
   prices: {
-    metaTitle: 'Prices',
-    metaDescription:
-      'How much a website, online store, web app or Telegram bot costs. Starting prices from Alisher Gafurov, web developer in Dushanbe.',
+    // prices and timelines for "website in Dushanbe" are /dushanbe's; this is the whole list
+    metaTitle: 'Prices for websites, stores and Telegram bots',
+    /** `{list}` is "landing page — from 1,500 TJS, website — …", read from the price list. */
+    metaDescription: 'Starting prices: {list}. I’ll tell you the exact amount after we talk.',
     eyebrow: 'Prices',
     title: 'What it costs',
     lede: 'These are starting prices. The final price depends on the size of the job — I’ll tell you the exact amount after we talk.',
   },
 
   work: {
-    metaTitle: 'Projects',
+    metaTitle: 'Portfolio: websites and online stores',
     metaDescription:
       'Work I built from start to finish: websites, online stores and web apps, made in Dushanbe.',
     eyebrow: 'Projects',
@@ -717,13 +823,14 @@ export const en = {
   aboutPage: {
     metaTitle: 'About me',
     metaDescription:
-      'Alisher Gafurov (aly) — web developer from Dushanbe, Tajikistan. How I got into development, what I studied, who I work with and what I don’t take on.',
+      'Alisher Gafurov (aly) — web developer and programmer in Dushanbe, Tajikistan. How I got into development, what I studied, who I work with and what I don’t take on.',
     eyebrow: 'About me',
   },
 
   contacts: {
-    metaTitle: 'Contact',
-    metaDescription: 'Contact Alisher Gafurov, web developer in Dushanbe: {email}, Telegram @{telegram}.',
+    metaTitle: 'Contact — WhatsApp, Telegram, phone',
+    metaDescription:
+      'Contact Alisher Gafurov, web developer in Dushanbe: WhatsApp and phone {phone}, Telegram @{telegram}, email {email}. I reply within a day.',
     eyebrow: 'Contact',
     title: 'Write to me directly',
     channels: {
@@ -737,7 +844,7 @@ export const en = {
   },
 
   reviewsPage: {
-    metaTitle: 'Reviews',
+    metaTitle: 'Client reviews',
     metaDescription: 'What clients say about working with Alisher Gafurov, web developer in Dushanbe.',
     eyebrow: 'Reviews',
     title: 'What clients say',
@@ -788,8 +895,12 @@ export const en = {
   },
 
   start: {
-    metaTitle: 'Send a request',
+    // not "Order a website": that query is /dushanbe's, with prices, timelines and answers; this is only the form
+    metaTitle: 'Request a website, store or Telegram bot',
+    metaDescription: `Tell me about your project — five short steps, about a minute. I reply within a day. ${PROMISE.en.full}`,
     eyebrow: 'Request',
+    /** The page's heading, over the form. */
+    title: 'Project request',
     howItWorks: 'How it works',
     steps: [
       {

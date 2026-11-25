@@ -16,6 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t.thanks.metaTitle,
     robots: { index: false, follow: false },
+    // the layout's canonical is the home page; a noindex page should not claim to be it
+    alternates: null,
   };
 }
 
