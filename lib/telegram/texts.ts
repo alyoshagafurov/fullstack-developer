@@ -1,5 +1,5 @@
 import { briefCopyRu, briefTypes, budgetRanges, contactMethods, priorities } from '@/lib/content/brief';
-import { PROJECTS, PROMISE } from '@/lib/content/site';
+import { PROJECTS, PROMISE, site } from '@/lib/content/site';
 
 /*
  * Everything the bot says, in the owner's words.
@@ -58,8 +58,10 @@ export const botDescription = [
   `Алишер Гафуров — сайты, интернет-магазины и Telegram-боты. ${PROJECTS} проектов. Отвечаю лично, в течение дня.`,
   '',
   'Нажмите «Старт», чтобы оставить заявку или посмотреть работы.',
+  '',
+  `${site.url}/ru`,
 ].join('\n');
-export const botShortDescription = `${PROMISE.full} Сайты, магазины, боты · ${PROJECTS} проектов.`;
+export const botShortDescription = `${PROMISE.full} ${site.url}/ru`;
 
 /**
  * What the owner sees on /start.
