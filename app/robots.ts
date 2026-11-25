@@ -11,9 +11,12 @@ export default function robots(): MetadataRoute.Robots {
       // the same forms the site already offers at /start and /reviews/new. In
       // an index it would compete with those pages for the same words and send
       // a searcher to a page built to sit inside a Telegram window.
-      disallow: ['/admin', '/api/', '/mini'],
+      // ?lang= only sets the language cookie and redirects to the clean address: nothing to index there.
+      disallow: ['/admin', '/api/', '/mini', '/*?lang='],
     },
+    // No `Host:` line: Yandex retired the directive in 2018 and Google never
+    // read it. The one address is set by the www → aly.lat redirect and the
+    // canonical on every page.
     sitemap: `${site.url}/sitemap.xml`,
-    host: site.url,
   };
 }

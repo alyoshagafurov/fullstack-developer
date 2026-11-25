@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import {
   Hero,
   NotFor,
@@ -16,12 +17,25 @@ import { Closing } from '@/components/site/Closing';
 import { isAlive } from '@/lib/alive';
 import { blurOf } from '@/lib/blur';
 import { getPublishedCases, getTestimonials, localizeCases } from '@/lib/cases';
-import { REVIEW_BUSINESS_MISSING, beforeAfter } from '@/lib/content/placeholders';
+import { REVIEW_BUSINESS_MISSING, beforeAfter, visibleText, type BeforeAfter } from '@/lib/content/placeholders';
 import { reviewShot } from '@/lib/content/review-shots';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
 import { priceFormatter } from '@/lib/price-display';
 import { getPriceList } from '@/lib/prices';
+import { pageMetadata } from '@/lib/seo/metadata';
+
+/*
+ * The page that answers «программист в Душанбе»: the role and the city lead
+ * its title, used as written because it already ends on his name. It is the
+ * address his Instagram, Telegram and the bot point to, so the query is this
+ * page's alone: another page that leads with the same words only competes
+ * with it.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { lang, t } = await getDictionary();
+  return pageMetadata({ lang, t, path: '/', title: t.meta.siteTitle, description: t.meta.siteDescription, absoluteTitle: true });
+}
 
 /*
  * The home page, in the order a careful client decides: what he does and the
@@ -61,6 +75,17 @@ const MIMI = {
 /* The first screen shows two real sites: a store on the laptop, the agency on the phone. */
 const HERO_SCREENS = { desktop: CAPTURES['arusdomod-shop'].desktop, phone: MIMI.phone };
 
+/*
+ * The «было → стало» pair as the page may show it. Filtered here, on the
+ * server: Works is a client component, so whatever it is handed is written
+ * into the page's HTML as data, and a placeholder left out only at render
+ * would still be read in the source. An empty string renders nothing.
+ */
+const shownPair = (pair: BeforeAfter): BeforeAfter => ({
+  before: visibleText(pair.before) ?? '',
+  after: visibleText(pair.after) ?? '',
+});
+
 /* The few prices shown on the home; the full list lives on /prices. */
 const PRICE_PICKS = ['landing', 'sites', 'ecommerce', 'telegram-bots'];
 
@@ -94,7 +119,7 @@ export default async function HomePage() {
         kind: s.kinds[row.slug] ?? '',
         year: row.year,
         result: row.result.split(/(?<=[.!?])\s/)[0] ?? row.result,
-        ...beforeAfter(row.slug, lang, row.title),
+        ...shownPair(beforeAfter(row.slug, lang, row.title)),
         host: row.liveUrl ? new URL(row.liveUrl).host : null,
         liveUrl: alive ? row.liveUrl : null,
         href: localePath(lang, `/work/${row.slug}`),
@@ -118,7 +143,7 @@ export default async function HomePage() {
     kind: mimi.kind,
     year: '',
     result: mimi.result,
-    ...beforeAfter('mimi', lang),
+    ...shownPair(beforeAfter('mimi', lang)),
     host: 'mimitj.agency',
     liveUrl: mimiAlive ? MIMI.url : null,
     href: null,
@@ -138,8 +163,8 @@ export default async function HomePage() {
       text: row.text,
       name: row.name,
       // the business first, then the person's role in it: "mimi agency · SEO";
-      // a visible placeholder when the admin has neither, never a blank under the name
-      business: [row.company, row.role].filter(Boolean).join(' · ') || REVIEW_BUSINESS_MISSING[lang],
+      // with neither, a placeholder in development and nothing on the live site
+      business: visibleText([row.company, row.role].filter(Boolean).join(' · ') || REVIEW_BUSINESS_MISSING[lang]) ?? '',
       lang: langOf(row.text),
       shot: reviewShot(row),
     }));
@@ -170,11 +195,12 @@ export default async function HomePage() {
         screens={{ ...HERO_SCREENS, label: s.screens, desktopBlur: heroBlur, phoneBlur: mimiPhoneBlur }}
       />
       <Specs label={s.specsLabel} items={s.specs} />
-      <Steps title={s.stepsTitle} steps={s.steps} cta={s.cta} ctaHref={startHref(lang)} />
+      <Steps title={s.stepsTitle} steps={s.steps} cta={s.cta} ctaHref={startHref(lang)} photo="/me/call.webp" alt={s.stepsAlt} />
       <Works
         id="work"
         title={s.workTitle}
-        sub={s.workSub}
+        // the «было → стало» half of the line only while a pair is actually shown
+        sub={works.some((work) => work.before || work.after) ? s.workSub : s.workSubPlain}
         all={s.workAll}
         allHref={localePath(lang, '/work')}
         labels={s.labels}
@@ -191,8 +217,9 @@ export default async function HomePage() {
         ctaHref={startHref(lang)}
         more={s.notForMore}
         moreHref={localePath(lang, '/about')}
-        photo="/me/blue-street.webp"
+        photo="/me/mirror.webp"
         alt={s.notForAlt}
+        focus="50% 46%"
       />
       <Voices
         title={s.voicesTitle}

@@ -10,6 +10,7 @@ import {
   priorities,
   type BriefCopy,
 } from '@/lib/content/brief';
+import { visibleText } from '@/lib/content/placeholders';
 import { FORM_PLACEHOLDERS } from '@/lib/content/placeholders-forms';
 import { localePath, type Locale } from '@/lib/i18n';
 import { useBrief } from '@/components/brief/useBrief';
@@ -189,6 +190,7 @@ export function BriefForm({
   const heading = [copy.projectType, copy.details, copy.priority, copy.budget, copy.reply][step];
   /** The last screen has a way to reply and a contact that checks out: Enter may send. */
   const sendable = Boolean(method) && !checkContact(method, values.contact);
+  const lastProject = visibleText(FORM_PLACEHOLDERS.lastProject[lang]);
 
   return (
     <form
@@ -202,13 +204,15 @@ export function BriefForm({
     >
       <Progress at={step} of={BRIEF_SCREENS} word={copy.of} />
 
-      {/* the work speaks first: one quiet line before the question */}
-      <p className="mx-auto mt-8 inline-flex max-w-full items-center gap-2 self-center rounded-full border border-seam px-3.5 py-1.5 text-[0.8125rem] leading-5 text-bone-2">
-        <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-bone-3" />
-        <span className="truncate">
-          {copy.lastProject}: <span className="text-bone">{FORM_PLACEHOLDERS.lastProject[lang]}</span>
-        </span>
-      </p>
+      {/* the work speaks first: one quiet line before the question — left out on the live site until the project is named */}
+      {lastProject && (
+        <p className="mx-auto mt-8 inline-flex max-w-full items-center gap-2 self-center rounded-full border border-seam px-3.5 py-1.5 text-[0.8125rem] leading-5 text-bone-2">
+          <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-bone-3" />
+          <span className="truncate">
+            {copy.lastProject}: <span className="text-bone">{lastProject}</span>
+          </span>
+        </p>
+      )}
 
       <div key={step} className="review-step mt-8 w-full text-center md:mt-10">
         <h2 className={kit.question}>{heading.question}</h2>

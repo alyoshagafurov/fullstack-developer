@@ -4,8 +4,11 @@ import { HallHead } from '@/components/museum/HallHead';
 import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getTestimonials } from '@/lib/cases';
-import { alternatesFor, localePath } from '@/lib/i18n';
+import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { pageMetadata } from '@/lib/seo/metadata';
+import { breadcrumbs } from '@/lib/seo/schema';
 
 /*
  * Every review, unedited, hung like notes left in a visitors' book: the words
@@ -14,13 +17,10 @@ import { getDictionary } from '@/lib/i18n/server';
  */
 export const revalidate = 300;
 
+/* The reviews stay plain text: no Review or rating markup, which Google treats as self-serving on a business's own site. */
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t } = await getDictionary();
-  return {
-    title: t.reviewsPage.metaTitle,
-    description: t.reviewsPage.metaDescription,
-    alternates: alternatesFor(lang, '/reviews'),
-  };
+  return pageMetadata({ lang, t, path: '/reviews', title: t.reviewsPage.metaTitle, description: t.reviewsPage.metaDescription });
 }
 
 export default async function ReviewsPage() {
@@ -29,6 +29,9 @@ export default async function ReviewsPage() {
 
   return (
     <>
+      <JsonLd
+        data={{ '@context': 'https://schema.org', ...breadcrumbs(lang, t, [{ name: t.nav.reviews, path: '/reviews' }]) }}
+      />
       <HallHead title={t.reviewsPage.title} script={t.home.voicesNote} note={t.reviews.workedWithMe}>
         <Link href={localePath(lang, '/reviews/new')} className="btn-line group">
           {t.reviews.leave}

@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { AnimatePresence, animate, motion, useInView, useReducedMotion } from 'motion/react';
 import { ArrowIcon, ChevronIcon, WhatsAppIcon } from '@/components/museum/Icons';
-import { isPlaceholder } from '@/lib/content/placeholders';
+import { isPlaceholder, visibleText } from '@/lib/content/placeholders';
 
 /*
  * The home page, shown the way Apple shows a Mac and Porsche shows a 911:
@@ -103,7 +103,9 @@ function HeroStage({ screens }: { screens: HeroScreens }) {
             sizes="(min-width: 1024px) 46vw, 90vw"
             // the captures are already sized and compressed: served as they are
             unoptimized
+            // the page's largest picture on the first screen: fetched first, not after the scripts
             preload
+            fetchPriority="high"
             placeholder={screens.desktopBlur ? 'blur' : 'empty'}
             blurDataURL={screens.desktopBlur}
             className="screen-drift object-cover object-top"
@@ -151,7 +153,12 @@ export function Hero({
   ctaNote: readonly string[];
   screens: HeroScreens;
 }) {
-  const reduce = useReducedMotion();
+  /*
+   * The first screen is painted whole by the server — eyebrow, heading,
+   * promise, button and devices are visible before any script runs, so the
+   * largest picture and the heading count as soon as they arrive. Only what
+   * sits below the fold rises into place (Reveal).
+   */
   return (
     <section data-tone="dark" aria-labelledby="hero-title" className="overflow-hidden bg-black text-bone">
       {/*
@@ -161,61 +168,36 @@ export function Hero({
        */}
       <div className="hall grid items-center gap-14 pt-24 pb-20 md:pt-32 md:pb-28 lg:min-h-[min(100svh,62rem)] lg:grid-cols-12 lg:gap-8 lg:pt-28 lg:pb-20">
         <div className="lg:col-span-6">
-          <motion.p
-            className="text-[0.9375rem] font-medium text-bone-2 md:text-[1.0625rem]"
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.1 }}
-          >
-            {eyebrow}
-          </motion.p>
+          <p className="text-[0.9375rem] font-medium text-bone-2 md:text-[1.0625rem]">{eyebrow}</p>
           <h1 id="hero-title" className={`${display} mt-4 text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02]`}>
             {title.map((line, i) => (
-              <span key={i} className="block overflow-hidden pb-[0.08em]">
-                <motion.span
-                  className="block"
-                  initial={reduce ? false : { y: '110%' }}
-                  animate={{ y: '0%' }}
-                  transition={{ duration: 1.3, ease: EASE, delay: 0.2 + i * 0.12 }}
-                >
-                  {line}
-                </motion.span>
+              <span key={i} className="block pb-[0.08em]">
+                {line}
               </span>
             ))}
           </h1>
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
-          >
-            <p className="mt-6 max-w-[34rem] text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-relaxed text-bone-2">{sub}</p>
-            {/* the promise sits beside the button where there is room, and drops under it rather than squeeze */}
-            <div className="mt-8 flex flex-col items-stretch gap-3.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-4">
-              <Link href={ctaHref} className={primary()}>
-                {cta}
-                <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-0.5" />
-              </Link>
-              {/* both halves of the promise on the first screen: nobody has to scroll to learn they pay only if they like it */}
-              <ul className="flex flex-col gap-1.5 text-[0.9375rem] leading-snug text-bone-2 max-sm:self-center">
-                {ctaNote.map((note) => (
-                  <li key={note} className="flex items-center gap-2">
-                    <CheckIcon className="size-4 shrink-0 text-bone" />
-                    {note}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
+          <p className="mt-6 max-w-[34rem] text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-relaxed text-bone-2">{sub}</p>
+          {/* the promise sits beside the button where there is room, and drops under it rather than squeeze */}
+          <div className="mt-8 flex flex-col items-stretch gap-3.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-4">
+            <Link href={ctaHref} className={primary()}>
+              {cta}
+              <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </Link>
+            {/* both halves of the promise on the first screen: nobody has to scroll to learn they pay only if they like it */}
+            <ul className="flex flex-col gap-1.5 text-[0.9375rem] leading-snug text-bone-2 max-sm:self-center">
+              {ctaNote.map((note) => (
+                <li key={note} className="flex items-center gap-2">
+                  <CheckIcon className="size-4 shrink-0 text-bone" />
+                  {note}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <motion.div
-          className="lg:col-span-6"
-          initial={reduce ? false : { opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: EASE, delay: 0.35 }}
-        >
+        <div className="lg:col-span-6">
           <HeroStage screens={screens} />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -226,47 +208,46 @@ export function Hero({
 /*
  * A figure that counts up when it comes into view.
  *
- * The real figure is what the server renders, for search engines, and what a
- * reader who asked for less motion sees. The animated copy is reset to zero
- * only while it is still below the fold, so the count is never seen running
- * backwards — and it is hidden from screen readers, which get the real figure
- * beside it and never hear "0+ projects". Only a plain number with a suffix
- * counts ('60+', '50%', '3'); a range like '1–3' is shown as it is.
+ * The real figure is the one text the server renders — for search engines,
+ * for screen readers and for a reader who asked for less motion — and it
+ * stays there until the figure scrolls in. Only a figure that started below
+ * the fold counts: the moment it enters the view (while its Reveal is still
+ * transparent) it drops to zero and runs up to the real value, ending on the
+ * exact text it started with. Only a plain number with a suffix counts
+ * ('60+', '50%', '3'); a range like '1–3' is shown as it is.
  */
 function Count({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const reduce = useReducedMotion();
   const seen = useInView(ref, { once: true, margin: '0px 0px -10% 0px' });
+  const [shown, setShown] = useState(value);
+  const belowFold = useRef(false);
   const match = /^(\d+)(\D*)$/.exec(value);
-  const target = match ? Number(match[1]) : 0;
+  const target = match ? Number(match[1]) : null;
   const suffix = match?.[2] ?? '';
-  const mv = useMotionValue(target);
-  const shown = useTransform(mv, (n) => `${Math.round(n)}${suffix}`);
-  const armed = useRef(false);
-  const countable = !!match && !reduce;
 
   useEffect(() => {
-    const el = ref.current;
-    if (!countable || !el || el.getBoundingClientRect().top <= window.innerHeight) return;
-    mv.set(0);
-    armed.current = true;
     // asked once, on mount: does the figure start below the fold?
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const el = ref.current;
+    belowFold.current = !!el && el.getBoundingClientRect().top > window.innerHeight;
+  }, []);
 
   useEffect(() => {
-    if (!seen || !armed.current) return;
-    armed.current = false;
-    const controls = animate(mv, target, { duration: 1.6, ease: EASE });
-    return () => controls.stop();
-  }, [seen, mv, target]);
+    if (!seen || !belowFold.current || reduce || target === null) return;
+    belowFold.current = false;
+    const controls = animate(0, target, {
+      duration: 1.6,
+      ease: EASE,
+      onUpdate: (n) => setShown(`${Math.round(n)}${suffix}`),
+      onComplete: () => setShown(value),
+    });
+    return () => {
+      controls.stop();
+      setShown(value);
+    };
+  }, [seen, reduce, target, suffix, value]);
 
-  if (!match) return <span ref={ref}>{value}</span>;
-  return (
-    <span ref={ref}>
-      <span className="sr-only">{value}</span>
-      <motion.span aria-hidden>{shown}</motion.span>
-    </span>
-  );
+  return <span ref={ref}>{shown}</span>;
 }
 
 export function Specs({ label, items }: { label: string; items: readonly { value: string; label: string }[] }) {
@@ -301,20 +282,34 @@ export function Steps({
   steps,
   cta,
   ctaHref,
+  photo,
+  alt,
 }: {
   title: string;
   steps: readonly string[];
   cta: string;
   ctaHref: string;
+  /** Him on a call — the first step is a conversation. */
+  photo?: string;
+  alt?: string;
 }) {
   return (
     <section data-tone="dark" data-doors aria-labelledby="steps-title" className="bg-wall-2 py-24 text-bone md:py-36">
       <div className="hall">
-        <Reveal>
-          <h2 id="steps-title" className={`${display} max-w-[18ch] text-[clamp(2.5rem,5.4vw,5rem)] leading-[1.02]`}>
-            {title}
-          </h2>
-        </Reveal>
+        <div className="grid items-end gap-10 md:grid-cols-12 md:gap-12">
+          <Reveal className={photo ? 'md:col-span-7' : 'md:col-span-12'}>
+            <h2 id="steps-title" className={`${display} max-w-[18ch] text-[clamp(2.5rem,5.4vw,5rem)] leading-[1.02]`}>
+              {title}
+            </h2>
+          </Reveal>
+          {photo && (
+            <Reveal delay={0.1} className="md:col-span-5">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-wall-3 md:aspect-[4/5] md:rounded-[28px]">
+                <Image src={photo} alt={alt ?? ''} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-[45%_48%]" />
+              </div>
+            </Reveal>
+          )}
+        </div>
         <ol className="mt-12 border-t border-seam md:mt-20 md:grid md:grid-cols-3">
           {steps.map((step, i) => (
             <li key={step} className="border-b border-seam md:border-b-0 md:border-l md:px-8 md:first:border-l-0 md:first:pl-0">
@@ -349,7 +344,11 @@ export type ShowWork = {
   kind: string;
   year: string;
   result: string;
-  /** «Было → стало»: the owner's own words, or a bracketed placeholder until he writes them. */
+  /**
+   * «Было → стало»: the owner's own words, a bracketed placeholder in
+   * development, or '' — the page filters with visibleText before handing them
+   * over, so a placeholder never reaches the live HTML, not even as data.
+   */
   before: string;
   after: string;
   host: string | null;
@@ -413,30 +412,40 @@ function Device({ work }: { work: ShowWork }) {
 
 /*
  * «Было → стало». Until the owner writes the real words, the bracketed
- * placeholder is shown in a dashed frame — visibly unfinished, so nobody reads
- * it as a claimed result.
+ * placeholder is shown in development in a dashed frame — visibly unfinished,
+ * so nobody reads it as a claimed result — and left out of the live site
+ * altogether. A half that is filled in shows on its own; with neither, the
+ * block is not rendered.
  */
 function BeforeAfter({ before, after, labels }: { before: string; after: string; labels: { before: string; after: string } }) {
+  const shownBefore = visibleText(before);
+  const shownAfter = visibleText(after);
+  if (!shownBefore && !shownAfter) return null;
   const draft = (text: string) => isPlaceholder(text);
+  const both = !!shownBefore && !!shownAfter;
   return (
-    <dl className="mt-7 grid gap-3 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
-      <div
-        data-placeholder={draft(before) || undefined}
-        className={`rounded-[16px] p-5 ${draft(before) ? 'border border-dashed border-seam-2' : 'bg-wall-2'}`}
-      >
-        <dt className="text-[0.8125rem] font-medium tracking-[0.08em] text-bone-3 uppercase">{labels.before}</dt>
-        <dd className="mt-2 text-[1rem] leading-snug text-bone-2">{before}</dd>
-      </div>
-      <div
-        data-placeholder={draft(after) || undefined}
-        className={`rounded-[16px] p-5 ${draft(after) ? 'border border-dashed border-seam-2' : 'bg-wall-3 ring-1 ring-seam'}`}
-      >
-        <dt className="flex items-center gap-2 text-[0.8125rem] font-medium tracking-[0.08em] text-bone uppercase">
-          <ArrowIcon className="size-3.5" />
-          {labels.after}
-        </dt>
-        <dd className={`mt-2 text-[1rem] leading-snug ${draft(after) ? 'text-bone-2' : 'font-semibold text-bone'}`}>{after}</dd>
-      </div>
+    <dl className={`mt-7 grid gap-3 ${both ? 'sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2' : ''}`}>
+      {shownBefore && (
+        <div
+          data-placeholder={draft(shownBefore) || undefined}
+          className={`rounded-[16px] p-5 ${draft(shownBefore) ? 'border border-dashed border-seam-2' : 'bg-wall-2'}`}
+        >
+          <dt className="text-[0.8125rem] font-medium tracking-[0.08em] text-bone-3 uppercase">{labels.before}</dt>
+          <dd className="mt-2 text-[1rem] leading-snug text-bone-2">{shownBefore}</dd>
+        </div>
+      )}
+      {shownAfter && (
+        <div
+          data-placeholder={draft(shownAfter) || undefined}
+          className={`rounded-[16px] p-5 ${draft(shownAfter) ? 'border border-dashed border-seam-2' : 'bg-wall-3 ring-1 ring-seam'}`}
+        >
+          <dt className="flex items-center gap-2 text-[0.8125rem] font-medium tracking-[0.08em] text-bone uppercase">
+            <ArrowIcon className="size-3.5" />
+            {labels.after}
+          </dt>
+          <dd className={`mt-2 text-[1rem] leading-snug ${draft(shownAfter) ? 'text-bone-2' : 'font-semibold text-bone'}`}>{shownAfter}</dd>
+        </div>
+      )}
     </dl>
   );
 }
@@ -545,6 +554,7 @@ export function NotFor({
   moreHref,
   photo,
   alt,
+  focus,
 }: {
   eyebrow: string;
   title: string;
@@ -557,13 +567,15 @@ export function NotFor({
   moreHref: string;
   photo: string;
   alt: string;
+  /** Where the photo's subject sits, as CSS object-position. */
+  focus?: string;
 }) {
   return (
     <section data-tone="dark" data-doors aria-labelledby="notfor-title" className="bg-wall-2 py-24 text-bone md:py-36">
       <div className="hall grid items-center gap-10 md:grid-cols-12 md:gap-12">
         <Reveal className="md:col-span-5">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-wall-3 md:aspect-[4/5] md:rounded-[28px]">
-            <Image src={photo} alt={alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-[70%_38%]" />
+          <div className="relative mx-auto aspect-[4/5] max-h-[78svh] overflow-hidden rounded-[22px] bg-wall-3 md:rounded-[28px]">
+            <Image src={photo} alt={alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" style={{ objectPosition: focus ?? '50% 45%' }} />
           </div>
         </Reveal>
         <Reveal delay={0.1} className="md:col-span-7 md:pl-4 lg:pl-12">
@@ -598,7 +610,8 @@ export type Voice = {
   name: string;
   /**
    * The client's business — company and role — set right under the name; a
-   * bracketed placeholder while the review in the admin has neither.
+   * bracketed placeholder while the review in the admin has neither, shown in
+   * development only.
    */
   business: string;
   lang: string;
@@ -628,6 +641,7 @@ export function Voices({
   const [dir, setDir] = useState(1);
   if (voices.length === 0) return null;
   const v = voices[index];
+  const business = visibleText(v.business);
   const go = (step: number) => {
     setDir(step);
     setIndex((i) => (i + step + voices.length) % voices.length);
@@ -674,13 +688,14 @@ export function Voices({
                 </blockquote>
                 <figcaption className="mt-8">
                   <span className="font-display block text-[1.25rem] font-semibold tracking-[-0.02em] text-bone">{v.name}</span>
-                  {isPlaceholder(v.business) ? (
+                  {/* a placeholder business is framed in development and left out on the live site */}
+                  {business && (isPlaceholder(business) ? (
                     <span data-placeholder className="mt-2 inline-block rounded-md border border-dashed border-seam-2 px-2.5 py-1 text-[0.9375rem] text-bone-3">
-                      {v.business}
+                      {business}
                     </span>
                   ) : (
-                    <span className="mt-1 block text-[1rem] text-bone-2">{v.business}</span>
-                  )}
+                    <span className="mt-1 block text-[1rem] text-bone-2">{business}</span>
+                  ))}
                 </figcaption>
               </figure>
               {v.shot && (
@@ -797,6 +812,7 @@ export function Finale({
   telegram,
   telegramHref,
   links,
+  avatar,
 }: {
   title: string;
   sub: string;
@@ -809,11 +825,23 @@ export function Finale({
   telegram: string;
   telegramHref: string;
   links: { label: string; href: string }[];
+  /** His face over the offer to help: the free advice comes from a person. */
+  avatar?: { src: string; alt: string };
 }) {
   return (
     <section data-tone="dark" data-doors aria-labelledby="final-title" className="bg-black py-28 text-center text-bone md:py-44">
       <div className="hall">
         <Reveal>
+          {avatar && (
+            <Image
+              src={avatar.src}
+              alt={avatar.alt}
+              width={480}
+              height={480}
+              sizes="96px"
+              className="mx-auto mb-8 size-20 rounded-full object-cover ring-1 ring-white/15 md:size-24"
+            />
+          )}
           <h2 id="final-title" className={`${display} mx-auto max-w-[17ch] text-[clamp(2.25rem,5.6vw,5.5rem)] leading-[1.02]`}>
             {title}
           </h2>

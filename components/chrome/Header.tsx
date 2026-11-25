@@ -238,11 +238,20 @@ function LangSwitch({ lang, label }: { lang: Locale; label: string }) {
   return (
     <nav aria-label={label}>
       <a
-        href={localePath(other, path)}
+        // ?lang= works with no script at all: proxy.ts stores the choice in the
+        // cookie and redirects to the clean address, so the marker never stays
+        // in the URL. The hreflang links and the sitemap already name each twin
+        // page, so crawlers lose nothing if robots.txt keeps them off this one.
+        href={`${localePath(other, path)}?lang=${other}`}
         hrefLang={other}
         lang={other}
-        onClick={() => {
+        onClick={(event) => {
           document.cookie = `${LANG_COOKIE}=${other}; path=/; max-age=31536000; samesite=lax`;
+          // a new tab or window goes through the proxy as written; a plain click
+          // has the cookie already and goes straight to the clean address, no 307 hop
+          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          window.location.assign(localePath(other, path));
         }}
         // a 44px target for a thumb; the visible circle stays the small 36px one
         className="group inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-[0.75rem] font-semibold text-bone/80 transition-colors hover:text-bone"

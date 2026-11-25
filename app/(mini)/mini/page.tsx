@@ -23,7 +23,7 @@ export const revalidate = 300;
 /** «От 700 сомони» — the cheapest entry, as written, so the wording stays his. */
 async function lowestPrice(): Promise<string | null> {
   try {
-    const priced = (await getPriceList())
+    const priced = (await getPriceList('ru'))
       .map((s) => ({ text: s.price, amount: Number((s.price ?? '').replace(/\D/g, '')) }))
       .filter((p): p is { text: string; amount: number } => Boolean(p.text) && p.amount > 0);
     if (priced.length === 0) return null;

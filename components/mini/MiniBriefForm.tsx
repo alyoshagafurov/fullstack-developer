@@ -10,6 +10,7 @@ import {
   contactMethods,
   priorities,
 } from '@/lib/content/brief';
+import { visibleText } from '@/lib/content/placeholders';
 import { FORM_PLACEHOLDERS } from '@/lib/content/placeholders-forms';
 import { site } from '@/lib/content/site';
 import { localePath } from '@/lib/i18n';
@@ -57,16 +58,7 @@ const copy = briefCopyRu;
 function Portrait() {
   return (
     <span className="relative block size-28 overflow-hidden rounded-full bg-[#1c1c1e] ring-1 ring-white/15">
-      <Image
-        src="/me/blue-street.webp"
-        alt={site.name}
-        width={1400}
-        height={2489}
-        sizes="208px"
-        loading="eager"
-        className="absolute max-w-none"
-        style={{ width: '185%', height: 'auto', left: '-84.5%', top: '-82%' }}
-      />
+      <Image src="/me/avatar.webp" alt={site.name} width={480} height={480} sizes="112px" loading="eager" className="size-full object-cover" />
     </span>
   );
 }
@@ -194,14 +186,16 @@ export function MiniBriefForm() {
   };
 
   // The work speaks first: one line, before the question, that he is building right now.
-  const strip = (
+  // Left out on the live Mini App until the project is named.
+  const lastProject = visibleText(FORM_PLACEHOLDERS.lastProject.ru);
+  const strip = lastProject ? (
     <p className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-[13px] leading-5 text-bone-3">
       <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-white/50" />
       <span className="truncate">
-        {copy.lastProject}: <span className="text-bone-2">{FORM_PLACEHOLDERS.lastProject.ru}</span>
+        {copy.lastProject}: <span className="text-bone-2">{lastProject}</span>
       </span>
     </p>
-  );
+  ) : null;
 
   return (
     <form

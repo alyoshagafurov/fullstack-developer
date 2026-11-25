@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/ui/Logo';
+import { DUSHANBE_PATH, dushanbeCopy } from '@/lib/content/dushanbe';
 import { site } from '@/lib/content/site';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
@@ -43,6 +44,14 @@ export async function Footer() {
           <div className="max-w-xs">
             <Logo className="h-6 w-auto dark:invert" />
             <p className="wall-note mt-6">{t.footer.statement}</p>
+            {/*
+             * The local page, linked from every page so it is never an orphan.
+             * Under the statement rather than among the halls: its label is
+             * long enough to crowd the email out of the two columns on a phone.
+             */}
+            <Link href={href(DUSHANBE_PATH)} className={`${footerLink} mt-3`}>
+              {dushanbeCopy(lang).footer}
+            </Link>
           </div>
 
           <div className="flex gap-16 md:gap-24">

@@ -37,6 +37,13 @@ const nextConfig = {
    *
    * The singular forms next to it are the same mistake waiting to happen —
    * /service, /price, /review — and cost nothing to answer.
+   *
+   * The retired cases (RETIRED in lib/cases.ts: their live sites are gone)
+   * were indexed in both languages. Their pages now 404, so each address
+   * hands what it earned to the list of work in its own language instead.
+   * The old /en/ form is answered here too: left to the proxy, it would be
+   * stripped to /work/{slug} first and take a second hop to /work.
+   * Keep this list in step with RETIRED.
    */
   async redirects() {
     const moved = [
@@ -49,7 +56,12 @@ const nextConfig = {
       ['/portfolio', '/work'],
       ['/cases', '/work'],
     ];
-    return moved.map(([source, destination]) => ({ source, destination, permanent: true }));
+    const retired = ['parfumeria', 'python-academy', 'tajshop'].flatMap((slug) => [
+      [`/work/${slug}`, '/work'],
+      [`/en/work/${slug}`, '/work'],
+      [`/ru/work/${slug}`, '/ru/work'],
+    ]);
+    return [...moved, ...retired].map(([source, destination]) => ({ source, destination, permanent: true }));
   },
 
   async headers() {

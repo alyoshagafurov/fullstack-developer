@@ -1,8 +1,21 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Lines } from '@/components/museum/Lines';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { localePath } from '@/lib/i18n';
 import { getDictionary } from '@/lib/i18n/server';
+import { notFoundMetadata } from '@/lib/seo/metadata';
+
+/*
+ * The 404's own head — «Страница не найдена», not indexed, and none of the
+ * canonical, language links or share card of the page that threw. A retired
+ * case or an unknown service lands here through notFound(); whatever that
+ * page's own head would have said, this one is the head of what is shown.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getDictionary();
+  return notFoundMetadata(t);
+}
 
 /* An empty wall where a work used to hang: the label says what happened. */
 export default async function NotFound() {

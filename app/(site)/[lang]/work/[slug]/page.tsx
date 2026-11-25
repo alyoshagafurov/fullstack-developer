@@ -6,8 +6,13 @@ import { HallHead } from '@/components/museum/HallHead';
 import { Closing } from '@/components/site/Closing';
 import { ArrowIcon } from '@/components/museum/Icons';
 import { getCase, getPublishedCases, localizeCases } from '@/lib/cases';
-import { alternatesFor, fill, localePath } from '@/lib/i18n';
-import { getDictionary } from '@/lib/i18n/server';
+import { fill, localePath } from '@/lib/i18n';
+import { dictionaryFor, getDictionary } from '@/lib/i18n/server';
+import { JsonLd } from '@/lib/seo/JsonLd';
+import { isUntranslated } from '@/lib/seo/dates';
+import { notFoundMetadata, pageMetadata, snippet } from '@/lib/seo/metadata';
+import { lowerFirst } from '@/lib/seo/price';
+import { breadcrumbs } from '@/lib/seo/schema';
 
 /*
  * One work, given its own room. The name large, the problem in the corner,
@@ -33,17 +38,32 @@ async function getLocalCase(slug: string) {
   return { row: local, lang, t };
 }
 
+/*
+ * A case with no English yet reads the same Russian text at both addresses.
+ * Rather than offer that as a translation, both point at the Russian page as
+ * the one to index (and the sitemap lists only it); once the owner adds the
+ * English in the admin, the usual pair of language versions comes back.
+ */
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const found = await getLocalCase(slug);
-  if (!found) return {};
-  const { row, lang } = found;
-  return {
-    title: row.title,
-    description: row.task.slice(0, 180),
-    alternates: alternatesFor(lang, `/work/${row.slug}`),
-    openGraph: row.screenshots[0] ? { images: [{ url: row.screenshots[0] }] } : undefined,
-  };
+  if (!found) return notFoundMetadata((await getDictionary()).t);
+  const { row, lang, t } = found;
+  const path = `/work/${row.slug}`;
+  const [english] = lang === 'en' ? [row] : await localizeCases([row], 'en');
+  const russianOnly = english ? isUntranslated(english) : false;
+  const kind = t.showroom.kinds[row.slug];
+  const shot = row.screenshots[0];
+  return pageMetadata({
+    lang,
+    t,
+    path,
+    // «ArusDomod — магазин свадебных нарядов»: the name alone says nothing to a searcher
+    title: kind ? `${row.title} — ${lowerFirst(kind)}` : row.title,
+    description: snippet(row.task),
+    image: shot ? { url: shot, alt: fill(t.work.screenAlt, { title: row.title, n: 1 }) } : undefined,
+    alternates: russianOnly ? { canonical: localePath('ru', path) } : undefined,
+  });
 }
 
 export default async function CasePage({ params }: Params) {
@@ -62,8 +82,25 @@ export default async function CasePage({ params }: Params) {
   const [first, ...rest] = screens;
   const caption = [row.client, row.year].filter(Boolean).join(' · ');
 
+  /*
+   * The breadcrumb of the page that is indexed. An English address with no
+   * English words yet points at the Russian page as its canonical, so its
+   * trail names the Russian addresses too, in Russian, as that page does.
+   */
+  const crumbLang = lang === 'en' && isUntranslated(row) ? 'ru' : lang;
+  const crumbT = crumbLang === lang ? t : dictionaryFor(crumbLang);
+
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          ...breadcrumbs(crumbLang, crumbT, [
+            { name: crumbT.nav.work, path: '/work' },
+            { name: row.title, path: `/work/${row.slug}` },
+          ]),
+        }}
+      />
       <HallHead
         title={row.title}
         script={caption}
