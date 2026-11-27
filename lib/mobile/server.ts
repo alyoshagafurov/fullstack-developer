@@ -2,6 +2,7 @@ import 'server-only';
 import { createHash, randomBytes } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/auth';
+import { SESSION_DAYS, SESSION_SQL, type Db } from '@/lib/mobile/core';
 export class MobileError extends Error { constructor(public status:number, message:string){super(message);} }
 export const digest=(value:string)=>createHash('sha256').update(value).digest('hex');
 export function enabled(){if(process.env.ALYOS_MOBILE_ENABLED!=='true')throw new MobileError(503,'Интеграция ALY OS ещё не включена на сервере');}
@@ -13,11 +14,14 @@ export async function body(req:Request,max=4_000_000):Promise<unknown>{
  for(;;){const {done,value}=await reader.read();if(done)break;total+=value.length;if(total>max){await reader.cancel();throw new MobileError(413,'Запрос слишком большой');}chunks.push(value);}
  try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new MobileError(400,'Некорректный JSON');}
 }
+// Constant SQL texts from core.ts only; every value goes in as a bound parameter.
+export const db:Db={query:<T>(text:string,params:unknown[])=>prisma.$queryRawUnsafe<T[]>(text,...params)};
 export async function owner(req:Request){
  const raw=req.headers.get('authorization')??'';
  if(!/^Bearer [a-f0-9]{64}$/.test(raw))throw new MobileError(401,'Войдите в аккаунт');
  const tokenHash=digest(raw.slice(7));
- const rows=await prisma.$queryRaw<{owner_id:string}[]>`SELECT owner_id FROM aly_mobile_session WHERE token_hash=${tokenHash} AND expires_at>now()`;
+ // Sliding session: SESSION_SQL also renews the expiry, at most about once a week per device.
+ const rows=await db.query<{owner_id:string}>(SESSION_SQL,[tokenHash]);
  if(!rows[0])throw new MobileError(401,'Сессия истекла. Войдите снова');
  return {id:rows[0].owner_id, tokenHash};
 }
@@ -30,7 +34,7 @@ export async function login(email:string,password:string,device:string){
  const hash=user?.passwordHash??'$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW';
  const valid=await verifyPassword(password,hash);
  if(!user||!valid)throw new MobileError(401,'Неверный email или пароль');
- const token=randomBytes(32).toString('hex');const expires=new Date(Date.now()+7*86400000);
+ const token=randomBytes(32).toString('hex');const expires=new Date(Date.now()+SESSION_DAYS*86400000);
  await prisma.$executeRaw`INSERT INTO aly_mobile_session(token_hash,owner_id,device,expires_at) VALUES(${digest(token)},${user.id},${device},${expires})`;
  return {token,ownerID:user.id,expiresAt:expires.toISOString()};
 }
